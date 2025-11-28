@@ -1,10 +1,8 @@
 # main.py
-# HyperCore GH-OS - Python ML Service v1
-# Real logistic regression for binary outcome datasets (e.g. Pima Diabetes)
+# HyperCore GH-OS - Python ML Service v1 (FIXED Pydantic Model)
 
 import io
 from typing import List, Dict, Any
-
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
@@ -21,7 +19,7 @@ from sklearn.metrics import (
     precision_recall_curve,
 )
 
-app = FastAPI(title="HyperCore GH-OS ML Service", version="1.0.0")
+app = FastAPI(title="HyperCore GH-OS ML Service", version="1.0.1")
 
 
 # ---------- Request / Response Models ----------
@@ -31,20 +29,25 @@ class AnalyzeRequest(BaseModel):
     label_column: str
 
 
+class FeatureImportance(BaseModel):
+    feature: str
+    importance: float
+
+
 class AnalyzeResponse(BaseModel):
     metrics: Dict[str, float]
     coefficients: Dict[str, float]
     roc_curve: Dict[str, List[float]]
     pr_curve: Dict[str, List[float]]
-    feature_importance: List[Dict[str, float]]
+    feature_importance: List[FeatureImportance]
 
 
 # ---------- Util Functions ----------
 
 def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0.0  # recall / TPR
-    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0  # TNR
+    sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
     return {"sensitivity": sensitivity, "specificity": specificity}
 
 
@@ -52,23 +55,34 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
     if label_column not in df.columns:
         raise ValueError(f"Label column '{label_column}' not in dataset.")
 
+    # convert label to numeric
+    df[label_column] = pd.to_numeric(df[label_column], errors="raise")
+
     # Separate features and label
     y = df[label_column].values
     X = df.drop(columns=[label_column])
 
-    # Keep only numeric columns
+    # Only numeric
     numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
     X = X[numeric_cols]
 
     if X.shape[1] == 0:
-        raise ValueError("No numeric feature columns found for logistic regression.")
+        raise ValueError("No numeric feature columns found.")
 
-    # Basic train/test split
+    # FIX: small dataset fallback (your sample had 5 rows)
+    if df[label_column].value_counts().min() < 2:
+        test_size = 0.5
+        stratify = None
+    else:
+        test_size = 0.3
+        stratify = y
+
+    # Train/test split
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=42, stratify=y
+        X, y, test_size=test_size, random_state=42, stratify=stratify
     )
 
-    # Logistic Regression Model
+    # Model
     model = LogisticRegression(max_iter=1000, solver="liblinear")
     model.fit(X_train, y_train)
 
@@ -82,7 +96,7 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
     acc = accuracy_score(y_test, y_pred)
     sens_spec = compute_sensitivity_specificity(y_test, y_pred)
 
-    # ROC & PR curves
+    # Curves
     fpr, tpr, roc_thresh = roc_curve(y_test, y_prob)
     prec, rec, pr_thresh = precision_recall_curve(y_test, y_prob)
 
@@ -90,7 +104,7 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
     coef = model.coef_[0]
     coefficients = {feature: float(weight) for feature, weight in zip(numeric_cols, coef)}
 
-    # Feature importance as |coef| normalized
+    # Importance
     abs_coef = np.abs(coef)
     if abs_coef.sum() > 0:
         importance = abs_coef / abs_coef.sum()
@@ -129,13 +143,8 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(request: AnalyzeRequest):
-    """
-    Accepts a CSV string and label column, returns real metric results
-    for a binary classification problem (e.g. Pima Diabetes).
-    """
     try:
-        csv_buffer = io.StringIO(request.csv)
-        df = pd.read_csv(csv_buffer)
+        df = pd.read_csv(io.StringIO(request.csv))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {e}")
 
@@ -151,4 +160,5 @@ def analyze(request: AnalyzeRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
