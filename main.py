@@ -1,16 +1,23 @@
-# main.py
-# DiviScan HyperCore – Unified Backend v4
+# ================================================================
+# main.py — DiviScan HyperCore Unified Backend v4 (Base44 Compatible)
+# ================================================================
+# Provides:
+#   ✔ /analyze           – ML analysis API (pharma + hospital aware)
+#   ✔ /generate_report   – Mode-aware narrative engine
+#   ✔ /astra             – ASTRA persona logic
+#   ✔ /health            – Railway uptime check
 #
-# Supports:
-# - /analyze          → ML analysis (pharma + hospital aware via pilot_mode)
-# - /generate_report  → HyperCore narrative (pharma, hospital, exec, investor, etc.)
-# - /astra            → ASTRA persona responses
-# - /health           → health check for Railway / monitoring
+# Works with:
+#   ✔ Base44 MVP frontend
+#   ✔ Railway hosting
+#   ✔ Future Firebase integration
 #
-# Designed for:
-# - Railway deployment
-# - Base44 front-end integration
-# - Multiple pilot types (pharma, hospital, government in future)
+# IMPORTANT:
+#   This version FIXES Base44 JSON key requirements:
+#       roc_curve_data  (NOT roc_curve)
+#       pr_curve_data   (NOT pr_curve)
+#
+# ================================================================
 
 import io
 import json
@@ -35,103 +42,83 @@ from sklearn.metrics import (
 )
 
 # -----------------------------
-# OpenAI client (uses env var OPENAI_API_KEY)
+# OpenAI client
 # -----------------------------
-
 client = OpenAI()
 
+# -----------------------------
+# FastAPI Application
+# -----------------------------
 app = FastAPI(
     title="DiviScan HyperCore Unified Backend",
-    version="4.0.0",
-    description=(
-        "Unified backend for DiviScan HyperCore. "
-        "Supports pharma + hospital pilots via pilot_mode and exposes ML + narrative APIs."
-    ),
+    version="4.0.1",
+    description="Unified backend for DiviScan HyperCore — now Base44 compatible.",
 )
 
 # -----------------------------
-# Internal knowledge (competitive + category framing)
+# Internal Knowledge Modules
 # -----------------------------
-
 COMPETITIVE_INTEL_CORE = """
 DiviScan Competitive Intelligence Core
 
-Diagnostic Domains:
-1. Molecular diagnostics
-2. Multi-omics (genomics, proteomics, metabolomics, microbiomics)
-3. Immune profiling (cytokines + chemokines)
-4. Emerging disease detection + novelty scoring
-5. Clinical trial intelligence + trial rescue
+DiviScan covers all diagnostic domains simultaneously:
+- Molecular diagnostics
+- Multi-omics: genomics, proteomics, metabolomics, microbiomics
+- Immune profiling
+- Emerging disease detection + novelty scoring
+- Trial intelligence + trial rescue
 
-Competitor gaps:
-- Cue Health: single pathogen
-- Viome: microbiome only
-- Everlywell: mail-in lab tests only
-- Abbott: lab-based, slower, not multi-omic
-- Freenome/Tempus: central lab sequencing, no point-of-care
-- Apple/Oura: surface physiology, no deep biomarkers
+Main competitor gaps:
+Cue: single pathogen only
+Viome: microbiome only
+Everlywell: mail-in labs only
+Abbott: lab-based, slow
+Freenome/Tempus: sequencing only, no point-of-care
+Apple/Oura: physiology only
 
 DiviScan advantages:
-- Real-time multi-omics (saliva and beyond)
-- On-device inference (future device phase)
-- Unknown phenotype detection
-- Confounder intelligence (iron-cytokine, microbiome-endocrine, etc.)
-- Federated learning across sites
-- Trial rescue engine (for pharma)
-- Diagnostic OS framework (for hospitals, pharma, and government)
+Real-time multi-omics; unknown phenotype detection; confounder intelligence;
+federated learning; trial rescue engine; diagnostic OS architecture.
 """
 
 CATEGORY_CREATION_CORE = """
-Market Category Creation Engine
+Market Category: Multi-Omic Diagnostic OS (Diag-OS)
 
-DiviScan is not a diagnostic device.
-It is the world's first:
-Multi-Omic Diagnostic Operating System (Diag-OS).
+DiviScan is not a test or device — it is a diagnostic operating system.
 
 Pillars:
-1. Multi-omic fusion
-2. Quantum sensing (future hardware iteration)
-3. CRISPR diagnostic analytics
-4. Phenotype drift detection
-5. Unknown-disease novelty scoring
-6. Trial rescue intelligence
-7. Federated multi-site learning
-8. Global health surveillance
+- Multi-omic fusion
+- CRISPR diagnostic analytics
+- Quantum sensing (future hardware)
+- Emerging phenotype detection
+- Trial rescue intelligence
+- Global federated learning
+- Outbreak detection intelligence
 
 Tagline:
 "The Diagnostic OS for Humanity."
-
-Category framing:
-- Not just a test → a diagnostic OS
-- Not just a device → an intelligence layer
-- Not just biomarker analysis → multi-omic reasoning
-- Not just clinical analytics → trial and care-pathway rescue
-- Not just outbreak detection → emerging disease pattern detection
 """
 
 HOSPITAL_PAIN_POINTS = """
-Hospital & Clinician Pain Points (Internal Knowledge):
-
-- Delayed diagnosis and fragmented evaluation across specialties
-- High readmission rates and costly manual risk-scoring programs
-- Physician burnout and cognitive overload
-- Lack of multi-omic signal linking inflammation, microbiome, endocrine, and metabolic axes
-- Insufficient decision support for triage and risk stratification
+Hospital Pain Points:
+- Readmission risk and manual scoring overhead
+- Physician burnout from fragmented diagnostic data
+- Slow labs delaying treatment
+- No multi-omic signal fusion
+- No early-warning detection for organ-system drift
 """
 
 PHARMA_PAIN_POINTS = """
-Pharma & Trial Pain Points (Internal Knowledge):
-
-- 20–40% of trial budgets wasted due to poor biomarker stratification
-- Confounders (iron, microbiome, co-medications) undetected in standard analyses
-- Failure to detect emerging phenotypes and responder/non-responder subgroups
-- Slow, manual, post-hoc trial forensics instead of real-time rescue intelligence
+Pharma Pain Points:
+- Trial failures due to poor biomarker stratification
+- Hidden confounders
+- No emerging phenotype detection
+- Slow trial forensics
 """
 
 # -----------------------------
 # Request / Response Models
 # -----------------------------
-
 class AnalyzeRequest(BaseModel):
     csv: str
     label_column: str
@@ -146,8 +133,8 @@ class FeatureImportance(BaseModel):
 class AnalyzeResponse(BaseModel):
     metrics: Dict[str, float]
     coefficients: Dict[str, float]
-    roc_curve: Dict[str, List[float]]
-    pr_curve: Dict[str, List[float]]
+    roc_curve_data: Dict[str, List[float]]
+    pr_curve_data: Dict[str, List[float]]
     feature_importance: List[FeatureImportance]
     dropped_features: List[str] = []
     pilot_mode: str
@@ -155,7 +142,7 @@ class AnalyzeResponse(BaseModel):
 
 class ReportRequest(BaseModel):
     analysis_json: Dict[str, Any]
-    mode: str  # "pharma", "hospital", "executive", "investor"
+    mode: str  # "pharma", "hospital", "executive", etc.
 
 
 class ReportResponse(BaseModel):
@@ -164,66 +151,64 @@ class ReportResponse(BaseModel):
 
 class ASTRARequest(BaseModel):
     question: str
-    mode: str  # "pharma", "clinical", "hospital", "regulatory", "investor", "executive", "unknown"
+    mode: str
 
 
 class ASTRAResponse(BaseModel):
     answer: str
 
 
-# -----------------------------
-# Utility Functions
-# -----------------------------
-
-def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
+# ================================================================
+# UTILITY FUNCTIONS
+# ================================================================
+def compute_sensitivity_specificity(y_true, y_pred):
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
-    return {"sensitivity": sensitivity, "specificity": specificity}
+    return {
+        "sensitivity": tp / (tp + fn) if (tp + fn) > 0 else 0,
+        "specificity": tn / (tn + fp) if (tn + fp) > 0 else 0,
+    }
 
 
 def clean_feature_matrix(df: pd.DataFrame, label_column: str):
     if label_column not in df.columns:
-        raise ValueError(f"Label column '{label_column}' not found in dataset.")
+        raise ValueError(f"Label column '{label_column}' not found.")
 
-    # Convert label to numeric
     df[label_column] = pd.to_numeric(df[label_column], errors="raise")
     y = df[label_column].values
     X_raw = df.drop(columns=[label_column])
 
     numeric_cols = X_raw.select_dtypes(include=[np.number]).columns.tolist()
     if not numeric_cols:
-        raise ValueError("No numeric feature columns found for analysis.")
+        raise ValueError("Dataset has no numeric feature columns.")
 
     X = X_raw[numeric_cols].copy()
     variances = X.var()
-    keep_cols = [col for col in numeric_cols if variances[col] > 0]
-    dropped_cols = [col for col in numeric_cols if col not in keep_cols]
+
+    keep_cols = [c for c in numeric_cols if variances[c] > 0]
+    dropped_cols = [c for c in numeric_cols if variances[c] == 0]
 
     if not keep_cols:
-        raise ValueError("All numeric feature columns have zero variance; cannot fit model.")
+        raise ValueError("All numeric features have zero variance.")
 
-    X = X[keep_cols]
-    return X, y, keep_cols, dropped_cols
+    return X[keep_cols], y, keep_cols, dropped_cols
 
 
-def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[str, Any]:
-    X, y, feature_cols, dropped_cols = clean_feature_matrix(df, label_column)
+def logistic_regression_analysis(df: pd.DataFrame, label_column: str):
+    X, y, features, dropped_cols = clean_feature_matrix(df, label_column)
 
-    n_samples = len(y)
-    unique_classes, class_counts = np.unique(y, return_counts=True)
+    classes, counts = np.unique(y, return_counts=True)
+    if len(classes) < 2:
+        raise ValueError("Label must contain at least two classes (0 & 1).")
 
-    if len(unique_classes) < 2:
-        raise ValueError("Label column must contain at least two classes (e.g., 0 and 1).")
-
-    if n_samples < 30 or class_counts.min() < 3:
+    # fallback for small datasets
+    if len(y) < 30 or counts.min() < 3:
         X_train, X_test, y_train, y_test = X, X, y, y
     else:
         try:
             X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=0.3, random_state=42, stratify=y
+                X, y, test_size=0.3, stratify=y, random_state=42
             )
-        except Exception:
+        except:
             X_train, X_test, y_train, y_test = train_test_split(
                 X, y, test_size=0.3, random_state=42
             )
@@ -243,16 +228,16 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
     prec, rec, pr_thresh = precision_recall_curve(y_test, y_prob)
 
     coef = model.coef_[0]
-    coefficients = {f: float(c) for f, c in zip(feature_cols, coef)}
 
     abs_coef = np.abs(coef)
-    importance = abs_coef / abs_coef.sum() if abs_coef.sum() > 0 else np.zeros_like(abs_coef)
+    importance = abs_coef / abs_coef.sum() if abs_coef.sum() else np.zeros_like(abs_coef)
 
     feature_importance = [
         {"feature": f, "importance": float(i)}
-        for f, i in zip(feature_cols, importance)
+        for f, i in zip(features, importance)
     ]
 
+    # FINAL — MUST MATCH Base44 KEY NAMES 🚨
     return {
         "metrics": {
             "roc_auc": float(roc_auc),
@@ -261,13 +246,13 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
             "sensitivity": float(sens_spec["sensitivity"]),
             "specificity": float(sens_spec["specificity"]),
         },
-        "coefficients": coefficients,
-        "roc_curve": {
+        "coefficients": {f: float(c) for f, c in zip(features, coef)},
+        "roc_curve_data": {   # FIXED KEY
             "fpr": fpr.tolist(),
             "tpr": tpr.tolist(),
             "thresholds": [float(x) for x in roc_thresh.tolist()],
         },
-        "pr_curve": {
+        "pr_curve_data": {    # FIXED KEY
             "precision": prec.tolist(),
             "recall": rec.tolist(),
             "thresholds": [float(x) for x in pr_thresh.tolist()],
@@ -277,107 +262,63 @@ def logistic_regression_analysis(df: pd.DataFrame, label_column: str) -> Dict[st
     }
 
 
-# -----------------------------
-# /analyze endpoint
-# -----------------------------
-
+# ================================================================
+# /analyze ENDPOINT
+# ================================================================
 @app.post("/analyze", response_model=AnalyzeResponse)
-def analyze(request: AnalyzeRequest):
-    """
-    Core ML analysis endpoint.
-    Works for both pharma and hospital pilots.
-    pilot_mode tells the front-end how to interpret the output and which UI to show.
-    """
+def analyze(req: AnalyzeRequest):
     try:
-        df = pd.read_csv(io.StringIO(request.csv))
+        df = pd.read_csv(io.StringIO(req.csv))
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"CSV parsing failed: {e}")
+        raise HTTPException(status_code=400, detail=f"CSV error: {e}")
 
     try:
-        result = logistic_regression_analysis(df, request.label_column)
+        result = logistic_regression_analysis(df, req.label_column)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Attach pilot_mode for UI routing
-    result["pilot_mode"] = request.pilot_mode or "pharma"
+    result["pilot_mode"] = req.pilot_mode or "pharma"
 
     return AnalyzeResponse(**result)
 
 
-# -----------------------------
-# /generate_report endpoint
-# -----------------------------
-
-def build_report_prompt(analysis_json: Dict[str, Any], mode: str) -> str:
-    """
-    Builds a mode-aware narrative prompt for HyperCore.
-    mode: "pharma", "hospital", "executive", "investor"
-    """
+# ================================================================
+# /generate_report ENDPOINT
+# ================================================================
+def build_report_prompt(analysis_json, mode):
     mode = mode.lower()
 
     if mode == "pharma":
-        context = f"{PHARMA_PAIN_POINTS}\n\n{COMPETITIVE_INTEL_CORE}\n\n{CATEGORY_CREATION_CORE}"
-        audience = (
-            "Pharmaceutical R&D, clinical operations, and trial leadership. "
-            "Focus on trial performance, biomarkers, confounders, emerging subgroups, and trial rescue."
-        )
+        context = PHARMA_PAIN_POINTS + "\n" + COMPETITIVE_INTEL_CORE + "\n" + CATEGORY_CREATION_CORE
     elif mode == "hospital":
-        context = f"{HOSPITAL_PAIN_POINTS}\n\n{COMPETITIVE_INTEL_CORE}\n\n{CATEGORY_CREATION_CORE}"
-        audience = (
-            "Hospital leadership, clinical heads, and quality/improvement teams. "
-            "Focus on diagnostic clarity, readmission reduction, burnout relief, and organ-system risk."
-        )
-    elif mode == "executive":
-        context = f"{COMPETITIVE_INTEL_CORE}\n\n{CATEGORY_CREATION_CORE}"
-        audience = (
-            "Health system executives. Focus on ROI, strategic differentiation, and system-wide impact."
-        )
+        context = HOSPITAL_PAIN_POINTS + "\n" + COMPETITIVE_INTEL_CORE + "\n" + CATEGORY_CREATION_CORE
     else:
-        context = f"{COMPETITIVE_INTEL_CORE}\n\n{CATEGORY_CREATION_CORE}"
-        audience = "Strategic stakeholder."
+        context = COMPETITIVE_INTEL_CORE + "\n" + CATEGORY_CREATION_CORE
 
-    prompt = f"""
-You are HyperCore, the DiviScan diagnostic intelligence engine.
+    return f"""
+You are HyperCore — DiviScan's Diagnostic OS narrative engine.
 
-Audience: {audience}
+Generate a {mode.upper()}-grade diagnostic intelligence narrative.
 
-Use this internal context:
+Internal context:
 {context}
 
-Now, generate a {mode}-grade diagnostic intelligence narrative based on this analysis JSON:
-
+Analysis JSON:
 {json.dumps(analysis_json, indent=2)}
 
-Your narrative MUST include the following sections with headings (and use plain text, no markdown markup):
+Use these sections:
 
 🔍 Key Insights
-- Summarize the main diagnostic or trial signals.
-
 📈 Analytical Model
-- Explain how the model performed (ROC AUC, PR AUC, sensitivity, specificity).
-- Describe which biomarkers or features drive separation.
-
 💡 Missed Opportunities
-- Call out what standard workflows or analytics would have missed.
-- Highlight confounders or hidden subgroups (even if inferred).
-
 🧠 HyperCore Advantage
-- Explain how DiviScan HyperCore (and the Diagnostic OS framing) provides superior insight vs traditional systems.
-
 🧾 Recommended Next Steps
-- Provide 3–5 concrete actions the hospital or pharma team should take next.
-
-Stay clinically responsible; do NOT make regulatory claims or overstate certainty.
-    """
-    return prompt
+"""
 
 
 @app.post("/generate_report", response_model=ReportResponse)
-def generate_report(request: ReportRequest):
-    """
-    Generate mode-aware narrative (pharma vs hospital vs executive etc.)
-    """
-    prompt = build_report_prompt(request.analysis_json, request.mode)
+def generate_report(req: ReportRequest):
+    prompt = build_report_prompt(req.analysis_json, req.mode)
 
     try:
         resp = client.chat.completions.create(
@@ -387,70 +328,44 @@ def generate_report(request: ReportRequest):
         )
         narrative = resp.choices[0].message["content"]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM error in /generate_report: {e}")
+        raise HTTPException(status_code=500, detail=f"LLM error: {e}")
 
     return ReportResponse(narrative=narrative)
 
 
-# -----------------------------
-# /astra endpoint
-# -----------------------------
-
-def build_astra_prefix(mode: str) -> str:
+# ================================================================
+# /astra ENDPOINT
+# ================================================================
+def build_astra_prefix(mode: str):
     m = mode.lower()
-    if m in ["pharma", "trial", "r&d"]:
-        return (
-            "You are ASTRA in Pharma Mode. "
-            "Answer as a clinical trial & biomarker intelligence specialist. "
-            "Focus on trial rescue, biomarkers, confounders, emerging phenotypes, and portfolio ROI."
-        )
-    if m in ["hospital", "clinical", "clinician"]:
-        return (
-            "You are ASTRA in Hospital Clinical Mode. "
-            "Answer as a diagnostic support and care-path optimization assistant. "
-            "Focus on diagnostic clarity, readmission risk, organ-system patterns, and workflow relief."
-        )
-    if m in ["regulatory"]:
-        return (
-            "You are ASTRA in Regulatory Mode. "
-            "Be conservative, compliance-focused, and avoid overclaims."
-        )
-    if m in ["investor"]:
-        return (
-            "You are ASTRA in Investor Mode. "
-            "Highlight ROI, defensibility, data moat, and scale potential, without disclosing SAFE internals."
-        )
-    if m in ["executive"]:
-        return (
-            "You are ASTRA in Executive Mode. "
-            "Be concise, strategic, and centered on system-wide impact."
-        )
+    if m in ["pharma", "trial"]:
+        return "You are ASTRA in Pharma Mode — expert in biomarkers, trial rescue, and phenotyping."
+    if m in ["hospital", "clinical"]:
+        return "You are ASTRA in Hospital Mode — expert in diagnostic workflows and readmission risk."
+    if m == "investor":
+        return "You are ASTRA in Investor Mode — focus on ROI and defensibility, no SAFE internals."
+    if m == "regulatory":
+        return "You are ASTRA in Regulatory Mode — cautious, compliant, no overclaims."
     if m in ["unknown", "emerging"]:
-        return (
-            "You are ASTRA in Unknown Disease Mode. "
-            "Describe novelty and phenotype patterns without naming new diseases or making diagnostic claims."
-        )
-    return (
-        "You are ASTRA, the DiviScan HyperCore assistant. "
-        "Respond professionally with clinical and strategic awareness."
-    )
+        return "You are ASTRA in Unknown Disease Mode — describe novelty patterns carefully."
+    return "You are ASTRA — DiviScan's multimodal clinical-intelligence assistant."
 
 
 @app.post("/astra", response_model=ASTRAResponse)
-def astra(request: ASTRARequest):
-    prefix = build_astra_prefix(request.mode)
+def astra(req: ASTRARequest):
+    prefix = build_astra_prefix(req.mode)
 
     prompt = f"""
 {prefix}
 
-Use this internal knowledge:
+Internal Knowledge:
 {COMPETITIVE_INTEL_CORE}
 
 Question:
-{request.question}
+{req.question}
 
-Answer clearly and precisely. Do not reference internal SAFE note mechanics or investor-only terms unless in Investor Mode.
-    """
+Provide a precise, professional answer.
+"""
 
     try:
         resp = client.chat.completions.create(
@@ -460,28 +375,22 @@ Answer clearly and precisely. Do not reference internal SAFE note mechanics or i
         )
         answer = resp.choices[0].message["content"]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM error in /astra: {e}")
+        raise HTTPException(status_code=500, detail=f"ASTRA error: {e}")
 
     return ASTRAResponse(answer=answer)
 
 
-# -----------------------------
-# /health endpoint
-# -----------------------------
-
+# ================================================================
+# /health ENDPOINT
+# ================================================================
 @app.get("/health")
 def health():
-    return {
-        "status": "ok",
-        "service": "DiviScan HyperCore Unified Backend",
-        "version": "4.0.0",
-    }
+    return {"status": "ok", "service": "DiviScan HyperCore Backend", "version": "4.0.1"}
 
 
-# -----------------------------
-# Local Run / Railway Entry
-# -----------------------------
-
+# ================================================================
+# LOCAL DEV ENTRY POINT
+# ================================================================
 if __name__ == "__main__":
-    # Local dev: python main.py
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
