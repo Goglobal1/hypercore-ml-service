@@ -1003,6 +1003,21 @@ def build_execution_manifest(
         "audit_timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
+
+def _sanitize_for_json(obj: Any) -> Any:
+    """Recursively replace NaN/inf/-inf with finite floats to make JSON-safe."""
+    if isinstance(obj, float):
+        if math.isinf(obj):
+            return float("1e9") if obj > 0 else float("-1e9")
+        if math.isnan(obj):
+            return 0.0
+        return obj
+    if isinstance(obj, dict):
+        return {k: _sanitize_for_json(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_for_json(v) for v in obj]
+    return obj
+
 # ---------------------------------------------------------------------
 # ANALYZE ENDPOINT
 # ---------------------------------------------------------------------
@@ -1126,6 +1141,10 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         explainability,
         cv_method,
     )
+
+    # JSON sanitization to avoid "inf" errors
+    pipeline = _sanitize_for_json(pipeline)
+    execution_manifest = _sanitize_for_json(execution_manifest)
 
     return AnalyzeResponse(
         metrics=linear_results["metrics"],
