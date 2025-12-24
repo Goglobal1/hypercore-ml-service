@@ -448,7 +448,7 @@ def extract_numeric_features(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, 
         df["time_parsed"] = pd.NaT
     df = df.sort_values(by=["patient_id", "lab_name", "time_parsed"])
 
-    latest = df.groupby(["patient_id", "lab_name"]).tail(1).setindex(["patient_id", "lab_name"])
+    latest = df.groupby(["patient_id", "lab_name"]).tail(1).set_index(["patient_id", "lab_name"])
     grouped = df.groupby(["patient_id", "lab_name"])
     stats = grouped["value"].agg(["mean", "min", "max", "std", "count"])
     out_flags = grouped["out_of_range"].max()
