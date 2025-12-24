@@ -975,68 +975,39 @@ def explainability_layer(
     return {"feature_direction": direction, "median_comparison": comparison}
 
 
-def build_execution_manifest(
-    request: AnalyzeRequest,
-    pipeline: Dict[str, Any],
-    model_info: Dict[str, Any],
-    silent_risk: Dict[str, Any],
-    explainability: Dict[str, Any],
-    cv_method: str,
-) -> Dict[str, Any]:
-    return {
-        "inputs": {
-            "label_column": request.label_column,
-            "patient_id_column": request.patient_id_column,
-            "time_column": request.time_column,
-            "lab_name_column": request.lab_name_column,
-            "value_column": request.value_column,
-            "unit_column": request.unit_column,
-            "sex": request.sex,
-            "age": request.age,
-            "context": request.context or {},
+    execution_manifest = build_execution_manifest(
+        req,
+        pipeline,
+        {
+            "linear_model": "logistic_regression",
+            "nonlinear_model": "random_forest",
         },
-        "transformations": pipeline,
-        "models": model_info,
-        "cv_method": cv_method,
-        "silent_risk": silent_risk,
-        "explainability": explainability,
-        "audit_timestamp": datetime.now(timezone.utc).isoformat(),
-    }
+        silent_risk,
+        explainability,
+        cv_method,
+    )
 
+    # JSON sanitization to avoid "inf"/NaN errors everywhere
+    pipeline = _sanitize_for_json(pipeline)
+    execution_manifest = _sanitize_for_json(execution_manifest)
 
-def _sanitize_for_json(obj: Any) -> Any:
-    """Recursively replace NaN/inf/-inf and numpy scalars for JSON safety."""
-    # Simple types
-    if obj is None or isinstance(obj, (str, bool)):
-        return obj
+    metrics = _sanitize_for_json(linear_results["metrics"])
+    coefficients = _sanitize_for_json(linear_results["coefficients"])
+    roc_curve_data = _sanitize_for_json(linear_results["roc_curve_data"])
+    pr_curve_data = _sanitize_for_json(linear_results["pr_curve_data"])
+    feature_importance = _sanitize_for_json(linear_results["feature_importance"])
+    dropped_features = _sanitize_for_json(linear_results["dropped_features"])
 
-    # Integers (Python + numpy)
-    if isinstance(obj, (int, np.integer)):
-        return int(obj)
-
-    # Floats (Python + numpy)
-    if isinstance(obj, (float, np.floating)):
-        f = float(obj)
-        if math.isinf(f):
-            return float("1e9") if f > 0 else float("-1e9")
-        if math.isnan(f):
-            return 0.0
-        return f
-
-    # Arrays and sequences
-    if isinstance(obj, (list, tuple, set, np.ndarray)):
-        return [_sanitize_for_json(v) for v in obj]
-
-    # Dicts
-    if isinstance(obj, dict):
-        return {k: _sanitize_for_json(v) for k, v in obj.items()}
-
-    # Numpy scalars / other objects with tolist()
-    if hasattr(obj, "tolist"):
-        return _sanitize_for_json(obj.tolist())
-
-    # Fallback: string representation
-    return str(obj)
+    return AnalyzeResponse(
+        metrics=metrics,
+        coefficients=coefficients,
+        roc_curve_data=roc_curve_data,
+        pr_curve_data=pr_curve_data,
+        feature_importance=[FeatureImportance(**fi) for fi in feature_importance],
+        dropped_features=dropped_features,
+        pipeline=pipeline,
+        execution_manifest=execution_manifest,
+    )
 
 
 # ---------------------------------------------------------------------
