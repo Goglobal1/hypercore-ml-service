@@ -1005,18 +1005,39 @@ def build_execution_manifest(
 
 
 def _sanitize_for_json(obj: Any) -> Any:
-    """Recursively replace NaN/inf/-inf with finite floats to make JSON-safe."""
-    if isinstance(obj, float):
-        if math.isinf(obj):
-            return float("1e9") if obj > 0 else float("-1e9")
-        if math.isnan(obj):
-            return 0.0
+    """Recursively replace NaN/inf/-inf and numpy scalars for JSON safety."""
+    # Simple types
+    if obj is None or isinstance(obj, (str, bool)):
         return obj
+
+    # Integers (Python + numpy)
+    if isinstance(obj, (int, np.integer)):
+        return int(obj)
+
+    # Floats (Python + numpy)
+    if isinstance(obj, (float, np.floating)):
+        f = float(obj)
+        if math.isinf(f):
+            return float("1e9") if f > 0 else float("-1e9")
+        if math.isnan(f):
+            return 0.0
+        return f
+
+    # Arrays and sequences
+    if isinstance(obj, (list, tuple, set, np.ndarray)):
+        return [_sanitize_for_json(v) for v in obj]
+
+    # Dicts
     if isinstance(obj, dict):
         return {k: _sanitize_for_json(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [_sanitize_for_json(v) for v in obj]
-    return obj
+
+    # Numpy scalars / other objects with tolist()
+    if hasattr(obj, "tolist"):
+        return _sanitize_for_json(obj.tolist())
+
+    # Fallback: string representation
+    return str(obj)
+
 
 # ---------------------------------------------------------------------
 # ANALYZE ENDPOINT
