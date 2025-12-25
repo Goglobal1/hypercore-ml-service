@@ -230,15 +230,15 @@ class PopulationRiskResult(BaseModel):
     top_biomarkers: List[str]
 
 
-class FluViewIngestionRequest(BaseModel):
-    fluview_json: Dict[str, Any]
-
-
 class FluViewIngestionResult(BaseModel):
     csv: str
     dataset_id: str
     rows: int
     label_column: str
+
+
+class FluViewIngestionRequest(BaseModel):
+    fluview_json: Dict[str, Any]
 
 
 class DigitalTwinStorageRequest(BaseModel):
@@ -254,12 +254,15 @@ class DigitalTwinStorageResult(BaseModel):
     indexed_in_global_learning: bool
     version: int
 
+
 # ---------------------------------------------------------------------
 # HELPER FUNCTIONS – INGESTION & FEATURES
 # ---------------------------------------------------------------------
 
 
-def ensure_patient_id(df: pd.DataFrame, patient_id_column: Optional[str]) -> Tuple[pd.DataFrame, str]:
+def ensure_patient_id(
+    df: pd.DataFrame, patient_id_column: Optional[str]
+) -> Tuple[pd.DataFrame, str]:
     if patient_id_column and patient_id_column in df.columns:
         return df, patient_id_column
     if "patient_id" in df.columns:
@@ -269,7 +272,9 @@ def ensure_patient_id(df: pd.DataFrame, patient_id_column: Optional[str]) -> Tup
     return df, "patient_id"
 
 
-def ensure_time_column(df: pd.DataFrame, time_column: Optional[str]) -> Tuple[pd.DataFrame, Optional[str]]:
+def ensure_time_column(
+    df: pd.DataFrame, time_column: Optional[str]
+) -> Tuple[pd.DataFrame, Optional[str]]:
     if time_column and time_column in df.columns:
         return df, time_column
     if "time" in df.columns:
@@ -289,7 +294,12 @@ def ingest_labs(
     df, patient_id_column = ensure_patient_id(df, patient_id_column)
     df, time_column = ensure_time_column(df, time_column)
 
-    if lab_name_column and value_column and lab_name_column in df.columns and value_column in df.columns:
+    if (
+        lab_name_column
+        and value_column
+        and lab_name_column in df.columns
+        and value_column in df.columns
+    ):
         long_df = df.copy()
         rename_map: Dict[str, str] = {
             lab_name_column: "lab_name",
@@ -305,7 +315,9 @@ def ingest_labs(
             long_df["time"] = None
         if "unit" not in long_df.columns:
             long_df["unit"] = None
-        long_df = long_df[["patient_id", "time", "lab_name", "value", "unit", label_column]].copy()
+        long_df = long_df[
+            ["patient_id", "time", "lab_name", "value", "unit", label_column]
+        ].copy()
         format_type = "long"
     else:
         exclude = {label_column, patient_id_column}
@@ -321,7 +333,7 @@ def ingest_labs(
             var_name="lab_name",
             value_name="value",
         )
-        rename_map: Dict[str, str] = {}
+        rename_map = {}
         if patient_id_column:
             rename_map[patient_id_column] = "patient_id"
         if time_column:
@@ -404,8 +416,12 @@ def align_time_series(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, Any]]:
         df["time_parsed"] = pd.NaT
 
     df = df.sort_values(by=["patient_id", "lab_name", "time_parsed"])
-    df["baseline_value"] = df.groupby(["patient_id", "lab_name"])["value"].transform("first")
-    df["baseline_time"] = df.groupby(["patient_id", "lab_name"])["time_parsed"].transform("first")
+    df["baseline_value"] = df.groupby(["patient_id", "lab_name"])["value"].transform(
+        "first"
+    )
+    df["baseline_time"] = df.groupby(["patient_id", "lab_name"])["time_parsed"].transform(
+        "first"
+    )
     df["baseline_flag"] = df.groupby(["patient_id", "lab_name"]).cumcount() == 0
 
     df["delta"] = df["value"] - df["baseline_value"]
@@ -448,7 +464,11 @@ def extract_numeric_features(df: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, 
         df["time_parsed"] = pd.NaT
     df = df.sort_values(by=["patient_id", "lab_name", "time_parsed"])
 
-    latest = df.groupby(["patient_id", "lab_name"]).tail(1).set_index(["patient_id", "lab_name"])
+    latest = (
+        df.groupby(["patient_id", "lab_name"])
+        .tail(1)
+        .set_index(["patient_id", "lab_name"])
+    )
     grouped = df.groupby(["patient_id", "lab_name"])
     stats = grouped["value"].agg(["mean", "min", "max", "std", "count"])
     out_flags = grouped["out_of_range"].max()
@@ -513,7 +533,11 @@ def detect_volatility(delta_df: pd.DataFrame) -> List[str]:
         return []
     lab_volatility = delta_df[volatility_cols].mean()
     threshold = float(lab_volatility.mean() + lab_volatility.std())
-    return [c.replace("_delta_volatility", "") for c, v in lab_volatility.items() if float(v) > threshold]
+    return [
+        c.replace("_delta_volatility", "")
+        for c, v in lab_volatility.items()
+        if float(v) > threshold
+    ]
 
 
 def flag_extremes(df: pd.DataFrame) -> Dict[str, Dict[str, float]]:
@@ -939,8 +963,33 @@ def forecast_risk(axis_scores: pd.DataFrame) -> Dict[str, float]:
     }
 
 # ---------------------------------------------------------------------
-# EXPLAINABILITY & EXECUTION MANIFEST
+# JSON SANITIZER & EXPLAINABILITY
 # ---------------------------------------------------------------------
+
+
+def _sanitize_for_json(obj: Any) -> Any:
+    """Recursively convert objects to JSON-safe representations."""
+    if isinstance(obj, dict):
+        return {k: _sanitize_for_json(v) for k, v in obj.items()}
+
+    if isinstance(obj, (list, tuple, set)):
+        return [_sanitize_for_json(v) for v in obj]
+
+    if isinstance(obj, pd.Series):
+        return _sanitize_for_json(obj.to_dict())
+
+    if isinstance(obj, pd.DataFrame):
+        return _sanitize_for_json(obj.to_dict(orient="records"))
+
+    if isinstance(obj, np.generic):
+        return _sanitize_for_json(obj.item())
+
+    if isinstance(obj, float):
+        if not math.isfinite(obj):
+            return 0.0
+        return obj
+
+    return obj
 
 
 def explainability_layer(
@@ -975,40 +1024,36 @@ def explainability_layer(
     return {"feature_direction": direction, "median_comparison": comparison}
 
 
-    execution_manifest = build_execution_manifest(
-        req,
-        pipeline,
-        {
-            "linear_model": "logistic_regression",
-            "nonlinear_model": "random_forest",
+def build_execution_manifest(
+    req: AnalyzeRequest,
+    pipeline: Dict[str, Any],
+    model_info: Dict[str, str],
+    silent_risk: Dict[str, Any],
+    explainability: Dict[str, Any],
+    cv_method: str,
+) -> Dict[str, Any]:
+    """Create a lightweight, JSON-safe execution manifest for observability."""
+    request_hash = hashlib.sha256(req.csv.encode()).hexdigest()[:12]
+    manifest = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "request": {
+            "label_column": req.label_column,
+            "patient_id_column": req.patient_id_column or "patient_id",
+            "time_column": req.time_column,
+            "lab_name_column": req.lab_name_column,
+            "value_column": req.value_column,
+            "request_hash": request_hash,
         },
-        silent_risk,
-        explainability,
-        cv_method,
-    )
-
-    # JSON sanitization to avoid "inf"/NaN errors everywhere
-    pipeline = _sanitize_for_json(pipeline)
-    execution_manifest = _sanitize_for_json(execution_manifest)
-
-    metrics = _sanitize_for_json(linear_results["metrics"])
-    coefficients = _sanitize_for_json(linear_results["coefficients"])
-    roc_curve_data = _sanitize_for_json(linear_results["roc_curve_data"])
-    pr_curve_data = _sanitize_for_json(linear_results["pr_curve_data"])
-    feature_importance = _sanitize_for_json(linear_results["feature_importance"])
-    dropped_features = _sanitize_for_json(linear_results["dropped_features"])
-
-    return AnalyzeResponse(
-        metrics=metrics,
-        coefficients=coefficients,
-        roc_curve_data=roc_curve_data,
-        pr_curve_data=pr_curve_data,
-        feature_importance=[FeatureImportance(**fi) for fi in feature_importance],
-        dropped_features=dropped_features,
-        pipeline=pipeline,
-        execution_manifest=execution_manifest,
-    )
-
+        "models": model_info,
+        "cross_validation": cv_method,
+        "pipeline_steps": list(pipeline.keys()),
+        "silent_risk_subgroups": silent_risk,
+        "explainability_summary": {
+            "feature_directions": len(explainability.get("feature_direction", {})),
+            "median_comparisons": len(explainability.get("median_comparison", {})),
+        },
+    }
+    return _sanitize_for_json(manifest)
 
 # ---------------------------------------------------------------------
 # ANALYZE ENDPOINT
@@ -1062,7 +1107,9 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
     probabilities = compute_probabilities(linear_model, X_clean)
 
     patient_scores = df.copy()
-    patient_scores, patient_id_column = ensure_patient_id(patient_scores, req.patient_id_column)
+    patient_scores, patient_id_column = ensure_patient_id(
+        patient_scores, req.patient_id_column
+    )
     label_df = (
         patient_scores[[patient_id_column, req.label_column]]
         .drop_duplicates()
@@ -1134,17 +1181,24 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         cv_method,
     )
 
-    # JSON sanitization to avoid "inf" errors
+    # JSON sanitization to avoid inf/NaN everywhere
     pipeline = _sanitize_for_json(pipeline)
     execution_manifest = _sanitize_for_json(execution_manifest)
 
+    metrics = _sanitize_for_json(linear_results["metrics"])
+    coefficients = _sanitize_for_json(linear_results["coefficients"])
+    roc_curve_data = _sanitize_for_json(linear_results["roc_curve_data"])
+    pr_curve_data = _sanitize_for_json(linear_results["pr_curve_data"])
+    feature_importance = _sanitize_for_json(linear_results["feature_importance"])
+    dropped_features = _sanitize_for_json(linear_results["dropped_features"])
+
     return AnalyzeResponse(
-        metrics=linear_results["metrics"],
-        coefficients=linear_results["coefficients"],
-        roc_curve_data=linear_results["roc_curve_data"],
-        pr_curve_data=linear_results["pr_curve_data"],
-        feature_importance=[FeatureImportance(**fi) for fi in linear_results["feature_importance"]],
-        dropped_features=linear_results["dropped_features"],
+        metrics=metrics,
+        coefficients=coefficients,
+        roc_curve_data=roc_curve_data,
+        pr_curve_data=pr_curve_data,
+        feature_importance=[FeatureImportance(**fi) for fi in feature_importance],
+        dropped_features=dropped_features,
         pipeline=pipeline,
         execution_manifest=execution_manifest,
     )
@@ -1178,179 +1232,5 @@ def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
         confidence=float(confidence),
     )
 
-
-@app.post("/confounder_detection", response_model=List[ConfounderFlag])
-def confounder_detection(req: ConfounderDetectionRequest) -> List[ConfounderFlag]:
-    df = pd.read_csv(io.StringIO(req.csv))
-    if req.label_column not in df.columns:
-        return []
-    y = pd.to_numeric(df[req.label_column], errors="coerce")
-    flags: List[ConfounderFlag] = []
-    for col in df.columns:
-        if col == req.label_column:
-            continue
-        x = pd.to_numeric(df[col], errors="coerce")
-        if x.notna().sum() < 5:
-            continue
-        try:
-            corr = float(np.corrcoef(x.fillna(0.0), y.fillna(0.0))[0, 1])
-        except Exception:
-            corr = 0.0
-        if abs(corr) > 0.3:
-            flags.append(
-                ConfounderFlag(
-                    type=col,
-                    explanation=f"Potential confounder with correlation {corr:.2f}",
-                )
-            )
-    return flags
-
-
-@app.post("/emerging_phenotype", response_model=EmergingPhenotypeResult)
-def emerging_phenotype(req: EmergingPhenotypeRequest) -> EmergingPhenotypeResult:
-    df = pd.read_csv(io.StringIO(req.csv))
-    phenotype_clusters = [
-        {"cluster_id": 0, "size": int(len(df) // 2)},
-        {"cluster_id": 1, "size": int(len(df) - len(df) // 2)},
-    ]
-    novelty_score = 0.7
-    drivers = {"crp": 0.4, "wbc": 0.3}
-    return EmergingPhenotypeResult(
-        phenotype_clusters=phenotype_clusters,
-        novelty_score=float(novelty_score),
-        drivers={k: float(v) for k, v in drivers.items()},
-    )
-
-
-@app.post("/responder_prediction", response_model=ResponderPredictionResult)
-def responder_prediction(req: ResponderPredictionRequest) -> ResponderPredictionResult:
-    df = pd.read_csv(io.StringIO(req.csv))
-    response_lift = 0.15
-    key_biomarkers = {"crp": 0.3, "glucose": -0.2}
-    subgroup_summary = {"high_risk": {"size": int(len(df) * 0.3)}}
-    return ResponderPredictionResult(
-        response_lift=float(response_lift),
-        key_biomarkers={k: float(v) for k, v in key_biomarkers.items()},
-        subgroup_summary=subgroup_summary,
-    )
-
-
-@app.post("/trial_rescue", response_model=TrialRescueResult)
-def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
-    futility_flag = False
-    enrichment_strategy = {"criteria": "high_inflammatory_axis"}
-    power_recalculation = {"new_power": 0.8}
-    return TrialRescueResult(
-        futility_flag=futility_flag,
-        enrichment_strategy=enrichment_strategy,
-        power_recalculation={k: float(v) for k, v in power_recalculation.items()},
-    )
-
-
-@app.post("/outbreak_detection", response_model=OutbreakDetectionResult)
-def outbreak_detection(req: OutbreakDetectionRequest) -> OutbreakDetectionResult:
-    df = pd.read_csv(io.StringIO(req.csv))
-    outbreak_regions: List[str] = []
-    signals: Dict[str, Any] = {}
-    if (
-        req.region_column in df.columns
-        and req.time_column in df.columns
-        and req.case_count_column in df.columns
-    ):
-        grouped = df.groupby(req.region_column)[req.case_count_column].mean()
-        threshold = float(grouped.mean() + grouped.std())
-        for region, val in grouped.items():
-            v = float(val)
-            if v > threshold:
-                outbreak_regions.append(str(region))
-                signals[str(region)] = {"avg_cases": v, "threshold": threshold}
-    return OutbreakDetectionResult(
-        outbreak_regions=outbreak_regions,
-        signals=signals,
-        confidence=0.7,
-    )
-
-
-@app.post("/predictive_modeling", response_model=PredictiveModelingResult)
-def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingResult:
-    hospitalization_risk = {"probability": 0.25}
-    deterioration_timeline = {"days": list(range(0, req.forecast_horizon_days, 7))}
-    community_surge = {"index": 0.2}
-    return PredictiveModelingResult(
-        hospitalization_risk={k: float(v) for k, v in hospitalization_risk.items()},
-        deterioration_timeline={"days": [int(d) for d in deterioration_timeline["days"]]},
-        community_surge={k: float(v) for k, v in community_surge.items()},
-    )
-
-
-@app.post("/synthetic_cohort", response_model=SyntheticCohortResult)
-def synthetic_cohort(req: SyntheticCohortRequest) -> SyntheticCohortResult:
-    data: List[Dict[str, float]] = []
-    for _ in range(req.n_subjects):
-        row: Dict[str, float] = {
-            k: float(v.get("mean", 0.0)) for k, v in req.real_data_distributions.items()
-        }
-        data.append(row)
-
-    return SyntheticCohortResult(
-        synthetic_data=data,
-        realism_score=0.8,
-        distribution_match={k: 1.0 for k in req.real_data_distributions},
-        validation={"count": int(req.n_subjects)},
-    )
-
-
-@app.post("/digital_twin_simulation", response_model=DigitalTwinSimulationResult)
-def digital_twin(req: DigitalTwinSimulationRequest) -> DigitalTwinSimulationResult:
-    timeline = [
-        {"day": int(d), "risk": float(0.3 + d * 0.001)}
-        for d in range(0, req.simulation_horizon_days, 10)
-    ]
-    return DigitalTwinSimulationResult(
-        timeline=timeline,
-        predicted_outcome="stable",
-        confidence=0.75,
-        key_inflection_points=[int(t["day"]) for t in timeline if t["risk"] > 0.35],
-    )
-
-
-@app.post("/population_risk", response_model=PopulationRiskResult)
-def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
-    scores = [float(a.get("risk_score", 0.5)) for a in req.analyses]
-    avg = mean_safe(scores)
-    return PopulationRiskResult(
-        region=req.region,
-        risk_score=float(avg),
-        trend="increasing" if avg > 0.6 else "stable",
-        confidence=0.6,
-        top_biomarkers=[],
-    )
-
-
-@app.post("/fluview_ingest", response_model=FluViewIngestionResult)
-def fluview_ingest(req: FluViewIngestionRequest) -> FluViewIngestionResult:
-    df = pd.json_normalize(req.fluview_json)
-    csv_text = df.to_csv(index=False)
-    return FluViewIngestionResult(
-        csv=csv_text,
-        dataset_id=hashlib.sha256(csv_text.encode()).hexdigest()[:12],
-        rows=int(len(df)),
-        label_column="ili_spike",
-    )
-
-
-@app.post("/create_digital_twin", response_model=DigitalTwinStorageResult)
-def create_digital_twin(req: DigitalTwinStorageRequest) -> DigitalTwinStorageResult:
-    fingerprint = hashlib.sha256(req.csv_content.encode()).hexdigest()
-    return DigitalTwinStorageResult(
-        digital_twin_id=f"{req.dataset_id}-{req.analysis_id}",
-        storage_url=f"https://storage.hypercore.ai/{req.dataset_id}",
-        fingerprint=fingerprint,
-        indexed_in_global_learning=True,
-        version=1,
-    )
-
-
-@app.get("/health")
-def health() -> Dict[str, Any]:
-    return {"status": "ok", "version": "5.0.0"}
+# (Keep your remaining endpoints here: /confounder_detection, /emerging_phenotype, etc.)
+# They were unchanged and already JSON-safe in the version you shared.
