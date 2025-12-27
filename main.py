@@ -223,7 +223,9 @@ def _safe_float(x: float, default: float = 0.0) -> float:
 
 def _sanitize_for_json(obj: Any) -> Any:
     """Recursively sanitize an object for JSON serialization (replace inf/nan with 0.0)."""
-    if isinstance(obj, dict):
+    if obj is None:
+        return None
+    elif isinstance(obj, dict):
         return {k: _sanitize_for_json(v) for k, v in obj.items()}
     elif isinstance(obj, list):
         return [_sanitize_for_json(v) for v in obj]
@@ -233,10 +235,20 @@ def _sanitize_for_json(obj: Any) -> Any:
         return int(obj)
     elif isinstance(obj, np.ndarray):
         return [_sanitize_for_json(v) for v in obj.tolist()]
-    elif hasattr(obj, 'dict'):  # Pydantic model
+    elif isinstance(obj, str):
+        return obj
+    elif isinstance(obj, bool):
+        return obj
+    elif hasattr(obj, 'model_dump'):  # Pydantic v2
+        return _sanitize_for_json(obj.model_dump())
+    elif hasattr(obj, 'dict') and callable(getattr(obj, 'dict', None)):  # Pydantic v1
         return _sanitize_for_json(obj.dict())
     else:
-        return obj
+        # Try to convert to a basic type
+        try:
+            return str(obj)
+        except Exception:
+            return None
 
 
 # ---------------------------------------------------------------------
@@ -1236,12 +1248,25 @@ def explainability_layer(X: pd.DataFrame, y: np.ndarray, coefficients: Dict[str,
         else:
             direction[feat] = "→"
 
-    # top median gaps (clinician “ah-ha” table)
+    # top median gaps (clinician "ah-ha" table)
     gaps = []
     for feat in X.columns:
         a = _to_float(med_event.get(feat, 0.0))
         b = _to_float(med_nonevent.get(feat, 0.0))
-        gaps.append({"feature": feat, "event_median": a, "non_event_median": b, "diff": a - b, "direction": direction.get(feat, "→")})
+        diff = a - b
+        # Calculate percent change (avoid division by zero)
+        if abs(b) > 0.0001:
+            percent = ((a - b) / abs(b)) * 100
+        else:
+            percent = 0.0 if abs(diff) < 0.0001 else (100.0 if diff > 0 else -100.0)
+        gaps.append({
+            "feature": feat,
+            "event_median": a,
+            "non_event_median": b,
+            "diff": diff,
+            "percent": _safe_float(percent),
+            "direction": direction.get(feat, "→")
+        })
     gaps.sort(key=lambda r: abs(r["diff"]), reverse=True)
 
     return {
