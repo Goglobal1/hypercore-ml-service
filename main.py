@@ -1241,9 +1241,168 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         df = pd.read_csv(io.StringIO(req.csv))
         context = normalize_context(req.context)
 
-        # (everything else stays exactly the same)
+        if req.label_column not in df.columns:
+            raise HTTPException(status_code=400, detail=f"label_column '{req.label_column}' not found in dataset")
 
-        return AnalyzeResponse(...)
+        # Ingest + canonicalize
+        labs_long, ingest_meta = ingest_labs(
+            df=df,
+            label_column=req.label_column,
+            patient_id_column=req.patient_id_column,
+            time_column=req.time_column,
+            lab_name_column=req.lab_name_column,
+            value_column=req.value_column,
+            unit_column=req.unit_column,
+        )
+
+        labs_long, unit_meta = normalize_units(labs_long)
+        labs_long, rr_meta = apply_reference_ranges(labs_long, req.sex, req.age)
+        labs_long, align_meta = align_time_series(labs_long)
+        labs_long, ctx_meta = apply_contextual_overrides(labs_long, req.context)
+
+        # Features
+        feat_df, feat_meta = extract_numeric_features(labs_long)
+        delta_df, delta_meta = compute_delta_features(labs_long)
+        full_features = feat_df.join(delta_df, how="left").fillna(0.0)
+
+        # Build label series per patient from long data (max label for any record)
+        label_by_patient = labs_long.groupby("patient_id")["label"].max().astype(int)
+        label_by_patient = label_by_patient.reindex(full_features.index).dropna()
+        full_features = full_features.loc[label_by_patient.index]
+        y = label_by_patient.values.astype(int)
+
+        if len(np.unique(y)) < 2:
+            raise HTTPException(status_code=400, detail="Label must contain at least two classes (0/1) after aggregation.")
+
+        # Axes + interactions + loops
+        axis_scores, axis_summary = decompose_axes(labs_long)
+        axis_scores = axis_scores.reindex(full_features.index).fillna(0.0)
+
+        interactions = map_axis_interactions(axis_scores)
+        feedback_loops = identify_feedback_loops(axis_scores)
+
+        # Modeling
+        linear = _fit_linear_model(full_features, y)
+        nonlinear = _fit_nonlinear_shadow(full_features, y, linear.get("cv_method", ""))
+
+        # Comparator benchmarking + silent risk (on original df where comparators live)
+        comparator = comparator_benchmarking(df, req.label_column)
+        silent_risk = detect_silent_risk(df, req.label_column, full_features)
+
+        # Negative space (missed opportunities)
+        ctx = req.context or {}
+        notes_text = ""
+        # pull notes from context if present
+        if isinstance(ctx.get("clinical_notes"), str):
+            notes_text = ctx["clinical_notes"]
+        # also scan any obvious text columns in df for trigger strings (safe heuristic)
+        text_cols = [c for c in df.columns if df[c].dtype == object]
+        if text_cols:
+            sample_text = " ".join([str(v) for v in df[text_cols].head(25).fillna("").values.flatten().tolist()])
+            notes_text = (notes_text + " " + sample_text).strip()
+
+        present_tests = list(set(labs_long["lab_key"].unique().tolist()))
+        # allow explicit present tests from ctx
+        if isinstance(ctx.get("present_tests"), list):
+            present_tests.extend([str(x) for x in ctx.get("present_tests", [])])
+
+        negative_space = detect_negative_space(ctx=ctx, present_tests=present_tests, notes=notes_text)
+
+        # Volatility + extremes
+        volatility = detect_volatility(delta_df)
+        extremes = flag_extremes(labs_long)
+
+        # Explainability (clinician-friendly)
+        X_clean = linear.get("X_clean", pd.DataFrame())
+        coef_map = linear.get("coefficients", {})
+        explain = explainability_layer(X_clean, y, coef_map)
+
+        # Pipeline (report-grade structured artifact)
+        pipeline: Dict[str, Any] = {
+            "ingestion": ingest_meta,
+            "unit_normalization": unit_meta,
+            "reference_ranges": rr_meta,
+            "time_alignment": align_meta,
+            "context_overrides": ctx_meta,
+            "feature_extraction": feat_meta,
+            "delta_features": delta_meta,
+            "axes": axis_summary,
+            "axis_interactions": interactions[:12],
+            "feedback_loops": feedback_loops[:12],
+            "modeling": {
+                "linear": {
+                    "cv_method": linear.get("cv_method"),
+                    "metrics": linear.get("metrics"),
+                },
+                "nonlinear_shadow": {
+                    "shadow_mode": True,
+                    "cv_method": nonlinear.get("cv_method"),
+                    "metrics": nonlinear.get("metrics"),
+                },
+            },
+            "benchmarking": comparator,
+            "silent_risk": silent_risk,
+            "negative_space": negative_space,
+            "volatility": volatility,
+            "extremes": extremes,
+            "explainability": explain,
+            "governance": {
+                "use": "quality_improvement / decision_support",
+                "not_for": "diagnosis",
+                "human_in_the_loop": True,
+            },
+        }
+
+        # Metrics object (single response surface)
+        metrics: Dict[str, Any] = {
+            "linear": linear.get("metrics", {}),
+            "nonlinear_shadow": nonlinear.get("metrics", {}),
+            "comparators": comparator.get("metrics", {}),
+            "silent_risk": silent_risk,
+            "negative_space_count": int(len(negative_space)),
+        }
+
+        execution_manifest = build_execution_manifest(
+            req=req,
+            ingestion={**ingest_meta, **{"columns": int(df.shape[1]), "rows": int(df.shape[0])}},
+            transforms=[
+                "canonical_lab_mapping",
+                "unit_normalization",
+                "reference_range_enrichment",
+                "time_alignment_delta_rate",
+                "trajectory_features",
+                "axis_decomposition",
+                "interaction_screen",
+                "linear_model",
+                "nonlinear_shadow_model",
+                "benchmarking_if_present",
+                "silent_risk_if_present",
+                "negative_space_rules",
+            ],
+            models_used={
+                "linear": {"type": "LogisticRegression", "cv_method": linear.get("cv_method")},
+                "nonlinear_shadow": {"type": "RandomForestClassifier", "cv_method": nonlinear.get("cv_method"), "shadow_mode": True},
+            },
+            metrics=metrics,
+            axis_summary=axis_summary,
+            interactions=interactions,
+            feedback_loops=feedback_loops,
+            negative_space=negative_space,
+            silent_risk=silent_risk,
+            explainability=explain,
+        )
+
+        # Return response (Base44 can be updated to read pipeline + manifest)
+        return AnalyzeResponse(
+            metrics=metrics,
+            coefficients={k: float(v) for k, v in (linear.get("coefficients", {}) or {}).items()},
+            roc_curve_data=linear.get("roc_curve_data", {"fpr": [], "tpr": [], "thresholds": []}),
+            pr_curve_data=linear.get("pr_curve_data", {"precision": [], "recall": [], "thresholds": []}),
+            feature_importance=[FeatureImportance(**fi) for fi in (linear.get("feature_importance", []) or [])],
+            dropped_features=linear.get("dropped_features", []) or [],
+            pipeline=pipeline,
+            execution_manifest=execution_manifest,
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -1252,170 +1411,6 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 "trace": traceback.format_exc().splitlines()[-10:]
             }
         )
-
-
-    if req.label_column not in df.columns:
-        raise HTTPException(status_code=400, detail=f"label_column '{req.label_column}' not found in dataset")
-
-    # Ingest + canonicalize
-    labs_long, ingest_meta = ingest_labs(
-        df=df,
-        label_column=req.label_column,
-        patient_id_column=req.patient_id_column,
-        time_column=req.time_column,
-        lab_name_column=req.lab_name_column,
-        value_column=req.value_column,
-        unit_column=req.unit_column,
-    )
-
-    labs_long, unit_meta = normalize_units(labs_long)
-    labs_long, rr_meta = apply_reference_ranges(labs_long, req.sex, req.age)
-    labs_long, align_meta = align_time_series(labs_long)
-    labs_long, ctx_meta = apply_contextual_overrides(labs_long, req.context)
-
-    # Features
-    feat_df, feat_meta = extract_numeric_features(labs_long)
-    delta_df, delta_meta = compute_delta_features(labs_long)
-    full_features = feat_df.join(delta_df, how="left").fillna(0.0)
-
-    # Build label series per patient from long data (max label for any record)
-    label_by_patient = labs_long.groupby("patient_id")["label"].max().astype(int)
-    label_by_patient = label_by_patient.reindex(full_features.index).dropna()
-    full_features = full_features.loc[label_by_patient.index]
-    y = label_by_patient.values.astype(int)
-
-    if len(np.unique(y)) < 2:
-        raise HTTPException(status_code=400, detail="Label must contain at least two classes (0/1) after aggregation.")
-
-    # Axes + interactions + loops
-    axis_scores, axis_summary = decompose_axes(labs_long)
-    axis_scores = axis_scores.reindex(full_features.index).fillna(0.0)
-
-    interactions = map_axis_interactions(axis_scores)
-    feedback_loops = identify_feedback_loops(axis_scores)
-
-    # Modeling
-    linear = _fit_linear_model(full_features, y)
-    nonlinear = _fit_nonlinear_shadow(full_features, y, linear.get("cv_method", ""))
-
-    # Comparator benchmarking + silent risk (on original df where comparators live)
-    comparator = comparator_benchmarking(df, req.label_column)
-    silent_risk = detect_silent_risk(df, req.label_column, full_features)
-
-    # Negative space (missed opportunities)
-    ctx = req.context or {}
-    notes_text = ""
-    # pull notes from context if present
-    if isinstance(ctx.get("clinical_notes"), str):
-        notes_text = ctx["clinical_notes"]
-    # also scan any obvious text columns in df for trigger strings (safe heuristic)
-    text_cols = [c for c in df.columns if df[c].dtype == object]
-    if text_cols:
-        sample_text = " ".join([str(v) for v in df[text_cols].head(25).fillna("").values.flatten().tolist()])
-        notes_text = (notes_text + " " + sample_text).strip()
-
-    present_tests = list(set(labs_long["lab_key"].unique().tolist()))
-    # allow explicit present tests from ctx
-    if isinstance(ctx.get("present_tests"), list):
-        present_tests.extend([str(x) for x in ctx.get("present_tests", [])])
-
-    negative_space = detect_negative_space(ctx=ctx, present_tests=present_tests, notes=notes_text)
-
-    # Volatility + extremes
-    volatility = detect_volatility(delta_df)
-    extremes = flag_extremes(labs_long)
-
-    # Explainability (clinician-friendly)
-    X_clean = linear.get("X_clean", pd.DataFrame())
-    coef_map = linear.get("coefficients", {})
-    explain = explainability_layer(X_clean, y, coef_map)
-
-    # Pipeline (report-grade structured artifact)
-    pipeline: Dict[str, Any] = {
-        "ingestion": ingest_meta,
-        "unit_normalization": unit_meta,
-        "reference_ranges": rr_meta,
-        "time_alignment": align_meta,
-        "context_overrides": ctx_meta,
-        "feature_extraction": feat_meta,
-        "delta_features": delta_meta,
-        "axes": axis_summary,
-        "axis_interactions": interactions[:12],
-        "feedback_loops": feedback_loops[:12],
-        "modeling": {
-            "linear": {
-                "cv_method": linear.get("cv_method"),
-                "metrics": linear.get("metrics"),
-            },
-            "nonlinear_shadow": {
-                "shadow_mode": True,
-                "cv_method": nonlinear.get("cv_method"),
-                "metrics": nonlinear.get("metrics"),
-            },
-        },
-        "benchmarking": comparator,
-        "silent_risk": silent_risk,
-        "negative_space": negative_space,
-        "volatility": volatility,
-        "extremes": extremes,
-        "explainability": explain,
-        "governance": {
-            "use": "quality_improvement / decision_support",
-            "not_for": "diagnosis",
-            "human_in_the_loop": True,
-        },
-    }
-
-    # Metrics object (single response surface)
-    metrics: Dict[str, Any] = {
-        "linear": linear.get("metrics", {}),
-        "nonlinear_shadow": nonlinear.get("metrics", {}),
-        "comparators": comparator.get("metrics", {}),
-        "silent_risk": silent_risk,
-        "negative_space_count": int(len(negative_space)),
-    }
-
-    execution_manifest = build_execution_manifest(
-        req=req,
-        ingestion={**ingest_meta, **{"columns": int(df.shape[1]), "rows": int(df.shape[0])}},
-        transforms=[
-            "canonical_lab_mapping",
-            "unit_normalization",
-            "reference_range_enrichment",
-            "time_alignment_delta_rate",
-            "trajectory_features",
-            "axis_decomposition",
-            "interaction_screen",
-            "linear_model",
-            "nonlinear_shadow_model",
-            "benchmarking_if_present",
-            "silent_risk_if_present",
-            "negative_space_rules",
-        ],
-        models_used={
-            "linear": {"type": "LogisticRegression", "cv_method": linear.get("cv_method")},
-            "nonlinear_shadow": {"type": "RandomForestClassifier", "cv_method": nonlinear.get("cv_method"), "shadow_mode": True},
-        },
-        metrics=metrics,
-        axis_summary=axis_summary,
-        interactions=interactions,
-        feedback_loops=feedback_loops,
-        negative_space=negative_space,
-        silent_risk=silent_risk,
-        explainability=explain,
-    )
-
-    # Return response (Base44 can be updated to read pipeline + manifest)
-    return AnalyzeResponse(
-        metrics=metrics,
-        coefficients={k: float(v) for k, v in (linear.get("coefficients", {}) or {}).items()},
-        roc_curve_data=linear.get("roc_curve_data", {"fpr": [], "tpr": [], "thresholds": []}),
-        pr_curve_data=linear.get("pr_curve_data", {"precision": [], "recall": [], "thresholds": []}),
-        feature_importance=[FeatureImportance(**fi) for fi in (linear.get("feature_importance", []) or [])],
-        dropped_features=linear.get("dropped_features", []) or [],
-        pipeline=pipeline,
-        execution_manifest=execution_manifest,
-    )
 
 
 # ---------------------------------------------------------------------
