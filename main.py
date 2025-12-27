@@ -27,6 +27,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+import traceback
 from pydantic import BaseModel, Field
 
 from sklearn.linear_model import LogisticRegression
@@ -439,6 +440,18 @@ def _find_comparator_columns(df: pd.DataFrame) -> Dict[str, str]:
                 break
     return found
 
+def normalize_context(context: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    context = context or {}
+
+    suspected_tags = context.get("suspected_condition_tags", {})
+    if not isinstance(suspected_tags, dict):
+        suspected_tags = {}
+
+    return {
+        "pregnancy": bool(context.get("pregnancy", False)),
+        "renal_failure": bool(context.get("renal_failure", False)),
+        "suspected_condition_tags": suspected_tags,
+    }
 
 def ensure_patient_id(df: pd.DataFrame, patient_id_column: Optional[str]) -> Tuple[pd.DataFrame, str]:
     if patient_id_column and patient_id_column in df.columns:
@@ -830,6 +843,14 @@ def _choose_cv_strategy(y: np.ndarray) -> Dict[str, Any]:
         return {"type": "skf", "n_splits": 5}
     return {"type": "split", "test_size": 0.3}
 
+def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    sensitivity = float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0
+    specificity = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
+    return {
+        "sensitivity": sensitivity,
+        "specificity": specificity,
+    }
 
 def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
     Xc, dropped = _sanitize_matrix(X)
@@ -1216,11 +1237,22 @@ def build_execution_manifest(
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
-    # Parse CSV
     try:
         df = pd.read_csv(io.StringIO(req.csv))
+        context = normalize_context(req.context)
+
+        # (everything else stays exactly the same)
+
+        return AnalyzeResponse(...)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "error": str(e),
+                "trace": traceback.format_exc().splitlines()[-10:]
+            }
+        )
+
 
     if req.label_column not in df.columns:
         raise HTTPException(status_code=400, detail=f"label_column '{req.label_column}' not found in dataset")
