@@ -199,6 +199,41 @@ NEGATIVE_SPACE_RULES: List[Dict[str, Any]] = [
 
 
 # ---------------------------------------------------------------------
+# JSON-SAFE FLOAT HELPERS
+# ---------------------------------------------------------------------
+
+def _safe_float(x: float, default: float = 0.0) -> float:
+    """Convert a float to a JSON-safe value (no inf, no nan)."""
+    if x is None or (isinstance(x, float) and (np.isnan(x) or np.isinf(x))):
+        return default
+    try:
+        f = float(x)
+        if np.isnan(f) or np.isinf(f):
+            return default
+        return f
+    except (TypeError, ValueError):
+        return default
+
+
+def _sanitize_for_json(obj: Any) -> Any:
+    """Recursively sanitize an object for JSON serialization (replace inf/nan with 0.0)."""
+    if isinstance(obj, dict):
+        return {k: _sanitize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_sanitize_for_json(v) for v in obj]
+    elif isinstance(obj, (float, np.floating)):
+        return _safe_float(obj)
+    elif isinstance(obj, (int, np.integer)):
+        return int(obj)
+    elif isinstance(obj, np.ndarray):
+        return [_sanitize_for_json(v) for v in obj.tolist()]
+    elif hasattr(obj, 'dict'):  # Pydantic model
+        return _sanitize_for_json(obj.dict())
+    else:
+        return obj
+
+
+# ---------------------------------------------------------------------
 # Pydantic MODELS
 # ---------------------------------------------------------------------
 
@@ -889,11 +924,11 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
                 "sensitivity": float(sens_spec["sensitivity"]),
                 "specificity": float(sens_spec["specificity"]),
             },
-            "coefficients": {f: float(c) for f, c in zip(Xc.columns, coef)},
-            "feature_importance": [{"feature": f, "importance": float(i)} for f, i in zip(Xc.columns, importance)],
-            "roc_curve_data": {"fpr": [float(x) for x in fpr], "tpr": [float(x) for x in tpr], "thresholds": [float(x) for x in roc_thr]},
-            "pr_curve_data": {"precision": [float(x) for x in prec], "recall": [float(x) for x in rec], "thresholds": [float(x) for x in pr_thr]},
-            "probabilities": [float(p) for p in probs],
+            "coefficients": {f: _safe_float(c) for f, c in zip(Xc.columns, coef)},
+            "feature_importance": [{"feature": f, "importance": _safe_float(i)} for f, i in zip(Xc.columns, importance)],
+            "roc_curve_data": {"fpr": [_safe_float(x) for x in fpr], "tpr": [_safe_float(x) for x in tpr], "thresholds": [_safe_float(x, 1.0) for x in roc_thr]},
+            "pr_curve_data": {"precision": [_safe_float(x) for x in prec], "recall": [_safe_float(x) for x in rec], "thresholds": [_safe_float(x, 1.0) for x in pr_thr]},
+            "probabilities": [_safe_float(p) for p in probs],
             "dropped_features": dropped,
             "model": lr,
             "X_clean": Xc,
@@ -935,11 +970,11 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
             "sensitivity": float(sens_spec["sensitivity"]),
             "specificity": float(sens_spec["specificity"]),
         },
-        "coefficients": {f: float(c) for f, c in zip(Xc.columns, coef)},
-        "feature_importance": [{"feature": f, "importance": float(i)} for f, i in zip(Xc.columns, importance)],
-        "roc_curve_data": {"fpr": [float(x) for x in fpr], "tpr": [float(x) for x in tpr], "thresholds": [float(x) for x in roc_thr]},
-        "pr_curve_data": {"precision": [float(x) for x in prec], "recall": [float(x) for x in rec], "thresholds": [float(x) for x in pr_thr]},
-        "probabilities": [float(p) for p in full_probs],
+        "coefficients": {f: _safe_float(c) for f, c in zip(Xc.columns, coef)},
+        "feature_importance": [{"feature": f, "importance": _safe_float(i)} for f, i in zip(Xc.columns, importance)],
+        "roc_curve_data": {"fpr": [_safe_float(x) for x in fpr], "tpr": [_safe_float(x) for x in tpr], "thresholds": [_safe_float(x, 1.0) for x in roc_thr]},
+        "pr_curve_data": {"precision": [_safe_float(x) for x in prec], "recall": [_safe_float(x) for x in rec], "thresholds": [_safe_float(x, 1.0) for x in pr_thr]},
+        "probabilities": [_safe_float(p) for p in full_probs],
         "dropped_features": dropped,
         "model": lr,
         "X_clean": Xc,
@@ -966,17 +1001,17 @@ def _fit_nonlinear_shadow(X: pd.DataFrame, y: np.ndarray, cv_method_hint: str) -
         sens_spec = compute_sensitivity_specificity(y, preds)
 
         rf.fit(Xc, y)
-        fi = {f: float(v) for f, v in zip(Xc.columns, rf.feature_importances_)}
+        fi = {f: _safe_float(v) for f, v in zip(Xc.columns, rf.feature_importances_)}
 
         return {
             "shadow_mode": True,
             "cv_method": f"StratifiedKFold(n_splits={policy['n_splits']})",
             "metrics": {
-                "roc_auc": float(auc),
-                "pr_auc": float(ap),
-                "accuracy": float(acc),
-                "sensitivity": float(sens_spec["sensitivity"]),
-                "specificity": float(sens_spec["specificity"]),
+                "roc_auc": _safe_float(auc),
+                "pr_auc": _safe_float(ap),
+                "accuracy": _safe_float(acc),
+                "sensitivity": _safe_float(sens_spec["sensitivity"]),
+                "specificity": _safe_float(sens_spec["specificity"]),
             },
             "feature_importance": fi,
             "permutation_importance": {},
@@ -999,23 +1034,23 @@ def _fit_nonlinear_shadow(X: pd.DataFrame, y: np.ndarray, cv_method_hint: str) -
     acc = float(accuracy_score(y_test, preds))
     sens_spec = compute_sensitivity_specificity(y_test, preds)
 
-    fi = {f: float(v) for f, v in zip(Xc.columns, rf.feature_importances_)}
+    fi = {f: _safe_float(v) for f, v in zip(Xc.columns, rf.feature_importances_)}
 
     perm_imp: Dict[str, float] = {}
     # only compute permutation importance if the split is meaningful
     if X_test.shape[0] >= 10 and len(np.unique(y_test)) > 1:
         perm = permutation_importance(rf, X_test, y_test, n_repeats=5, random_state=42)
-        perm_imp = {f: float(v) for f, v in zip(Xc.columns, perm.importances_mean)}
+        perm_imp = {f: _safe_float(v) for f, v in zip(Xc.columns, perm.importances_mean)}
 
     return {
         "shadow_mode": True,
         "cv_method": split_used,
         "metrics": {
-            "roc_auc": float(auc),
-            "pr_auc": float(ap),
-            "accuracy": float(acc),
-            "sensitivity": float(sens_spec["sensitivity"]),
-            "specificity": float(sens_spec["specificity"]),
+            "roc_auc": _safe_float(auc),
+            "pr_auc": _safe_float(ap),
+            "accuracy": _safe_float(acc),
+            "sensitivity": _safe_float(sens_spec["sensitivity"]),
+            "specificity": _safe_float(sens_spec["specificity"]),
         },
         "feature_importance": fi,
         "permutation_importance": perm_imp,
@@ -1393,15 +1428,16 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         )
 
         # Return response (Base44 can be updated to read pipeline + manifest)
+        # Sanitize all data to ensure no inf/nan values in JSON response
         return AnalyzeResponse(
-            metrics=metrics,
-            coefficients={k: float(v) for k, v in (linear.get("coefficients", {}) or {}).items()},
-            roc_curve_data=linear.get("roc_curve_data", {"fpr": [], "tpr": [], "thresholds": []}),
-            pr_curve_data=linear.get("pr_curve_data", {"precision": [], "recall": [], "thresholds": []}),
-            feature_importance=[FeatureImportance(**fi) for fi in (linear.get("feature_importance", []) or [])],
+            metrics=_sanitize_for_json(metrics),
+            coefficients={k: _safe_float(v) for k, v in (linear.get("coefficients", {}) or {}).items()},
+            roc_curve_data=_sanitize_for_json(linear.get("roc_curve_data", {"fpr": [], "tpr": [], "thresholds": []})),
+            pr_curve_data=_sanitize_for_json(linear.get("pr_curve_data", {"precision": [], "recall": [], "thresholds": []})),
+            feature_importance=[FeatureImportance(feature=fi["feature"], importance=_safe_float(fi["importance"])) for fi in (linear.get("feature_importance", []) or [])],
             dropped_features=linear.get("dropped_features", []) or [],
-            pipeline=pipeline,
-            execution_manifest=execution_manifest,
+            pipeline=_sanitize_for_json(pipeline),
+            execution_manifest=_sanitize_for_json(execution_manifest),
         )
     except Exception as e:
         raise HTTPException(
