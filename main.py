@@ -19,6 +19,8 @@
 
 import io
 import hashlib
+import hmac
+import json
 import math
 import random
 from datetime import datetime, timezone
@@ -77,6 +79,7 @@ from scipy.spatial.distance import pdist, squareform
 from scipy.stats import poisson
 from scipy.cluster.hierarchy import linkage, fcluster
 from collections import Counter, defaultdict
+from dataclasses import dataclass, asdict
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -100,7 +103,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.12.1"
+APP_VERSION = "5.12.2"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
