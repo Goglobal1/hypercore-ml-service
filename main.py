@@ -48,13 +48,29 @@ from sklearn.metrics import (
     roc_curve,
 )
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_predict
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import Lasso
+from scipy.stats import chi2_contingency, spearmanr
+
+# Optional imports for Clinical Intelligence Layer
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except ImportError:
+    SHAP_AVAILABLE = False
+
+try:
+    import ruptures as rpt
+    RUPTURES_AVAILABLE = True
+except ImportError:
+    RUPTURES_AVAILABLE = False
 
 
 # ---------------------------------------------------------------------
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.3.0"
+APP_VERSION = "5.4.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -2956,6 +2972,966 @@ def patient_report(req: PatientReportRequest) -> PatientReportResponse:
             reading_level=req.reading_level
         )
         return PatientReportResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+# ---------------------------------------------------------------------
+# MODULE 1: CONFOUNDER DETECTION ENGINE
+# ---------------------------------------------------------------------
+
+def stratify_population(
+    patient_data: List[Dict[str, Any]],
+    stratify_by: List[str],
+    outcome_key: str = "outcome"
+) -> Dict[str, Any]:
+    """
+    Stratify patient population by demographics/clinical factors.
+    Computes outcome rates per stratum and performs chi-square test.
+    """
+    if not patient_data:
+        return {"error": "No patient data provided", "strata": []}
+
+    df = pd.DataFrame(patient_data)
+
+    # Build strata key
+    if not all(col in df.columns for col in stratify_by):
+        missing = [c for c in stratify_by if c not in df.columns]
+        return {"error": f"Missing stratification columns: {missing}", "strata": []}
+
+    df["_strata_key"] = df[stratify_by].astype(str).agg("_".join, axis=1)
+
+    strata_results = []
+    for strata_key, group in df.groupby("_strata_key"):
+        n = len(group)
+        if outcome_key in group.columns:
+            outcome_rate = float(group[outcome_key].mean()) if n > 0 else 0.0
+        else:
+            outcome_rate = None
+
+        strata_results.append({
+            "strata": strata_key,
+            "n": n,
+            "outcome_rate": outcome_rate,
+            "factors": dict(zip(stratify_by, str(strata_key).split("_")))
+        })
+
+    # Chi-square test for independence
+    chi2_result = None
+    if outcome_key in df.columns and len(stratify_by) == 1:
+        try:
+            contingency = pd.crosstab(df["_strata_key"], df[outcome_key])
+            chi2, p_val, dof, expected = chi2_contingency(contingency)
+            chi2_result = {
+                "chi2": float(chi2),
+                "p_value": float(p_val),
+                "dof": int(dof),
+                "significant": p_val < 0.05
+            }
+        except Exception:
+            chi2_result = None
+
+    return {
+        "strata": strata_results,
+        "total_patients": len(df),
+        "stratification_factors": stratify_by,
+        "chi2_test": chi2_result
+    }
+
+
+def detect_masked_efficacy(
+    patient_data: List[Dict[str, Any]],
+    treatment_key: str,
+    outcome_key: str,
+    confounder_keys: List[str]
+) -> Dict[str, Any]:
+    """
+    Detect if treatment efficacy is masked by confounders.
+    Uses stratified analysis to reveal hidden treatment effects.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "masked_effects": []}
+
+    df = pd.DataFrame(patient_data)
+    required = [treatment_key, outcome_key] + confounder_keys
+    if not all(col in df.columns for col in required):
+        missing = [c for c in required if c not in df.columns]
+        return {"error": f"Missing columns: {missing}", "masked_effects": []}
+
+    # Overall treatment effect
+    treated = df[df[treatment_key] == 1]
+    control = df[df[treatment_key] == 0]
+
+    overall_effect = None
+    if len(treated) > 0 and len(control) > 0:
+        overall_effect = float(treated[outcome_key].mean() - control[outcome_key].mean())
+
+    # Stratified effects
+    masked_effects = []
+    for conf in confounder_keys:
+        for val, stratum in df.groupby(conf):
+            t = stratum[stratum[treatment_key] == 1]
+            c = stratum[stratum[treatment_key] == 0]
+            if len(t) > 5 and len(c) > 5:
+                stratum_effect = float(t[outcome_key].mean() - c[outcome_key].mean())
+
+                # Check if stratum effect differs from overall
+                if overall_effect is not None:
+                    effect_ratio = stratum_effect / overall_effect if overall_effect != 0 else float('inf')
+                    is_masked = abs(effect_ratio) > 1.5 or (stratum_effect > 0 and overall_effect < 0)
+                else:
+                    is_masked = False
+                    effect_ratio = None
+
+                masked_effects.append({
+                    "confounder": conf,
+                    "stratum_value": str(val),
+                    "stratum_n": len(stratum),
+                    "stratum_effect": stratum_effect,
+                    "overall_effect": overall_effect,
+                    "effect_ratio": _safe_float(effect_ratio) if effect_ratio else None,
+                    "potentially_masked": is_masked
+                })
+
+    return {
+        "overall_treatment_effect": overall_effect,
+        "masked_effects": [m for m in masked_effects if m["potentially_masked"]],
+        "all_strata": masked_effects,
+        "recommendation": "Consider stratified analysis" if any(m["potentially_masked"] for m in masked_effects) else "No significant masking detected"
+    }
+
+
+def discover_responder_subgroups(
+    patient_data: List[Dict[str, Any]],
+    treatment_key: str,
+    outcome_key: str,
+    feature_keys: List[str],
+    min_subgroup_size: int = 20
+) -> Dict[str, Any]:
+    """
+    Discover patient subgroups with differential treatment response.
+    Uses decision tree to find interpretable subgroup rules.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "subgroups": []}
+
+    df = pd.DataFrame(patient_data)
+    required = [treatment_key, outcome_key] + feature_keys
+    if not all(col in df.columns for col in required):
+        missing = [c for c in required if c not in df.columns]
+        return {"error": f"Missing columns: {missing}", "subgroups": []}
+
+    # Create interaction features
+    df["_treatment_benefit"] = df.apply(
+        lambda row: row[outcome_key] if row[treatment_key] == 1 else 1 - row[outcome_key],
+        axis=1
+    )
+
+    # Fit decision tree to find subgroups
+    X = df[feature_keys].fillna(0)
+    y = (df["_treatment_benefit"] > df["_treatment_benefit"].median()).astype(int)
+
+    tree = DecisionTreeClassifier(
+        max_depth=3,
+        min_samples_leaf=min_subgroup_size,
+        random_state=RANDOM_SEED
+    )
+    tree.fit(X, y)
+
+    # Extract rules
+    subgroups = []
+    feature_names = feature_keys
+
+    def extract_rules(node, rules=[]):
+        if tree.tree_.feature[node] == -2:  # Leaf
+            n_samples = tree.tree_.n_node_samples[node]
+            if n_samples >= min_subgroup_size:
+                # Get patients in this leaf
+                leaf_mask = tree.apply(X) == node
+                leaf_patients = df[leaf_mask]
+                treated = leaf_patients[leaf_patients[treatment_key] == 1]
+                control = leaf_patients[leaf_patients[treatment_key] == 0]
+
+                if len(treated) > 3 and len(control) > 3:
+                    effect = float(treated[outcome_key].mean() - control[outcome_key].mean())
+                    subgroups.append({
+                        "rules": list(rules),
+                        "n_patients": n_samples,
+                        "treatment_effect": effect,
+                        "responder_type": "positive" if effect > 0.1 else ("negative" if effect < -0.1 else "neutral")
+                    })
+            return
+
+        feature = feature_names[tree.tree_.feature[node]]
+        threshold = tree.tree_.threshold[node]
+
+        extract_rules(tree.tree_.children_left[node], rules + [f"{feature} <= {threshold:.2f}"])
+        extract_rules(tree.tree_.children_right[node], rules + [f"{feature} > {threshold:.2f}"])
+
+    extract_rules(0)
+
+    return {
+        "subgroups": sorted(subgroups, key=lambda x: abs(x["treatment_effect"]), reverse=True),
+        "total_patients": len(df),
+        "features_analyzed": feature_keys
+    }
+
+
+def screen_drug_biomarker_interactions(
+    patient_data: List[Dict[str, Any]],
+    drug_key: str,
+    biomarker_keys: List[str],
+    outcome_key: str
+) -> Dict[str, Any]:
+    """
+    Screen for drug-biomarker interactions that modify treatment effect.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "interactions": []}
+
+    df = pd.DataFrame(patient_data)
+    required = [drug_key, outcome_key] + biomarker_keys
+    if not all(col in df.columns for col in required):
+        missing = [c for c in required if c not in df.columns]
+        return {"error": f"Missing columns: {missing}", "interactions": []}
+
+    interactions = []
+
+    for biomarker in biomarker_keys:
+        if biomarker not in df.columns:
+            continue
+
+        # Median split for biomarker
+        median_val = df[biomarker].median()
+        df["_bio_high"] = (df[biomarker] > median_val).astype(int)
+
+        # Effect in high vs low biomarker groups
+        for bio_level, bio_label in [(1, "high"), (0, "low")]:
+            subset = df[df["_bio_high"] == bio_level]
+            treated = subset[subset[drug_key] == 1]
+            control = subset[subset[drug_key] == 0]
+
+            if len(treated) > 5 and len(control) > 5:
+                effect = float(treated[outcome_key].mean() - control[outcome_key].mean())
+
+                interactions.append({
+                    "biomarker": biomarker,
+                    "level": bio_label,
+                    "threshold": float(median_val),
+                    "n_patients": len(subset),
+                    "treatment_effect": effect
+                })
+
+        # Correlation between biomarker and treatment response
+        treated_only = df[df[drug_key] == 1]
+        if len(treated_only) > 10:
+            try:
+                corr, p_val = spearmanr(treated_only[biomarker], treated_only[outcome_key])
+                if p_val < 0.1:
+                    interactions.append({
+                        "biomarker": biomarker,
+                        "correlation_type": "response_modifier",
+                        "correlation": float(corr),
+                        "p_value": float(p_val),
+                        "interpretation": f"{biomarker} {'enhances' if corr > 0 else 'reduces'} drug response"
+                    })
+            except Exception:
+                pass
+
+    return {
+        "interactions": interactions,
+        "biomarkers_screened": biomarker_keys,
+        "drug": drug_key
+    }
+
+
+# ---------------------------------------------------------------------
+# MODULE 2: SHAP EXPLAINABILITY
+# ---------------------------------------------------------------------
+
+def compute_shap_attribution(
+    patient_data: List[Dict[str, Any]],
+    feature_keys: List[str],
+    outcome_key: str,
+    patient_index: int = 0
+) -> Dict[str, Any]:
+    """
+    Compute SHAP values for individual patient risk prediction.
+    Falls back to permutation importance if SHAP unavailable.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "attributions": []}
+
+    df = pd.DataFrame(patient_data)
+    required = feature_keys + [outcome_key]
+    if not all(col in df.columns for col in required):
+        missing = [c for c in required if c not in df.columns]
+        return {"error": f"Missing columns: {missing}", "attributions": []}
+
+    X = df[feature_keys].fillna(0)
+    y = df[outcome_key]
+
+    # Train model
+    model = RandomForestClassifier(n_estimators=100, random_state=RANDOM_SEED)
+    model.fit(X, y)
+
+    if SHAP_AVAILABLE:
+        # Use SHAP TreeExplainer
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X)
+
+        # Get SHAP values for target patient
+        if isinstance(shap_values, list):
+            patient_shap = shap_values[1][patient_index]  # Class 1 SHAP values
+        else:
+            patient_shap = shap_values[patient_index]
+
+        attributions = [
+            {
+                "feature": feat,
+                "value": float(X.iloc[patient_index][feat]),
+                "shap_value": float(patient_shap[i]),
+                "direction": "increases_risk" if patient_shap[i] > 0 else "decreases_risk",
+                "magnitude": abs(float(patient_shap[i]))
+            }
+            for i, feat in enumerate(feature_keys)
+        ]
+
+        # Base value
+        base_value = float(explainer.expected_value[1]) if isinstance(explainer.expected_value, np.ndarray) else float(explainer.expected_value)
+
+        return {
+            "patient_index": patient_index,
+            "base_risk": base_value,
+            "predicted_risk": float(model.predict_proba(X.iloc[[patient_index]])[0][1]),
+            "attributions": sorted(attributions, key=lambda x: x["magnitude"], reverse=True),
+            "method": "shap_tree"
+        }
+    else:
+        # Fallback to permutation importance
+        perm_imp = permutation_importance(model, X, y, n_repeats=10, random_state=RANDOM_SEED)
+
+        attributions = [
+            {
+                "feature": feat,
+                "value": float(X.iloc[patient_index][feat]),
+                "importance": float(perm_imp.importances_mean[i]),
+                "std": float(perm_imp.importances_std[i])
+            }
+            for i, feat in enumerate(feature_keys)
+        ]
+
+        return {
+            "patient_index": patient_index,
+            "predicted_risk": float(model.predict_proba(X.iloc[[patient_index]])[0][1]),
+            "attributions": sorted(attributions, key=lambda x: x["importance"], reverse=True),
+            "method": "permutation_importance",
+            "note": "SHAP not available, using permutation importance"
+        }
+
+
+def trace_causal_pathways(
+    patient_data: List[Dict[str, Any]],
+    feature_keys: List[str],
+    outcome_key: str,
+    max_depth: int = 3
+) -> Dict[str, Any]:
+    """
+    Trace causal pathways from features to outcome.
+    Uses feature correlation chains and Lasso for pathway discovery.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "pathways": []}
+
+    df = pd.DataFrame(patient_data)
+    required = feature_keys + [outcome_key]
+    if not all(col in df.columns for col in required):
+        missing = [c for c in required if c not in df.columns]
+        return {"error": f"Missing columns: {missing}", "pathways": []}
+
+    X = df[feature_keys].fillna(0)
+    y = df[outcome_key]
+
+    # Lasso for feature selection
+    lasso = Lasso(alpha=0.1, random_state=RANDOM_SEED)
+    lasso.fit(X, y)
+
+    # Get important features
+    important_features = [
+        (feat, float(coef))
+        for feat, coef in zip(feature_keys, lasso.coef_)
+        if abs(coef) > 0.01
+    ]
+
+    # Build correlation matrix
+    corr_matrix = X.corr()
+
+    # Trace pathways
+    pathways = []
+    for feat, direct_effect in important_features:
+        pathway = {
+            "start_feature": feat,
+            "direct_effect": direct_effect,
+            "chain": [feat],
+            "total_effect": direct_effect
+        }
+
+        # Find correlated features
+        correlations = corr_matrix[feat].drop(feat).abs().sort_values(ascending=False)
+        mediators = []
+
+        for mediator, corr in correlations.head(3).items():
+            if corr > 0.3:  # Threshold for meaningful correlation
+                # Check if mediator also affects outcome
+                mediator_effect = lasso.coef_[feature_keys.index(mediator)] if mediator in feature_keys else 0
+                if abs(mediator_effect) > 0.01:
+                    mediators.append({
+                        "feature": mediator,
+                        "correlation": float(corr),
+                        "effect_on_outcome": float(mediator_effect)
+                    })
+
+        pathway["mediators"] = mediators
+        pathway["indirect_effect"] = sum(m["correlation"] * m["effect_on_outcome"] for m in mediators)
+        pathway["total_effect"] = pathway["direct_effect"] + pathway["indirect_effect"]
+
+        pathways.append(pathway)
+
+    return {
+        "pathways": sorted(pathways, key=lambda x: abs(x["total_effect"]), reverse=True),
+        "features_analyzed": feature_keys,
+        "method": "lasso_pathway_analysis"
+    }
+
+
+def decompose_risk_score(
+    patient_data: List[Dict[str, Any]],
+    feature_keys: List[str],
+    outcome_key: str,
+    patient_index: int = 0
+) -> Dict[str, Any]:
+    """
+    Decompose risk score into component contributions by axis.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "decomposition": {}}
+
+    df = pd.DataFrame(patient_data)
+    required = feature_keys + [outcome_key]
+    if not all(col in df.columns for col in required):
+        missing = [c for c in required if c not in df.columns]
+        return {"error": f"Missing columns: {missing}", "decomposition": {}}
+
+    X = df[feature_keys].fillna(0)
+    y = df[outcome_key]
+
+    # Train model
+    model = RandomForestClassifier(n_estimators=100, random_state=RANDOM_SEED)
+    model.fit(X, y)
+
+    # Get feature importances
+    importances = model.feature_importances_
+
+    # Patient values
+    patient_values = X.iloc[patient_index]
+
+    # Map features to axes
+    axis_contributions = {axis: 0.0 for axis in AXES}
+    feature_to_axis = {}
+
+    for axis, labs in AXIS_LAB_MAP.items():
+        for lab in labs:
+            for feat in feature_keys:
+                if lab.lower() in feat.lower():
+                    feature_to_axis[feat] = axis
+
+    # Calculate contributions
+    decomposition = []
+    for i, feat in enumerate(feature_keys):
+        contribution = float(importances[i] * patient_values[feat])
+        axis = feature_to_axis.get(feat, "other")
+        if axis in axis_contributions:
+            axis_contributions[axis] += abs(contribution)
+
+        decomposition.append({
+            "feature": feat,
+            "value": float(patient_values[feat]),
+            "importance": float(importances[i]),
+            "contribution": contribution,
+            "axis": axis
+        })
+
+    # Normalize axis contributions
+    total = sum(axis_contributions.values()) or 1
+    axis_contributions = {k: v/total for k, v in axis_contributions.items()}
+
+    return {
+        "patient_index": patient_index,
+        "predicted_risk": float(model.predict_proba(X.iloc[[patient_index]])[0][1]),
+        "feature_decomposition": sorted(decomposition, key=lambda x: abs(x["contribution"]), reverse=True),
+        "axis_contributions": axis_contributions,
+        "dominant_axis": max(axis_contributions, key=axis_contributions.get) if axis_contributions else None
+    }
+
+
+# ---------------------------------------------------------------------
+# MODULE 3: CHANGE POINT DETECTION
+# ---------------------------------------------------------------------
+
+def detect_change_points(
+    time_series: List[Dict[str, Any]],
+    value_key: str,
+    time_key: str = "timestamp",
+    n_breakpoints: int = 3,
+    model_type: str = "rbf"
+) -> Dict[str, Any]:
+    """
+    Detect significant change points in patient biomarker time series.
+    Falls back to simple threshold detection if ruptures unavailable.
+    """
+    if not time_series:
+        return {"error": "No time series data", "change_points": []}
+
+    # Sort by time
+    sorted_data = sorted(time_series, key=lambda x: x.get(time_key, 0))
+    values = [float(d.get(value_key, 0)) for d in sorted_data]
+    times = [d.get(time_key, i) for i, d in enumerate(sorted_data)]
+
+    if len(values) < 5:
+        return {"error": "Insufficient data points", "change_points": []}
+
+    signal = np.array(values)
+
+    if RUPTURES_AVAILABLE:
+        # Use ruptures library
+        if model_type == "rbf":
+            algo = rpt.Pelt(model="rbf").fit(signal)
+        elif model_type == "l2":
+            algo = rpt.Pelt(model="l2").fit(signal)
+        else:
+            algo = rpt.Pelt(model="l1").fit(signal)
+
+        try:
+            change_indices = algo.predict(pen=3)
+        except Exception:
+            change_indices = []
+
+        # Remove last index (end of signal)
+        change_indices = [i for i in change_indices if i < len(signal)]
+
+        change_points = []
+        for idx in change_indices[:n_breakpoints]:
+            if idx > 0 and idx < len(signal):
+                before_mean = float(np.mean(signal[:idx]))
+                after_mean = float(np.mean(signal[idx:]))
+                change_magnitude = after_mean - before_mean
+
+                change_points.append({
+                    "index": idx,
+                    "time": times[idx] if idx < len(times) else None,
+                    "value_at_change": float(signal[idx]),
+                    "before_mean": before_mean,
+                    "after_mean": after_mean,
+                    "change_magnitude": change_magnitude,
+                    "direction": "increase" if change_magnitude > 0 else "decrease",
+                    "percent_change": float(change_magnitude / before_mean * 100) if before_mean != 0 else 0
+                })
+
+        return {
+            "change_points": change_points,
+            "method": f"ruptures_{model_type}",
+            "n_points": len(values),
+            "signal_stats": {
+                "mean": float(np.mean(signal)),
+                "std": float(np.std(signal)),
+                "min": float(np.min(signal)),
+                "max": float(np.max(signal))
+            }
+        }
+    else:
+        # Fallback: simple threshold-based detection
+        mean_val = np.mean(signal)
+        std_val = np.std(signal)
+        threshold = 1.5 * std_val
+
+        change_points = []
+        for i in range(1, len(signal)):
+            diff = abs(signal[i] - signal[i-1])
+            if diff > threshold:
+                change_points.append({
+                    "index": i,
+                    "time": times[i],
+                    "value_at_change": float(signal[i]),
+                    "previous_value": float(signal[i-1]),
+                    "change_magnitude": float(signal[i] - signal[i-1]),
+                    "direction": "increase" if signal[i] > signal[i-1] else "decrease"
+                })
+
+        return {
+            "change_points": change_points[:n_breakpoints],
+            "method": "threshold_detection",
+            "threshold_used": float(threshold),
+            "note": "ruptures not available, using simple threshold detection"
+        }
+
+
+def model_state_transitions(
+    patient_data: List[Dict[str, Any]],
+    state_key: str,
+    time_key: str = "timestamp"
+) -> Dict[str, Any]:
+    """
+    Model state transitions for patient disease progression.
+    Builds transition matrix and identifies common pathways.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "transitions": {}}
+
+    # Sort by time
+    sorted_data = sorted(patient_data, key=lambda x: x.get(time_key, 0))
+    states = [d.get(state_key, "unknown") for d in sorted_data]
+
+    # Build transition matrix
+    unique_states = list(set(states))
+    transition_counts = {s1: {s2: 0 for s2 in unique_states} for s1 in unique_states}
+
+    for i in range(len(states) - 1):
+        from_state = states[i]
+        to_state = states[i + 1]
+        transition_counts[from_state][to_state] += 1
+
+    # Convert to probabilities
+    transition_probs = {}
+    for from_state, to_states in transition_counts.items():
+        total = sum(to_states.values())
+        if total > 0:
+            transition_probs[from_state] = {
+                to_state: count / total
+                for to_state, count in to_states.items()
+                if count > 0
+            }
+        else:
+            transition_probs[from_state] = {}
+
+    # Find common pathways (sequences of 2-3 states)
+    pathways = {}
+    for i in range(len(states) - 1):
+        path2 = f"{states[i]} -> {states[i+1]}"
+        pathways[path2] = pathways.get(path2, 0) + 1
+
+        if i < len(states) - 2:
+            path3 = f"{states[i]} -> {states[i+1]} -> {states[i+2]}"
+            pathways[path3] = pathways.get(path3, 0) + 1
+
+    # Sort pathways by frequency
+    sorted_pathways = sorted(pathways.items(), key=lambda x: x[1], reverse=True)
+
+    return {
+        "states": unique_states,
+        "transition_matrix": transition_counts,
+        "transition_probabilities": transition_probs,
+        "common_pathways": [{"pathway": p, "count": c} for p, c in sorted_pathways[:10]],
+        "n_observations": len(states)
+    }
+
+
+# ---------------------------------------------------------------------
+# MODULE 4: LEAD TIME ANALYSIS
+# ---------------------------------------------------------------------
+
+def calculate_lead_time(
+    patient_events: List[Dict[str, Any]],
+    marker_key: str,
+    event_key: str,
+    time_key: str = "timestamp",
+    threshold: Optional[float] = None
+) -> Dict[str, Any]:
+    """
+    Calculate lead time between biomarker signal and clinical event.
+    Determines how early a biomarker can predict an event.
+    """
+    if not patient_events:
+        return {"error": "No patient events", "lead_times": []}
+
+    # Sort by time
+    sorted_events = sorted(patient_events, key=lambda x: x.get(time_key, 0))
+
+    # Find event occurrences
+    event_times = []
+    marker_signals = []
+
+    for i, event in enumerate(sorted_events):
+        if event.get(event_key):
+            event_times.append((i, event.get(time_key, i)))
+
+        marker_val = event.get(marker_key)
+        if marker_val is not None:
+            if threshold is None:
+                threshold = np.median([e.get(marker_key, 0) for e in sorted_events if e.get(marker_key) is not None]) * 1.5
+
+            if float(marker_val) > threshold:
+                marker_signals.append((i, event.get(time_key, i), float(marker_val)))
+
+    # Calculate lead times
+    lead_times = []
+    for event_idx, event_time in event_times:
+        # Find earliest marker signal before this event
+        preceding_signals = [(idx, t, val) for idx, t, val in marker_signals if idx < event_idx]
+        if preceding_signals:
+            first_signal = preceding_signals[0]
+            lead_time = event_idx - first_signal[0]  # In index units
+
+            lead_times.append({
+                "event_time": event_time,
+                "first_signal_time": first_signal[1],
+                "lead_time_units": lead_time,
+                "signal_value": first_signal[2]
+            })
+
+    if not lead_times:
+        return {
+            "lead_times": [],
+            "average_lead_time": None,
+            "marker": marker_key,
+            "event": event_key,
+            "threshold_used": threshold
+        }
+
+    avg_lead = np.mean([lt["lead_time_units"] for lt in lead_times])
+
+    return {
+        "lead_times": lead_times,
+        "average_lead_time": float(avg_lead),
+        "min_lead_time": min(lt["lead_time_units"] for lt in lead_times),
+        "max_lead_time": max(lt["lead_time_units"] for lt in lead_times),
+        "n_events_analyzed": len(event_times),
+        "n_events_with_signal": len(lead_times),
+        "detection_rate": len(lead_times) / len(event_times) if event_times else 0,
+        "marker": marker_key,
+        "event": event_key,
+        "threshold_used": threshold
+    }
+
+
+def analyze_early_warning_potential(
+    patient_data: List[Dict[str, Any]],
+    biomarker_keys: List[str],
+    outcome_key: str,
+    time_key: str = "timestamp"
+) -> Dict[str, Any]:
+    """
+    Analyze which biomarkers provide the best early warning for outcomes.
+    Ranks biomarkers by their predictive lead time.
+    """
+    if not patient_data:
+        return {"error": "No patient data", "biomarker_ranking": []}
+
+    rankings = []
+
+    for biomarker in biomarker_keys:
+        lead_result = calculate_lead_time(
+            patient_data,
+            marker_key=biomarker,
+            event_key=outcome_key,
+            time_key=time_key
+        )
+
+        if lead_result.get("average_lead_time") is not None:
+            rankings.append({
+                "biomarker": biomarker,
+                "average_lead_time": lead_result["average_lead_time"],
+                "detection_rate": lead_result["detection_rate"],
+                "score": lead_result["average_lead_time"] * lead_result["detection_rate"],
+                "n_detections": lead_result["n_events_with_signal"]
+            })
+
+    # Sort by composite score (lead time * detection rate)
+    rankings = sorted(rankings, key=lambda x: x["score"], reverse=True)
+
+    return {
+        "biomarker_ranking": rankings,
+        "best_early_warning": rankings[0]["biomarker"] if rankings else None,
+        "outcome_analyzed": outcome_key,
+        "recommendation": f"Use {rankings[0]['biomarker']} for early warning (avg {rankings[0]['average_lead_time']:.1f} units lead time)" if rankings else "Insufficient data for recommendations"
+    }
+
+
+# Pydantic models for Clinical Intelligence endpoints
+class ConfounderRequest(BaseModel):
+    patient_data: List[Dict[str, Any]]
+    stratify_by: Optional[List[str]] = None
+    treatment_key: Optional[str] = None
+    outcome_key: str = "outcome"
+    confounder_keys: Optional[List[str]] = None
+    feature_keys: Optional[List[str]] = None
+
+
+class ConfounderResponse(BaseModel):
+    stratification: Optional[Dict[str, Any]] = None
+    masked_efficacy: Optional[Dict[str, Any]] = None
+    responder_subgroups: Optional[Dict[str, Any]] = None
+    drug_biomarker_interactions: Optional[Dict[str, Any]] = None
+
+
+class SHAPRequest(BaseModel):
+    patient_data: List[Dict[str, Any]]
+    feature_keys: List[str]
+    outcome_key: str = "outcome"
+    patient_index: int = 0
+
+
+class SHAPResponse(BaseModel):
+    attribution: Optional[Dict[str, Any]] = None
+    pathways: Optional[Dict[str, Any]] = None
+    decomposition: Optional[Dict[str, Any]] = None
+
+
+class ChangePointRequest(BaseModel):
+    time_series: List[Dict[str, Any]]
+    value_key: str
+    time_key: str = "timestamp"
+    n_breakpoints: int = 3
+    model_type: str = "rbf"
+
+
+class ChangePointResponse(BaseModel):
+    change_points: List[Dict[str, Any]] = []
+    method: str = ""
+    signal_stats: Optional[Dict[str, Any]] = None
+
+
+class LeadTimeRequest(BaseModel):
+    patient_events: List[Dict[str, Any]]
+    marker_key: str
+    event_key: str
+    time_key: str = "timestamp"
+    threshold: Optional[float] = None
+
+
+class LeadTimeResponse(BaseModel):
+    lead_times: List[Dict[str, Any]] = []
+    average_lead_time: Optional[float] = None
+    detection_rate: Optional[float] = None
+    marker: str = ""
+    event: str = ""
+
+
+# Endpoints for Clinical Intelligence Layer
+@app.post("/confounder_analysis", response_model=ConfounderResponse)
+def confounder_analysis(req: ConfounderRequest) -> ConfounderResponse:
+    """
+    Comprehensive confounder analysis including stratification,
+    masked efficacy detection, and responder subgroup discovery.
+    """
+    try:
+        result = ConfounderResponse()
+
+        if req.stratify_by:
+            result.stratification = stratify_population(
+                req.patient_data,
+                req.stratify_by,
+                req.outcome_key
+            )
+
+        if req.treatment_key and req.confounder_keys:
+            result.masked_efficacy = detect_masked_efficacy(
+                req.patient_data,
+                req.treatment_key,
+                req.outcome_key,
+                req.confounder_keys
+            )
+
+        if req.treatment_key and req.feature_keys:
+            result.responder_subgroups = discover_responder_subgroups(
+                req.patient_data,
+                req.treatment_key,
+                req.outcome_key,
+                req.feature_keys
+            )
+
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/shap_explain", response_model=SHAPResponse)
+def shap_explain(req: SHAPRequest) -> SHAPResponse:
+    """
+    SHAP-based explainability including attribution, causal pathways,
+    and risk decomposition.
+    """
+    try:
+        result = SHAPResponse()
+
+        result.attribution = compute_shap_attribution(
+            req.patient_data,
+            req.feature_keys,
+            req.outcome_key,
+            req.patient_index
+        )
+
+        result.pathways = trace_causal_pathways(
+            req.patient_data,
+            req.feature_keys,
+            req.outcome_key
+        )
+
+        result.decomposition = decompose_risk_score(
+            req.patient_data,
+            req.feature_keys,
+            req.outcome_key,
+            req.patient_index
+        )
+
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/change_point_detect", response_model=ChangePointResponse)
+def change_point_detect(req: ChangePointRequest) -> ChangePointResponse:
+    """
+    Detect significant change points in biomarker time series.
+    """
+    try:
+        result = detect_change_points(
+            req.time_series,
+            req.value_key,
+            req.time_key,
+            req.n_breakpoints,
+            req.model_type
+        )
+        return ChangePointResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/lead_time_analysis", response_model=LeadTimeResponse)
+def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
+    """
+    Calculate biomarker lead time for early warning of clinical events.
+    """
+    try:
+        result = calculate_lead_time(
+            req.patient_events,
+            req.marker_key,
+            req.event_key,
+            req.time_key,
+            req.threshold
+        )
+        return LeadTimeResponse(**result)
     except Exception as e:
         raise HTTPException(
             status_code=500,
