@@ -94,7 +94,7 @@ warnings.filterwarnings('ignore')
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.7.0"
+APP_VERSION = "5.7.1"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -390,6 +390,27 @@ class AnalyzeResponse(BaseModel):
     # MODULE 4: FHIR Compatibility
     fhir_diagnostic_report: Optional[Dict[str, Any]] = None
     loinc_mappings: Optional[List[Dict[str, Any]]] = None
+
+    # ============================================
+    # BATCH 3A NEW FIELDS
+    # ============================================
+
+    # MODULE 1: Unknown Disease Detection
+    unknown_disease_detection: Optional[Dict[str, Any]] = None
+    novel_disease_clusters: Optional[List[Dict[str, Any]]] = None
+
+    # MODULE 2: Outbreak Prediction
+    outbreak_analysis: Optional[Dict[str, Any]] = None
+    epidemic_forecast: Optional[Dict[str, Any]] = None
+    r0_estimation: Optional[Dict[str, Any]] = None
+
+    # MODULE 3: Multi-Site Synthesis
+    multisite_patterns: Optional[Dict[str, Any]] = None
+    cross_site_clusters: Optional[List[Dict[str, Any]]] = None
+
+    # MODULE 4: Global Database Integration
+    global_database_matches: Optional[Dict[str, Any]] = None
+    promed_outbreaks: Optional[Dict[str, Any]] = None
 
 
 class EarlyRiskRequest(BaseModel):
@@ -2334,6 +2355,148 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         except Exception:
             pass  # Silent fail for entire Batch 2 if critical error
 
+        # ============================================
+        # BATCH 3A: SURVEILLANCE & UNKNOWN DISEASE DETECTION
+        # ============================================
+
+        unknown_disease_detection = None
+        novel_disease_clusters = None
+        outbreak_analysis = None
+        epidemic_forecast = None
+        r0_estimation = None
+        multisite_patterns = None
+        cross_site_clusters = None
+        global_database_matches = None
+        promed_outbreaks = None
+
+        try:
+            # ============================================
+            # MODULE 9: UNKNOWN DISEASE DETECTION
+            # ============================================
+
+            try:
+                # Check if we have multi-patient data
+                if not labs.empty and len(labs) >= 20:
+                    # Prepare multi-patient feature matrix
+                    if req.patient_id_column and req.patient_id_column in labs.columns:
+                        # Aggregate features per patient
+                        patient_features = labs.groupby(req.patient_id_column).agg({
+                            'value': ['mean', 'std', 'min', 'max', 'count']
+                        }).reset_index()
+
+                        patient_features.columns = ['_'.join(col).strip('_') for col in patient_features.columns]
+
+                        if len(patient_features) >= 10:
+                            # Detect unknown disease patterns
+                            unknown_disease_detection = detect_unknown_disease_patterns(
+                                multi_patient_data=patient_features,
+                                known_disease_profiles=None,
+                                contamination=0.1,
+                                novelty_threshold=0.7
+                            )
+
+                            if unknown_disease_detection.get("novel_clusters"):
+                                novel_disease_clusters = unknown_disease_detection["novel_clusters"]
+
+            except Exception:
+                pass  # Silent fail for unknown disease module
+
+            # ============================================
+            # MODULE 10: OUTBREAK PREDICTION
+            # ============================================
+
+            try:
+                if not labs.empty and len(labs) >= 20:
+                    # Check for timestamp column
+                    time_col = None
+                    for col in labs.columns:
+                        if 'time' in col.lower() or 'date' in col.lower():
+                            time_col = col
+                            break
+
+                    # Check for location/site column
+                    location_col = None
+                    for col in labs.columns:
+                        if 'site' in col.lower() or 'location' in col.lower() or 'facility' in col.lower():
+                            location_col = col
+                            break
+
+                    # Create case definition
+                    case_col = None
+                    if req.label_column and req.label_column in labs.columns:
+                        case_col = req.label_column
+
+                    if time_col and case_col:
+                        # Detect outbreak patterns
+                        outbreak_analysis = detect_outbreak_patterns(
+                            multi_site_data=labs,
+                            time_column=time_col,
+                            location_column=location_col if location_col else 'site',
+                            case_definition_column=case_col,
+                            temporal_window_days=14
+                        )
+
+                        if outbreak_analysis.get("epidemic_forecast"):
+                            epidemic_forecast = outbreak_analysis["epidemic_forecast"]
+
+                        if outbreak_analysis.get("r0_estimation"):
+                            r0_estimation = outbreak_analysis["r0_estimation"]
+
+            except Exception:
+                pass  # Silent fail for outbreak module
+
+            # ============================================
+            # MODULE 11: MULTI-SITE PATTERN SYNTHESIS
+            # ============================================
+
+            try:
+                if not labs.empty and len(labs) >= 30:
+                    # Look for site identifier
+                    site_col = None
+                    for col in labs.columns:
+                        if 'site' in col.lower() or 'facility' in col.lower() or 'location' in col.lower():
+                            site_col = col
+                            break
+
+                    if site_col:
+                        multisite_patterns = synthesize_multisite_patterns(
+                            aggregated_data=labs,
+                            site_column=site_col,
+                            patient_column=req.patient_id_column if req.patient_id_column else 'patient_id'
+                        )
+
+                        if multisite_patterns.get("cross_site_patterns"):
+                            cross_site_clusters = multisite_patterns["cross_site_patterns"]
+
+            except Exception:
+                pass  # Silent fail for multi-site module
+
+            # ============================================
+            # MODULE 12: GLOBAL DATABASE INTEGRATION
+            # ============================================
+
+            try:
+                if unknown_disease_detection and unknown_disease_detection.get("unknown_diseases_detected"):
+                    global_database_matches = integrate_global_health_databases(
+                        local_patterns=unknown_disease_detection,
+                        enable_who_glass=False,
+                        enable_cdc_nndss=False,
+                        enable_gisaid=False
+                    )
+
+                    # Query ProMED for similar outbreaks
+                    promed_outbreaks = query_promed_outbreaks(
+                        geographic_region=None,
+                        disease_keywords=None,
+                        days_back=30
+                    )
+
+            except Exception:
+                pass  # Silent fail for global database module
+
+        except Exception:
+            pass  # Silent fail for entire Batch 3A if critical error
+
         # Return response (Base44 can be updated to read pipeline + manifest)
         # Sanitize all data to ensure no inf/nan values in JSON response
         return AnalyzeResponse(
@@ -2383,6 +2546,16 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             reproducibility_verification=_sanitize_for_json(reproducibility_verification),
             fhir_diagnostic_report=_sanitize_for_json(fhir_diagnostic_report),
             loinc_mappings=_sanitize_for_json(loinc_mappings),
+            # BATCH 3A NEW FIELDS
+            unknown_disease_detection=_sanitize_for_json(unknown_disease_detection),
+            novel_disease_clusters=_sanitize_for_json(novel_disease_clusters),
+            outbreak_analysis=_sanitize_for_json(outbreak_analysis),
+            epidemic_forecast=_sanitize_for_json(epidemic_forecast),
+            r0_estimation=_sanitize_for_json(r0_estimation),
+            multisite_patterns=_sanitize_for_json(multisite_patterns),
+            cross_site_clusters=_sanitize_for_json(cross_site_clusters),
+            global_database_matches=_sanitize_for_json(global_database_matches),
+            promed_outbreaks=_sanitize_for_json(promed_outbreaks),
         )
     except Exception as e:
         raise HTTPException(
