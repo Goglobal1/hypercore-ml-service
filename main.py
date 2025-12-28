@@ -54,7 +54,7 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.1.0"
+APP_VERSION = "5.2.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
