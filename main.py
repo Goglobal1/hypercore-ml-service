@@ -1758,7 +1758,7 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             narrative_insights=narrative_insights,
             explainability=_sanitize_for_json(explain),
             volatility_analysis=_sanitize_for_json(volatility),
-            extremes_flagged=_sanitize_for_json(extremes),
+            extremes_flagged=_sanitize_for_json(extremes.get('extremes', []) if isinstance(extremes, dict) else []),
         )
     except Exception as e:
         raise HTTPException(
