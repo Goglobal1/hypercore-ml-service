@@ -100,7 +100,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.12.0"
+APP_VERSION = "5.12.1"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -10313,12 +10313,212 @@ class GovernanceBlockchain:
         return {"verified": True, "anchor": anchor}
 
 
+# ============================================
+# BATCH 4C MODULE 6: CONSENT LEDGER
+# ============================================
+
+class ConsentLedger:
+    """Blockchain-backed consent management (GDPR/HIPAA compliant)."""
+
+    def __init__(self, blockchain: GovernanceBlockchain):
+        self.blockchain = blockchain
+        self.consent_records: Dict[str, List[Dict[str, Any]]] = {}
+
+    async def record_consent(
+        self,
+        patient_ref: str,
+        purpose: PurposeOfUse,
+        granted: bool,
+        data_types: List[str],
+        expires_at: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Record consent decision on blockchain."""
+
+        consent_record = {
+            "consent_id": str(uuid.uuid4()),
+            "patient_ref": hashlib.sha256(patient_ref.encode()).hexdigest()[:16],
+            "purpose": purpose.value,
+            "granted": granted,
+            "data_types": data_types,
+            "recorded_at": datetime.utcnow().isoformat(),
+            "expires_at": expires_at,
+            "revoked": False
+        }
+
+        record_hash = self.blockchain.compute_sha3(json.dumps(consent_record, sort_keys=True))
+        consent_record["record_hash"] = record_hash
+
+        anchor = await self.blockchain.anchor_session(
+            session_id=consent_record["consent_id"],
+            ledger_head_hash=record_hash
+        )
+
+        consent_record["blockchain_anchor"] = anchor
+
+        if patient_ref not in self.consent_records:
+            self.consent_records[patient_ref] = []
+
+        self.consent_records[patient_ref].append(consent_record)
+
+        return consent_record
+
+    async def withdraw_consent(self, patient_ref: str, consent_id: str) -> Dict[str, Any]:
+        """Record consent withdrawal (GDPR right to withdraw)."""
+
+        records = self.consent_records.get(patient_ref, [])
+
+        for record in records:
+            if record["consent_id"] == consent_id:
+                record["revoked"] = True
+                record["revoked_at"] = datetime.utcnow().isoformat()
+
+                withdrawal_record = {
+                    "consent_id": consent_id,
+                    "action": "WITHDRAWN",
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+
+                withdrawal_hash = self.blockchain.compute_sha3(
+                    json.dumps(withdrawal_record, sort_keys=True)
+                )
+
+                anchor = await self.blockchain.anchor_session(
+                    session_id=f"withdrawal_{consent_id}",
+                    ledger_head_hash=withdrawal_hash
+                )
+
+                return {
+                    "status": "withdrawn",
+                    "consent_id": consent_id,
+                    "blockchain_anchor": anchor
+                }
+
+        return {"status": "error", "message": "Consent record not found"}
+
+    def get_active_consents(
+        self,
+        patient_ref: str,
+        purpose: Optional[PurposeOfUse] = None
+    ) -> List[Dict[str, Any]]:
+        """Get active (non-revoked, non-expired) consents."""
+
+        records = self.consent_records.get(patient_ref, [])
+        now = datetime.utcnow()
+
+        active = []
+        for record in records:
+            if record.get("revoked"):
+                continue
+
+            if record.get("expires_at"):
+                expires = datetime.fromisoformat(record["expires_at"])
+                if now > expires:
+                    continue
+
+            if purpose and record["purpose"] != purpose.value:
+                continue
+
+            active.append(record)
+
+        return active
+
+
 # Initialize Batch 4C Governance Components
 policy_engine = PolicyEngine()
 tool_gateway = ToolGateway(policy_engine)
 audit_ledger = AuditLedger()
 evidence_generator = EvidencePacketGenerator(audit_ledger)
 governance_blockchain = GovernanceBlockchain()
+consent_ledger = ConsentLedger(governance_blockchain)
+
+
+# ============================================
+# BATCH 4C MODULE 7: GOVERNANCE MIDDLEWARE
+# ============================================
+
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import JSONResponse as StarletteJSONResponse
+
+
+class GovernanceMiddleware(BaseHTTPMiddleware):
+    """Governance middleware that enforces policy on all requests."""
+
+    async def dispatch(self, request: StarletteRequest, call_next):
+        """Intercept and govern all requests."""
+
+        # Skip governance for health check to avoid overhead
+        if request.url.path == "/health":
+            return await call_next(request)
+
+        session_id = request.headers.get("X-Session-ID") or str(uuid.uuid4())
+        user_id = request.headers.get("X-User-ID", "anonymous")
+        tenant_id = request.headers.get("X-Tenant-ID", "default")
+
+        policy_request = PolicyRequest(
+            principal_id=user_id,
+            principal_roles=["user"],
+            tenant_id=tenant_id,
+            purpose_of_use=PurposeOfUse.TREATMENT,
+            action_type="api_access",
+            data_classification=DataClassification.L2_INTERNAL,
+            patient_refs=[]
+        )
+
+        policy_decision = await policy_engine.evaluate_policy(policy_request)
+
+        if policy_decision.decision == PolicyDecision.DENY:
+            await audit_ledger.append_event({
+                "event_type": "REQUEST_DENIED",
+                "session_id": session_id,
+                "tenant_id": tenant_id,
+                "actor": {"user_id": user_id},
+                "object_refs": {},
+                "request_hash": hashlib.sha256(str(request.url).encode()).hexdigest(),
+                "result_hash": "",
+                "policy_decision": policy_decision.to_dict()
+            })
+
+            return StarletteJSONResponse(
+                status_code=403,
+                content={"status": "denied", "reason": policy_decision.reason_codes}
+            )
+
+        request_hash = hashlib.sha256(str(request.url).encode()).hexdigest()
+
+        await audit_ledger.append_event({
+            "event_type": "REQUEST_STARTED",
+            "session_id": session_id,
+            "tenant_id": tenant_id,
+            "actor": {"user_id": user_id},
+            "object_refs": {"endpoint": str(request.url.path)},
+            "request_hash": request_hash,
+            "result_hash": "",
+            "policy_decision": policy_decision.to_dict()
+        })
+
+        response = await call_next(request)
+
+        result_hash = hashlib.sha256(str(response.status_code).encode()).hexdigest()
+
+        await audit_ledger.append_event({
+            "event_type": "REQUEST_COMPLETED",
+            "session_id": session_id,
+            "tenant_id": tenant_id,
+            "actor": {"user_id": user_id},
+            "object_refs": {"endpoint": str(request.url.path)},
+            "request_hash": request_hash,
+            "result_hash": result_hash,
+            "policy_decision": None
+        })
+
+        response.headers["X-Session-ID"] = session_id
+
+        return response
+
+
+# Add governance middleware to app
+app.add_middleware(GovernanceMiddleware)
 
 
 # ============================================
@@ -10433,6 +10633,69 @@ async def governance_blockchain_verify(request: Dict[str, Any]):
         return {"status": "error", "error": str(e)}
 
 
+# ============================================
+# BATCH 4C: CONSENT ENDPOINTS
+# ============================================
+
+@app.post("/governance/consent/record")
+async def governance_consent_record(request: Dict[str, Any]):
+    """Record patient consent on blockchain."""
+    try:
+        patient_ref = request.get("patient_ref")
+        purpose = PurposeOfUse(request.get("purpose", "treatment"))
+        granted = request.get("granted", True)
+        data_types = request.get("data_types", ["all"])
+        expires_at = request.get("expires_at")
+
+        if not patient_ref:
+            return {"status": "error", "message": "patient_ref required"}
+
+        result = await consent_ledger.record_consent(
+            patient_ref=patient_ref,
+            purpose=purpose,
+            granted=granted,
+            data_types=data_types,
+            expires_at=expires_at
+        )
+
+        return {"status": "success", "consent": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.post("/governance/consent/withdraw")
+async def governance_consent_withdraw(request: Dict[str, Any]):
+    """Withdraw patient consent (GDPR right to withdraw)."""
+    try:
+        patient_ref = request.get("patient_ref")
+        consent_id = request.get("consent_id")
+
+        if not patient_ref or not consent_id:
+            return {"status": "error", "message": "patient_ref and consent_id required"}
+
+        result = await consent_ledger.withdraw_consent(patient_ref, consent_id)
+
+        return result
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.get("/governance/consent/{patient_ref}")
+def governance_consent_get(patient_ref: str, purpose: Optional[str] = None):
+    """Get active consents for a patient."""
+    try:
+        purpose_enum = PurposeOfUse(purpose) if purpose else None
+        consents = consent_ledger.get_active_consents(patient_ref, purpose_enum)
+
+        return {
+            "status": "success",
+            "patient_ref": patient_ref,
+            "active_consents": consents
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
 @app.get("/governance/status")
 def governance_status():
     """Get governance system status."""
@@ -10443,6 +10706,8 @@ def governance_status():
             "audit_ledger": "ACTIVE",
             "evidence_generator": "ACTIVE",
             "blockchain": "ACTIVE",
+            "consent_ledger": "ACTIVE",
+            "middleware": "ACTIVE",
             "policy_version": "2025-01-01.1",
             "compliance_frameworks": ["HIPAA", "FDA_21CFR11", "GDPR"]
         }
