@@ -103,7 +103,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.12.2"
+APP_VERSION = "5.12.3"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -9625,6 +9625,18 @@ def encryption_split_secret(request: Dict[str, Any]):
 # ============================================
 # BATCH 4C: GOVERNANCE & COMPLIANCE LAYER
 # ============================================
+
+# Batch 4C imports (re-import for clarity within module)
+from typing import List, Dict, Any, Optional, Tuple, Set
+from datetime import datetime, timedelta
+from enum import Enum
+from dataclasses import dataclass, asdict
+import hashlib
+import json
+import hmac
+import uuid
+import secrets
+
 
 class PurposeOfUse(str, Enum):
     """Purpose of data use (HIPAA-aligned)."""
