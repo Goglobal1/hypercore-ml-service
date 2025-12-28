@@ -65,23 +65,11 @@ try:
 except ImportError:
     RUPTURES_AVAILABLE = False
 
-# NEW IMPORTS FOR BATCH 3A: GLOBAL SURVEILLANCE
-try:
-    import hdbscan
-    HDBSCAN_AVAILABLE = True
-except ImportError:
-    HDBSCAN_AVAILABLE = False
-
-try:
-    import umap
-    UMAP_AVAILABLE = True
-except ImportError:
-    UMAP_AVAILABLE = False
-
+# NEW IMPORTS FOR BATCH 3A (REVISED - NO HDBSCAN/UMAP)
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM
+from sklearn.cluster import DBSCAN, AgglomerativeClustering
 from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import DBSCAN
 from scipy.spatial.distance import pdist, squareform
 from scipy.stats import poisson
 from scipy.cluster.hierarchy import linkage, fcluster
@@ -94,7 +82,7 @@ warnings.filterwarnings('ignore')
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.7.1"
+APP_VERSION = "5.7.2"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -5543,10 +5531,10 @@ def detect_unknown_disease_patterns(
     """
     Detect unknown/novel disease patterns using multi-stage anomaly detection.
 
-    Uses ensemble approach:
+    Uses ensemble approach (scikit-learn only):
     - Isolation Forest (outlier detection)
     - One-Class SVM (deviation from normal)
-    - HDBSCAN clustering (pattern grouping)
+    - DBSCAN clustering (pattern grouping)
 
     Returns novel disease clusters with similarity to known diseases.
     """
@@ -5606,24 +5594,18 @@ def detect_unknown_disease_patterns(
             detection["reason"] = "No anomalies detected"
             return detection
 
-        # Stage 3: Cluster anomalies to find disease patterns
+        # Stage 3: Cluster anomalies using DBSCAN (density-based)
         if len(anomaly_indices) >= 5:
             X_anomalies = X_scaled[anomaly_indices]
 
-            # Use HDBSCAN for density-based clustering
-            if HDBSCAN_AVAILABLE and len(X_anomalies) >= 5:
-                clusterer = hdbscan.HDBSCAN(
-                    min_cluster_size=max(2, len(X_anomalies) // 10),
-                    min_samples=1,
-                    metric='euclidean'
-                )
-                cluster_labels = clusterer.fit_predict(X_anomalies)
-                detection["algorithms_used"].append("hdbscan")
-            else:
-                # Fallback: DBSCAN clustering
-                clusterer = DBSCAN(eps=1.5, min_samples=2)
-                cluster_labels = clusterer.fit_predict(X_anomalies)
-                detection["algorithms_used"].append("dbscan_fallback")
+            # Use DBSCAN for clustering (scikit-learn built-in)
+            clusterer = DBSCAN(
+                eps=1.0,  # Distance threshold
+                min_samples=2,
+                metric='euclidean'
+            )
+            cluster_labels = clusterer.fit_predict(X_anomalies)
+            detection["algorithms_used"].append("dbscan")
 
             # Analyze each cluster
             unique_clusters = [c for c in np.unique(cluster_labels) if c != -1]
