@@ -54,7 +54,7 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.2.0"
+APP_VERSION = "5.3.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -478,6 +478,80 @@ class DigitalTwinStorageResult(BaseModel):
     fingerprint: str
     indexed_in_global_learning: bool
     version: int
+
+
+# ---------------------------------------------------------------------
+# NEW HYPERCORE ENDPOINTS - Request/Response Models
+# ---------------------------------------------------------------------
+
+class MedicationInteractionRequest(BaseModel):
+    medications: List[str]
+    patient_weight_kg: Optional[float] = None
+    patient_age: Optional[float] = None
+    egfr: Optional[float] = None  # eGFR for renal function
+    liver_function: Optional[str] = None  # "normal", "impaired", "severe"
+
+
+class MedicationInteractionResponse(BaseModel):
+    interactions: List[Dict[str, Any]]
+    metabolic_burden_score: float
+    renal_adjustment_needed: bool
+    hepatic_adjustment_needed: bool
+    high_risk_combinations: List[Dict[str, Any]]
+    recommendations: List[str]
+    narrative: str
+
+
+class ForecastTimelineRequest(BaseModel):
+    csv: str
+    label_column: str
+    patient_id_column: Optional[str] = "patient_id"
+    time_column: Optional[str] = "time"
+    forecast_days: int = 90
+
+
+class ForecastTimelineResponse(BaseModel):
+    risk_windows: List[Dict[str, Any]]
+    inflection_points: List[Dict[str, Any]]
+    trend_direction: str
+    confidence: float
+    weekly_risk_scores: List[float]
+    narrative: str
+
+
+class RootCauseSimRequest(BaseModel):
+    condition: str  # "bradycardia", "hypoglycemia", "hyponatremia", etc.
+    patient_age: Optional[float] = None
+    medications: Optional[List[str]] = None
+    labs: Optional[Dict[str, float]] = None
+    vitals: Optional[Dict[str, float]] = None
+    comorbidities: Optional[List[str]] = None
+
+
+class RootCauseSimResponse(BaseModel):
+    condition: str
+    ranked_causes: List[Dict[str, Any]]
+    contributing_factors: Dict[str, float]
+    medication_related: bool
+    lab_abnormalities: List[str]
+    recommended_workup: List[str]
+    narrative: str
+
+
+class PatientReportRequest(BaseModel):
+    executive_summary: str
+    clinical_signals: Optional[List[Dict[str, Any]]] = None
+    recommendations: Optional[List[str]] = None
+    reading_level: str = "6th_grade"  # "6th_grade", "8th_grade", "adult"
+
+
+class PatientReportResponse(BaseModel):
+    simplified_summary: str
+    key_findings: List[str]
+    action_items: List[str]
+    questions_for_doctor: List[str]
+    reading_level: str
+    word_count: int
 
 
 # ---------------------------------------------------------------------
@@ -2265,6 +2339,628 @@ def create_digital_twin(req: DigitalTwinStorageRequest) -> DigitalTwinStorageRes
         indexed_in_global_learning=True,
         version=1,
     )
+
+
+# ---------------------------------------------------------------------
+# NEW HYPERCORE ENDPOINTS
+# ---------------------------------------------------------------------
+
+# Drug interaction database (deterministic rules)
+DRUG_INTERACTIONS = {
+    ("warfarin", "aspirin"): {"severity": "high", "effect": "Increased bleeding risk", "mechanism": "Additive anticoagulation"},
+    ("warfarin", "nsaid"): {"severity": "high", "effect": "Increased bleeding risk", "mechanism": "Platelet inhibition + anticoagulation"},
+    ("metformin", "contrast"): {"severity": "moderate", "effect": "Lactic acidosis risk", "mechanism": "Renal stress"},
+    ("ace_inhibitor", "potassium"): {"severity": "moderate", "effect": "Hyperkalemia risk", "mechanism": "Reduced potassium excretion"},
+    ("ace_inhibitor", "nsaid"): {"severity": "moderate", "effect": "Reduced antihypertensive effect, AKI risk", "mechanism": "Prostaglandin inhibition"},
+    ("digoxin", "amiodarone"): {"severity": "high", "effect": "Digoxin toxicity", "mechanism": "Reduced digoxin clearance"},
+    ("statin", "fibrate"): {"severity": "moderate", "effect": "Myopathy risk", "mechanism": "Additive muscle toxicity"},
+    ("ssri", "maoi"): {"severity": "critical", "effect": "Serotonin syndrome", "mechanism": "Serotonin accumulation"},
+    ("methotrexate", "nsaid"): {"severity": "high", "effect": "Methotrexate toxicity", "mechanism": "Reduced renal clearance"},
+    ("lithium", "nsaid"): {"severity": "high", "effect": "Lithium toxicity", "mechanism": "Reduced lithium clearance"},
+    ("fluoroquinolone", "antacid"): {"severity": "moderate", "effect": "Reduced antibiotic absorption", "mechanism": "Chelation"},
+    ("beta_blocker", "calcium_blocker"): {"severity": "moderate", "effect": "Bradycardia, hypotension", "mechanism": "Additive cardiac depression"},
+}
+
+# Drug categories for matching
+DRUG_CATEGORIES = {
+    "warfarin": ["warfarin", "coumadin"],
+    "aspirin": ["aspirin", "asa", "acetylsalicylic"],
+    "nsaid": ["ibuprofen", "naproxen", "meloxicam", "diclofenac", "ketorolac", "indomethacin", "celecoxib"],
+    "metformin": ["metformin", "glucophage"],
+    "ace_inhibitor": ["lisinopril", "enalapril", "ramipril", "benazepril", "captopril"],
+    "potassium": ["potassium", "kcl", "k-dur"],
+    "digoxin": ["digoxin", "lanoxin"],
+    "amiodarone": ["amiodarone", "cordarone"],
+    "statin": ["atorvastatin", "simvastatin", "rosuvastatin", "pravastatin", "lovastatin"],
+    "fibrate": ["gemfibrozil", "fenofibrate"],
+    "ssri": ["fluoxetine", "sertraline", "paroxetine", "citalopram", "escitalopram"],
+    "maoi": ["phenelzine", "tranylcypromine", "selegiline"],
+    "methotrexate": ["methotrexate", "mtx"],
+    "lithium": ["lithium", "lithobid"],
+    "fluoroquinolone": ["ciprofloxacin", "levofloxacin", "moxifloxacin"],
+    "antacid": ["omeprazole", "pantoprazole", "famotidine", "ranitidine", "calcium carbonate"],
+    "beta_blocker": ["metoprolol", "atenolol", "propranolol", "carvedilol", "bisoprolol"],
+    "calcium_blocker": ["amlodipine", "diltiazem", "verapamil", "nifedipine"],
+}
+
+# Renal-adjusted drugs
+RENAL_ADJUSTED_DRUGS = ["metformin", "gabapentin", "pregabalin", "digoxin", "lithium", "vancomycin", "enoxaparin"]
+
+# Hepatic-adjusted drugs
+HEPATIC_ADJUSTED_DRUGS = ["acetaminophen", "methotrexate", "statins", "warfarin", "valproic acid"]
+
+
+def _categorize_drug(drug_name: str) -> List[str]:
+    """Map drug name to category(ies)"""
+    drug_lower = drug_name.lower().strip()
+    categories = []
+    for category, names in DRUG_CATEGORIES.items():
+        if any(name in drug_lower for name in names):
+            categories.append(category)
+    return categories
+
+
+def drug_interaction_simulator(
+    medications: List[str],
+    weight_kg: Optional[float],
+    age: Optional[float],
+    egfr: Optional[float],
+    liver_function: Optional[str]
+) -> Dict[str, Any]:
+    """DETERMINISTIC drug interaction analysis"""
+
+    interactions = []
+    high_risk = []
+    recommendations = []
+    metabolic_burden = 0.0
+
+    # Categorize all medications
+    med_categories = {}
+    for med in medications:
+        cats = _categorize_drug(med)
+        med_categories[med] = cats
+        metabolic_burden += len(cats) * 0.1  # Each drug adds metabolic load
+
+    # Check pairwise interactions
+    meds_list = list(medications)
+    for i in range(len(meds_list)):
+        for j in range(i + 1, len(meds_list)):
+            med1, med2 = meds_list[i], meds_list[j]
+            cats1, cats2 = med_categories.get(med1, []), med_categories.get(med2, [])
+
+            for c1 in cats1:
+                for c2 in cats2:
+                    key = (c1, c2) if (c1, c2) in DRUG_INTERACTIONS else (c2, c1)
+                    if key in DRUG_INTERACTIONS:
+                        interaction = DRUG_INTERACTIONS[key]
+                        interaction_entry = {
+                            "drug1": med1,
+                            "drug2": med2,
+                            "severity": interaction["severity"],
+                            "effect": interaction["effect"],
+                            "mechanism": interaction["mechanism"]
+                        }
+                        interactions.append(interaction_entry)
+
+                        if interaction["severity"] in ["high", "critical"]:
+                            high_risk.append(interaction_entry)
+                            metabolic_burden += 0.3
+
+    # Check renal adjustments
+    renal_adjustment_needed = False
+    if egfr is not None and egfr < 60:
+        for med in medications:
+            med_lower = med.lower()
+            if any(rd in med_lower for rd in RENAL_ADJUSTED_DRUGS):
+                renal_adjustment_needed = True
+                recommendations.append(f"Consider dose adjustment for {med} (eGFR: {egfr})")
+                metabolic_burden += 0.2
+
+    # Check hepatic adjustments
+    hepatic_adjustment_needed = False
+    if liver_function in ["impaired", "severe"]:
+        for med in medications:
+            med_lower = med.lower()
+            if any(hd in med_lower for hd in HEPATIC_ADJUSTED_DRUGS):
+                hepatic_adjustment_needed = True
+                recommendations.append(f"Consider dose adjustment for {med} (liver function: {liver_function})")
+                metabolic_burden += 0.2
+
+    # Age-based considerations
+    if age is not None and age >= 65:
+        metabolic_burden += 0.15
+        if len(medications) >= 5:
+            recommendations.append("Polypharmacy in elderly patient - consider medication reconciliation")
+
+    # Cap metabolic burden
+    metabolic_burden = min(1.0, metabolic_burden)
+
+    # Generate narrative
+    if high_risk:
+        risk_summary = ", ".join([f"{h['drug1']}-{h['drug2']}" for h in high_risk[:3]])
+        narrative = f"High-risk drug interactions detected: {risk_summary}. "
+    else:
+        narrative = "No critical drug interactions detected. "
+
+    narrative += f"Metabolic burden score: {metabolic_burden:.2f}/1.0. "
+
+    if renal_adjustment_needed:
+        narrative += "Renal dose adjustments recommended. "
+    if hepatic_adjustment_needed:
+        narrative += "Hepatic dose adjustments recommended. "
+
+    if not recommendations:
+        recommendations.append("Continue current medications with standard monitoring")
+
+    return {
+        "interactions": interactions,
+        "metabolic_burden_score": _safe_float(metabolic_burden),
+        "renal_adjustment_needed": renal_adjustment_needed,
+        "hepatic_adjustment_needed": hepatic_adjustment_needed,
+        "high_risk_combinations": high_risk,
+        "recommendations": recommendations,
+        "narrative": narrative
+    }
+
+
+@app.post("/medication_interaction", response_model=MedicationInteractionResponse)
+def medication_interaction(req: MedicationInteractionRequest) -> MedicationInteractionResponse:
+    """
+    Analyze drug interactions and metabolic burden.
+    Uses deterministic rules-based engine.
+    """
+    try:
+        result = drug_interaction_simulator(
+            medications=req.medications,
+            weight_kg=req.patient_weight_kg,
+            age=req.patient_age,
+            egfr=req.egfr,
+            liver_function=req.liver_function
+        )
+        return MedicationInteractionResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+def forecast_risk_timeline(
+    df: pd.DataFrame,
+    label_column: str,
+    forecast_days: int = 90
+) -> Dict[str, Any]:
+    """DETERMINISTIC 90-day risk forecast using trend extrapolation"""
+
+    # Calculate baseline risk from event rate
+    if label_column in df.columns:
+        event_rate = df[label_column].mean()
+    else:
+        event_rate = 0.1  # Default assumption
+
+    # Calculate weekly risk scores using simple trend
+    weeks = forecast_days // 7
+    weekly_scores = []
+
+    # Simulate trend: slight increase over time (conservative)
+    base_risk = _safe_float(event_rate)
+    trend_factor = 0.02  # 2% increase per week
+
+    for week in range(weeks + 1):
+        week_risk = min(1.0, base_risk * (1 + trend_factor * week))
+        weekly_scores.append(_safe_float(week_risk))
+
+    # Identify risk windows (2-4 week cycles)
+    risk_windows = []
+    for i in range(0, weeks, 3):  # 3-week windows
+        start_week = i
+        end_week = min(i + 3, weeks)
+        window_risk = sum(weekly_scores[start_week:end_week]) / (end_week - start_week) if end_week > start_week else 0
+
+        risk_level = "low" if window_risk < 0.3 else ("moderate" if window_risk < 0.6 else "high")
+
+        risk_windows.append({
+            "window_start_day": start_week * 7,
+            "window_end_day": end_week * 7,
+            "risk_level": risk_level,
+            "risk_score": _safe_float(window_risk),
+            "intervention_window": risk_level != "low"
+        })
+
+    # Identify inflection points (where risk changes significantly)
+    inflection_points = []
+    for i in range(1, len(weekly_scores) - 1):
+        prev_delta = weekly_scores[i] - weekly_scores[i-1]
+        next_delta = weekly_scores[i+1] - weekly_scores[i]
+
+        if abs(next_delta - prev_delta) > 0.05:  # Significant change in trend
+            inflection_points.append({
+                "day": i * 7,
+                "risk_score": weekly_scores[i],
+                "trend_change": "accelerating" if next_delta > prev_delta else "decelerating",
+                "clinical_significance": "Monitor closely for clinical changes"
+            })
+
+    # Determine overall trend
+    if len(weekly_scores) >= 2:
+        if weekly_scores[-1] > weekly_scores[0] * 1.1:
+            trend_direction = "increasing"
+        elif weekly_scores[-1] < weekly_scores[0] * 0.9:
+            trend_direction = "decreasing"
+        else:
+            trend_direction = "stable"
+    else:
+        trend_direction = "insufficient_data"
+
+    # Confidence based on data quality
+    confidence = min(0.85, 0.5 + (len(df) / 1000) * 0.35)
+
+    # Generate narrative
+    high_risk_windows = [w for w in risk_windows if w["risk_level"] == "high"]
+
+    narrative = f"90-day risk forecast shows {trend_direction} trend. "
+    if high_risk_windows:
+        narrative += f"High-risk windows identified at days {', '.join([str(w['window_start_day']) for w in high_risk_windows])}. "
+    else:
+        narrative += "No high-risk windows identified in forecast period. "
+
+    if inflection_points:
+        narrative += f"{len(inflection_points)} inflection points detected suggesting potential clinical transitions. "
+
+    narrative += f"Confidence: {confidence:.0%}."
+
+    return {
+        "risk_windows": risk_windows,
+        "inflection_points": inflection_points,
+        "trend_direction": trend_direction,
+        "confidence": _safe_float(confidence),
+        "weekly_risk_scores": weekly_scores,
+        "narrative": narrative
+    }
+
+
+@app.post("/forecast_timeline", response_model=ForecastTimelineResponse)
+def forecast_timeline(req: ForecastTimelineRequest) -> ForecastTimelineResponse:
+    """
+    Generate 90-day risk forecast with trend extrapolation.
+    Uses deterministic trend analysis.
+    """
+    try:
+        df = pd.read_csv(io.StringIO(req.csv))
+        result = forecast_risk_timeline(df, req.label_column, req.forecast_days)
+        return ForecastTimelineResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+# Root cause rules database
+ROOT_CAUSE_RULES = {
+    "bradycardia": {
+        "medication_causes": [
+            {"drug": "beta_blocker", "score": 0.8, "mechanism": "Negative chronotropic effect"},
+            {"drug": "calcium_blocker", "score": 0.6, "mechanism": "AV node suppression"},
+            {"drug": "digoxin", "score": 0.7, "mechanism": "Vagal tone increase"},
+            {"drug": "amiodarone", "score": 0.5, "mechanism": "Sodium/potassium channel blockade"},
+        ],
+        "lab_causes": [
+            {"lab": "potassium", "condition": "high", "threshold": 5.5, "score": 0.6, "mechanism": "Hyperkalemia"},
+            {"lab": "tsh", "condition": "high", "threshold": 10, "score": 0.5, "mechanism": "Hypothyroidism"},
+        ],
+        "age_factor": {"threshold": 70, "score_add": 0.2, "reason": "Age-related conduction system degeneration"},
+        "workup": ["12-lead ECG", "TSH", "Potassium", "Digoxin level if applicable", "Consider Holter monitor"]
+    },
+    "hypoglycemia": {
+        "medication_causes": [
+            {"drug": "insulin", "score": 0.9, "mechanism": "Exogenous insulin"},
+            {"drug": "sulfonylurea", "score": 0.8, "mechanism": "Insulin secretagogue"},
+            {"drug": "metformin", "score": 0.2, "mechanism": "Rare, usually with renal impairment"},
+        ],
+        "lab_causes": [
+            {"lab": "creatinine", "condition": "high", "threshold": 2.0, "score": 0.4, "mechanism": "Reduced drug clearance"},
+            {"lab": "albumin", "condition": "low", "threshold": 3.0, "score": 0.3, "mechanism": "Malnutrition"},
+        ],
+        "age_factor": {"threshold": 75, "score_add": 0.15, "reason": "Reduced hypoglycemia awareness"},
+        "workup": ["Fingerstick glucose", "HbA1c", "Renal function", "Medication reconciliation", "Dietary assessment"]
+    },
+    "hyponatremia": {
+        "medication_causes": [
+            {"drug": "thiazide", "score": 0.7, "mechanism": "Renal sodium wasting"},
+            {"drug": "ssri", "score": 0.5, "mechanism": "SIADH induction"},
+            {"drug": "carbamazepine", "score": 0.4, "mechanism": "SIADH induction"},
+        ],
+        "lab_causes": [
+            {"lab": "glucose", "condition": "high", "threshold": 200, "score": 0.5, "mechanism": "Pseudohyponatremia"},
+            {"lab": "osmolality", "condition": "low", "threshold": 280, "score": 0.6, "mechanism": "Hypotonic hyponatremia"},
+        ],
+        "age_factor": {"threshold": 65, "score_add": 0.1, "reason": "Reduced renal concentrating ability"},
+        "workup": ["Serum osmolality", "Urine osmolality", "Urine sodium", "TSH", "Cortisol", "Volume status assessment"]
+    },
+}
+
+
+def simulate_root_cause(
+    condition: str,
+    age: Optional[float],
+    medications: Optional[List[str]],
+    labs: Optional[Dict[str, float]],
+    vitals: Optional[Dict[str, float]],
+    comorbidities: Optional[List[str]]
+) -> Dict[str, Any]:
+    """DETERMINISTIC root cause simulation using multi-factorial logic"""
+
+    condition_lower = condition.lower().strip()
+
+    if condition_lower not in ROOT_CAUSE_RULES:
+        # Handle unknown conditions gracefully
+        return {
+            "condition": condition,
+            "ranked_causes": [{"cause": "Unknown condition", "score": 0.0, "mechanism": "Not in database"}],
+            "contributing_factors": {},
+            "medication_related": False,
+            "lab_abnormalities": [],
+            "recommended_workup": ["Clinical evaluation", "Review medication list", "Basic metabolic panel"],
+            "narrative": f"Condition '{condition}' not in root cause database. General workup recommended."
+        }
+
+    rules = ROOT_CAUSE_RULES[condition_lower]
+    causes = []
+    contributing_factors = {}
+    medication_related = False
+    lab_abnormalities = []
+
+    medications = medications or []
+    labs = labs or {}
+    comorbidities = comorbidities or []
+
+    # Check medication causes
+    for med_rule in rules.get("medication_causes", []):
+        drug_category = med_rule["drug"]
+        for med in medications:
+            if any(name in med.lower() for name in DRUG_CATEGORIES.get(drug_category, [drug_category])):
+                score = med_rule["score"]
+                causes.append({
+                    "cause": f"Medication: {med}",
+                    "score": _safe_float(score),
+                    "mechanism": med_rule["mechanism"],
+                    "category": "medication"
+                })
+                contributing_factors[f"med_{med}"] = score
+                medication_related = True
+
+    # Check lab causes
+    for lab_rule in rules.get("lab_causes", []):
+        lab_name = lab_rule["lab"]
+        if lab_name in labs:
+            lab_value = labs[lab_name]
+            threshold = lab_rule["threshold"]
+            meets_condition = (
+                (lab_rule["condition"] == "high" and lab_value > threshold) or
+                (lab_rule["condition"] == "low" and lab_value < threshold)
+            )
+            if meets_condition:
+                score = lab_rule["score"]
+                causes.append({
+                    "cause": f"Lab abnormality: {lab_name} = {lab_value}",
+                    "score": _safe_float(score),
+                    "mechanism": lab_rule["mechanism"],
+                    "category": "laboratory"
+                })
+                contributing_factors[f"lab_{lab_name}"] = score
+                lab_abnormalities.append(f"{lab_name}: {lab_value} ({lab_rule['condition']})")
+
+    # Check age factor
+    age_rule = rules.get("age_factor")
+    if age_rule and age is not None and age >= age_rule["threshold"]:
+        score = age_rule["score_add"]
+        causes.append({
+            "cause": f"Advanced age ({age} years)",
+            "score": _safe_float(score),
+            "mechanism": age_rule["reason"],
+            "category": "patient_factor"
+        })
+        contributing_factors["age"] = score
+
+    # Sort causes by score
+    causes.sort(key=lambda x: x["score"], reverse=True)
+
+    # Get recommended workup
+    recommended_workup = rules.get("workup", ["General clinical evaluation"])
+
+    # Generate narrative
+    if causes:
+        top_cause = causes[0]
+        narrative = f"Root cause analysis for {condition}: Primary suspected cause is {top_cause['cause']} "
+        narrative += f"(confidence score: {top_cause['score']:.2f}). "
+        narrative += f"Mechanism: {top_cause['mechanism']}. "
+
+        if len(causes) > 1:
+            narrative += f"{len(causes) - 1} additional contributing factors identified. "
+
+        if medication_related:
+            narrative += "Medication review recommended. "
+    else:
+        narrative = f"No specific root cause identified for {condition}. Consider comprehensive workup."
+
+    return {
+        "condition": condition,
+        "ranked_causes": causes,
+        "contributing_factors": {k: _safe_float(v) for k, v in contributing_factors.items()},
+        "medication_related": medication_related,
+        "lab_abnormalities": lab_abnormalities,
+        "recommended_workup": recommended_workup,
+        "narrative": narrative
+    }
+
+
+@app.post("/root_cause_sim", response_model=RootCauseSimResponse)
+def root_cause_sim(req: RootCauseSimRequest) -> RootCauseSimResponse:
+    """
+    Simulate root cause analysis for clinical conditions.
+    Uses deterministic multi-factorial logic.
+    """
+    try:
+        result = simulate_root_cause(
+            condition=req.condition,
+            age=req.patient_age,
+            medications=req.medications,
+            labs=req.labs,
+            vitals=req.vitals,
+            comorbidities=req.comorbidities
+        )
+        return RootCauseSimResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+# Medical jargon to plain language mapping
+JARGON_MAP = {
+    "inflammatory": "body fighting something",
+    "metabolic": "how your body uses energy",
+    "sepsis": "serious infection spreading through your body",
+    "renal": "kidney",
+    "hepatic": "liver",
+    "cardiac": "heart",
+    "pulmonary": "lung",
+    "hypertension": "high blood pressure",
+    "hypotension": "low blood pressure",
+    "tachycardia": "fast heart rate",
+    "bradycardia": "slow heart rate",
+    "hyperglycemia": "high blood sugar",
+    "hypoglycemia": "low blood sugar",
+    "hyponatremia": "low sodium in blood",
+    "hyperkalemia": "high potassium in blood",
+    "anemia": "low red blood cells",
+    "thrombocytopenia": "low platelet count",
+    "leukocytosis": "high white blood cell count",
+    "acute": "sudden",
+    "chronic": "long-term",
+    "prognosis": "outlook",
+    "etiology": "cause",
+    "prophylaxis": "prevention",
+    "benign": "not harmful",
+    "malignant": "harmful/cancerous",
+    "contraindicated": "not recommended",
+    "afebrile": "no fever",
+    "febrile": "having a fever",
+    "dyspnea": "trouble breathing",
+    "edema": "swelling",
+    "emesis": "vomiting",
+    "syncope": "fainting",
+    "bilateral": "both sides",
+    "unilateral": "one side",
+}
+
+
+def simplify_text(text: str, reading_level: str = "6th_grade") -> str:
+    """Convert medical text to patient-friendly language"""
+
+    result = text.lower()
+
+    # Replace jargon
+    for jargon, plain in JARGON_MAP.items():
+        result = result.replace(jargon.lower(), plain)
+
+    # Capitalize first letter of sentences
+    sentences = result.split(". ")
+    sentences = [s.capitalize() if s else s for s in sentences]
+    result = ". ".join(sentences)
+
+    # Simplify numbers for 6th grade
+    if reading_level == "6th_grade":
+        result = result.replace("0.85", "85%").replace("0.9", "90%").replace("0.75", "75%")
+
+    return result
+
+
+def generate_patient_report(
+    executive_summary: str,
+    clinical_signals: Optional[List[Dict[str, Any]]],
+    recommendations: Optional[List[str]],
+    reading_level: str = "6th_grade"
+) -> Dict[str, Any]:
+    """Generate patient-friendly report at specified reading level"""
+
+    # Simplify executive summary
+    simplified = simplify_text(executive_summary, reading_level)
+
+    # Extract key findings from clinical signals
+    key_findings = []
+    if clinical_signals:
+        for signal in clinical_signals[:5]:
+            name = signal.get("signal_name", "Test result")
+            direction = signal.get("direction", "changed")
+
+            if direction == "rising":
+                finding = f"Your {name.lower()} levels are higher than normal"
+            elif direction == "falling":
+                finding = f"Your {name.lower()} levels are lower than normal"
+            else:
+                finding = f"Your {name.lower()} levels show changes"
+
+            key_findings.append(finding)
+
+    if not key_findings:
+        key_findings = ["Your test results are being reviewed by your care team"]
+
+    # Create action items
+    action_items = []
+    if recommendations:
+        for rec in recommendations[:4]:
+            simplified_rec = simplify_text(rec, reading_level)
+            action_items.append(simplified_rec)
+
+    if not action_items:
+        action_items = [
+            "Take all medications as prescribed",
+            "Keep your follow-up appointments",
+            "Call your doctor if you feel worse"
+        ]
+
+    # Generate questions for doctor
+    questions = [
+        "What do these test results mean for me?",
+        "What should I watch out for at home?",
+        "When should I call or come back?",
+        "Are there any changes to my medications?"
+    ]
+
+    word_count = len(simplified.split())
+
+    return {
+        "simplified_summary": simplified,
+        "key_findings": key_findings,
+        "action_items": action_items,
+        "questions_for_doctor": questions,
+        "reading_level": reading_level,
+        "word_count": word_count
+    }
+
+
+@app.post("/patient_report", response_model=PatientReportResponse)
+def patient_report(req: PatientReportRequest) -> PatientReportResponse:
+    """
+    Generate patient-friendly report at specified reading level.
+    Removes medical jargon and simplifies language.
+    """
+    try:
+        result = generate_patient_report(
+            executive_summary=req.executive_summary,
+            clinical_signals=req.clinical_signals,
+            recommendations=req.recommendations,
+            reading_level=req.reading_level
+        )
+        return PatientReportResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
 
 
 @app.get("/health")
