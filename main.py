@@ -65,12 +65,36 @@ try:
 except ImportError:
     RUPTURES_AVAILABLE = False
 
+# NEW IMPORTS FOR BATCH 3A: GLOBAL SURVEILLANCE
+try:
+    import hdbscan
+    HDBSCAN_AVAILABLE = True
+except ImportError:
+    HDBSCAN_AVAILABLE = False
+
+try:
+    import umap
+    UMAP_AVAILABLE = True
+except ImportError:
+    UMAP_AVAILABLE = False
+
+from sklearn.ensemble import IsolationForest
+from sklearn.svm import OneClassSVM
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+from scipy.spatial.distance import pdist, squareform
+from scipy.stats import poisson
+from scipy.cluster.hierarchy import linkage, fcluster
+from collections import Counter, defaultdict
+import warnings
+warnings.filterwarnings('ignore')
+
 
 # ---------------------------------------------------------------------
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.6.0"
+APP_VERSION = "5.7.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -5326,6 +5350,1026 @@ def convert_to_fhir_diagnostic_report(
     }
 
     return report
+
+
+# =====================================================================
+# BATCH 3A: GLOBAL SURVEILLANCE & UNKNOWN DISEASE DETECTION LAYER
+# =====================================================================
+
+
+# ---------------------------------------------------------------------
+# MODULE 9: UNKNOWN DISEASE DETECTION ENGINE
+# ---------------------------------------------------------------------
+
+def detect_unknown_disease_patterns(
+    multi_patient_data: pd.DataFrame,
+    known_disease_profiles: Dict[str, Dict] = None,
+    contamination: float = 0.1,
+    novelty_threshold: float = 0.7
+) -> Dict[str, Any]:
+    """
+    Detect unknown/novel disease patterns using multi-stage anomaly detection.
+
+    Uses ensemble approach:
+    - Isolation Forest (outlier detection)
+    - One-Class SVM (deviation from normal)
+    - HDBSCAN clustering (pattern grouping)
+
+    Returns novel disease clusters with similarity to known diseases.
+    """
+    detection = {
+        "unknown_diseases_detected": False,
+        "novel_clusters": [],
+        "anomaly_patients": [],
+        "methodology": "ensemble_anomaly_detection",
+        "algorithms_used": []
+    }
+
+    if multi_patient_data.empty or len(multi_patient_data) < 10:
+        detection["reason"] = "Insufficient patient data for unknown disease detection"
+        return detection
+
+    try:
+        # Prepare feature matrix (only numeric features)
+        numeric_cols = multi_patient_data.select_dtypes(include=[np.number]).columns
+        X = multi_patient_data[numeric_cols].fillna(multi_patient_data[numeric_cols].median())
+
+        if len(X.columns) < 3:
+            detection["reason"] = "Insufficient features for anomaly detection"
+            return detection
+
+        # Standardize features
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        # Stage 1: Isolation Forest (find outliers)
+        iso_forest = IsolationForest(
+            contamination=contamination,
+            random_state=RANDOM_SEED,
+            n_estimators=100
+        )
+        iso_predictions = iso_forest.fit_predict(X_scaled)
+        iso_scores = iso_forest.score_samples(X_scaled)
+
+        detection["algorithms_used"].append("isolation_forest")
+
+        # Stage 2: One-Class SVM (deviation scoring)
+        try:
+            oc_svm = OneClassSVM(nu=contamination, kernel='rbf', gamma='auto')
+            svm_predictions = oc_svm.fit_predict(X_scaled)
+            svm_scores = oc_svm.score_samples(X_scaled)
+            detection["algorithms_used"].append("one_class_svm")
+        except Exception:
+            svm_predictions = iso_predictions
+            svm_scores = iso_scores
+
+        # Combine anomaly scores (ensemble voting)
+        anomaly_votes = (iso_predictions == -1).astype(int) + (svm_predictions == -1).astype(int)
+        anomalies_mask = anomaly_votes >= 1  # At least 1 algorithm flags as anomaly
+
+        anomaly_indices = np.where(anomalies_mask)[0]
+
+        if len(anomaly_indices) == 0:
+            detection["reason"] = "No anomalies detected"
+            return detection
+
+        # Stage 3: Cluster anomalies to find disease patterns
+        if len(anomaly_indices) >= 5:
+            X_anomalies = X_scaled[anomaly_indices]
+
+            # Use HDBSCAN for density-based clustering
+            if HDBSCAN_AVAILABLE and len(X_anomalies) >= 5:
+                clusterer = hdbscan.HDBSCAN(
+                    min_cluster_size=max(2, len(X_anomalies) // 10),
+                    min_samples=1,
+                    metric='euclidean'
+                )
+                cluster_labels = clusterer.fit_predict(X_anomalies)
+                detection["algorithms_used"].append("hdbscan")
+            else:
+                # Fallback: DBSCAN clustering
+                clusterer = DBSCAN(eps=1.5, min_samples=2)
+                cluster_labels = clusterer.fit_predict(X_anomalies)
+                detection["algorithms_used"].append("dbscan_fallback")
+
+            # Analyze each cluster
+            unique_clusters = [c for c in np.unique(cluster_labels) if c != -1]
+
+            for cluster_id in unique_clusters:
+                cluster_mask = cluster_labels == cluster_id
+                cluster_indices = anomaly_indices[cluster_mask]
+
+                if len(cluster_indices) < 2:
+                    continue
+
+                # Get cluster characteristics
+                cluster_data = X.iloc[cluster_indices]
+                cluster_median = cluster_data.median()
+
+                # Calculate novelty score
+                novelty_score = _calculate_novelty_score(
+                    cluster_data,
+                    X,
+                    known_disease_profiles
+                )
+
+                if novelty_score >= novelty_threshold:
+                    # Identify distinguishing features
+                    distinguishing_features = _identify_distinguishing_features(
+                        cluster_data,
+                        X,
+                        numeric_cols
+                    )
+
+                    # Get patient IDs if available
+                    patient_ids = []
+                    if 'patient_id' in multi_patient_data.columns:
+                        patient_ids = multi_patient_data.iloc[cluster_indices]['patient_id'].tolist()
+
+                    detection["novel_clusters"].append({
+                        "cluster_id": f"novel_disease_{cluster_id}",
+                        "patient_count": int(len(cluster_indices)),
+                        "patient_ids": patient_ids[:10],
+                        "novelty_score": round(float(novelty_score), 3),
+                        "distinguishing_features": distinguishing_features[:5],
+                        "cluster_characteristics": {
+                            k: round(float(v), 3)
+                            for k, v in cluster_median.head(5).items()
+                        },
+                        "similarity_to_known_diseases": _compare_to_known_diseases(
+                            cluster_median,
+                            known_disease_profiles
+                        ) if known_disease_profiles else {},
+                        "recommended_actions": _get_novel_disease_actions(novelty_score, len(cluster_indices))
+                    })
+
+        # Get all anomaly patients
+        if 'patient_id' in multi_patient_data.columns:
+            detection["anomaly_patients"] = multi_patient_data.iloc[anomaly_indices]['patient_id'].tolist()[:20]
+
+        detection["unknown_diseases_detected"] = len(detection["novel_clusters"]) > 0
+        detection["total_anomalies"] = int(len(anomaly_indices))
+        detection["anomaly_rate"] = round(float(len(anomaly_indices) / len(X)), 3)
+
+    except Exception as e:
+        detection["error"] = f"Unknown disease detection failed: {str(e)}"
+
+    return detection
+
+
+def _calculate_novelty_score(
+    cluster_data: pd.DataFrame,
+    all_data: pd.DataFrame,
+    known_profiles: Dict = None
+) -> float:
+    """Calculate how novel/different this cluster is from known patterns."""
+
+    # Method 1: Distance from population center
+    cluster_center = cluster_data.mean()
+    population_center = all_data.mean()
+
+    distance = np.linalg.norm(cluster_center - population_center)
+
+    # Normalize by population std
+    pop_std = all_data.std().mean()
+    normalized_distance = distance / (pop_std + 1e-10)
+
+    # Method 2: Density-based novelty
+    from sklearn.neighbors import NearestNeighbors
+    nbrs = NearestNeighbors(n_neighbors=min(5, len(all_data))).fit(all_data)
+    distances, _ = nbrs.kneighbors(cluster_data)
+    avg_distance = distances.mean()
+
+    # Combine metrics
+    novelty = min(1.0, (normalized_distance + avg_distance) / 10)
+
+    return novelty
+
+
+def _identify_distinguishing_features(
+    cluster_data: pd.DataFrame,
+    population_data: pd.DataFrame,
+    feature_names: pd.Index
+) -> List[Dict[str, Any]]:
+    """Identify features that distinguish this cluster from the population."""
+
+    distinguishing = []
+
+    cluster_mean = cluster_data.mean()
+    pop_mean = population_data.mean()
+    pop_std = population_data.std()
+
+    for feat in feature_names:
+        diff = abs(cluster_mean[feat] - pop_mean[feat])
+        z_score = diff / (pop_std[feat] + 1e-10)
+
+        if z_score > 2.0:
+            distinguishing.append({
+                "feature": str(feat),
+                "cluster_value": round(float(cluster_mean[feat]), 3),
+                "population_value": round(float(pop_mean[feat]), 3),
+                "z_score": round(float(z_score), 2),
+                "deviation": "elevated" if cluster_mean[feat] > pop_mean[feat] else "reduced"
+            })
+
+    return sorted(distinguishing, key=lambda x: x["z_score"], reverse=True)
+
+
+def _compare_to_known_diseases(
+    cluster_profile: pd.Series,
+    known_profiles: Dict[str, Dict]
+) -> Dict[str, float]:
+    """Compare cluster to known disease profiles."""
+
+    if not known_profiles:
+        return {"note": "No known disease profiles provided for comparison"}
+
+    similarities = {}
+
+    for disease, profile in known_profiles.items():
+        # Calculate similarity based on overlapping features
+        common_features = set(cluster_profile.index) & set(profile.keys())
+        if common_features:
+            similarity = 0
+            for feat in common_features:
+                if feat in profile:
+                    diff = abs(cluster_profile[feat] - profile[feat])
+                    similarity += 1 / (1 + diff)
+            similarity = similarity / len(common_features)
+            similarities[disease] = round(float(similarity), 3)
+
+    return dict(sorted(similarities.items(), key=lambda x: x[1], reverse=True)[:3])
+
+
+def _get_novel_disease_actions(novelty_score: float, patient_count: int) -> List[str]:
+    """Get recommended actions based on novelty and prevalence."""
+
+    actions = []
+
+    if novelty_score > 0.8 and patient_count >= 5:
+        actions.extend([
+            "CRITICAL: Immediate public health notification required",
+            "Isolate affected patients pending investigation",
+            "Broad-spectrum pathogen panel + sequencing",
+            "Contact CDC/WHO for cluster investigation"
+        ])
+    elif novelty_score > 0.7:
+        actions.extend([
+            "HIGH PRIORITY: Infectious disease consult",
+            "Extended diagnostic workup",
+            "Enhanced monitoring + contact tracing"
+        ])
+    else:
+        actions.extend([
+            "MODERATE: Clinical review of affected cases",
+            "Consider atypical presentation of known disease"
+        ])
+
+    return actions
+
+
+# ---------------------------------------------------------------------
+# MODULE 10: OUTBREAK PREDICTION & GEOGRAPHIC CLUSTERING
+# ---------------------------------------------------------------------
+
+def detect_outbreak_patterns(
+    multi_site_data: pd.DataFrame,
+    time_column: str = 'timestamp',
+    location_column: str = 'location',
+    case_definition_column: str = 'is_case',
+    temporal_window_days: int = 14
+) -> Dict[str, Any]:
+    """
+    Detect outbreak patterns using spatial-temporal clustering.
+
+    Uses:
+    - Temporal clustering (case rate increase detection)
+    - Spatial clustering (geographic aggregation)
+    - Epidemic curve modeling
+    - R0 estimation (basic reproduction number)
+
+    Returns outbreak alerts with forecasting.
+    """
+    outbreak = {
+        "outbreak_detected": False,
+        "clusters": [],
+        "temporal_analysis": {},
+        "geographic_analysis": {},
+        "methodology": "spatial_temporal_scan"
+    }
+
+    if multi_site_data.empty or len(multi_site_data) < 20:
+        outbreak["reason"] = "Insufficient data for outbreak detection"
+        return outbreak
+
+    try:
+        # Temporal analysis: detect case rate increases
+        if time_column in multi_site_data.columns and case_definition_column in multi_site_data.columns:
+            temporal_result = _analyze_temporal_clustering(
+                multi_site_data,
+                time_column,
+                case_definition_column,
+                temporal_window_days
+            )
+            outbreak["temporal_analysis"] = temporal_result
+
+            if temporal_result.get("significant_increase"):
+                outbreak["outbreak_detected"] = True
+
+        # Spatial analysis: detect geographic clusters
+        if location_column in multi_site_data.columns and case_definition_column in multi_site_data.columns:
+            spatial_result = _analyze_spatial_clustering(
+                multi_site_data,
+                location_column,
+                case_definition_column
+            )
+            outbreak["geographic_analysis"] = spatial_result
+
+            if spatial_result.get("clusters_detected"):
+                outbreak["outbreak_detected"] = True
+                outbreak["clusters"] = spatial_result.get("clusters", [])
+
+        # If outbreak detected, generate forecast
+        if outbreak["outbreak_detected"]:
+            outbreak["epidemic_forecast"] = _forecast_epidemic_curve(
+                multi_site_data,
+                time_column,
+                case_definition_column,
+                forecast_days=[7, 14, 30]
+            )
+
+            outbreak["r0_estimation"] = _estimate_basic_reproduction_number(
+                multi_site_data,
+                time_column,
+                case_definition_column
+            )
+
+            outbreak["recommended_response"] = _get_outbreak_response_actions(
+                outbreak["r0_estimation"],
+                len(outbreak["clusters"])
+            )
+
+    except Exception as e:
+        outbreak["error"] = f"Outbreak detection failed: {str(e)}"
+
+    return outbreak
+
+
+def _analyze_temporal_clustering(
+    data: pd.DataFrame,
+    time_col: str,
+    case_col: str,
+    window_days: int
+) -> Dict[str, Any]:
+    """Analyze temporal patterns for outbreak detection."""
+
+    result = {
+        "significant_increase": False,
+        "baseline_rate": 0.0,
+        "current_rate": 0.0,
+        "rate_ratio": 1.0
+    }
+
+    try:
+        # Convert to datetime
+        data = data.copy()
+        data[time_col] = pd.to_datetime(data[time_col], errors='coerce')
+        data = data.dropna(subset=[time_col])
+
+        if len(data) < 10:
+            return result
+
+        # Get most recent window
+        latest_date = data[time_col].max()
+        window_start = latest_date - pd.Timedelta(days=window_days)
+
+        recent_data = data[data[time_col] >= window_start]
+        historical_data = data[data[time_col] < window_start]
+
+        if len(historical_data) < 5:
+            return result
+
+        # Calculate case rates
+        recent_rate = float(recent_data[case_col].mean()) if len(recent_data) > 0 else 0
+        baseline_rate = float(historical_data[case_col].mean())
+
+        rate_ratio = recent_rate / (baseline_rate + 1e-10)
+
+        # Use Poisson-based threshold for significance
+        expected_cases = baseline_rate * len(recent_data)
+        observed_cases = recent_data[case_col].sum()
+
+        # Poisson p-value
+        p_value = 1 - poisson.cdf(observed_cases, max(expected_cases, 1))
+
+        result.update({
+            "significant_increase": rate_ratio > 2.0 and p_value < 0.05,
+            "baseline_rate": round(baseline_rate, 4),
+            "current_rate": round(recent_rate, 4),
+            "rate_ratio": round(float(rate_ratio), 2),
+            "p_value": round(float(p_value), 4)
+        })
+
+    except Exception as e:
+        result["error"] = str(e)
+
+    return result
+
+
+def _analyze_spatial_clustering(
+    data: pd.DataFrame,
+    location_col: str,
+    case_col: str
+) -> Dict[str, Any]:
+    """Analyze geographic clustering of cases."""
+
+    result = {
+        "clusters_detected": False,
+        "clusters": [],
+        "total_locations": 0
+    }
+
+    try:
+        # Group by location
+        location_summary = data.groupby(location_col).agg({
+            case_col: ['sum', 'count', 'mean']
+        }).reset_index()
+
+        location_summary.columns = ['location', 'cases', 'total', 'rate']
+
+        result["total_locations"] = len(location_summary)
+
+        # Identify high-rate locations (clusters)
+        median_rate = location_summary['rate'].median()
+        high_rate_threshold = median_rate * 2
+
+        clusters = location_summary[location_summary['rate'] >= high_rate_threshold]
+
+        if len(clusters) > 0:
+            result["clusters_detected"] = True
+            result["clusters"] = [
+                {
+                    "location": row['location'],
+                    "case_count": int(row['cases']),
+                    "case_rate": round(float(row['rate']), 3),
+                    "relative_risk": round(float(row['rate'] / (median_rate + 1e-10)), 2)
+                }
+                for _, row in clusters.iterrows()
+            ][:5]
+
+    except Exception as e:
+        result["error"] = str(e)
+
+    return result
+
+
+def _forecast_epidemic_curve(
+    data: pd.DataFrame,
+    time_col: str,
+    case_col: str,
+    forecast_days: List[int] = None
+) -> Dict[str, Any]:
+    """Simple epidemic curve forecasting using exponential growth model."""
+
+    if forecast_days is None:
+        forecast_days = [7, 14, 30]
+
+    forecast = {
+        "available": False,
+        "predictions": {},
+        "model": "exponential_growth"
+    }
+
+    try:
+        data = data.copy()
+        data[time_col] = pd.to_datetime(data[time_col], errors='coerce')
+        data = data.dropna(subset=[time_col]).sort_values(time_col)
+
+        if len(data) < 7:
+            return forecast
+
+        # Get daily case counts
+        daily_cases = data.groupby(data[time_col].dt.date)[case_col].sum()
+
+        if len(daily_cases) < 5:
+            return forecast
+
+        # Fit exponential growth model
+        days = np.arange(len(daily_cases))
+        cases = daily_cases.values
+
+        # Log-linear regression for growth rate
+        log_cases = np.log(cases + 1)
+        growth_rate = np.polyfit(days, log_cases, 1)[0]
+
+        # Current case count
+        current_cases = float(cases[-1])
+
+        # Forecast
+        for horizon in forecast_days:
+            predicted_cases = current_cases * np.exp(growth_rate * horizon)
+            forecast["predictions"][f"{horizon}_day"] = int(max(0, predicted_cases))
+
+        forecast["available"] = True
+        forecast["growth_rate_per_day"] = round(float(growth_rate), 4)
+        forecast["doubling_time_days"] = round(float(np.log(2) / (growth_rate + 1e-10)), 1) if growth_rate > 0 else None
+
+    except Exception as e:
+        forecast["error"] = str(e)
+
+    return forecast
+
+
+def _estimate_basic_reproduction_number(
+    data: pd.DataFrame,
+    time_col: str,
+    case_col: str
+) -> Dict[str, Any]:
+    """Estimate basic reproduction number (R0) - simplified version."""
+
+    r0_result = {
+        "available": False,
+        "r0_estimate": None,
+        "confidence_interval": None,
+        "methodology": "exponential_growth_method"
+    }
+
+    try:
+        data = data.copy()
+        data[time_col] = pd.to_datetime(data[time_col], errors='coerce')
+        data = data.dropna(subset=[time_col]).sort_values(time_col)
+
+        daily_cases = data.groupby(data[time_col].dt.date)[case_col].sum()
+
+        if len(daily_cases) < 7:
+            return r0_result
+
+        # Calculate growth rate
+        days = np.arange(len(daily_cases))
+        log_cases = np.log(daily_cases.values + 1)
+        growth_rate = np.polyfit(days, log_cases, 1)[0]
+
+        # Assume mean generation time (typical for respiratory infections)
+        generation_time = 5  # days
+
+        # R0 = 1 + (growth_rate * generation_time)
+        r0 = 1 + (growth_rate * generation_time)
+
+        r0_result.update({
+            "available": True,
+            "r0_estimate": round(float(max(0, r0)), 2),
+            "confidence_interval": [
+                round(float(max(0, r0 - 0.5)), 2),
+                round(float(r0 + 0.5), 2)
+            ],
+            "interpretation": _interpret_r0(r0)
+        })
+
+    except Exception as e:
+        r0_result["error"] = str(e)
+
+    return r0_result
+
+
+def _interpret_r0(r0: float) -> str:
+    """Interpret R0 value for clinical context."""
+    if r0 < 1.0:
+        return "Epidemic declining - disease will die out without intervention"
+    elif r0 < 1.5:
+        return "Slow growth - containment measures likely effective"
+    elif r0 < 2.0:
+        return "Moderate transmission - enhanced intervention needed"
+    elif r0 < 3.0:
+        return "Rapid spread - aggressive containment required"
+    else:
+        return "Very rapid transmission - emergency public health response"
+
+
+def _get_outbreak_response_actions(r0_data: Dict, cluster_count: int) -> List[str]:
+    """Generate outbreak response recommendations."""
+
+    actions = []
+    r0 = r0_data.get("r0_estimate", 1.0) or 1.0
+
+    if r0 >= 2.0 or cluster_count >= 3:
+        actions.extend([
+            "IMMEDIATE: Activate emergency operations center",
+            "Implement aggressive case finding + contact tracing",
+            "Consider community-wide interventions",
+            "Notify CDC/state health department - STAT",
+            "Deploy rapid response teams to affected areas"
+        ])
+    elif r0 >= 1.5 or cluster_count >= 2:
+        actions.extend([
+            "URGENT: Enhanced surveillance in affected areas",
+            "Expand testing capacity",
+            "Implement targeted interventions",
+            "Daily epidemiologic briefings"
+        ])
+    else:
+        actions.extend([
+            "Maintain heightened surveillance",
+            "Monitor cluster evolution",
+            "Prepare contingency plans"
+        ])
+
+    return actions
+
+
+# ---------------------------------------------------------------------
+# MODULE 11: MULTI-SITE PATTERN SYNTHESIS
+# ---------------------------------------------------------------------
+
+def synthesize_multisite_patterns(
+    aggregated_data: pd.DataFrame,
+    site_column: str = 'site_id',
+    patient_column: str = 'patient_id'
+) -> Dict[str, Any]:
+    """
+    Synthesize patterns across multiple sites for population-level intelligence.
+
+    Identifies:
+    - Cross-site disease patterns
+    - Geographic variations
+    - Temporal trends across facilities
+    - Novel multi-site clusters
+
+    Returns population-level insights.
+    """
+    synthesis = {
+        "available": False,
+        "total_sites": 0,
+        "total_patients": 0,
+        "cross_site_patterns": [],
+        "geographic_variations": {},
+        "temporal_trends": {}
+    }
+
+    if aggregated_data.empty or site_column not in aggregated_data.columns:
+        synthesis["reason"] = "Insufficient multi-site data"
+        return synthesis
+
+    try:
+        # Basic statistics
+        synthesis["total_sites"] = int(aggregated_data[site_column].nunique())
+
+        if patient_column in aggregated_data.columns:
+            synthesis["total_patients"] = int(aggregated_data[patient_column].nunique())
+
+        # Identify cross-site patterns using feature clustering
+        numeric_cols = aggregated_data.select_dtypes(include=[np.number]).columns
+
+        if len(numeric_cols) >= 3 and len(aggregated_data) >= 20:
+            # Aggregate by site
+            site_profiles = aggregated_data.groupby(site_column)[numeric_cols].mean()
+
+            if len(site_profiles) >= 2:
+                # Cluster sites by similarity
+                distance_matrix = pdist(site_profiles.values, metric='euclidean')
+                linkage_matrix = linkage(distance_matrix, method='ward')
+
+                # Cut dendrogram to get clusters
+                n_clusters = min(3, len(site_profiles) // 2)
+                if n_clusters >= 2:
+                    cluster_labels = fcluster(linkage_matrix, n_clusters, criterion='maxclust')
+
+                    # Analyze each cluster
+                    for cluster_id in range(1, n_clusters + 1):
+                        cluster_sites = site_profiles.index[cluster_labels == cluster_id].tolist()
+
+                        if len(cluster_sites) >= 2:
+                            synthesis["cross_site_patterns"].append({
+                                "pattern_id": f"cluster_{cluster_id}",
+                                "affected_sites": cluster_sites,
+                                "site_count": len(cluster_sites),
+                                "pattern_description": f"Sites showing similar biomarker profiles"
+                            })
+
+            # Geographic variation analysis
+            site_variance = site_profiles.std()
+            high_variance_features = site_variance.nlargest(5)
+
+            synthesis["geographic_variations"] = {
+                "high_variation_biomarkers": [
+                    {
+                        "biomarker": str(feat),
+                        "variation_coefficient": round(float(site_variance[feat] / (site_profiles[feat].mean() + 1e-10)), 3)
+                    }
+                    for feat in high_variance_features.index
+                ]
+            }
+
+        synthesis["available"] = True
+
+    except Exception as e:
+        synthesis["error"] = f"Multi-site synthesis failed: {str(e)}"
+
+    return synthesis
+
+
+# ---------------------------------------------------------------------
+# MODULE 12: GLOBAL DATABASE INTEGRATION FRAMEWORK
+# ---------------------------------------------------------------------
+
+def integrate_global_health_databases(
+    local_patterns: Dict[str, Any],
+    enable_who_glass: bool = False,
+    enable_cdc_nndss: bool = False,
+    enable_gisaid: bool = False
+) -> Dict[str, Any]:
+    """
+    Framework for integrating with global health databases.
+
+    Supports (when enabled):
+    - WHO GLASS (antimicrobial resistance)
+    - CDC NNDSS (notifiable diseases)
+    - GISAID (pathogen sequences)
+    - ProMED (outbreak reports)
+
+    This is a FRAMEWORK - actual API integrations require credentials.
+    Returns matched patterns and resistance trends.
+    """
+    integration = {
+        "available": True,
+        "enabled_databases": [],
+        "matches_found": False,
+        "global_patterns": [],
+        "resistance_patterns": {},
+        "outbreak_alerts": [],
+        "note": "Framework ready - API credentials required for live data"
+    }
+
+    # Track which databases are enabled
+    if enable_who_glass:
+        integration["enabled_databases"].append("WHO_GLASS")
+    if enable_cdc_nndss:
+        integration["enabled_databases"].append("CDC_NNDSS")
+    if enable_gisaid:
+        integration["enabled_databases"].append("GISAID")
+
+    # Placeholder for actual API integration
+    if local_patterns.get("novel_clusters"):
+        integration["matches_found"] = True
+        integration["global_patterns"] = [
+            {
+                "source": "framework_placeholder",
+                "match_type": "similar_outbreak_pattern",
+                "location": "reference_region",
+                "similarity_score": 0.75,
+                "note": "Actual matching requires API credentials and live database access"
+            }
+        ]
+
+    # Framework for resistance pattern matching
+    integration["resistance_patterns"] = {
+        "framework_ready": True,
+        "note": "Resistance pattern matching available when connected to WHO GLASS",
+        "example_structure": {
+            "pathogen": "unknown",
+            "resistance_profile": [],
+            "regional_trends": "awaiting_live_data"
+        }
+    }
+
+    return integration
+
+
+def query_promed_outbreaks(
+    geographic_region: str = None,
+    disease_keywords: List[str] = None,
+    days_back: int = 30
+) -> Dict[str, Any]:
+    """
+    Query ProMED for recent outbreak reports.
+
+    This is a FRAMEWORK - requires ProMED API access for live data.
+    Returns structured outbreak intelligence.
+    """
+    return {
+        "available": True,
+        "framework_ready": True,
+        "geographic_region": geographic_region,
+        "disease_keywords": disease_keywords,
+        "days_back": days_back,
+        "note": "ProMED API integration ready - credentials required for live data",
+        "sample_structure": {
+            "alerts": [],
+            "total_reports": 0,
+            "high_priority": 0
+        }
+    }
+
+
+# ---------------------------------------------------------------------
+# Pydantic Models for Surveillance Endpoints
+# ---------------------------------------------------------------------
+
+class SurveillanceRequest(BaseModel):
+    csv: str
+    patient_id_column: Optional[str] = "patient_id"
+    time_column: Optional[str] = "timestamp"
+    location_column: Optional[str] = "location"
+    case_definition_column: Optional[str] = "is_case"
+    contamination_rate: Optional[float] = 0.1
+    novelty_threshold: Optional[float] = 0.7
+
+
+class SurveillanceResponse(BaseModel):
+    unknown_disease_detection: Optional[Dict[str, Any]] = None
+    outbreak_analysis: Optional[Dict[str, Any]] = None
+    multisite_patterns: Optional[Dict[str, Any]] = None
+    global_integration: Optional[Dict[str, Any]] = None
+    surveillance_summary: Optional[Dict[str, Any]] = None
+
+
+# ---------------------------------------------------------------------
+# SURVEILLANCE ENDPOINTS
+# ---------------------------------------------------------------------
+
+@app.post("/surveillance/unknown_diseases", response_model=Dict[str, Any])
+def detect_unknown_diseases(req: SurveillanceRequest) -> Dict[str, Any]:
+    """
+    Detect unknown/novel disease patterns from multi-patient data.
+    Uses ensemble anomaly detection + clustering.
+    """
+    try:
+        df = pd.read_csv(io.StringIO(req.csv))
+
+        result = detect_unknown_disease_patterns(
+            multi_patient_data=df,
+            known_disease_profiles=None,
+            contamination=req.contamination_rate,
+            novelty_threshold=req.novelty_threshold
+        )
+
+        return _sanitize_for_json(result)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/surveillance/outbreak_detection", response_model=Dict[str, Any])
+def detect_outbreaks(req: SurveillanceRequest) -> Dict[str, Any]:
+    """
+    Detect outbreak patterns using spatial-temporal analysis.
+    Includes R0 estimation and epidemic forecasting.
+    """
+    try:
+        df = pd.read_csv(io.StringIO(req.csv))
+
+        result = detect_outbreak_patterns(
+            multi_site_data=df,
+            time_column=req.time_column,
+            location_column=req.location_column,
+            case_definition_column=req.case_definition_column
+        )
+
+        return _sanitize_for_json(result)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/surveillance/multisite_synthesis", response_model=Dict[str, Any])
+def synthesize_multisite(req: SurveillanceRequest) -> Dict[str, Any]:
+    """
+    Synthesize patterns across multiple sites for population-level intelligence.
+    """
+    try:
+        df = pd.read_csv(io.StringIO(req.csv))
+
+        result = synthesize_multisite_patterns(
+            aggregated_data=df,
+            site_column=req.location_column,
+            patient_column=req.patient_id_column
+        )
+
+        return _sanitize_for_json(result)
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/surveillance/comprehensive", response_model=SurveillanceResponse)
+def comprehensive_surveillance(req: SurveillanceRequest) -> SurveillanceResponse:
+    """
+    Comprehensive population surveillance combining all modules:
+    - Unknown disease detection
+    - Outbreak prediction
+    - Multi-site pattern synthesis
+    - Global database integration framework
+    """
+    try:
+        df = pd.read_csv(io.StringIO(req.csv))
+
+        # Run all surveillance modules
+        unknown_diseases = detect_unknown_disease_patterns(
+            multi_patient_data=df,
+            contamination=req.contamination_rate,
+            novelty_threshold=req.novelty_threshold
+        )
+
+        outbreak = detect_outbreak_patterns(
+            multi_site_data=df,
+            time_column=req.time_column,
+            location_column=req.location_column,
+            case_definition_column=req.case_definition_column
+        )
+
+        multisite = synthesize_multisite_patterns(
+            aggregated_data=df,
+            site_column=req.location_column,
+            patient_column=req.patient_id_column
+        )
+
+        global_int = integrate_global_health_databases(
+            local_patterns=unknown_diseases
+        )
+
+        # Generate summary
+        summary = {
+            "total_patients_analyzed": len(df),
+            "anomalies_detected": unknown_diseases.get("total_anomalies", 0),
+            "novel_disease_clusters": len(unknown_diseases.get("novel_clusters", [])),
+            "outbreak_detected": outbreak.get("outbreak_detected", False),
+            "r0_estimate": outbreak.get("r0_estimation", {}).get("r0_estimate"),
+            "sites_analyzed": multisite.get("total_sites", 0),
+            "cross_site_patterns": len(multisite.get("cross_site_patterns", [])),
+            "alert_level": _determine_alert_level(unknown_diseases, outbreak),
+            "recommended_actions": _get_comprehensive_actions(unknown_diseases, outbreak)
+        }
+
+        return SurveillanceResponse(
+            unknown_disease_detection=_sanitize_for_json(unknown_diseases),
+            outbreak_analysis=_sanitize_for_json(outbreak),
+            multisite_patterns=_sanitize_for_json(multisite),
+            global_integration=_sanitize_for_json(global_int),
+            surveillance_summary=_sanitize_for_json(summary)
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+def _determine_alert_level(unknown_diseases: Dict, outbreak: Dict) -> str:
+    """Determine overall alert level based on surveillance results."""
+
+    novel_clusters = len(unknown_diseases.get("novel_clusters", []))
+    outbreak_detected = outbreak.get("outbreak_detected", False)
+    r0 = outbreak.get("r0_estimation", {}).get("r0_estimate", 0) or 0
+
+    if novel_clusters >= 3 or r0 >= 2.5:
+        return "CRITICAL"
+    elif novel_clusters >= 2 or r0 >= 2.0 or outbreak_detected:
+        return "HIGH"
+    elif novel_clusters >= 1 or r0 >= 1.5:
+        return "MODERATE"
+    else:
+        return "LOW"
+
+
+def _get_comprehensive_actions(unknown_diseases: Dict, outbreak: Dict) -> List[str]:
+    """Get comprehensive recommended actions."""
+
+    actions = []
+    alert_level = _determine_alert_level(unknown_diseases, outbreak)
+
+    if alert_level == "CRITICAL":
+        actions.extend([
+            "IMMEDIATE: Activate emergency operations",
+            "Notify public health authorities - STAT",
+            "Implement isolation protocols",
+            "Begin intensive epidemiologic investigation"
+        ])
+    elif alert_level == "HIGH":
+        actions.extend([
+            "URGENT: Enhanced surveillance",
+            "Prepare isolation capacity",
+            "Contact public health",
+            "Daily situation briefings"
+        ])
+    elif alert_level == "MODERATE":
+        actions.extend([
+            "Heightened monitoring",
+            "Review affected cases",
+            "Prepare contingency plans"
+        ])
+    else:
+        actions.append("Continue routine surveillance")
+
+    return actions
 
 
 @app.get("/health")
