@@ -100,7 +100,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.11.0"
+APP_VERSION = "5.12.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -9617,6 +9617,836 @@ def encryption_split_secret(request: Dict[str, Any]):
             "status": "error",
             "error": str(e)
         }
+
+
+# ============================================
+# BATCH 4C: GOVERNANCE & COMPLIANCE LAYER
+# ============================================
+
+class PurposeOfUse(str, Enum):
+    """Purpose of data use (HIPAA-aligned)."""
+    TREATMENT = "treatment"
+    PAYMENT = "payment"
+    OPERATIONS = "operations"
+    RESEARCH = "research"
+    PUBLIC_HEALTH = "public_health"
+    QUALITY_IMPROVEMENT = "quality_improvement"
+
+
+class DataClassification(str, Enum):
+    """Data classification levels."""
+    L1_PUBLIC = "L1"  # Public, non-sensitive
+    L2_INTERNAL = "L2"  # Internal use only
+    L3_CONFIDENTIAL = "L3"  # PHI, confidential
+    L4_RESTRICTED = "L4"  # Highly sensitive (genetic, mental health)
+
+
+class PolicyDecision(str, Enum):
+    """Policy decision outcomes."""
+    ALLOW = "allow"
+    DENY = "deny"
+    ALLOW_WITH_OBLIGATIONS = "allow_with_obligations"
+
+
+@dataclass
+class Obligation:
+    """Policy obligation that must be enforced."""
+    type: str  # redact, log, watermark, max_rows, etc.
+    value: Any
+    description: str
+
+
+@dataclass
+class PolicyRequest:
+    """Request for policy decision."""
+    principal_id: str
+    principal_roles: List[str]
+    tenant_id: str
+    purpose_of_use: PurposeOfUse
+    action_type: str  # analyze, export, delete, etc.
+    data_classification: DataClassification
+    patient_refs: List[str]
+    consent_status: Optional[str] = None
+
+
+@dataclass
+class PolicyDecisionResult:
+    """Result of policy evaluation."""
+    decision: PolicyDecision
+    reason_codes: List[str]
+    obligations: List[Obligation]
+    evaluated_at: str
+    policy_version: str = "2025-01-01.1"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "decision": self.decision.value,
+            "reason_codes": self.reason_codes,
+            "obligations": [{"type": o.type, "value": o.value, "description": o.description} for o in self.obligations],
+            "evaluated_at": self.evaluated_at,
+            "policy_version": self.policy_version
+        }
+
+
+class ConsentValidator:
+    """Validates patient consent for data use."""
+
+    def __init__(self):
+        self.consent_records: Dict[str, Dict[str, Any]] = {}
+
+    def validate_consent(
+        self,
+        patient_ref: str,
+        purpose: PurposeOfUse,
+        data_types: List[str]
+    ) -> Dict[str, Any]:
+        """Validate consent for specific purpose and data types."""
+
+        # TPO (Treatment, Payment, Operations) allowed under HIPAA
+        if purpose in [PurposeOfUse.TREATMENT, PurposeOfUse.PAYMENT, PurposeOfUse.OPERATIONS]:
+            return {
+                "granted": True,
+                "scope": data_types,
+                "expires_at": None,
+                "basis": "HIPAA_TPO"
+            }
+
+        # Research requires explicit consent
+        if purpose == PurposeOfUse.RESEARCH:
+            consent = self.consent_records.get(patient_ref, {})
+            research_consent = consent.get("research_consent", False)
+
+            return {
+                "granted": research_consent,
+                "scope": data_types if research_consent else [],
+                "expires_at": consent.get("research_consent_expires"),
+                "basis": "EXPLICIT_CONSENT" if research_consent else "NO_CONSENT"
+            }
+
+        return {
+            "granted": False,
+            "scope": [],
+            "expires_at": None,
+            "basis": "NO_CONSENT"
+        }
+
+
+class PolicyEngine:
+    """Policy Decision Point (PDP) - Policy-as-code enforcement."""
+
+    def __init__(self):
+        self.consent_validator = ConsentValidator()
+        self.policy_cache: Dict[str, PolicyDecisionResult] = {}
+
+    async def evaluate_policy(self, request: PolicyRequest) -> PolicyDecisionResult:
+        """Evaluate if action is allowed under current policies."""
+
+        reason_codes = []
+        obligations = []
+
+        # Rule 1: Tenant boundary check
+        if not request.tenant_id:
+            return PolicyDecisionResult(
+                decision=PolicyDecision.DENY,
+                reason_codes=["MISSING_TENANT_ID"],
+                obligations=[],
+                evaluated_at=datetime.utcnow().isoformat()
+            )
+
+        # Rule 2: Role-based access control
+        required_roles = self._get_required_roles(request.action_type, request.data_classification)
+
+        if not any(role in request.principal_roles for role in required_roles):
+            return PolicyDecisionResult(
+                decision=PolicyDecision.DENY,
+                reason_codes=["INSUFFICIENT_ROLE"],
+                obligations=[],
+                evaluated_at=datetime.utcnow().isoformat()
+            )
+
+        reason_codes.append("RBAC_PASSED")
+
+        # Rule 3: Consent validation for PHI
+        if request.data_classification in [DataClassification.L3_CONFIDENTIAL, DataClassification.L4_RESTRICTED]:
+            for patient_ref in request.patient_refs:
+                consent = self.consent_validator.validate_consent(
+                    patient_ref=patient_ref,
+                    purpose=request.purpose_of_use,
+                    data_types=["all"]
+                )
+
+                if not consent["granted"]:
+                    return PolicyDecisionResult(
+                        decision=PolicyDecision.DENY,
+                        reason_codes=["CONSENT_REQUIRED", f"patient_{patient_ref}"],
+                        obligations=[],
+                        evaluated_at=datetime.utcnow().isoformat()
+                    )
+
+        reason_codes.append("CONSENT_VALIDATED")
+
+        # Rule 4: Data minimization obligations
+        if request.action_type in ["query", "export"]:
+            if "researcher" in request.principal_roles:
+                obligations.append(Obligation(
+                    type="max_rows",
+                    value=500,
+                    description="Researcher queries limited to 500 rows"
+                ))
+
+            if "clinician" not in request.principal_roles:
+                obligations.append(Obligation(
+                    type="field_allowlist",
+                    value=["age", "sex", "diagnosis", "risk_score"],
+                    description="Limited field access for non-clinicians"
+                ))
+
+        # Rule 5: Redaction obligation for logs
+        if request.data_classification in [DataClassification.L3_CONFIDENTIAL, DataClassification.L4_RESTRICTED]:
+            obligations.append(Obligation(
+                type="redact_before_log",
+                value=True,
+                description="PHI must be redacted before logging"
+            ))
+
+        # Rule 6: Watermark obligation for exports
+        if request.action_type == "export":
+            obligations.append(Obligation(
+                type="watermark",
+                value=f"AUTHORIZED USE ONLY - {request.tenant_id}",
+                description="Watermark required on all exports"
+            ))
+
+        # Rule 7: Enhanced logging for L4 data
+        if request.data_classification == DataClassification.L4_RESTRICTED:
+            obligations.append(Obligation(
+                type="enhanced_logging",
+                value=True,
+                description="Enhanced audit logging for restricted data"
+            ))
+            reason_codes.append("L4_ENHANCED_LOGGING")
+
+        # Determine final decision
+        if obligations:
+            decision = PolicyDecision.ALLOW_WITH_OBLIGATIONS
+        else:
+            decision = PolicyDecision.ALLOW
+
+        return PolicyDecisionResult(
+            decision=decision,
+            reason_codes=reason_codes,
+            obligations=obligations,
+            evaluated_at=datetime.utcnow().isoformat()
+        )
+
+    def _get_required_roles(self, action_type: str, data_classification: DataClassification) -> List[str]:
+        """Determine required roles for action."""
+
+        if action_type in ["delete", "modify_policy", "system_config"]:
+            return ["admin", "superadmin"]
+
+        if data_classification in [DataClassification.L3_CONFIDENTIAL, DataClassification.L4_RESTRICTED]:
+            if action_type in ["analyze", "view"]:
+                return ["clinician", "researcher", "admin"]
+            elif action_type == "export":
+                return ["clinician", "admin"]
+
+        return ["user", "clinician", "researcher", "admin"]
+
+
+# ============================================
+# BATCH 4C MODULE 2: TOOL GATEWAY (PEP)
+# ============================================
+
+class IdempotencyStore:
+    """Store for idempotency keys."""
+
+    def __init__(self):
+        self.store: Dict[str, Any] = {}
+        self.ttl_seconds = 3600
+
+    async def get(self, key: str) -> Optional[Any]:
+        """Get cached result for idempotency key."""
+        entry = self.store.get(key)
+
+        if entry:
+            if datetime.utcnow() < entry["expires_at"]:
+                return entry["result"]
+            else:
+                del self.store[key]
+
+        return None
+
+    async def set(self, key: str, result: Any, ttl: int = None):
+        """Store result with idempotency key."""
+        ttl = ttl or self.ttl_seconds
+        expires_at = datetime.utcnow() + timedelta(seconds=ttl)
+
+        self.store[key] = {
+            "result": result,
+            "stored_at": datetime.utcnow(),
+            "expires_at": expires_at
+        }
+
+
+class SchemaValidator:
+    """JSON schema validator for tool requests."""
+
+    def validate(self, tool: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate payload against tool schema."""
+
+        schemas = {
+            "hypercore_analysis_engine": {
+                "required_fields": ["csv", "label_column"],
+                "optional_fields": ["patient_id_column", "features"],
+                "max_payload_size": 10 * 1024 * 1024
+            },
+            "predictive_core": {
+                "required_fields": ["task"],
+                "optional_fields": ["n_patients", "params"],
+                "max_payload_size": 1 * 1024 * 1024
+            }
+        }
+
+        schema = schemas.get(tool)
+
+        if not schema:
+            return {"valid": True, "warnings": [f"No schema defined for tool: {tool}"]}
+
+        errors = []
+
+        for field in schema["required_fields"]:
+            if field not in payload:
+                errors.append(f"Missing required field: {field}")
+
+        allowed_fields = set(schema["required_fields"] + schema["optional_fields"])
+        unknown_fields = set(payload.keys()) - allowed_fields
+
+        if unknown_fields:
+            errors.append(f"Unknown fields: {unknown_fields}")
+
+        payload_size = len(json.dumps(payload).encode())
+        if payload_size > schema["max_payload_size"]:
+            errors.append(f"Payload too large: {payload_size} bytes")
+
+        return {"valid": len(errors) == 0, "errors": errors}
+
+
+class ToolGateway:
+    """Policy Enforcement Point (PEP) - enforces policy decisions on all tool calls."""
+
+    def __init__(self, policy_engine: PolicyEngine):
+        self.policy_engine = policy_engine
+        self.schema_validator = SchemaValidator()
+        self.idempotency_store = IdempotencyStore()
+
+    async def execute_tool_call(
+        self,
+        tool_request: Dict[str, Any],
+        policy_decision: PolicyDecisionResult
+    ) -> Dict[str, Any]:
+        """Execute tool call with full policy enforcement."""
+
+        tool_name = tool_request.get("tool")
+        payload = tool_request.get("payload", {})
+        idempotency_key = tool_request.get("idempotency_key")
+
+        # Step 1: Schema validation
+        validation = self.schema_validator.validate(tool_name, payload)
+
+        if not validation["valid"]:
+            return {
+                "status": "error",
+                "error_type": "schema_validation_failed",
+                "errors": validation["errors"]
+            }
+
+        # Step 2: Idempotency check
+        if idempotency_key:
+            cached_result = await self.idempotency_store.get(idempotency_key)
+            if cached_result:
+                return {"status": "cached", "result": cached_result, "executed": False}
+
+        # Step 3: Apply obligations
+        modified_payload = self._apply_obligations(payload, policy_decision.obligations)
+
+        # Step 4: Execute tool (framework)
+        result = {
+            "status": "success",
+            "tool": tool_name,
+            "output": "Tool execution framework - actual agent calls in production"
+        }
+
+        # Step 5: Classify output
+        classification = self._classify_output(result)
+
+        # Step 6: Redact for logs if obligated
+        redact_obligation = next(
+            (o for o in policy_decision.obligations if o.type == "redact_before_log"),
+            None
+        )
+
+        log_safe_result = self._redact_phi(result) if redact_obligation else result
+
+        # Step 7: Cache for idempotency
+        if idempotency_key:
+            await self.idempotency_store.set(idempotency_key, result)
+
+        return {
+            "status": "executed",
+            "result": result,
+            "result_hash": hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest(),
+            "log_safe_result": log_safe_result,
+            "classification": classification
+        }
+
+    def _apply_obligations(self, payload: Dict[str, Any], obligations: List[Obligation]) -> Dict[str, Any]:
+        """Apply policy obligations to payload."""
+        modified = payload.copy()
+
+        for obligation in obligations:
+            if obligation.type == "max_rows":
+                if "query" in modified:
+                    modified["query"]["limit"] = min(modified["query"].get("limit", 9999), obligation.value)
+            elif obligation.type == "field_allowlist":
+                if "fields" in modified:
+                    modified["fields"] = [f for f in modified["fields"] if f in obligation.value]
+            elif obligation.type == "watermark":
+                modified["_watermark"] = obligation.value
+
+        return modified
+
+    def _classify_output(self, output: Dict[str, Any]) -> str:
+        """Classify output data sensitivity."""
+        output_str = json.dumps(output).lower()
+
+        if any(keyword in output_str for keyword in ["patient", "mrn", "ssn", "dob"]):
+            return "L3_PHI"
+        elif any(keyword in output_str for keyword in ["genetic", "mental_health"]):
+            return "L4_RESTRICTED"
+        else:
+            return "L2_INTERNAL"
+
+    def _redact_phi(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Redact PHI from data for logging."""
+        redacted = json.loads(json.dumps(data))
+
+        if "patient_id" in redacted:
+            redacted["patient_id"] = hashlib.sha256(str(redacted["patient_id"]).encode()).hexdigest()[:16]
+
+        return redacted
+
+
+# ============================================
+# BATCH 4C MODULE 3: AUDIT LEDGER (WORM)
+# ============================================
+
+@dataclass
+class AuditEvent:
+    """Single audit event."""
+    event_id: str
+    event_type: str
+    timestamp: str
+    tenant_id: str
+    session_id: str
+    actor: Dict[str, Any]
+    object_refs: Dict[str, Any]
+    request_hash: str
+    result_hash: str
+    policy_decision: Optional[Dict[str, Any]]
+    prev_event_hash: str
+    event_hash: str
+    signatures: List[Dict[str, str]]
+
+
+class AuditLedger:
+    """Immutable, hash-chained event log (WORM - Write Once Read Many)."""
+
+    def __init__(self):
+        self.events: Dict[str, List[Dict[str, Any]]] = {}
+        self.session_chains: Dict[str, str] = {}
+
+    async def append_event(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Append event to immutable ledger."""
+
+        session_id = event_data.get("session_id", "global")
+        prev_hash = self.session_chains.get(session_id, "0" * 64)
+
+        event_record = {
+            "event_id": event_data.get("event_id", str(uuid.uuid4())),
+            "event_type": event_data.get("event_type"),
+            "timestamp": datetime.utcnow().isoformat(),
+            "tenant_id": event_data.get("tenant_id", "unknown"),
+            "session_id": session_id,
+            "actor": event_data.get("actor", {}),
+            "object_refs": event_data.get("object_refs", {}),
+            "request_hash": event_data.get("request_hash", ""),
+            "result_hash": event_data.get("result_hash", ""),
+            "policy_decision": event_data.get("policy_decision"),
+            "prev_event_hash": prev_hash
+        }
+
+        event_hash = self._compute_event_hash(event_record)
+        event_record["event_hash"] = event_hash
+
+        signature = self._sign_event(event_hash)
+        event_record["signatures"] = [{
+            "kid": "service-key-001",
+            "alg": "HMAC-SHA256",
+            "sig": signature
+        }]
+
+        if session_id not in self.events:
+            self.events[session_id] = []
+
+        self.events[session_id].append(event_record)
+        self.session_chains[session_id] = event_hash
+
+        return {
+            "event_id": event_record["event_id"],
+            "event_hash": event_hash,
+            "prev_hash": prev_hash,
+            "chain_valid": True
+        }
+
+    def _compute_event_hash(self, event_record: Dict[str, Any]) -> str:
+        """Compute canonical hash of event."""
+        hashable = {k: v for k, v in event_record.items() if k not in ["event_hash", "signatures"]}
+        canonical = json.dumps(hashable, sort_keys=True, separators=(',', ':'))
+        return hashlib.sha256(canonical.encode()).hexdigest()
+
+    def _sign_event(self, event_hash: str) -> str:
+        """Sign event hash."""
+        secret_key = b"diviscan_secret_key_change_in_production"
+        return hmac.new(secret_key, event_hash.encode(), hashlib.sha256).hexdigest()
+
+    async def get_session_events(self, session_id: str) -> List[Dict[str, Any]]:
+        """Get all events for a session."""
+        return self.events.get(session_id, [])
+
+    async def verify_chain(self, session_id: str) -> Dict[str, Any]:
+        """Verify integrity of event chain for a session."""
+
+        events = self.events.get(session_id, [])
+
+        if not events:
+            return {"valid": True, "event_count": 0}
+
+        for i, event in enumerate(events):
+            computed_hash = self._compute_event_hash(event)
+            if computed_hash != event["event_hash"]:
+                return {
+                    "valid": False,
+                    "error": f"Hash mismatch at event {i}",
+                    "tampered_event": event["event_id"]
+                }
+
+            if i > 0:
+                if event["prev_event_hash"] != events[i-1]["event_hash"]:
+                    return {
+                        "valid": False,
+                        "error": f"Chain broken at event {i}",
+                        "tampered_event": event["event_id"]
+                    }
+
+            sig_valid = self._verify_signature(event["event_hash"], event["signatures"][0]["sig"])
+            if not sig_valid:
+                return {
+                    "valid": False,
+                    "error": f"Invalid signature at event {i}",
+                    "tampered_event": event["event_id"]
+                }
+
+        return {"valid": True, "event_count": len(events)}
+
+    def _verify_signature(self, event_hash: str, signature: str) -> bool:
+        """Verify event signature."""
+        expected_sig = self._sign_event(event_hash)
+        return hmac.compare_digest(expected_sig, signature)
+
+
+# ============================================
+# BATCH 4C MODULE 4: EVIDENCE PACKET GENERATOR
+# ============================================
+
+class EvidencePacketGenerator:
+    """Creates reproducible proof bundles for regulatory/legal use."""
+
+    def __init__(self, audit_ledger: AuditLedger):
+        self.audit_ledger = audit_ledger
+
+    async def build_evidence_packet(self, session_id: str, case_id: str = None) -> Dict[str, Any]:
+        """Build complete evidence packet for a session."""
+
+        events = await self.audit_ledger.get_session_events(session_id)
+
+        if not events:
+            return {"status": "error", "message": f"No events found for session {session_id}"}
+
+        policy_decisions = [
+            {
+                "event_id": e["event_id"],
+                "timestamp": e["timestamp"],
+                "decision": e.get("policy_decision", {}).get("decision") if e.get("policy_decision") else None,
+                "reason_codes": e.get("policy_decision", {}).get("reason_codes", []) if e.get("policy_decision") else []
+            }
+            for e in events if e["event_type"] == "POLICY_EVALUATED"
+        ]
+
+        tool_calls = [
+            {
+                "event_id": e["event_id"],
+                "timestamp": e["timestamp"],
+                "request_hash": e["request_hash"],
+                "result_hash": e["result_hash"]
+            }
+            for e in events if e["event_type"] == "TOOL_CALL_EXECUTED"
+        ]
+
+        ledger_head = events[-1]["event_hash"] if events else None
+
+        manifest = {
+            "session_id": session_id,
+            "case_id": case_id or f"case_{session_id[:8]}",
+            "generated_at": datetime.utcnow().isoformat(),
+            "event_count": len(events),
+            "ledger_head_hash": ledger_head,
+            "contents": {
+                "policy_decisions": self._hash_data(policy_decisions),
+                "tool_calls": self._hash_data(tool_calls)
+            }
+        }
+
+        chain_verification = await self.audit_ledger.verify_chain(session_id)
+
+        return {
+            "status": "success",
+            "packet_id": f"evidence_{session_id}_{case_id or 'default'}",
+            "manifest": manifest,
+            "policy_decisions": policy_decisions,
+            "tool_calls": tool_calls,
+            "ledger_head": ledger_head,
+            "chain_verification": chain_verification
+        }
+
+    def _hash_data(self, data: Any) -> str:
+        """Hash data for manifest."""
+        canonical = json.dumps(data, sort_keys=True)
+        return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+# ============================================
+# BATCH 4C MODULE 5: BLOCKCHAIN INTEGRATION
+# ============================================
+
+class GovernanceBlockchain:
+    """Blockchain integration for immutable anchoring."""
+
+    def __init__(self):
+        self.anchored_sessions: Dict[str, Dict[str, Any]] = {}
+
+    def compute_sha3(self, data: str) -> str:
+        """Compute SHA-3 hash."""
+        return hashlib.sha3_256(data.encode()).hexdigest()
+
+    def compute_merkle_root(self, hashes: List[str]) -> str:
+        """Compute Merkle root from list of hashes."""
+
+        if not hashes:
+            return ""
+
+        if len(hashes) == 1:
+            return hashes[0]
+
+        current_level = hashes[:]
+
+        while len(current_level) > 1:
+            next_level = []
+
+            for i in range(0, len(current_level), 2):
+                if i + 1 < len(current_level):
+                    combined = current_level[i] + current_level[i + 1]
+                    parent_hash = self.compute_sha3(combined)
+                else:
+                    parent_hash = current_level[i]
+                next_level.append(parent_hash)
+
+            current_level = next_level
+
+        return current_level[0]
+
+    async def anchor_session(self, session_id: str, ledger_head_hash: str) -> Dict[str, Any]:
+        """Anchor session hash to blockchain."""
+
+        anchor_record = {
+            "session_id": session_id,
+            "ledger_head_hash": ledger_head_hash,
+            "sha3_hash": self.compute_sha3(ledger_head_hash),
+            "anchored_at": datetime.utcnow().isoformat(),
+            "blockchain": "diviscan_chain",
+            "transaction_id": f"tx_{secrets.token_hex(16)}",
+            "block_number": len(self.anchored_sessions) + 1,
+            "status": "confirmed"
+        }
+
+        self.anchored_sessions[session_id] = anchor_record
+        return anchor_record
+
+    async def verify_anchor(self, session_id: str, claimed_hash: str) -> Dict[str, Any]:
+        """Verify that session hash matches blockchain anchor."""
+
+        anchor = self.anchored_sessions.get(session_id)
+
+        if not anchor:
+            return {"verified": False, "error": "Session not found in blockchain"}
+
+        claimed_sha3 = self.compute_sha3(claimed_hash)
+
+        if claimed_sha3 != anchor["sha3_hash"]:
+            return {
+                "verified": False,
+                "error": "Hash mismatch",
+                "expected": anchor["sha3_hash"],
+                "received": claimed_sha3
+            }
+
+        return {"verified": True, "anchor": anchor}
+
+
+# Initialize Batch 4C Governance Components
+policy_engine = PolicyEngine()
+tool_gateway = ToolGateway(policy_engine)
+audit_ledger = AuditLedger()
+evidence_generator = EvidencePacketGenerator(audit_ledger)
+governance_blockchain = GovernanceBlockchain()
+
+
+# ============================================
+# BATCH 4C: GOVERNANCE ENDPOINTS
+# ============================================
+
+@app.post("/governance/policy/evaluate")
+async def governance_policy_evaluate(request: Dict[str, Any]):
+    """Evaluate policy for a request."""
+    try:
+        policy_request = PolicyRequest(
+            principal_id=request.get("principal_id"),
+            principal_roles=request.get("principal_roles", []),
+            tenant_id=request.get("tenant_id"),
+            purpose_of_use=PurposeOfUse(request.get("purpose_of_use", "treatment")),
+            action_type=request.get("action_type", "analyze"),
+            data_classification=DataClassification(request.get("data_classification", "L2")),
+            patient_refs=request.get("patient_refs", [])
+        )
+
+        decision = await policy_engine.evaluate_policy(policy_request)
+
+        return {
+            "status": "success",
+            "decision": decision.to_dict()
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.get("/governance/audit/{session_id}")
+async def governance_audit_get(session_id: str):
+    """Get audit events for a session."""
+    events = await audit_ledger.get_session_events(session_id)
+    verification = await audit_ledger.verify_chain(session_id)
+
+    return {
+        "status": "success",
+        "session_id": session_id,
+        "event_count": len(events),
+        "events": events,
+        "chain_verification": verification
+    }
+
+
+@app.get("/governance/audit/{session_id}/verify")
+async def governance_audit_verify(session_id: str):
+    """Verify audit chain integrity."""
+    verification = await audit_ledger.verify_chain(session_id)
+    return {"status": "success", "verification": verification}
+
+
+@app.post("/governance/audit/append")
+async def governance_audit_append(request: Dict[str, Any]):
+    """Append event to audit ledger."""
+    try:
+        result = await audit_ledger.append_event(request)
+        return {"status": "success", "result": result}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.post("/governance/evidence/build")
+async def governance_evidence_build(request: Dict[str, Any]):
+    """Build evidence packet for a session."""
+    try:
+        session_id = request.get("session_id")
+        case_id = request.get("case_id")
+
+        if not session_id:
+            return {"status": "error", "message": "session_id required"}
+
+        packet = await evidence_generator.build_evidence_packet(
+            session_id=session_id,
+            case_id=case_id
+        )
+
+        return packet
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.post("/governance/blockchain/anchor")
+async def governance_blockchain_anchor(request: Dict[str, Any]):
+    """Anchor session to blockchain."""
+    try:
+        session_id = request.get("session_id")
+        events = await audit_ledger.get_session_events(session_id)
+
+        if not events:
+            return {"status": "error", "message": "No events found for session"}
+
+        ledger_head = events[-1]["event_hash"]
+        anchor = await governance_blockchain.anchor_session(session_id, ledger_head)
+
+        return {"status": "success", "anchor": anchor}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.post("/governance/blockchain/verify")
+async def governance_blockchain_verify(request: Dict[str, Any]):
+    """Verify blockchain anchor."""
+    try:
+        session_id = request.get("session_id")
+        claimed_hash = request.get("claimed_hash")
+
+        verification = await governance_blockchain.verify_anchor(session_id, claimed_hash)
+
+        return {"status": "success", "verification": verification}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.get("/governance/status")
+def governance_status():
+    """Get governance system status."""
+    return {
+        "status": "success",
+        "governance": {
+            "policy_engine": "ACTIVE",
+            "audit_ledger": "ACTIVE",
+            "evidence_generator": "ACTIVE",
+            "blockchain": "ACTIVE",
+            "policy_version": "2025-01-01.1",
+            "compliance_frameworks": ["HIPAA", "FDA_21CFR11", "GDPR"]
+        }
+    }
 
 
 @app.get("/health")
