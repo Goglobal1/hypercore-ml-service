@@ -70,7 +70,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.5.0"
+APP_VERSION = "5.6.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -344,6 +344,28 @@ class AnalyzeResponse(BaseModel):
     lead_time_analysis: Optional[Dict[str, Any]] = None
     early_warning_metrics: Optional[Dict[str, Any]] = None
     detection_sensitivity: Optional[Dict[str, Any]] = None
+
+    # ============================================
+    # BATCH 2 NEW FIELDS
+    # ============================================
+
+    # MODULE 1: Uncertainty Quantification
+    uncertainty_metrics: Optional[Dict[str, Any]] = None
+    confidence_intervals: Optional[Dict[str, Any]] = None
+    calibration_assessment: Optional[Dict[str, Any]] = None
+
+    # MODULE 2: Bias & Fairness Validation
+    bias_analysis: Optional[Dict[str, Any]] = None
+    equity_metrics: Optional[Dict[str, Any]] = None
+
+    # MODULE 3: Stability Testing
+    stability_metrics: Optional[Dict[str, Any]] = None
+    robustness_analysis: Optional[Dict[str, Any]] = None
+    reproducibility_verification: Optional[Dict[str, Any]] = None
+
+    # MODULE 4: FHIR Compatibility
+    fhir_diagnostic_report: Optional[Dict[str, Any]] = None
+    loinc_mappings: Optional[List[Dict[str, Any]]] = None
 
 
 class EarlyRiskRequest(BaseModel):
@@ -2100,6 +2122,194 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         except Exception as batch1_err:
             pass  # Silent fail for entire Batch 1 if critical error
 
+        # ============================================
+        # BATCH 2: VALIDATION, GOVERNANCE & SAFETY
+        # ============================================
+
+        # Initialize Batch 2 outputs
+        uncertainty_metrics = None
+        confidence_intervals = None
+        calibration_assessment = None
+        bias_analysis = None
+        equity_metrics = None
+        stability_metrics = None
+        robustness_analysis = None
+        reproducibility_verification = None
+        fhir_diagnostic_report = None
+        loinc_mappings = None
+
+        try:
+            # Get trained model and features
+            trained_model = linear.get("model", None)
+            X_clean = linear.get("X_clean", pd.DataFrame())
+            y_series = pd.Series(y, index=full_features.index) if len(y) == len(full_features) else None
+
+            # ============================================
+            # MODULE 5: UNCERTAINTY QUANTIFICATION
+            # ============================================
+            try:
+                if trained_model is not None and not X_clean.empty:
+                    # Quantify prediction uncertainty
+                    uncertainty_metrics = quantify_prediction_uncertainty(
+                        model=trained_model,
+                        X=X_clean,
+                        method="bootstrap",
+                        n_iterations=50,
+                        confidence_level=0.95
+                    )
+
+                    # Compute confidence intervals for risk scores
+                    if hasattr(trained_model, 'predict_proba'):
+                        try:
+                            risk_scores_series = pd.Series(
+                                trained_model.predict_proba(X_clean)[:, 1],
+                                index=X_clean.index
+                            )
+                            confidence_intervals = compute_confidence_intervals(
+                                risk_scores=risk_scores_series,
+                                confidence_level=0.95
+                            )
+                        except Exception:
+                            pass
+
+                    # Assess calibration
+                    if y_series is not None and len(y_series) >= 30:
+                        common_idx = X_clean.index.intersection(y_series.index)
+                        if len(common_idx) >= 30:
+                            try:
+                                y_pred = pd.Series(
+                                    trained_model.predict_proba(X_clean.loc[common_idx])[:, 1],
+                                    index=common_idx
+                                )
+                                calibration_assessment = assess_calibration(
+                                    y_true=y_series.loc[common_idx],
+                                    y_pred_proba=y_pred,
+                                    n_bins=5
+                                )
+                            except Exception:
+                                pass
+
+            except Exception:
+                pass  # Silent fail for uncertainty module
+
+            # ============================================
+            # MODULE 6: BIAS & FAIRNESS VALIDATION
+            # ============================================
+            try:
+                if trained_model is not None and not X_clean.empty and y_series is not None:
+                    ctx = req.context or {}
+                    # Check for demographic data
+                    demo_keys = ['age', 'sex', 'gender', 'race', 'ethnicity']
+                    available_demos = [k for k in demo_keys if k in df.columns or k in ctx]
+
+                    if available_demos:
+                        # Build demographics dataframe
+                        demo_data = {}
+                        for key in available_demos:
+                            if key in df.columns:
+                                demo_data[key] = df[key].values[:len(X_clean)]
+                            elif key in ctx:
+                                demo_data[key] = [ctx[key]] * len(X_clean)
+
+                        if demo_data:
+                            demographics = pd.DataFrame(demo_data, index=X_clean.index)
+                            common_idx = X_clean.index.intersection(y_series.index)
+
+                            if len(common_idx) >= 30:
+                                preds = pd.Series(
+                                    trained_model.predict_proba(X_clean.loc[common_idx])[:, 1],
+                                    index=common_idx
+                                )
+
+                                bias_analysis = detect_demographic_bias(
+                                    predictions=preds,
+                                    outcomes=y_series.loc[common_idx],
+                                    demographics=demographics.loc[common_idx] if common_idx.isin(demographics.index).all() else demographics.iloc[:len(common_idx)],
+                                    sensitive_attributes=list(demo_data.keys())
+                                )
+
+                                # Compute equity metrics if bias analysis succeeded
+                                if bias_analysis.get("fairness_metrics"):
+                                    first_attr = list(bias_analysis["fairness_metrics"].keys())[0]
+                                    perf_by_group = bias_analysis["fairness_metrics"][first_attr].get("group_metrics", {})
+                                    if perf_by_group:
+                                        equity_metrics = compute_equity_metrics(perf_by_group)
+
+            except Exception:
+                pass  # Silent fail for bias module
+
+            # ============================================
+            # MODULE 7: STABILITY TESTING
+            # ============================================
+            try:
+                if trained_model is not None and not X_clean.empty and y_series is not None:
+                    common_idx = X_clean.index.intersection(y_series.index)
+
+                    if len(common_idx) >= 30:
+                        X_aligned = X_clean.loc[common_idx]
+                        y_aligned = y_series.loc[common_idx]
+
+                        # Test model stability
+                        stability_metrics = test_model_stability(
+                            model=trained_model,
+                            X=X_aligned,
+                            y=y_aligned,
+                            n_iterations=30,
+                            test_size=0.2
+                        )
+
+                    # Test robustness to perturbations
+                    if len(X_clean) >= 10:
+                        robustness_analysis = test_perturbation_robustness(
+                            model=trained_model,
+                            X=X_clean,
+                            noise_levels=[0.01, 0.05, 0.10]
+                        )
+
+                    # Verify reproducibility
+                    if len(X_clean) >= 5:
+                        reproducibility_verification = verify_reproducibility(
+                            model=trained_model,
+                            X=X_clean,
+                            n_runs=10
+                        )
+
+            except Exception:
+                pass  # Silent fail for stability module
+
+            # ============================================
+            # MODULE 8: FHIR COMPATIBILITY
+            # ============================================
+            try:
+                # Generate FHIR DiagnosticReport
+                patient_id = req.patient_id_column if hasattr(req, 'patient_id_column') else "unknown"
+
+                analysis_for_fhir = {
+                    "executive_summary": executive_summary,
+                    "narrative_insights": narrative_insights
+                }
+
+                fhir_diagnostic_report = convert_to_fhir_diagnostic_report(
+                    analysis_result=analysis_for_fhir,
+                    patient_id=str(patient_id)
+                )
+
+                # Map labs to LOINC
+                if not labs_long.empty:
+                    loinc_mappings = []
+                    unique_labs = labs_long['lab_key'].unique()
+
+                    for lab in unique_labs[:20]:  # Limit to 20 for performance
+                        mapping = map_to_loinc(str(lab))
+                        if mapping["matched"]:
+                            loinc_mappings.append(mapping)
+
+            except Exception:
+                pass  # Silent fail for FHIR module
+
+        except Exception:
+            pass  # Silent fail for entire Batch 2 if critical error
+
         # Return response (Base44 can be updated to read pipeline + manifest)
         # Sanitize all data to ensure no inf/nan values in JSON response
         return AnalyzeResponse(
@@ -2138,6 +2348,17 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             lead_time_analysis=_sanitize_for_json(lead_time_analysis),
             early_warning_metrics=_sanitize_for_json(early_warning_metrics),
             detection_sensitivity=_sanitize_for_json(detection_sensitivity),
+            # BATCH 2 NEW FIELDS
+            uncertainty_metrics=_sanitize_for_json(uncertainty_metrics),
+            confidence_intervals=_sanitize_for_json(confidence_intervals),
+            calibration_assessment=_sanitize_for_json(calibration_assessment),
+            bias_analysis=_sanitize_for_json(bias_analysis),
+            equity_metrics=_sanitize_for_json(equity_metrics),
+            stability_metrics=_sanitize_for_json(stability_metrics),
+            robustness_analysis=_sanitize_for_json(robustness_analysis),
+            reproducibility_verification=_sanitize_for_json(reproducibility_verification),
+            fhir_diagnostic_report=_sanitize_for_json(fhir_diagnostic_report),
+            loinc_mappings=_sanitize_for_json(loinc_mappings),
         )
     except Exception as e:
         raise HTTPException(
@@ -4389,6 +4610,722 @@ def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
             status_code=500,
             detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
         )
+
+
+# =====================================================================
+# BATCH 2: VALIDATION, GOVERNANCE & SAFETY LAYER
+# =====================================================================
+
+
+# ---------------------------------------------------------------------
+# MODULE 5: UNCERTAINTY QUANTIFICATION
+# ---------------------------------------------------------------------
+
+def quantify_prediction_uncertainty(
+    model: Any,
+    X: pd.DataFrame,
+    method: str = "bootstrap",
+    n_iterations: int = 50,
+    confidence_level: float = 0.95
+) -> Dict[str, Any]:
+    """
+    Quantify prediction uncertainty using bootstrap or other methods.
+    Returns uncertainty metrics for regulatory compliance.
+    """
+    if X.empty:
+        return {"available": False, "reason": "No features provided"}
+
+    uncertainty = {
+        "available": True,
+        "method": method,
+        "n_iterations": n_iterations,
+        "confidence_level": confidence_level
+    }
+
+    try:
+        if not hasattr(model, 'predict_proba'):
+            uncertainty["available"] = False
+            uncertainty["reason"] = "Model does not support probability predictions"
+            return uncertainty
+
+        # Get base predictions
+        base_probs = model.predict_proba(X)[:, 1]
+
+        if method == "bootstrap":
+            # Bootstrap uncertainty estimation
+            np.random.seed(RANDOM_SEED)
+            bootstrap_preds = []
+
+            for i in range(n_iterations):
+                # Resample with replacement
+                indices = np.random.choice(len(X), size=len(X), replace=True)
+                X_boot = X.iloc[indices]
+
+                # Get predictions on bootstrap sample
+                preds = model.predict_proba(X_boot)[:, 1]
+                bootstrap_preds.append(np.mean(preds))
+
+            bootstrap_preds = np.array(bootstrap_preds)
+
+            # Compute confidence intervals
+            alpha = 1 - confidence_level
+            lower = np.percentile(bootstrap_preds, alpha/2 * 100)
+            upper = np.percentile(bootstrap_preds, (1 - alpha/2) * 100)
+
+            uncertainty.update({
+                "mean_prediction": float(np.mean(base_probs)),
+                "std_prediction": float(np.std(base_probs)),
+                "bootstrap_mean": float(np.mean(bootstrap_preds)),
+                "bootstrap_std": float(np.std(bootstrap_preds)),
+                "confidence_interval": {
+                    "lower": float(lower),
+                    "upper": float(upper),
+                    "level": confidence_level
+                },
+                "coefficient_of_variation": float(np.std(bootstrap_preds) / np.mean(bootstrap_preds)) if np.mean(bootstrap_preds) > 0 else 0
+            })
+
+        # Add prediction distribution stats
+        uncertainty["prediction_distribution"] = {
+            "min": float(np.min(base_probs)),
+            "max": float(np.max(base_probs)),
+            "median": float(np.median(base_probs)),
+            "q25": float(np.percentile(base_probs, 25)),
+            "q75": float(np.percentile(base_probs, 75))
+        }
+
+    except Exception as e:
+        uncertainty["available"] = False
+        uncertainty["error"] = str(e)
+
+    return uncertainty
+
+
+def compute_confidence_intervals(
+    risk_scores: pd.Series,
+    confidence_level: float = 0.95
+) -> Dict[str, Any]:
+    """
+    Compute confidence intervals for risk score distributions.
+    """
+    if len(risk_scores) < 5:
+        return {"available": False, "reason": "Insufficient data"}
+
+    try:
+        alpha = 1 - confidence_level
+        n = len(risk_scores)
+
+        # Standard error based CI
+        mean = float(risk_scores.mean())
+        std = float(risk_scores.std())
+        se = std / np.sqrt(n)
+
+        # Z-score for confidence level
+        z = 1.96 if confidence_level == 0.95 else 2.576 if confidence_level == 0.99 else 1.645
+
+        ci_lower = mean - z * se
+        ci_upper = mean + z * se
+
+        # Percentile-based CI
+        percentile_lower = float(np.percentile(risk_scores, alpha/2 * 100))
+        percentile_upper = float(np.percentile(risk_scores, (1 - alpha/2) * 100))
+
+        return {
+            "available": True,
+            "n_samples": n,
+            "mean": mean,
+            "std": std,
+            "standard_error": float(se),
+            "parametric_ci": {
+                "lower": float(ci_lower),
+                "upper": float(ci_upper),
+                "level": confidence_level
+            },
+            "percentile_ci": {
+                "lower": percentile_lower,
+                "upper": percentile_upper,
+                "level": confidence_level
+            },
+            "margin_of_error": float(z * se)
+        }
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+def assess_calibration(
+    y_true: pd.Series,
+    y_pred_proba: pd.Series,
+    n_bins: int = 5
+) -> Dict[str, Any]:
+    """
+    Assess model calibration using reliability diagram metrics.
+    Critical for regulatory compliance.
+    """
+    if len(y_true) < 10 or len(y_pred_proba) < 10:
+        return {"available": False, "reason": "Insufficient data"}
+
+    try:
+        # Align indices
+        common_idx = y_true.index.intersection(y_pred_proba.index)
+        if len(common_idx) < 10:
+            return {"available": False, "reason": "Insufficient overlapping data"}
+
+        y_true = y_true.loc[common_idx].values
+        y_pred = y_pred_proba.loc[common_idx].values
+
+        # Bin predictions
+        bins = np.linspace(0, 1, n_bins + 1)
+        bin_indices = np.digitize(y_pred, bins) - 1
+        bin_indices = np.clip(bin_indices, 0, n_bins - 1)
+
+        calibration_data = []
+        ece = 0  # Expected Calibration Error
+        mce = 0  # Maximum Calibration Error
+
+        for i in range(n_bins):
+            mask = bin_indices == i
+            if np.sum(mask) > 0:
+                bin_pred = np.mean(y_pred[mask])
+                bin_true = np.mean(y_true[mask])
+                bin_count = int(np.sum(mask))
+
+                gap = abs(bin_pred - bin_true)
+                ece += gap * bin_count / len(y_true)
+                mce = max(mce, gap)
+
+                calibration_data.append({
+                    "bin": i + 1,
+                    "bin_range": [float(bins[i]), float(bins[i+1])],
+                    "mean_predicted": float(bin_pred),
+                    "mean_observed": float(bin_true),
+                    "count": bin_count,
+                    "calibration_gap": float(gap)
+                })
+
+        # Brier score
+        brier_score = float(np.mean((y_pred - y_true) ** 2))
+
+        # Calibration quality assessment
+        if ece < 0.05:
+            quality = "EXCELLENT"
+        elif ece < 0.10:
+            quality = "GOOD"
+        elif ece < 0.15:
+            quality = "FAIR"
+        else:
+            quality = "POOR"
+
+        return {
+            "available": True,
+            "expected_calibration_error": float(ece),
+            "maximum_calibration_error": float(mce),
+            "brier_score": brier_score,
+            "calibration_quality": quality,
+            "n_bins": n_bins,
+            "bin_data": calibration_data,
+            "regulatory_compliant": ece < 0.15,
+            "recommendation": "Model is well-calibrated" if ece < 0.10 else "Consider recalibration"
+        }
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+# ---------------------------------------------------------------------
+# MODULE 6: BIAS & FAIRNESS VALIDATION
+# ---------------------------------------------------------------------
+
+def detect_demographic_bias(
+    predictions: pd.Series,
+    outcomes: pd.Series,
+    demographics: pd.DataFrame,
+    sensitive_attributes: List[str]
+) -> Dict[str, Any]:
+    """
+    Detect bias across demographic groups.
+    Essential for regulatory compliance and ethical AI.
+    """
+    if len(predictions) < 20:
+        return {"available": False, "reason": "Insufficient data"}
+
+    try:
+        # Align all data
+        common_idx = predictions.index.intersection(outcomes.index).intersection(demographics.index)
+        if len(common_idx) < 20:
+            return {"available": False, "reason": "Insufficient overlapping data"}
+
+        predictions = predictions.loc[common_idx]
+        outcomes = outcomes.loc[common_idx]
+        demographics = demographics.loc[common_idx]
+
+        fairness_metrics = {}
+
+        for attr in sensitive_attributes:
+            if attr not in demographics.columns:
+                continue
+
+            groups = demographics[attr].dropna().unique()
+            if len(groups) < 2:
+                continue
+
+            group_metrics = {}
+
+            for group in groups:
+                mask = demographics[attr] == group
+                if mask.sum() < 5:
+                    continue
+
+                group_preds = predictions[mask]
+                group_outcomes = outcomes[mask]
+
+                # Calculate group-specific metrics
+                pred_positive_rate = float((group_preds >= 0.5).mean())
+                actual_positive_rate = float(group_outcomes.mean())
+
+                # True positive rate (sensitivity)
+                if group_outcomes.sum() > 0:
+                    tpr = float(((group_preds >= 0.5) & (group_outcomes == 1)).sum() / group_outcomes.sum())
+                else:
+                    tpr = None
+
+                # False positive rate
+                if (group_outcomes == 0).sum() > 0:
+                    fpr = float(((group_preds >= 0.5) & (group_outcomes == 0)).sum() / (group_outcomes == 0).sum())
+                else:
+                    fpr = None
+
+                group_metrics[str(group)] = {
+                    "n": int(mask.sum()),
+                    "predicted_positive_rate": pred_positive_rate,
+                    "actual_positive_rate": actual_positive_rate,
+                    "true_positive_rate": tpr,
+                    "false_positive_rate": fpr,
+                    "mean_prediction": float(group_preds.mean())
+                }
+
+            # Calculate disparity metrics
+            if len(group_metrics) >= 2:
+                ppr_values = [m["predicted_positive_rate"] for m in group_metrics.values()]
+                tpr_values = [m["true_positive_rate"] for m in group_metrics.values() if m["true_positive_rate"] is not None]
+                fpr_values = [m["false_positive_rate"] for m in group_metrics.values() if m["false_positive_rate"] is not None]
+
+                disparities = {
+                    "demographic_parity_difference": float(max(ppr_values) - min(ppr_values)) if ppr_values else None,
+                    "equalized_odds_difference": float(max(tpr_values) - min(tpr_values)) if len(tpr_values) >= 2 else None,
+                    "fpr_difference": float(max(fpr_values) - min(fpr_values)) if len(fpr_values) >= 2 else None
+                }
+
+                # Bias flags
+                fairness_metrics[attr] = {
+                    "group_metrics": group_metrics,
+                    "disparities": disparities,
+                    "demographic_parity_satisfied": disparities["demographic_parity_difference"] < 0.1 if disparities["demographic_parity_difference"] else None,
+                    "equalized_odds_satisfied": disparities["equalized_odds_difference"] < 0.1 if disparities["equalized_odds_difference"] else None
+                }
+
+        # Overall bias assessment
+        bias_detected = False
+        for attr_data in fairness_metrics.values():
+            if not attr_data.get("demographic_parity_satisfied", True):
+                bias_detected = True
+            if not attr_data.get("equalized_odds_satisfied", True):
+                bias_detected = True
+
+        return {
+            "available": True,
+            "fairness_metrics": fairness_metrics,
+            "bias_detected": bias_detected,
+            "recommendation": "Review model for potential bias" if bias_detected else "No significant bias detected",
+            "regulatory_note": "Bias analysis performed per regulatory requirements"
+        }
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+def compute_equity_metrics(
+    performance_by_group: Dict[str, Dict[str, Any]]
+) -> Dict[str, Any]:
+    """
+    Compute equity metrics across demographic groups.
+    """
+    if not performance_by_group or len(performance_by_group) < 2:
+        return {"available": False, "reason": "Insufficient group data"}
+
+    try:
+        groups = list(performance_by_group.keys())
+
+        # Extract metrics
+        pprs = []
+        tprs = []
+        fprs = []
+
+        for group, metrics in performance_by_group.items():
+            if metrics.get("predicted_positive_rate") is not None:
+                pprs.append(metrics["predicted_positive_rate"])
+            if metrics.get("true_positive_rate") is not None:
+                tprs.append(metrics["true_positive_rate"])
+            if metrics.get("false_positive_rate") is not None:
+                fprs.append(metrics["false_positive_rate"])
+
+        equity = {
+            "available": True,
+            "n_groups": len(groups),
+            "groups_analyzed": groups
+        }
+
+        # Demographic parity ratio
+        if len(pprs) >= 2:
+            min_ppr = min(pprs)
+            max_ppr = max(pprs)
+            equity["demographic_parity_ratio"] = float(min_ppr / max_ppr) if max_ppr > 0 else None
+            equity["demographic_parity_met"] = equity["demographic_parity_ratio"] >= 0.8 if equity["demographic_parity_ratio"] else None
+
+        # Equal opportunity ratio
+        if len(tprs) >= 2:
+            min_tpr = min(tprs)
+            max_tpr = max(tprs)
+            equity["equal_opportunity_ratio"] = float(min_tpr / max_tpr) if max_tpr > 0 else None
+            equity["equal_opportunity_met"] = equity["equal_opportunity_ratio"] >= 0.8 if equity["equal_opportunity_ratio"] else None
+
+        # Overall equity score (average of ratios)
+        ratios = [v for k, v in equity.items() if "ratio" in k and v is not None]
+        if ratios:
+            equity["overall_equity_score"] = float(np.mean(ratios))
+            equity["equity_grade"] = "A" if equity["overall_equity_score"] >= 0.9 else "B" if equity["overall_equity_score"] >= 0.8 else "C" if equity["overall_equity_score"] >= 0.7 else "D"
+
+        return equity
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+# ---------------------------------------------------------------------
+# MODULE 7: STABILITY TESTING
+# ---------------------------------------------------------------------
+
+def test_model_stability(
+    model: Any,
+    X: pd.DataFrame,
+    y: pd.Series,
+    n_iterations: int = 30,
+    test_size: float = 0.2
+) -> Dict[str, Any]:
+    """
+    Test model stability across multiple train/test splits.
+    """
+    if len(X) < 30 or len(y) < 30:
+        return {"available": False, "reason": "Insufficient data"}
+
+    try:
+        np.random.seed(RANDOM_SEED)
+
+        auc_scores = []
+        accuracy_scores = []
+
+        for i in range(n_iterations):
+            # Split data
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=test_size, random_state=RANDOM_SEED + i, stratify=y
+            )
+
+            # Fit model
+            if hasattr(model, 'fit'):
+                temp_model = model.__class__(**model.get_params())
+                temp_model.fit(X_train, y_train)
+
+                # Evaluate
+                if hasattr(temp_model, 'predict_proba'):
+                    y_proba = temp_model.predict_proba(X_test)[:, 1]
+                    try:
+                        auc = roc_auc_score(y_test, y_proba)
+                        auc_scores.append(auc)
+                    except:
+                        pass
+
+                y_pred = temp_model.predict(X_test)
+                accuracy_scores.append(accuracy_score(y_test, y_pred))
+
+        if not auc_scores:
+            return {"available": False, "reason": "Could not compute stability metrics"}
+
+        auc_mean = float(np.mean(auc_scores))
+        auc_std = float(np.std(auc_scores))
+        acc_mean = float(np.mean(accuracy_scores))
+        acc_std = float(np.std(accuracy_scores))
+
+        # Stability assessment
+        stability_score = 1 - (auc_std / auc_mean if auc_mean > 0 else 1)
+
+        return {
+            "available": True,
+            "n_iterations": n_iterations,
+            "auc_mean": auc_mean,
+            "auc_std": auc_std,
+            "auc_cv": float(auc_std / auc_mean) if auc_mean > 0 else None,
+            "accuracy_mean": acc_mean,
+            "accuracy_std": acc_std,
+            "stability_score": float(stability_score),
+            "stability_grade": "STABLE" if stability_score > 0.95 else "MODERATE" if stability_score > 0.90 else "UNSTABLE",
+            "regulatory_compliant": stability_score > 0.90
+        }
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+def test_perturbation_robustness(
+    model: Any,
+    X: pd.DataFrame,
+    noise_levels: List[float] = None
+) -> Dict[str, Any]:
+    """
+    Test model robustness to input perturbations.
+    """
+    if noise_levels is None:
+        noise_levels = [0.01, 0.05, 0.10]
+
+    if X.empty:
+        return {"available": False, "reason": "No features provided"}
+
+    try:
+        if not hasattr(model, 'predict_proba'):
+            return {"available": False, "reason": "Model does not support probability predictions"}
+
+        np.random.seed(RANDOM_SEED)
+
+        # Get baseline predictions
+        baseline_preds = model.predict_proba(X)[:, 1]
+
+        robustness_data = []
+
+        for noise in noise_levels:
+            # Add Gaussian noise
+            X_noisy = X + np.random.normal(0, noise, X.shape) * X.std()
+
+            # Get perturbed predictions
+            noisy_preds = model.predict_proba(X_noisy)[:, 1]
+
+            # Calculate prediction changes
+            pred_diff = np.abs(noisy_preds - baseline_preds)
+            mean_change = float(np.mean(pred_diff))
+            max_change = float(np.max(pred_diff))
+
+            # Decision stability (how often prediction flips)
+            baseline_decisions = (baseline_preds >= 0.5).astype(int)
+            noisy_decisions = (noisy_preds >= 0.5).astype(int)
+            decision_stability = float((baseline_decisions == noisy_decisions).mean())
+
+            robustness_data.append({
+                "noise_level": noise,
+                "mean_prediction_change": mean_change,
+                "max_prediction_change": max_change,
+                "decision_stability": decision_stability,
+                "robust_at_level": decision_stability > 0.95
+            })
+
+        # Overall robustness score
+        avg_stability = np.mean([r["decision_stability"] for r in robustness_data])
+
+        return {
+            "available": True,
+            "noise_levels_tested": noise_levels,
+            "robustness_by_noise": robustness_data,
+            "overall_robustness": float(avg_stability),
+            "robustness_grade": "ROBUST" if avg_stability > 0.95 else "MODERATE" if avg_stability > 0.85 else "FRAGILE",
+            "regulatory_compliant": avg_stability > 0.90
+        }
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+def verify_reproducibility(
+    model: Any,
+    X: pd.DataFrame,
+    n_runs: int = 10
+) -> Dict[str, Any]:
+    """
+    Verify that model produces identical outputs for identical inputs.
+    Critical for regulatory compliance.
+    """
+    if X.empty:
+        return {"available": False, "reason": "No features provided"}
+
+    try:
+        if not hasattr(model, 'predict_proba'):
+            return {"available": False, "reason": "Model does not support probability predictions"}
+
+        predictions = []
+
+        for i in range(n_runs):
+            # Reset random state before each prediction
+            np.random.seed(RANDOM_SEED)
+            preds = model.predict_proba(X)[:, 1]
+            predictions.append(preds)
+
+        # Check if all predictions are identical
+        reference = predictions[0]
+        all_identical = all(np.allclose(p, reference, rtol=1e-10) for p in predictions)
+
+        # Calculate max deviation
+        max_deviation = 0
+        for p in predictions[1:]:
+            dev = np.max(np.abs(p - reference))
+            max_deviation = max(max_deviation, dev)
+
+        fingerprint = hashlib.md5(reference.tobytes()).hexdigest()
+
+        return {
+            "available": True,
+            "n_runs": n_runs,
+            "is_reproducible": all_identical,
+            "max_deviation": float(max_deviation),
+            "prediction_fingerprint": fingerprint,
+            "regulatory_compliant": all_identical,
+            "determinism_verified": all_identical,
+            "note": "All predictions identical" if all_identical else f"Max deviation: {max_deviation}"
+        }
+
+    except Exception as e:
+        return {"available": False, "error": str(e)}
+
+
+# ---------------------------------------------------------------------
+# MODULE 8: FHIR COMPATIBILITY
+# ---------------------------------------------------------------------
+
+# LOINC mapping for common labs
+LOINC_MAP = {
+    "glucose": {"code": "2345-7", "display": "Glucose [Mass/volume] in Serum or Plasma"},
+    "crp": {"code": "1988-5", "display": "C reactive protein [Mass/volume] in Serum or Plasma"},
+    "creatinine": {"code": "2160-0", "display": "Creatinine [Mass/volume] in Serum or Plasma"},
+    "albumin": {"code": "1751-7", "display": "Albumin [Mass/volume] in Serum or Plasma"},
+    "wbc": {"code": "6690-2", "display": "Leukocytes [#/volume] in Blood"},
+    "hemoglobin": {"code": "718-7", "display": "Hemoglobin [Mass/volume] in Blood"},
+    "platelet": {"code": "777-3", "display": "Platelets [#/volume] in Blood"},
+    "platelets": {"code": "777-3", "display": "Platelets [#/volume] in Blood"},
+    "sodium": {"code": "2951-2", "display": "Sodium [Moles/volume] in Serum or Plasma"},
+    "potassium": {"code": "2823-3", "display": "Potassium [Moles/volume] in Serum or Plasma"},
+    "lactate": {"code": "2524-7", "display": "Lactate [Moles/volume] in Serum or Plasma"},
+    "bilirubin": {"code": "1975-2", "display": "Bilirubin.total [Mass/volume] in Serum or Plasma"},
+    "alt": {"code": "1742-6", "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma"},
+    "ast": {"code": "1920-8", "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma"},
+    "bun": {"code": "3094-0", "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"},
+    "hba1c": {"code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood"},
+    "tsh": {"code": "3016-3", "display": "Thyrotropin [Units/volume] in Serum or Plasma"},
+    "troponin": {"code": "10839-9", "display": "Troponin I.cardiac [Mass/volume] in Serum or Plasma"},
+    "bnp": {"code": "30934-4", "display": "Natriuretic peptide B [Mass/volume] in Serum or Plasma"},
+    "procalcitonin": {"code": "33959-8", "display": "Procalcitonin [Mass/volume] in Serum or Plasma"}
+}
+
+
+def map_to_loinc(lab_name: str) -> Dict[str, Any]:
+    """
+    Map lab name to LOINC code.
+    Basic mapping for common labs.
+    """
+    lab_lower = lab_name.lower().strip()
+
+    for key, value in LOINC_MAP.items():
+        if key in lab_lower:
+            return {
+                "lab_name": lab_name,
+                "loinc_code": value["code"],
+                "loinc_display": value["display"],
+                "system": "http://loinc.org",
+                "matched": True
+            }
+
+    return {
+        "lab_name": lab_name,
+        "loinc_code": None,
+        "loinc_display": None,
+        "matched": False
+    }
+
+
+def convert_to_fhir_diagnostic_report(
+    analysis_result: Dict[str, Any],
+    patient_id: str = "unknown"
+) -> Dict[str, Any]:
+    """
+    Convert HyperCore analysis to FHIR R4 DiagnosticReport format.
+    Enables EHR integration and regulatory compliance.
+    """
+    now = datetime.now(timezone.utc).isoformat()
+
+    report = {
+        "resourceType": "DiagnosticReport",
+        "id": hashlib.md5(f"{patient_id}{now}".encode()).hexdigest()[:16],
+        "status": "final",
+        "category": [{
+            "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "LAB",
+                "display": "Laboratory"
+            }]
+        }],
+        "code": {
+            "coding": [{
+                "system": "http://loinc.org",
+                "code": "11502-2",
+                "display": "Laboratory report"
+            }],
+            "text": "HyperCore Clinical Intelligence Analysis"
+        },
+        "subject": {
+            "reference": f"Patient/{patient_id}"
+        },
+        "effectiveDateTime": now,
+        "issued": now,
+        "performer": [{
+            "display": "HyperCore GH-OS ML Service"
+        }]
+    }
+
+    # Add executive summary as conclusion
+    if analysis_result.get("executive_summary"):
+        report["conclusion"] = str(analysis_result["executive_summary"])[:1000]
+
+    # Add risk scores as observations
+    if analysis_result.get("disease_risk_scores"):
+        report["result"] = []
+
+        for risk in analysis_result.get("disease_risk_scores", []):
+            if isinstance(risk, dict):
+                condition = risk.get("condition", "Unknown")
+                score = risk.get("risk_score", 0)
+                obs_ref = {
+                    "reference": f"Observation/{hashlib.md5(condition.encode()).hexdigest()[:16]}",
+                    "display": f"{condition}: {score:.3f}"
+                }
+                report["result"].append(obs_ref)
+
+    # Add narrative insights as conclusion codes
+    if analysis_result.get("narrative_insights"):
+        insights = analysis_result["narrative_insights"]
+        conclusion_parts = []
+
+        for key, value in insights.items():
+            if isinstance(value, str):
+                conclusion_parts.append(f"{key}: {value[:100]}")
+
+        if conclusion_parts:
+            report["conclusionCode"] = [{
+                "text": " | ".join(conclusion_parts[:3])
+            }]
+
+    # Add metadata
+    report["meta"] = {
+        "versionId": "1",
+        "lastUpdated": now,
+        "profile": ["http://hl7.org/fhir/StructureDefinition/DiagnosticReport"],
+        "source": "HyperCore-ML-Service"
+    }
+
+    return report
 
 
 @app.get("/health")
