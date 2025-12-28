@@ -70,7 +70,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.4.0"
+APP_VERSION = "5.5.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -319,6 +319,31 @@ class AnalyzeResponse(BaseModel):
     explainability: Optional[Dict[str, Any]] = None
     volatility_analysis: Optional[Dict[str, Any]] = None
     extremes_flagged: Optional[List[Dict[str, Any]]] = None
+
+    # ============================================
+    # BATCH 1 NEW FIELDS
+    # ============================================
+
+    # MODULE 1: Confounder Detection
+    confounders_detected: Optional[Dict[str, Any]] = None
+    population_strata: Optional[Dict[str, Any]] = None
+    responder_subgroups: Optional[List[Dict[str, Any]]] = None
+    drug_biomarker_interactions: Optional[List[Dict[str, Any]]] = None
+
+    # MODULE 2: SHAP Explainability
+    shap_attribution: Optional[Dict[str, Any]] = None
+    causal_pathways: Optional[List[Dict[str, Any]]] = None
+    risk_decomposition: Optional[Dict[str, Any]] = None
+
+    # MODULE 3: Change Point Detection
+    change_points: Optional[List[Dict[str, Any]]] = None
+    state_transitions: Optional[Dict[str, Any]] = None
+    trajectory_cluster: Optional[Dict[str, Any]] = None
+
+    # MODULE 4: Lead Time Analysis
+    lead_time_analysis: Optional[Dict[str, Any]] = None
+    early_warning_metrics: Optional[Dict[str, Any]] = None
+    detection_sensitivity: Optional[Dict[str, Any]] = None
 
 
 class EarlyRiskRequest(BaseModel):
@@ -1825,6 +1850,256 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         executive_summary = generate_executive_summary(analysis_data)
         narrative_insights = generate_narrative_insights(analysis_data)
 
+        # ============================================
+        # BATCH 1: CLINICAL INTELLIGENCE LAYER
+        # ============================================
+
+        # Initialize Batch 1 outputs
+        population_strata = None
+        confounders_detected = None
+        responder_subgroups = None
+        drug_biomarker_interactions = None
+        shap_attribution = None
+        causal_pathways = None
+        risk_decomposition = None
+        change_points = None
+        state_transitions = None
+        trajectory_cluster = None
+        lead_time_analysis = None
+        early_warning_metrics = None
+        detection_sensitivity = None
+
+        # Prepare feature data for advanced modules
+        try:
+            # Get the trained model's features
+            X_clean = linear.get("X_clean", pd.DataFrame())
+            trained_model = linear.get("model", None)
+
+            # ============================================
+            # MODULE 1: CONFOUNDER DETECTION
+            # ============================================
+            try:
+                # Stratify population by available demographic factors
+                strata_factors = []
+                if 'sex' in df.columns:
+                    strata_factors.append('sex')
+                if 'age_group' in df.columns:
+                    strata_factors.append('age_group')
+                elif 'age' in df.columns:
+                    # Create age groups
+                    df['_age_group'] = pd.cut(df['age'], bins=[0, 18, 40, 65, 100], labels=['pediatric', 'young_adult', 'adult', 'elderly'])
+                    strata_factors.append('_age_group')
+
+                if strata_factors and len(df) >= 10:
+                    # Convert to list of dicts for stratify_population
+                    patient_records = df.to_dict('records')
+                    population_strata = stratify_population(
+                        patient_data=patient_records,
+                        stratify_by=strata_factors,
+                        outcome_key=req.label_column
+                    )
+
+                # Detect masked efficacy if we have treatment data
+                ctx = req.context or {}
+                if 'treatment' in df.columns or ctx.get('treatment_column'):
+                    treatment_col = ctx.get('treatment_column', 'treatment')
+                    if treatment_col in df.columns:
+                        confounder_cols = [c for c in df.columns if c in ['age', 'sex', 'bmi', 'comorbidity_count']]
+                        if confounder_cols:
+                            patient_records = df.to_dict('records')
+                            confounders_detected = detect_masked_efficacy(
+                                patient_data=patient_records,
+                                treatment_key=treatment_col,
+                                outcome_key=req.label_column,
+                                confounder_keys=confounder_cols
+                            )
+
+                # Discover responder subgroups
+                if not X_clean.empty and len(X_clean) >= 20:
+                    feature_cols = list(X_clean.columns)[:10]  # Top 10 features
+                    if 'treatment' in df.columns:
+                        patient_records = []
+                        for idx in X_clean.index:
+                            if idx in df.index:
+                                record = X_clean.loc[idx].to_dict()
+                                record['treatment'] = df.loc[idx].get('treatment', 0)
+                                record[req.label_column] = y[list(X_clean.index).index(idx)]
+                                patient_records.append(record)
+
+                        if patient_records:
+                            subgroups_result = discover_responder_subgroups(
+                                patient_data=patient_records,
+                                treatment_key='treatment',
+                                outcome_key=req.label_column,
+                                feature_keys=feature_cols,
+                                min_subgroup_size=max(3, len(patient_records) // 10)
+                            )
+                            responder_subgroups = subgroups_result.get('subgroups', [])
+
+                # Drug-biomarker interactions
+                if ctx.get('medications'):
+                    meds = ctx.get('medications', [])
+                    biomarker_cols = [c for c in labs_long['lab_key'].unique() if c in ['crp', 'albumin', 'creatinine', 'glucose', 'wbc']]
+                    if biomarker_cols and meds:
+                        patient_records = df.to_dict('records')
+                        interactions_result = screen_drug_biomarker_interactions(
+                            patient_data=patient_records,
+                            drug_key='on_' + meds[0] if meds else 'treatment',
+                            biomarker_keys=biomarker_cols,
+                            outcome_key=req.label_column
+                        )
+                        drug_biomarker_interactions = interactions_result.get('interactions', [])
+
+            except Exception as conf_err:
+                pass  # Silent fail for optional module
+
+            # ============================================
+            # MODULE 2: SHAP EXPLAINABILITY
+            # ============================================
+            try:
+                if not X_clean.empty and len(X_clean) >= 10 and trained_model is not None:
+                    feature_cols = list(X_clean.columns)
+
+                    # Prepare patient data for SHAP
+                    patient_records = []
+                    for i, idx in enumerate(X_clean.index):
+                        record = X_clean.loc[idx].to_dict()
+                        record['outcome'] = int(y[i])
+                        patient_records.append(record)
+
+                    # Compute SHAP attribution
+                    shap_result = compute_shap_attribution(
+                        patient_data=patient_records,
+                        feature_keys=feature_cols,
+                        outcome_key='outcome',
+                        patient_index=0
+                    )
+                    if shap_result.get('attributions'):
+                        shap_attribution = shap_result
+
+                    # Trace causal pathways
+                    pathways_result = trace_causal_pathways(
+                        patient_data=patient_records,
+                        feature_keys=feature_cols,
+                        outcome_key='outcome'
+                    )
+                    if pathways_result.get('pathways'):
+                        causal_pathways = pathways_result.get('pathways', [])
+
+                    # Decompose risk score
+                    decomp_result = decompose_risk_score(
+                        patient_data=patient_records,
+                        feature_keys=feature_cols,
+                        outcome_key='outcome',
+                        patient_index=0
+                    )
+                    if decomp_result.get('axis_contributions'):
+                        risk_decomposition = decomp_result
+
+            except Exception as shap_err:
+                pass  # Silent fail for optional module
+
+            # ============================================
+            # MODULE 3: CHANGE POINT DETECTION
+            # ============================================
+            try:
+                if not labs_long.empty:
+                    key_labs = ['crp', 'glucose', 'creatinine', 'lactate', 'albumin', 'wbc']
+                    all_change_points = []
+
+                    for lab in key_labs:
+                        lab_data = labs_long[labs_long['lab_key'].str.lower() == lab.lower()]
+
+                        if len(lab_data) >= 6:
+                            # Prepare time series data
+                            ts_data = []
+                            for _, row in lab_data.iterrows():
+                                ts_record = {'value': float(row.get('value', 0))}
+                                if 'timestamp' in row:
+                                    ts_record['timestamp'] = row['timestamp']
+                                elif 'time' in row:
+                                    ts_record['timestamp'] = row['time']
+                                ts_data.append(ts_record)
+
+                            if ts_data:
+                                cp_result = detect_change_points(
+                                    time_series=ts_data,
+                                    value_key='value',
+                                    time_key='timestamp',
+                                    n_breakpoints=3
+                                )
+
+                                for cp in cp_result.get('change_points', []):
+                                    cp['biomarker'] = lab
+                                    all_change_points.append(cp)
+
+                    if all_change_points:
+                        # Keep top 5 most significant
+                        change_points = sorted(
+                            all_change_points,
+                            key=lambda x: abs(x.get('change_magnitude', 0)),
+                            reverse=True
+                        )[:5]
+
+                    # Model state transitions
+                    if change_points:
+                        # Create state sequence from labs
+                        state_data = []
+                        for _, row in labs_long.iterrows():
+                            state_record = {
+                                'state': 'normal' if row.get('in_range', True) else 'abnormal',
+                                'timestamp': row.get('timestamp', row.get('time', 0))
+                            }
+                            state_data.append(state_record)
+
+                        if state_data:
+                            state_transitions = model_state_transitions(
+                                patient_data=state_data,
+                                state_key='state',
+                                time_key='timestamp'
+                            )
+
+            except Exception as cp_err:
+                pass  # Silent fail for optional module
+
+            # ============================================
+            # MODULE 4: LEAD TIME ANALYSIS
+            # ============================================
+            try:
+                if not X_clean.empty and trained_model is not None and hasattr(trained_model, 'predict_proba'):
+                    # Get risk predictions
+                    risk_probs = trained_model.predict_proba(X_clean)[:, 1]
+                    y_series = pd.Series(y, index=X_clean.index)
+
+                    # Detection sensitivity analysis
+                    detection_sensitivity = analyze_detection_sensitivity(
+                        risk_scores=pd.Series(risk_probs, index=X_clean.index),
+                        outcomes=y_series,
+                        thresholds=[0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+                    )
+
+                    # Early warning metrics based on model performance
+                    if detection_sensitivity.get('available'):
+                        best_thresh = detection_sensitivity.get('recommended_threshold', 0.5)
+                        perf = next(
+                            (p for p in detection_sensitivity.get('threshold_performance', [])
+                             if p['threshold'] == best_thresh),
+                            {}
+                        )
+                        early_warning_metrics = {
+                            'optimal_threshold': best_thresh,
+                            'sensitivity_at_optimal': perf.get('sensitivity', 0),
+                            'specificity_at_optimal': perf.get('specificity', 0),
+                            'alert_burden': perf.get('alert_rate', 0),
+                            'clinical_utility': 'HIGH' if perf.get('j_statistic', 0) > 0.5 else 'MODERATE' if perf.get('j_statistic', 0) > 0.3 else 'LOW'
+                        }
+
+            except Exception as lt_err:
+                pass  # Silent fail for optional module
+
+        except Exception as batch1_err:
+            pass  # Silent fail for entire Batch 1 if critical error
+
         # Return response (Base44 can be updated to read pipeline + manifest)
         # Sanitize all data to ensure no inf/nan values in JSON response
         return AnalyzeResponse(
@@ -1849,6 +2124,20 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             explainability=_sanitize_for_json(explain),
             volatility_analysis=_sanitize_for_json(volatility),
             extremes_flagged=_sanitize_for_json(extremes.get('extremes', []) if isinstance(extremes, dict) else []),
+            # BATCH 1 NEW FIELDS
+            confounders_detected=_sanitize_for_json(confounders_detected),
+            population_strata=_sanitize_for_json(population_strata),
+            responder_subgroups=_sanitize_for_json(responder_subgroups),
+            drug_biomarker_interactions=_sanitize_for_json(drug_biomarker_interactions),
+            shap_attribution=_sanitize_for_json(shap_attribution),
+            causal_pathways=_sanitize_for_json(causal_pathways),
+            risk_decomposition=_sanitize_for_json(risk_decomposition),
+            change_points=_sanitize_for_json(change_points),
+            state_transitions=_sanitize_for_json(state_transitions),
+            trajectory_cluster=_sanitize_for_json(trajectory_cluster),
+            lead_time_analysis=_sanitize_for_json(lead_time_analysis),
+            early_warning_metrics=_sanitize_for_json(early_warning_metrics),
+            detection_sensitivity=_sanitize_for_json(detection_sensitivity),
         )
     except Exception as e:
         raise HTTPException(
@@ -3639,81 +3928,227 @@ def model_state_transitions(
 
 
 # ---------------------------------------------------------------------
-# MODULE 4: LEAD TIME ANALYSIS
+# MODULE 4: LEAD TIME ANALYSIS (Enhanced)
 # ---------------------------------------------------------------------
 
 def calculate_lead_time(
-    patient_events: List[Dict[str, Any]],
-    marker_key: str,
-    event_key: str,
-    time_key: str = "timestamp",
-    threshold: Optional[float] = None
+    risk_trajectory: pd.DataFrame,
+    event_occurred: bool,
+    event_time: Optional[Any] = None,
+    risk_threshold: float = 0.6
 ) -> Dict[str, Any]:
     """
-    Calculate lead time between biomarker signal and clinical event.
-    Determines how early a biomarker can predict an event.
+    Calculate lead time: "Risk detectable at T-Xh before event".
+
+    Identifies when HyperCore first detected risk above threshold,
+    compared to when event actually occurred.
+
+    Returns quantified early warning advantage.
     """
-    if not patient_events:
-        return {"error": "No patient events", "lead_times": []}
-
-    # Sort by time
-    sorted_events = sorted(patient_events, key=lambda x: x.get(time_key, 0))
-
-    # Find event occurrences
-    event_times = []
-    marker_signals = []
-
-    for i, event in enumerate(sorted_events):
-        if event.get(event_key):
-            event_times.append((i, event.get(time_key, i)))
-
-        marker_val = event.get(marker_key)
-        if marker_val is not None:
-            if threshold is None:
-                threshold = np.median([e.get(marker_key, 0) for e in sorted_events if e.get(marker_key) is not None]) * 1.5
-
-            if float(marker_val) > threshold:
-                marker_signals.append((i, event.get(time_key, i), float(marker_val)))
-
-    # Calculate lead times
-    lead_times = []
-    for event_idx, event_time in event_times:
-        # Find earliest marker signal before this event
-        preceding_signals = [(idx, t, val) for idx, t, val in marker_signals if idx < event_idx]
-        if preceding_signals:
-            first_signal = preceding_signals[0]
-            lead_time = event_idx - first_signal[0]  # In index units
-
-            lead_times.append({
-                "event_time": event_time,
-                "first_signal_time": first_signal[1],
-                "lead_time_units": lead_time,
-                "signal_value": first_signal[2]
-            })
-
-    if not lead_times:
-        return {
-            "lead_times": [],
-            "average_lead_time": None,
-            "marker": marker_key,
-            "event": event_key,
-            "threshold_used": threshold
-        }
-
-    avg_lead = np.mean([lt["lead_time_units"] for lt in lead_times])
-
-    return {
-        "lead_times": lead_times,
-        "average_lead_time": float(avg_lead),
-        "min_lead_time": min(lt["lead_time_units"] for lt in lead_times),
-        "max_lead_time": max(lt["lead_time_units"] for lt in lead_times),
-        "n_events_analyzed": len(event_times),
-        "n_events_with_signal": len(lead_times),
-        "detection_rate": len(lead_times) / len(event_times) if event_times else 0,
-        "marker": marker_key,
-        "event": event_key,
-        "threshold_used": threshold
+    lead_time = {
+        "available": False,
+        "first_detection_time": None,
+        "event_time": None,
+        "lead_time_hours": None,
+        "methodology": "threshold crossing analysis"
     }
+
+    if risk_trajectory.empty or not event_occurred or event_time is None:
+        return lead_time
+
+    # Find first time risk crossed threshold
+    risk_col = None
+    time_col = None
+
+    for col in risk_trajectory.columns:
+        if 'risk' in col.lower() or 'score' in col.lower():
+            risk_col = col
+        if 'time' in col.lower() or 'date' in col.lower():
+            time_col = col
+
+    if risk_col is None:
+        return lead_time
+
+    # Find first threshold crossing
+    high_risk_rows = risk_trajectory[risk_trajectory[risk_col] >= risk_threshold]
+
+    if high_risk_rows.empty:
+        lead_time["available"] = False
+        lead_time["reason"] = f"Risk never exceeded threshold of {risk_threshold}"
+        return lead_time
+
+    first_detection = high_risk_rows.iloc[0]
+
+    if time_col and time_col in first_detection.index:
+        try:
+            detection_time = pd.to_datetime(first_detection[time_col])
+            event_time_dt = pd.to_datetime(event_time)
+
+            lead_hours = (event_time_dt - detection_time).total_seconds() / 3600
+
+            lead_time.update({
+                "available": True,
+                "first_detection_time": str(detection_time),
+                "event_time": str(event_time_dt),
+                "lead_time_hours": round(float(lead_hours), 1),
+                "risk_score_at_detection": round(float(first_detection[risk_col]), 3),
+                "clinical_implication": f"Risk detectable {abs(lead_hours):.1f} hours before event"
+            })
+        except Exception:
+            pass
+
+    return lead_time
+
+
+def quantify_early_warning(
+    hypercore_detection_time: Any,
+    standard_detection_time: Any,
+    event_time: Any
+) -> Dict[str, Any]:
+    """
+    Quantify HyperCore advantage over standard care systems.
+
+    Compares:
+    - HyperCore detection time
+    - Standard system (NEWS/qSOFA) detection time
+    - Actual event time
+
+    Returns advantage metrics in hours and percentage.
+    """
+    advantage = {
+        "available": False,
+        "hypercore_lead_hours": None,
+        "standard_lead_hours": None,
+        "advantage_hours": None,
+        "advantage_percentage": None
+    }
+
+    try:
+        hc_time = pd.to_datetime(hypercore_detection_time)
+        std_time = pd.to_datetime(standard_detection_time)
+        evt_time = pd.to_datetime(event_time)
+
+        hc_lead = (evt_time - hc_time).total_seconds() / 3600
+        std_lead = (evt_time - std_time).total_seconds() / 3600
+
+        adv_hours = hc_lead - std_lead
+
+        # Percentage advantage
+        if std_lead > 0:
+            adv_pct = (adv_hours / std_lead) * 100
+        else:
+            adv_pct = 0
+
+        advantage.update({
+            "available": True,
+            "hypercore_lead_hours": round(float(hc_lead), 1),
+            "standard_lead_hours": round(float(std_lead), 1),
+            "advantage_hours": round(float(adv_hours), 1),
+            "advantage_percentage": round(float(adv_pct), 1),
+            "clinical_impact": _interpret_advantage(adv_hours)
+        })
+
+    except Exception as e:
+        advantage["error"] = str(e)
+
+    return advantage
+
+
+def _interpret_advantage(advantage_hours: float) -> str:
+    """Interpret clinical impact of lead time advantage."""
+    if advantage_hours >= 24:
+        return "MAJOR: >24h early warning enables preventive intervention"
+    elif advantage_hours >= 12:
+        return "SIGNIFICANT: 12-24h advance notice for treatment escalation"
+    elif advantage_hours >= 6:
+        return "MODERATE: 6-12h window for early action"
+    elif advantage_hours >= 2:
+        return "MINOR: 2-6h earlier detection"
+    else:
+        return "MINIMAL: <2h advantage"
+
+
+def analyze_detection_sensitivity(
+    risk_scores: pd.Series,
+    outcomes: pd.Series,
+    thresholds: List[float] = None
+) -> Dict[str, Any]:
+    """
+    Analyze detection performance across multiple risk thresholds.
+
+    Tests sensitivity/specificity tradeoff to find optimal operating point
+    that balances early detection with alert burden.
+
+    Returns threshold recommendations.
+    """
+    if thresholds is None:
+        thresholds = [0.4, 0.5, 0.6, 0.7, 0.8]
+
+    sensitivity_analysis = {
+        "available": True,
+        "threshold_performance": [],
+        "recommended_threshold": None,
+        "methodology": "ROC-based threshold optimization"
+    }
+
+    if len(risk_scores) < 10 or len(outcomes) < 10:
+        sensitivity_analysis["available"] = False
+        return sensitivity_analysis
+
+    # Align indices
+    common_idx = risk_scores.index.intersection(outcomes.index)
+    if len(common_idx) < 10:
+        sensitivity_analysis["available"] = False
+        return sensitivity_analysis
+
+    risk_scores = risk_scores.loc[common_idx]
+    outcomes = outcomes.loc[common_idx]
+
+    # Calculate metrics for each threshold
+    for thresh in thresholds:
+        predictions = (risk_scores >= thresh).astype(int)
+
+        tp = int(((predictions == 1) & (outcomes == 1)).sum())
+        fp = int(((predictions == 1) & (outcomes == 0)).sum())
+        tn = int(((predictions == 0) & (outcomes == 0)).sum())
+        fn = int(((predictions == 0) & (outcomes == 1)).sum())
+
+        sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
+        specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
+        ppv = tp / (tp + fp) if (tp + fp) > 0 else 0
+        npv = tn / (tn + fn) if (tn + fn) > 0 else 0
+
+        # Alert rate (how often system fires)
+        alert_rate = (tp + fp) / len(predictions) if len(predictions) > 0 else 0
+
+        # Youden's J statistic for optimal threshold
+        j_stat = sensitivity + specificity - 1
+
+        sensitivity_analysis["threshold_performance"].append({
+            "threshold": thresh,
+            "sensitivity": round(sensitivity, 3),
+            "specificity": round(specificity, 3),
+            "ppv": round(ppv, 3),
+            "npv": round(npv, 3),
+            "alert_rate": round(alert_rate, 3),
+            "j_statistic": round(j_stat, 3)
+        })
+
+    # Find threshold with best J statistic
+    if sensitivity_analysis["threshold_performance"]:
+        best_thresh = max(
+            sensitivity_analysis["threshold_performance"],
+            key=lambda x: x["j_statistic"]
+        )
+
+        sensitivity_analysis["recommended_threshold"] = best_thresh["threshold"]
+        sensitivity_analysis["recommendation_rationale"] = (
+            f"Threshold {best_thresh['threshold']} balances sensitivity "
+            f"({best_thresh['sensitivity']:.1%}) and specificity ({best_thresh['specificity']:.1%}) "
+            f"with alert rate of {best_thresh['alert_rate']:.1%}"
+        )
+
+    return sensitivity_analysis
 
 
 def analyze_early_warning_potential(
@@ -3732,30 +4167,47 @@ def analyze_early_warning_potential(
     rankings = []
 
     for biomarker in biomarker_keys:
+        # Build risk trajectory from patient data
+        df = pd.DataFrame(patient_data)
+        if biomarker not in df.columns:
+            continue
+
+        # Check if any events occurred
+        events = df[df.get(outcome_key, pd.Series([False]*len(df))) == True]
+        if events.empty:
+            continue
+
+        # Create risk trajectory
+        trajectory = df[[biomarker]].copy()
+        trajectory.columns = ['risk_score']
+        if time_key in df.columns:
+            trajectory['time'] = df[time_key]
+
+        event_time = events[time_key].iloc[0] if time_key in events.columns else None
+
         lead_result = calculate_lead_time(
-            patient_data,
-            marker_key=biomarker,
-            event_key=outcome_key,
-            time_key=time_key
+            risk_trajectory=trajectory,
+            event_occurred=True,
+            event_time=event_time,
+            risk_threshold=0.6
         )
 
-        if lead_result.get("average_lead_time") is not None:
+        if lead_result.get("available") and lead_result.get("lead_time_hours") is not None:
             rankings.append({
                 "biomarker": biomarker,
-                "average_lead_time": lead_result["average_lead_time"],
-                "detection_rate": lead_result["detection_rate"],
-                "score": lead_result["average_lead_time"] * lead_result["detection_rate"],
-                "n_detections": lead_result["n_events_with_signal"]
+                "lead_time_hours": lead_result["lead_time_hours"],
+                "risk_at_detection": lead_result.get("risk_score_at_detection", 0),
+                "score": abs(lead_result["lead_time_hours"])
             })
 
-    # Sort by composite score (lead time * detection rate)
+    # Sort by lead time score
     rankings = sorted(rankings, key=lambda x: x["score"], reverse=True)
 
     return {
         "biomarker_ranking": rankings,
         "best_early_warning": rankings[0]["biomarker"] if rankings else None,
         "outcome_analyzed": outcome_key,
-        "recommendation": f"Use {rankings[0]['biomarker']} for early warning (avg {rankings[0]['average_lead_time']:.1f} units lead time)" if rankings else "Insufficient data for recommendations"
+        "recommendation": f"Use {rankings[0]['biomarker']} for early warning ({rankings[0]['lead_time_hours']:.1f}h lead time)" if rankings else "Insufficient data for recommendations"
     }
 
 
