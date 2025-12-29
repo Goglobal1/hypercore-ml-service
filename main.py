@@ -103,7 +103,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.13.0"
+APP_VERSION = "5.14.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -11203,6 +11203,562 @@ def predictive_core_capabilities():
                 "params": ["drug_profile", "n_patients", "trial_duration_days"]
             }
         }
+    }
+
+
+# ============================================
+# BATCH 4E: ASTRA INTERFACE (USER-FACING LAYER)
+# ============================================
+
+class IntentClassifier:
+    """Classifies user intent from natural language queries."""
+
+    def __init__(self):
+        self.intent_patterns = {
+            "diagnostic": ["diagnose", "diagnosis", "what's wrong", "symptoms", "analyze patient", "test results"],
+            "predictive": ["predict", "forecast", "will", "future", "risk", "probability", "chance"],
+            "educational": ["what is", "explain", "how does", "tell me about", "learn", "understand"],
+            "operational": ["status", "health", "performance", "metrics", "uptime"],
+            "research": ["study", "research", "clinical trial", "cohort", "population", "dataset"],
+            "treatment": ["treatment", "therapy", "medication", "drug", "intervention", "recommend"],
+            "comparison": ["compare", "versus", "vs", "difference", "better", "which"],
+            "summary": ["summary", "summarize", "overview", "brief", "report"]
+        }
+
+    def classify(self, query: str) -> Dict[str, Any]:
+        """Classify user intent from query text."""
+        query_lower = query.lower()
+
+        intent_scores = {}
+        for intent, patterns in self.intent_patterns.items():
+            score = sum(1 for p in patterns if p in query_lower)
+            if score > 0:
+                intent_scores[intent] = score
+
+        if not intent_scores:
+            primary_intent = "general"
+            confidence = 0.5
+        else:
+            primary_intent = max(intent_scores, key=intent_scores.get)
+            max_score = intent_scores[primary_intent]
+            confidence = min(0.95, 0.5 + (max_score * 0.15))
+
+        return {
+            "primary_intent": primary_intent,
+            "confidence": confidence,
+            "all_intents": intent_scores,
+            "query_length": len(query.split())
+        }
+
+
+class EntityExtractor:
+    """Extracts medical and clinical entities from text."""
+
+    def __init__(self):
+        self.entity_patterns = {
+            "biomarker": ["glucose", "hba1c", "cholesterol", "ldl", "hdl", "triglycerides",
+                         "creatinine", "egfr", "alt", "ast", "bilirubin", "hemoglobin",
+                         "white blood cell", "wbc", "platelet", "sodium", "potassium"],
+            "condition": ["diabetes", "hypertension", "cancer", "heart disease", "covid",
+                         "influenza", "pneumonia", "sepsis", "stroke", "alzheimer",
+                         "parkinson", "arthritis", "asthma", "copd", "hepatitis"],
+            "medication": ["metformin", "insulin", "lisinopril", "atorvastatin", "aspirin",
+                          "ibuprofen", "acetaminophen", "omeprazole", "levothyroxine"],
+            "demographic": ["age", "gender", "sex", "male", "female", "adult", "pediatric",
+                           "elderly", "pregnant", "race", "ethnicity"],
+            "temporal": ["days", "weeks", "months", "years", "acute", "chronic", "onset",
+                        "duration", "history", "recent", "past"],
+            "anatomical": ["heart", "lung", "liver", "kidney", "brain", "blood", "bone",
+                          "muscle", "skin", "eye", "ear"]
+        }
+
+    def extract(self, text: str) -> Dict[str, Any]:
+        """Extract entities from text."""
+        text_lower = text.lower()
+
+        extracted = {}
+        for entity_type, patterns in self.entity_patterns.items():
+            found = [p for p in patterns if p in text_lower]
+            if found:
+                extracted[entity_type] = found
+
+        # Extract numeric values
+        import re
+        numbers = re.findall(r'\b\d+\.?\d*\b', text)
+        if numbers:
+            extracted["numeric_values"] = [float(n) for n in numbers[:10]]
+
+        return {
+            "entities": extracted,
+            "entity_count": sum(len(v) for v in extracted.values()),
+            "entity_types_found": list(extracted.keys())
+        }
+
+
+class AudienceAdapter:
+    """Adapts responses for different audience types."""
+
+    def __init__(self):
+        self.audience_profiles = {
+            "clinician": {
+                "terminology": "technical",
+                "detail_level": "comprehensive",
+                "include_statistics": True,
+                "include_citations": True,
+                "format": "structured"
+            },
+            "patient": {
+                "terminology": "simplified",
+                "detail_level": "essential",
+                "include_statistics": False,
+                "include_citations": False,
+                "format": "conversational"
+            },
+            "researcher": {
+                "terminology": "technical",
+                "detail_level": "comprehensive",
+                "include_statistics": True,
+                "include_citations": True,
+                "format": "academic"
+            },
+            "administrator": {
+                "terminology": "business",
+                "detail_level": "summary",
+                "include_statistics": True,
+                "include_citations": False,
+                "format": "executive"
+            },
+            "investor": {
+                "terminology": "business",
+                "detail_level": "strategic",
+                "include_statistics": True,
+                "include_citations": False,
+                "format": "executive"
+            }
+        }
+
+    def adapt(self, response: Dict[str, Any], audience: str) -> Dict[str, Any]:
+        """Adapt response for target audience."""
+        profile = self.audience_profiles.get(audience, self.audience_profiles["patient"])
+
+        adapted = {
+            "content": response,
+            "audience": audience,
+            "adaptation_profile": profile,
+            "presentation_hints": {
+                "use_technical_terms": profile["terminology"] == "technical",
+                "include_confidence_intervals": profile["include_statistics"],
+                "visualization_complexity": "high" if profile["detail_level"] == "comprehensive" else "low",
+                "recommended_format": profile["format"]
+            }
+        }
+
+        # Add audience-specific disclaimers
+        if audience == "patient":
+            adapted["disclaimer"] = "This information is for educational purposes. Please consult your healthcare provider for medical advice."
+        elif audience == "clinician":
+            adapted["disclaimer"] = "Clinical decision support - verify with institutional protocols."
+        elif audience == "investor":
+            adapted["disclaimer"] = "Forward-looking statements subject to regulatory and market conditions."
+
+        return adapted
+
+
+class ConversationManager:
+    """Manages multi-turn conversations with context."""
+
+    def __init__(self):
+        self.sessions = {}
+        self.max_history = 20
+
+    def get_or_create_session(self, session_id: str) -> Dict[str, Any]:
+        """Get existing session or create new one."""
+        if session_id not in self.sessions:
+            self.sessions[session_id] = {
+                "session_id": session_id,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "last_active": datetime.now(timezone.utc).isoformat(),
+                "history": [],
+                "context": {},
+                "user_profile": {},
+                "preferences": {"audience": "patient"}
+            }
+        return self.sessions[session_id]
+
+    def add_turn(self, session_id: str, role: str, content: str, metadata: Dict = None):
+        """Add a conversation turn."""
+        session = self.get_or_create_session(session_id)
+
+        turn = {
+            "role": role,
+            "content": content,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "metadata": metadata or {}
+        }
+
+        session["history"].append(turn)
+        session["last_active"] = datetime.now(timezone.utc).isoformat()
+
+        # Trim history if too long
+        if len(session["history"]) > self.max_history:
+            session["history"] = session["history"][-self.max_history:]
+
+    def get_context(self, session_id: str) -> Dict[str, Any]:
+        """Get conversation context for a session."""
+        session = self.get_or_create_session(session_id)
+
+        # Build context from recent history
+        recent_entities = {}
+        recent_intents = []
+
+        for turn in session["history"][-5:]:
+            if "entities" in turn.get("metadata", {}):
+                for etype, entities in turn["metadata"]["entities"].items():
+                    if etype not in recent_entities:
+                        recent_entities[etype] = []
+                    recent_entities[etype].extend(entities)
+            if "intent" in turn.get("metadata", {}):
+                recent_intents.append(turn["metadata"]["intent"])
+
+        return {
+            "session_id": session_id,
+            "turn_count": len(session["history"]),
+            "recent_entities": recent_entities,
+            "recent_intents": recent_intents,
+            "user_preferences": session["preferences"],
+            "accumulated_context": session["context"]
+        }
+
+    def update_preferences(self, session_id: str, preferences: Dict[str, Any]):
+        """Update user preferences for a session."""
+        session = self.get_or_create_session(session_id)
+        session["preferences"].update(preferences)
+
+    def get_session_summary(self, session_id: str) -> Dict[str, Any]:
+        """Get a summary of the session."""
+        session = self.get_or_create_session(session_id)
+
+        return {
+            "session_id": session_id,
+            "created_at": session["created_at"],
+            "last_active": session["last_active"],
+            "total_turns": len(session["history"]),
+            "preferences": session["preferences"]
+        }
+
+
+class AstraInterface:
+    """Astra - User-facing natural language interface for DiviScan OS."""
+
+    def __init__(self):
+        self.intent_classifier = IntentClassifier()
+        self.entity_extractor = EntityExtractor()
+        self.audience_adapter = AudienceAdapter()
+        self.conversation_manager = ConversationManager()
+        self.version = "1.0.0"
+
+    async def process_query(self, query: str, session_id: str = None,
+                           audience: str = "patient") -> Dict[str, Any]:
+        """Process a natural language query through the full pipeline."""
+
+        # Generate session ID if not provided
+        if not session_id:
+            session_id = f"astra_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{id(query) % 10000}"
+
+        # Get conversation context
+        context = self.conversation_manager.get_context(session_id)
+
+        # Classify intent
+        intent_result = self.intent_classifier.classify(query)
+
+        # Extract entities
+        entity_result = self.entity_extractor.extract(query)
+
+        # Route to appropriate handler based on intent
+        response = await self._route_query(
+            query=query,
+            intent=intent_result,
+            entities=entity_result,
+            context=context
+        )
+
+        # Adapt for audience
+        adapted_response = self.audience_adapter.adapt(response, audience)
+
+        # Record conversation turn
+        self.conversation_manager.add_turn(
+            session_id=session_id,
+            role="user",
+            content=query,
+            metadata={
+                "intent": intent_result["primary_intent"],
+                "entities": entity_result["entities"]
+            }
+        )
+
+        self.conversation_manager.add_turn(
+            session_id=session_id,
+            role="assistant",
+            content=str(response.get("answer", "")),
+            metadata={"audience": audience}
+        )
+
+        return {
+            "session_id": session_id,
+            "query": query,
+            "intent": intent_result,
+            "entities": entity_result,
+            "response": adapted_response,
+            "context_used": bool(context.get("recent_entities"))
+        }
+
+    async def _route_query(self, query: str, intent: Dict, entities: Dict,
+                          context: Dict) -> Dict[str, Any]:
+        """Route query to appropriate DiviScan subsystem."""
+
+        primary_intent = intent["primary_intent"]
+
+        if primary_intent == "diagnostic":
+            return await self._handle_diagnostic(query, entities, context)
+        elif primary_intent == "predictive":
+            return await self._handle_predictive(query, entities, context)
+        elif primary_intent == "educational":
+            return await self._handle_educational(query, entities, context)
+        elif primary_intent == "operational":
+            return await self._handle_operational(query, entities, context)
+        elif primary_intent == "research":
+            return await self._handle_research(query, entities, context)
+        elif primary_intent == "treatment":
+            return await self._handle_treatment(query, entities, context)
+        else:
+            return await self._handle_general(query, entities, context)
+
+    async def _handle_diagnostic(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle diagnostic-related queries."""
+        biomarkers = entities.get("entities", {}).get("biomarker", [])
+        conditions = entities.get("entities", {}).get("condition", [])
+
+        return {
+            "type": "diagnostic",
+            "answer": f"Diagnostic analysis requested. Detected biomarkers: {biomarkers or 'none specified'}. Conditions of interest: {conditions or 'none specified'}. For full diagnostic analysis, please use the /analyze endpoint with patient data.",
+            "suggested_endpoints": ["/analyze", "/risk-stratify"],
+            "detected_biomarkers": biomarkers,
+            "detected_conditions": conditions,
+            "requires_patient_data": True
+        }
+
+    async def _handle_predictive(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle predictive queries."""
+        return {
+            "type": "predictive",
+            "answer": "Predictive analysis available through DiviScan Predictive Core. Available predictions include: disease emergence forecasting, mutation trajectory modeling, synthetic cohort generation, and clinical trial simulation.",
+            "suggested_endpoints": ["/predict", "/risk-stratify"],
+            "available_models": [
+                "disease_emergence_forecasting",
+                "mutation_trajectory_modeling",
+                "clinical_trial_simulation",
+                "synthetic_cohort_generation"
+            ]
+        }
+
+    async def _handle_educational(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle educational queries."""
+        conditions = entities.get("entities", {}).get("condition", [])
+        biomarkers = entities.get("entities", {}).get("biomarker", [])
+
+        topic = conditions[0] if conditions else (biomarkers[0] if biomarkers else "health")
+
+        return {
+            "type": "educational",
+            "answer": f"Educational information about {topic}: DiviScan provides clinical decision support and health insights. For detailed medical information, please consult healthcare resources or your medical provider.",
+            "topic": topic,
+            "resources": ["medical_literature", "clinical_guidelines", "patient_education"],
+            "disclaimer": "This is general educational information, not medical advice."
+        }
+
+    async def _handle_operational(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle operational/status queries."""
+        return {
+            "type": "operational",
+            "answer": "DiviScan OS is fully operational. All subsystems including HyperCore AI, Predictive Core SI, Oracle Orchestrator, and Governance Layer are active.",
+            "status": "operational",
+            "subsystems": {
+                "hypercore_ai": "active",
+                "predictive_core_si": "active",
+                "oracle_orchestrator": "active",
+                "governance_layer": "active",
+                "astra_interface": "active"
+            },
+            "suggested_endpoints": ["/health", "/oracle/status", "/governance/status"]
+        }
+
+    async def _handle_research(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle research-related queries."""
+        return {
+            "type": "research",
+            "answer": "Research capabilities available: synthetic cohort generation for in-silico studies, clinical trial simulation, population health modeling, and disease emergence forecasting.",
+            "capabilities": [
+                "synthetic_cohort_generation",
+                "clinical_trial_simulation",
+                "population_health_modeling",
+                "disease_forecasting"
+            ],
+            "suggested_endpoints": ["/predict", "/governance/audit"]
+        }
+
+    async def _handle_treatment(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle treatment-related queries."""
+        medications = entities.get("entities", {}).get("medication", [])
+        conditions = entities.get("entities", {}).get("condition", [])
+
+        return {
+            "type": "treatment",
+            "answer": f"Treatment guidance requested. Detected medications: {medications or 'none'}. Conditions: {conditions or 'none'}. Treatment recommendations require full clinical context. Please use /clinical-decision endpoint with complete patient data.",
+            "detected_medications": medications,
+            "detected_conditions": conditions,
+            "suggested_endpoints": ["/clinical-decision", "/analyze"],
+            "disclaimer": "Treatment decisions must be made by qualified healthcare providers."
+        }
+
+    async def _handle_general(self, query: str, entities: Dict, context: Dict) -> Dict[str, Any]:
+        """Handle general queries."""
+        return {
+            "type": "general",
+            "answer": "Welcome to Astra, the DiviScan OS intelligent interface. I can help with: diagnostic analysis, predictive modeling, health education, system status, research tools, and treatment guidance. How can I assist you today?",
+            "capabilities": [
+                "diagnostic_analysis",
+                "predictive_modeling",
+                "health_education",
+                "system_status",
+                "research_tools",
+                "treatment_guidance"
+            ],
+            "suggested_queries": [
+                "What is my diabetes risk?",
+                "Explain hypertension",
+                "System status",
+                "Predict disease emergence",
+                "Compare treatment options"
+            ]
+        }
+
+    def get_capabilities(self) -> Dict[str, Any]:
+        """Return Astra's capabilities."""
+        return {
+            "name": "Astra",
+            "version": self.version,
+            "description": "Intelligent natural language interface for DiviScan OS",
+            "supported_intents": list(self.intent_classifier.intent_patterns.keys()),
+            "supported_audiences": list(self.audience_adapter.audience_profiles.keys()),
+            "entity_types": list(self.entity_extractor.entity_patterns.keys()),
+            "features": [
+                "natural_language_understanding",
+                "intent_classification",
+                "entity_extraction",
+                "audience_adaptation",
+                "conversation_management",
+                "context_awareness",
+                "multi_turn_dialogue"
+            ]
+        }
+
+
+# Initialize Astra Interface
+astra = AstraInterface()
+
+# Register Astra with Oracle
+oracle_engine.agent_registry.register_agent(
+    agent_id="astra_interface",
+    agent_type="nl_interface",
+    capabilities=[
+        "natural_language_understanding",
+        "intent_classification",
+        "entity_extraction",
+        "audience_adaptation",
+        "conversation_management"
+    ],
+    trust_score=0.92,
+    metadata={
+        "endpoint": "/astra",
+        "interface_type": "user_facing",
+        "supported_audiences": ["clinician", "patient", "researcher", "administrator", "investor"]
+    }
+)
+
+
+# ============================================
+# BATCH 4E: ASTRA ENDPOINTS
+# ============================================
+
+@app.post("/astra/query")
+async def astra_query(request: Dict[str, Any]):
+    """Process a natural language query through Astra."""
+    try:
+        query = request.get("query")
+        if not query:
+            return {"status": "error", "error": "Missing 'query' field"}
+
+        session_id = request.get("session_id")
+        audience = request.get("audience", "patient")
+
+        result = await astra.process_query(
+            query=query,
+            session_id=session_id,
+            audience=audience
+        )
+
+        return {"status": "success", **result}
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.get("/astra/conversation/{session_id}")
+async def astra_conversation(session_id: str):
+    """Get conversation history and context for a session."""
+    try:
+        summary = astra.conversation_manager.get_session_summary(session_id)
+        context = astra.conversation_manager.get_context(session_id)
+        session = astra.conversation_manager.get_or_create_session(session_id)
+
+        return {
+            "status": "success",
+            "summary": summary,
+            "context": context,
+            "history": session["history"][-10:]  # Last 10 turns
+        }
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.get("/astra/capabilities")
+def astra_capabilities():
+    """Get Astra interface capabilities."""
+    return {
+        "status": "operational",
+        **astra.get_capabilities()
+    }
+
+
+@app.get("/astra/status")
+def astra_status():
+    """Get Astra interface status."""
+    active_sessions = len(astra.conversation_manager.sessions)
+
+    return {
+        "status": "operational",
+        "name": "Astra",
+        "version": astra.version,
+        "active_sessions": active_sessions,
+        "subsystem_status": {
+            "intent_classifier": "active",
+            "entity_extractor": "active",
+            "audience_adapter": "active",
+            "conversation_manager": "active"
+        },
+        "oracle_registered": True,
+        "agent_id": "astra_interface"
     }
 
 
