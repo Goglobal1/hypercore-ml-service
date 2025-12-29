@@ -38,6 +38,7 @@ RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 random.seed(RANDOM_SEED)
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import traceback
 from pydantic import BaseModel, Field
 
@@ -103,12 +104,21 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.14.0"
+APP_VERSION = "5.14.1"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
     version=APP_VERSION,
     description="Unified ML API for DiviScan HyperCore / DiviCore AI",
+)
+
+# CORS middleware - allow Base44 frontend to call backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for now (restrict to Base44 domain in production)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
