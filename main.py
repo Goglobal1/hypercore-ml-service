@@ -10961,11 +10961,6 @@ class ClinicalTrialSimulator:
     ) -> Dict[str, Any]:
         """Simulate clinical trial with virtual patients."""
 
-        rng = np.random.RandomState(42)
-
-        cohort_gen = AdvancedSyntheticCohortGenerator()
-        cohort = cohort_gen.generate_cohort(n_patients=n_patients, diversity_profile="trial_eligible")
-
         if placebo_controlled:
             n_treatment = n_patients // 2
             n_placebo = n_patients - n_treatment
@@ -10983,17 +10978,14 @@ class ClinicalTrialSimulator:
         treatment_aes = int(n_treatment * ae_rate)
         placebo_aes = int(n_placebo * 0.05)
 
+        rr = None
+        p_value = None
+
         if placebo_controlled and n_placebo > 0 and placebo_responders > 0:
-            try:
-                rr = (treatment_responders / n_treatment) / (placebo_responders / n_placebo)
-                chi2_stat = ((treatment_responders - placebo_responders) ** 2) / max(1, (treatment_responders + placebo_responders))
-                p_value = float(1 - stats.chi2.cdf(float(chi2_stat), 1))
-            except Exception:
-                rr = None
-                p_value = None
-        else:
-            rr = None
-            p_value = None
+            rr = (treatment_responders / n_treatment) / (placebo_responders / n_placebo)
+            chi2_stat = ((treatment_responders - placebo_responders) ** 2) / max(1, (treatment_responders + placebo_responders))
+            from scipy.stats import chi2
+            p_value = float(1.0 - chi2.cdf(float(chi2_stat), 1))
 
         return {
             "trial_design": {
@@ -11008,7 +11000,7 @@ class ClinicalTrialSimulator:
                 "treatment_response_rate": round(treatment_responders / n_treatment, 3) if n_treatment > 0 else 0,
                 "placebo_responders": placebo_responders,
                 "placebo_response_rate": round(placebo_responders / n_placebo, 3) if n_placebo > 0 else 0,
-                "risk_ratio": round(rr, 3) if rr and rr != float('inf') else None,
+                "risk_ratio": round(rr, 3) if rr else None,
                 "p_value": round(p_value, 4) if p_value else None,
                 "statistically_significant": p_value < 0.05 if p_value else None
             },
