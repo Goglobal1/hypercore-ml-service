@@ -10817,8 +10817,9 @@ class AdvancedSyntheticCohortGenerator:
         albumin_base = 4.2 - (ages - 50) * 0.005 - (crp / 10) * 0.1
         albumin = self.rng.normal(albumin_base, 0.4, n).clip(2.0, 5.5)
 
-        creatinine_base = 0.9 + (ages - 50) * 0.003
-        creatinine_base[sexes == "M"] += 0.2
+        creatinine_base = np.array(0.9 + (ages - 50) * 0.003)
+        male_mask = (sexes == "M")
+        creatinine_base[male_mask] = creatinine_base[male_mask] + 0.2
         creatinine = self.rng.normal(creatinine_base, 0.3, n).clip(0.5, 3.0)
 
         wbc_base = 7.0 + (crp / 5) * 0.5
@@ -10982,10 +10983,14 @@ class ClinicalTrialSimulator:
         treatment_aes = int(n_treatment * ae_rate)
         placebo_aes = int(n_placebo * 0.05)
 
-        if placebo_controlled and n_placebo > 0:
-            rr = (treatment_responders / n_treatment) / (placebo_responders / n_placebo) if placebo_responders > 0 else float('inf')
-            chi2_stat = ((treatment_responders - placebo_responders) ** 2) / max(1, (treatment_responders + placebo_responders))
-            p_value = 1 - stats.chi2.cdf(chi2_stat, 1)
+        if placebo_controlled and n_placebo > 0 and placebo_responders > 0:
+            try:
+                rr = (treatment_responders / n_treatment) / (placebo_responders / n_placebo)
+                chi2_stat = ((treatment_responders - placebo_responders) ** 2) / max(1, (treatment_responders + placebo_responders))
+                p_value = float(1 - stats.chi2.cdf(float(chi2_stat), 1))
+            except Exception:
+                rr = None
+                p_value = None
         else:
             rr = None
             p_value = None
