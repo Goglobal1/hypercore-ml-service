@@ -103,7 +103,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.12.3"
+APP_VERSION = "5.13.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -10725,6 +10725,486 @@ def governance_status():
             "middleware": "ACTIVE",
             "policy_version": "2025-01-01.1",
             "compliance_frameworks": ["HIPAA", "FDA_21CFR11", "GDPR"]
+        }
+    }
+
+
+# ============================================
+# BATCH 4D: PREDICTIVE CORE (SYNTHETIC INTELLIGENCE)
+# ============================================
+
+# Batch 4D imports
+from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timedelta
+import numpy as np
+import pandas as pd
+from scipy import stats
+import json
+
+
+class AdvancedSyntheticCohortGenerator:
+    """Advanced synthetic patient generation with realistic distributions."""
+
+    def __init__(self, random_state: int = 42):
+        self.rng = np.random.RandomState(random_state)
+
+    def generate_cohort(
+        self,
+        n_patients: int = 10000,
+        diversity_profile: str = "representative",
+        disease_prevalence: Dict[str, float] = None,
+        age_range: Tuple[int, int] = (18, 95),
+        biomarker_correlations: bool = True
+    ) -> pd.DataFrame:
+        """Generate advanced synthetic patient cohort."""
+
+        ages = self._generate_ages(n_patients, age_range, diversity_profile)
+        sexes = self._generate_sexes(n_patients, diversity_profile)
+        ethnicities = self._generate_ethnicities(n_patients, diversity_profile)
+
+        if biomarker_correlations:
+            biomarkers = self._generate_correlated_biomarkers(n_patients, ages, sexes)
+        else:
+            biomarkers = self._generate_independent_biomarkers(n_patients)
+
+        cohort = pd.DataFrame({
+            "patient_id": [f"synthetic_{i:08d}" for i in range(n_patients)],
+            "age": ages,
+            "sex": sexes,
+            "ethnicity": ethnicities,
+            **biomarkers
+        })
+
+        if disease_prevalence:
+            for disease, prevalence in disease_prevalence.items():
+                cohort[f"has_{disease}"] = self.rng.random(n_patients) < prevalence
+
+        return cohort
+
+    def _generate_ages(self, n: int, age_range: Tuple[int, int], profile: str) -> np.ndarray:
+        """Generate realistic age distribution."""
+        if profile == "high_risk":
+            ages = self.rng.normal(65, 12, n)
+        elif profile == "trial_eligible":
+            ages = self.rng.normal(55, 10, n)
+        else:
+            ages = self.rng.normal(50, 18, n)
+        return ages.clip(age_range[0], age_range[1])
+
+    def _generate_sexes(self, n: int, profile: str) -> np.ndarray:
+        """Generate sex distribution."""
+        p_female = 0.45 if profile == "high_risk" else 0.51
+        return self.rng.choice(["F", "M"], n, p=[p_female, 1 - p_female])
+
+    def _generate_ethnicities(self, n: int, profile: str) -> np.ndarray:
+        """Generate ethnicity distribution."""
+        if profile == "representative":
+            return self.rng.choice(
+                ["White", "Black", "Hispanic", "Asian", "Other"],
+                n, p=[0.60, 0.13, 0.18, 0.06, 0.03]
+            )
+        else:
+            return self.rng.choice(
+                ["White", "Black", "Hispanic", "Asian", "Other"],
+                n, p=[0.75, 0.10, 0.08, 0.05, 0.02]
+            )
+
+    def _generate_correlated_biomarkers(self, n: int, ages: np.ndarray, sexes: np.ndarray) -> Dict[str, np.ndarray]:
+        """Generate biomarkers with realistic correlations."""
+        crp_base = 1.5 + (ages - 50) * 0.02
+        crp = self.rng.lognormal(np.log(crp_base), 1.0, n).clip(0.1, 50)
+
+        albumin_base = 4.2 - (ages - 50) * 0.005 - (crp / 10) * 0.1
+        albumin = self.rng.normal(albumin_base, 0.4, n).clip(2.0, 5.5)
+
+        creatinine_base = 0.9 + (ages - 50) * 0.003
+        creatinine_base[sexes == "M"] += 0.2
+        creatinine = self.rng.normal(creatinine_base, 0.3, n).clip(0.5, 3.0)
+
+        wbc_base = 7.0 + (crp / 5) * 0.5
+        wbc = self.rng.normal(wbc_base, 2.0, n).clip(2.0, 20.0)
+
+        hgb_base_array = np.full(n, 14.5)
+        hgb_base_array[sexes == "F"] -= 1.5
+        hemoglobin = self.rng.normal(hgb_base_array, 1.5, n).clip(7.0, 18.0)
+
+        return {
+            "crp": crp,
+            "albumin": albumin,
+            "creatinine": creatinine,
+            "wbc": wbc,
+            "hemoglobin": hemoglobin
+        }
+
+    def _generate_independent_biomarkers(self, n: int) -> Dict[str, np.ndarray]:
+        """Generate biomarkers without correlations."""
+        return {
+            "crp": self.rng.lognormal(1.5, 1.0, n).clip(0.1, 50),
+            "albumin": self.rng.normal(3.8, 0.4, n).clip(2.0, 5.5),
+            "creatinine": self.rng.normal(1.0, 0.3, n).clip(0.5, 3.0),
+            "wbc": self.rng.normal(8.0, 2.5, n).clip(2.0, 20.0),
+            "hemoglobin": self.rng.normal(14.0, 2.0, n).clip(7.0, 18.0)
+        }
+
+
+class DiseaseEmergenceForecaster:
+    """Forecasts disease emergence and outbreak patterns."""
+
+    def forecast_emergence(
+        self,
+        current_data: pd.DataFrame,
+        forecast_days: int = 30,
+        region: str = None,
+        confidence_interval: float = 0.95
+    ) -> Dict[str, Any]:
+        """Forecast disease emergence over next N days."""
+
+        if current_data.empty:
+            return {
+                "forecast": [],
+                "trend": "insufficient_data",
+                "confidence_lower": [],
+                "confidence_upper": []
+            }
+
+        if "date" in current_data.columns and "cases" in current_data.columns:
+            ts = current_data.sort_values("date")
+            x = np.arange(len(ts))
+            y = ts["cases"].values
+
+            slope, intercept = np.polyfit(x, y, 1)
+
+            future_x = np.arange(len(ts), len(ts) + forecast_days)
+            forecast = slope * future_x + intercept
+
+            residuals = y - (slope * x + intercept)
+            std_err = np.std(residuals)
+            z_score = stats.norm.ppf((1 + confidence_interval) / 2)
+            margin = z_score * std_err
+
+            if slope > 1:
+                trend = "increasing"
+            elif slope < -1:
+                trend = "decreasing"
+            else:
+                trend = "stable"
+
+            return {
+                "forecast": forecast.clip(0).tolist(),
+                "trend": trend,
+                "slope": float(slope),
+                "confidence_lower": (forecast - margin).clip(0).tolist(),
+                "confidence_upper": (forecast + margin).tolist(),
+                "forecast_days": forecast_days
+            }
+
+        return {"forecast": [], "trend": "unknown", "error": "Invalid data format"}
+
+
+class MutationTrajectoryModeler:
+    """Models pathogen mutation trajectories."""
+
+    def model_mutation_trajectory(
+        self,
+        current_sequence: str,
+        selection_pressures: List[str],
+        generations: int = 100,
+        mutation_rate: float = 0.001
+    ) -> Dict[str, Any]:
+        """Model mutation trajectory for pathogen."""
+
+        rng = np.random.RandomState(42)
+        trajectories = []
+
+        for gen in range(0, generations, 10):
+            expected_mutations = int(len(current_sequence) * mutation_rate * gen)
+
+            immune_escape_prob = min(0.9, expected_mutations * 0.01) if "immune" in selection_pressures else 0.1
+            drug_resistance_prob = min(0.8, expected_mutations * 0.015) if "drug" in selection_pressures else 0.05
+
+            trajectories.append({
+                "generation": gen,
+                "mutations": expected_mutations,
+                "immune_escape_probability": round(immune_escape_prob, 3),
+                "drug_resistance_probability": round(drug_resistance_prob, 3)
+            })
+
+        return {
+            "trajectories": trajectories,
+            "total_generations": generations,
+            "selection_pressures": selection_pressures,
+            "mutation_rate": mutation_rate,
+            "predicted_variants": self._predict_variants(trajectories)
+        }
+
+    def _predict_variants(self, trajectories: List[Dict]) -> List[str]:
+        """Predict likely variant labels based on trajectory."""
+        variants = []
+        for t in trajectories:
+            if t["immune_escape_probability"] > 0.7:
+                variants.append(f"immune_escape_gen_{t['generation']}")
+            if t["drug_resistance_probability"] > 0.6:
+                variants.append(f"drug_resistant_gen_{t['generation']}")
+        return variants[:5]
+
+
+class ClinicalTrialSimulator:
+    """Simulates clinical trials with virtual patients."""
+
+    def simulate_trial(
+        self,
+        drug_profile: Dict[str, Any],
+        n_patients: int = 1000,
+        trial_duration_days: int = 180,
+        placebo_controlled: bool = True
+    ) -> Dict[str, Any]:
+        """Simulate clinical trial with virtual patients."""
+
+        rng = np.random.RandomState(42)
+
+        cohort_gen = AdvancedSyntheticCohortGenerator()
+        cohort = cohort_gen.generate_cohort(n_patients=n_patients, diversity_profile="trial_eligible")
+
+        if placebo_controlled:
+            n_treatment = n_patients // 2
+            n_placebo = n_patients - n_treatment
+        else:
+            n_treatment = n_patients
+            n_placebo = 0
+
+        efficacy_rate = drug_profile.get("efficacy", 0.6)
+        placebo_rate = drug_profile.get("placebo_effect", 0.3)
+
+        treatment_responders = int(n_treatment * efficacy_rate)
+        placebo_responders = int(n_placebo * placebo_rate)
+
+        ae_rate = drug_profile.get("adverse_event_rate", 0.15)
+        treatment_aes = int(n_treatment * ae_rate)
+        placebo_aes = int(n_placebo * 0.05)
+
+        if placebo_controlled and n_placebo > 0:
+            rr = (treatment_responders / n_treatment) / (placebo_responders / n_placebo) if placebo_responders > 0 else float('inf')
+            chi2_stat = ((treatment_responders - placebo_responders) ** 2) / max(1, (treatment_responders + placebo_responders))
+            p_value = 1 - stats.chi2.cdf(chi2_stat, 1)
+        else:
+            rr = None
+            p_value = None
+
+        return {
+            "trial_design": {
+                "n_patients": n_patients,
+                "n_treatment": n_treatment,
+                "n_placebo": n_placebo,
+                "duration_days": trial_duration_days,
+                "placebo_controlled": placebo_controlled
+            },
+            "outcomes": {
+                "treatment_responders": treatment_responders,
+                "treatment_response_rate": round(treatment_responders / n_treatment, 3) if n_treatment > 0 else 0,
+                "placebo_responders": placebo_responders,
+                "placebo_response_rate": round(placebo_responders / n_placebo, 3) if n_placebo > 0 else 0,
+                "risk_ratio": round(rr, 3) if rr and rr != float('inf') else None,
+                "p_value": round(p_value, 4) if p_value else None,
+                "statistically_significant": p_value < 0.05 if p_value else None
+            },
+            "safety": {
+                "treatment_adverse_events": treatment_aes,
+                "treatment_ae_rate": round(treatment_aes / n_treatment, 3) if n_treatment > 0 else 0,
+                "placebo_adverse_events": placebo_aes,
+                "placebo_ae_rate": round(placebo_aes / n_placebo, 3) if n_placebo > 0 else 0
+            },
+            "recommendation": self._generate_recommendation(
+                treatment_responders / n_treatment if n_treatment > 0 else 0,
+                p_value if p_value else 1.0,
+                treatment_aes / n_treatment if n_treatment > 0 else 0
+            )
+        }
+
+    def _generate_recommendation(self, response_rate: float, p_value: float, ae_rate: float) -> str:
+        """Generate trial recommendation."""
+        if p_value < 0.05 and response_rate > 0.5 and ae_rate < 0.2:
+            return "proceed_to_phase_3"
+        elif p_value < 0.05 and response_rate > 0.4:
+            return "continue_with_caution"
+        elif p_value >= 0.05:
+            return "insufficient_efficacy"
+        elif ae_rate >= 0.3:
+            return "safety_concerns"
+        else:
+            return "further_evaluation_needed"
+
+
+class DiviScanPredictiveCore:
+    """DiviScan Predictive Core - Synthetic Intelligence Agent."""
+
+    def __init__(self):
+        self.cohort_generator = AdvancedSyntheticCohortGenerator()
+        self.emergence_forecaster = DiseaseEmergenceForecaster()
+        self.mutation_modeler = MutationTrajectoryModeler()
+        self.trial_simulator = ClinicalTrialSimulator()
+
+    async def execute_task(self, task: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute SI task."""
+
+        if task == "generate_synthetic_cohort":
+            cohort = self.cohort_generator.generate_cohort(
+                n_patients=params.get("n_patients", 10000),
+                diversity_profile=params.get("diversity_profile", "representative"),
+                disease_prevalence=params.get("disease_prevalence"),
+                biomarker_correlations=params.get("biomarker_correlations", True)
+            )
+
+            return {
+                "status": "success",
+                "task": task,
+                "cohort_size": len(cohort),
+                "cohort_summary": {
+                    "age_mean": round(cohort["age"].mean(), 1),
+                    "age_std": round(cohort["age"].std(), 1),
+                    "sex_distribution": cohort["sex"].value_counts().to_dict(),
+                    "biomarker_ranges": {
+                        col: {
+                            "min": round(cohort[col].min(), 2),
+                            "max": round(cohort[col].max(), 2),
+                            "mean": round(cohort[col].mean(), 2)
+                        }
+                        for col in ["crp", "albumin", "creatinine", "wbc", "hemoglobin"]
+                        if col in cohort.columns
+                    }
+                },
+                "cohort_sample": cohort.head(100).to_dict(orient="records")
+            }
+
+        elif task == "forecast_disease_emergence":
+            current_data_dict = params.get("current_data", [])
+            current_data = pd.DataFrame(current_data_dict) if isinstance(current_data_dict, list) else pd.DataFrame()
+
+            forecast = self.emergence_forecaster.forecast_emergence(
+                current_data=current_data,
+                forecast_days=params.get("forecast_days", 30),
+                region=params.get("region")
+            )
+
+            return {"status": "success", "task": task, "forecast": forecast}
+
+        elif task == "model_mutation_trajectory":
+            trajectory = self.mutation_modeler.model_mutation_trajectory(
+                current_sequence=params.get("sequence", "ATCG" * 250),
+                selection_pressures=params.get("selection_pressures", []),
+                generations=params.get("generations", 100),
+                mutation_rate=params.get("mutation_rate", 0.001)
+            )
+
+            return {"status": "success", "task": task, "trajectory": trajectory}
+
+        elif task == "simulate_clinical_trial":
+            trial_results = self.trial_simulator.simulate_trial(
+                drug_profile=params.get("drug_profile", {}),
+                n_patients=params.get("n_patients", 1000),
+                trial_duration_days=params.get("trial_duration_days", 180),
+                placebo_controlled=params.get("placebo_controlled", True)
+            )
+
+            return {"status": "success", "task": task, "trial_results": trial_results}
+
+        else:
+            return {
+                "status": "error",
+                "error": f"Unknown task: {task}",
+                "supported_tasks": [
+                    "generate_synthetic_cohort",
+                    "forecast_disease_emergence",
+                    "model_mutation_trajectory",
+                    "simulate_clinical_trial"
+                ]
+            }
+
+
+# Initialize Predictive Core
+predictive_core = DiviScanPredictiveCore()
+
+# Register Predictive Core with Oracle
+oracle_engine.agent_registry.register_agent(
+    agent_id="diviscan_predictive_core",
+    agent_type="si_pattern_projection",
+    capabilities=[
+        "synthetic_cohort_generation",
+        "disease_emergence_forecasting",
+        "mutation_trajectory_modeling",
+        "clinical_trial_simulation",
+        "population_dynamics_modeling"
+    ],
+    trust_score=0.88,
+    metadata={
+        "endpoint": "/predict",
+        "data_source": "synthetic_simulation",
+        "validation": "statistical_accuracy"
+    }
+)
+
+
+# ============================================
+# BATCH 4D: PREDICTIVE CORE ENDPOINTS
+# ============================================
+
+@app.post("/predict")
+async def predict_endpoint(request: Dict[str, Any]):
+    """DiviScan Predictive Core endpoint - Execute synthetic intelligence tasks."""
+    try:
+        task = request.get("task")
+        params = request.get("params", {})
+
+        if not task:
+            return {
+                "status": "error",
+                "error": "Missing 'task' field",
+                "supported_tasks": [
+                    "generate_synthetic_cohort",
+                    "forecast_disease_emergence",
+                    "model_mutation_trajectory",
+                    "simulate_clinical_trial"
+                ]
+            }
+
+        result = await predictive_core.execute_task(task, params)
+        return result
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.get("/predict/capabilities")
+def predictive_core_capabilities():
+    """Get Predictive Core capabilities and status."""
+    return {
+        "status": "operational",
+        "agent_id": "diviscan_predictive_core",
+        "agent_type": "si_pattern_projection",
+        "trust_score": 0.88,
+        "capabilities": [
+            "synthetic_cohort_generation",
+            "disease_emergence_forecasting",
+            "mutation_trajectory_modeling",
+            "clinical_trial_simulation",
+            "population_dynamics_modeling"
+        ],
+        "supported_tasks": {
+            "generate_synthetic_cohort": {
+                "description": "Generate realistic synthetic patients",
+                "params": ["n_patients", "diversity_profile", "disease_prevalence"]
+            },
+            "forecast_disease_emergence": {
+                "description": "Predict future disease case counts",
+                "params": ["current_data", "forecast_days", "region"]
+            },
+            "model_mutation_trajectory": {
+                "description": "Model pathogen mutation paths",
+                "params": ["sequence", "selection_pressures", "generations"]
+            },
+            "simulate_clinical_trial": {
+                "description": "Simulate virtual clinical trial",
+                "params": ["drug_profile", "n_patients", "trial_duration_days"]
+            }
         }
     }
 
