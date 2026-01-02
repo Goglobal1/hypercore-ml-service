@@ -4639,22 +4639,21 @@ Rescue Score: {best_score}/100
         error_type = type(e).__name__
         error_msg = str(e)
 
-        # Get full traceback for debugging
-        tb_str = traceback.format_exc()
+        # Get full traceback for debugging - this shows the EXACT LINE NUMBER
+        full_traceback = traceback.format_exc()
 
-        # Log comprehensive error info
-        print(f"=" * 60)
-        print(f"TrialRescue Error [{error_id}]")
-        print(f"Type: {error_type}")
-        print(f"Message: {error_msg}")
-        print(f"Traceback:")
-        print(tb_str)
-        print(f"=" * 60)
+        # Print to stdout so it shows in Railway logs
+        print(f"=== TRIAL RESCUE ERROR [{error_id}] ===")
+        print(f"Error Type: {error_type}")
+        print(f"Error Message: {error_msg}")
+        print(f"Full Traceback:")
+        print(full_traceback)
+        print(f"=== END ERROR [{error_id}] ===")
 
         # Return graceful error with reference ID
         raise HTTPException(
             status_code=500,
-            detail=f"Internal analysis error (ref: {error_id}). Error type: {error_type}. Please verify data format and try again."
+            detail=f"Internal analysis error (ref: {error_id}). Please verify data format and try again."
         )
 
 
