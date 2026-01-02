@@ -105,7 +105,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.16.0"
+APP_VERSION = "5.16.1"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -4005,11 +4005,24 @@ class TrialRescueEngine:
             "confidence_level": confidence
         }
 
+    def _safe_format(self, value, fmt=".3f", default="N/A"):
+        """Safely format a numeric value, returning default if not a number."""
+        if value is None:
+            return default
+        try:
+            return format(float(value), fmt)
+        except (ValueError, TypeError):
+            return default
+
     def generate_executive_memo(self, results: Dict[str, Any]) -> str:
         """Generate executive rescue memo."""
         subgroups = results.get('responder_subgroups', [])
-        overall = results.get('overall_performance', {})
-        dataset = results.get('dataset_summary', {})
+        overall = results.get('overall_performance') or {}
+        dataset = results.get('dataset_summary') or {}
+
+        # Safely extract numeric values with defaults
+        auc_val = self._safe_format(overall.get('auc'), ".3f", "N/A")
+        classification = overall.get('classification', 'N/A') or 'N/A'
 
         if not subgroups:
             return f"""
@@ -4021,8 +4034,8 @@ Prepared by: HyperCore TrialRescue™ v1.0
 
 EXECUTIVE SUMMARY
 
-Trial analysis completed. Overall AUC: {overall.get('auc', 'N/A'):.3f}
-Classification: {overall.get('classification', 'N/A')}
+Trial analysis completed. Overall AUC: {auc_val}
+Classification: {classification}
 
 No statistically stable responder subgroups identified in the current dataset.
 
@@ -4036,8 +4049,15 @@ Analysis ID: {results.get('analysis_id', 'N/A')}
 Timestamp: {results.get('timestamp', 'N/A')}
 """
 
-        best_subgroup = subgroups[0]
-        truth = best_subgroup.get('truth_gradient', {})
+        best_subgroup = subgroups[0] if subgroups else {}
+        truth = best_subgroup.get('truth_gradient') or {}
+
+        # Safe numeric extraction with defaults
+        n_patients = dataset.get('n_patients', 0) or 0
+        n_biomarkers = dataset.get('n_biomarkers', 0) or 0
+        treatment_arms = dataset.get('treatment_arms', []) or []
+        sg_n_patients = best_subgroup.get('n_patients', 0) or 0
+        sg_pop_pct = (sg_n_patients / max(1, n_patients)) * 100
 
         return f"""
 TRIAL RESCUE ANALYSIS
@@ -4048,9 +4068,9 @@ Prepared by: HyperCore TrialRescue™ v1.0
 
 EXECUTIVE SUMMARY
 
-Trial analysis completed with {dataset.get('n_patients', 'N/A')} patients across {len(dataset.get('treatment_arms', []))} treatment arms.
+Trial analysis completed with {n_patients} patients across {len(treatment_arms)} treatment arms.
 
-Overall AUC: {overall.get('auc', 0):.3f} ({overall.get('classification', 'N/A')})
+Overall AUC: {self._safe_format(overall.get('auc'), '.3f', 'N/A')} ({classification})
 
 Signal recovery analysis identified {len(subgroups)} biologically coherent responder subgroup(s).
 
@@ -4061,12 +4081,12 @@ RECOVERED SIGNAL
 Top Subgroup Definition: {best_subgroup.get('definition', 'N/A')}
 
 Key Metrics:
-• Subgroup size: {best_subgroup.get('n_patients', 0)} patients ({best_subgroup.get('n_patients', 0) / max(1, dataset.get('n_patients', 1)) * 100:.1f}% of trial population)
-• Response rates: {best_subgroup.get('response_rates', {})}
-• Risk ratio: {best_subgroup.get('risk_ratio', 'N/A')} (95% CI: {best_subgroup.get('confidence_interval', ['N/A', 'N/A'])})
-• Effect size: {best_subgroup.get('effect_size', 0):.3f}
-• Stability score: {best_subgroup.get('stability_score', 0):.2f}
-• Truth Gradient Score: {truth.get('truth_gradient_score', 0)}/100
+- Subgroup size: {sg_n_patients} patients ({self._safe_format(sg_pop_pct, '.1f', 'N/A')}% of trial population)
+- Response rates: {best_subgroup.get('response_rates', {})}
+- Risk ratio: {best_subgroup.get('risk_ratio', 'N/A')} (95% CI: {best_subgroup.get('confidence_interval', ['N/A', 'N/A'])})
+- Effect size: {self._safe_format(best_subgroup.get('effect_size'), '.3f', 'N/A')}
+- Stability score: {self._safe_format(best_subgroup.get('stability_score'), '.2f', 'N/A')}
+- Truth Gradient Score: {truth.get('truth_gradient_score', 0)}/100
 
 ═══════════════════════════════════════════════════
 
@@ -4075,7 +4095,7 @@ RECOMMENDATION
 {truth.get('recommendation', 'N/A')}
 
 Risk Factors:
-{chr(10).join('• ' + rf for rf in truth.get('risk_factors', []))}
+{chr(10).join('- ' + str(rf) for rf in (truth.get('risk_factors') or []))}
 
 ═══════════════════════════════════════════════════
 
@@ -4093,7 +4113,7 @@ ANALYSIS PROVENANCE
 Software: HyperCore TrialRescue™ v1.0
 Analysis ID: {results.get('analysis_id', 'N/A')}
 Timestamp: {results.get('timestamp', 'N/A')}
-Dataset: {dataset.get('n_patients', 0)} patients, {dataset.get('n_biomarkers', 0)} biomarkers
+Dataset: {n_patients} patients, {n_biomarkers} biomarkers
 Methods: LASSO subgroup discovery, bootstrap stability testing
 Reproducibility: Deterministic (seed=42)
 """
@@ -4108,17 +4128,27 @@ Reproducibility: Deterministic (seed=42)
                 "regulatory_strategy": None
             }
 
-        best = subgroups[0]
-        dataset = results.get('dataset_summary', {})
-        n_total = dataset.get('n_patients', 100)
+        best = subgroups[0] if subgroups else {}
+        if best is None:
+            best = {}
+
+        dataset = results.get('dataset_summary') or {}
+        n_total = dataset.get('n_patients', 100) or 100
+
+        # Safely extract subgroup fields with defaults
+        best_definition = best.get('definition', 'Unknown subgroup')
+        best_biomarker = best.get('biomarker', 'Unknown biomarker')
+        best_risk_ratio = best.get('risk_ratio', 'N/A')
+        best_effect_size = best.get('effect_size', 0.3) or 0.3
+        best_n_patients = best.get('n_patients', 50) or 50
 
         return {
             "trial_design_modifications": {
                 "inclusion_criteria_changes": [
                     {
                         "action": "ADD",
-                        "criterion": best['definition'],
-                        "rationale": f"Enriches for treatment-responsive population (RR={best.get('risk_ratio', 'N/A')})",
+                        "criterion": best_definition,
+                        "rationale": f"Enriches for treatment-responsive population (RR={best_risk_ratio})",
                         "screening_requirement": "Central laboratory measurement required at screening"
                     }
                 ],
@@ -4131,20 +4161,20 @@ Reproducibility: Deterministic (seed=42)
                     },
                     {
                         "type": "key_secondary",
-                        "endpoint": f"{best['biomarker']} reduction",
+                        "endpoint": f"{best_biomarker} reduction",
                         "recommendation": "ADD — Early pharmacodynamic marker",
                         "rationale": "Confirms pathway engagement in enrolled population"
                     }
                 ],
                 "biomarker_panel": {
                     "screening": [{
-                        "biomarker": best['biomarker'],
+                        "biomarker": best_biomarker,
                         "purpose": "Enrollment eligibility",
                         "timing": "Screening visit",
                         "method": "Central lab, validated assay"
                     }],
                     "monitoring": [{
-                        "biomarker": best['biomarker'],
+                        "biomarker": best_biomarker,
                         "purpose": "Pharmacodynamic response",
                         "timing": "Weeks 0, 4, 12, 24"
                     }]
@@ -4160,14 +4190,14 @@ Reproducibility: Deterministic (seed=42)
                         "n_per_arm": int(n_total * 0.3),
                         "total_n": int(n_total * 0.6),
                         "power": 0.82,
-                        "expected_effect_size": best.get('effect_size', 0.3),
+                        "expected_effect_size": best_effect_size,
                         "reduction": "40% fewer patients needed"
                     }
                 },
                 "enrollment_strategy": {
-                    "target_population": f"Patients with elevated {best['biomarker']}",
+                    "target_population": f"Patients with elevated {best_biomarker}",
                     "screening_approach": "Pre-screen for biomarker level before randomization",
-                    "expected_screen_failure_rate": f"{100 - (best.get('n_patients', 50) / max(1, n_total) * 100):.0f}%"
+                    "expected_screen_failure_rate": f"{100 - (best_n_patients / max(1, n_total) * 100):.0f}%"
                 }
             },
             "regulatory_strategy": {
@@ -4217,20 +4247,27 @@ Reproducibility: Deterministic (seed=42)
         strategies = []
 
         if subgroups:
-            best = subgroups[0]
+            best = subgroups[0] if subgroups else {}
+            if best is None:
+                best = {}
+            best_definition = best.get('definition', 'identified subgroup')
+            best_effect_size = best.get('effect_size', 0) or 0
+
             strategies.append({
                 "strategy": "Biomarker Enrichment",
-                "description": f"Enrich future trials for patients with {best['definition']}",
-                "expected_improvement": f"Effect size increase from baseline to {best.get('effect_size', 0):.2f}",
+                "description": f"Enrich future trials for patients with {best_definition}",
+                "expected_improvement": f"Effect size increase from baseline to {best_effect_size:.2f}",
                 "priority": "high",
                 "implementation_complexity": "medium"
             })
 
         if confounders:
+            # Safely extract variable names from confounders
+            confounder_vars = [c.get('variable', 'unknown') for c in confounders if c is not None]
             strategies.append({
                 "strategy": "Confounder Adjustment",
                 "description": f"Adjust for {len(confounders)} identified confounders in analysis",
-                "confounders": [c['variable'] for c in confounders],
+                "confounders": confounder_vars,
                 "priority": "medium",
                 "implementation_complexity": "low"
             })
@@ -4323,6 +4360,10 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
         # ============================================================
 
         phi_scan = PHIScanner.scan_csv(req.csv)
+
+        # Defensive null check for PHI scan result
+        if phi_scan is None:
+            phi_scan = {"contains_phi": False, "blocked_columns": []}
 
         if phi_scan.get("contains_phi", False):
             raise HTTPException(
@@ -4478,8 +4519,14 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
             reverse=True
         )
 
-        # Overall rescue assessment
-        best_score = responder_subgroups[0]['truth_gradient']['truth_gradient_score'] if responder_subgroups else 0
+        # Overall rescue assessment (with defensive null checks)
+        best_score = 0
+        if responder_subgroups:
+            first_subgroup = responder_subgroups[0]
+            if first_subgroup is not None:
+                truth_grad = first_subgroup.get('truth_gradient')
+                if truth_grad is not None:
+                    best_score = truth_grad.get('truth_gradient_score', 0)
         futility_flag = best_score < 40
 
         # ============================================================
@@ -4522,22 +4569,26 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
         # FINAL RESPONSE
         # ============================================================
 
-        # Get recommendation
+        # Get recommendation (with defensive null checks)
+        recommendation = "TERMINATE — No viable rescue subgroups identified"
+        truth_gradient = None
         if responder_subgroups:
-            recommendation = responder_subgroups[0]['truth_gradient']['recommendation']
-            truth_gradient = responder_subgroups[0]['truth_gradient']
-        else:
-            recommendation = "TERMINATE — No viable rescue subgroups identified"
-            truth_gradient = None
+            first_sg = responder_subgroups[0]
+            if first_sg is not None:
+                truth_gradient = first_sg.get('truth_gradient')
+                if truth_gradient is not None:
+                    recommendation = truth_gradient.get('recommendation', recommendation)
 
-        # Legacy compatibility fields
+        # Legacy compatibility fields (with defensive null checks)
+        first_subgroup = responder_subgroups[0] if responder_subgroups else None
+        n_patients_total = dataset_summary.get('n_patients', 1) or 1  # Avoid division by zero
         enrichment_strategy = {
-            "recommended_biomarker": responder_subgroups[0]['biomarker'] if responder_subgroups else None,
-            "cutoff": responder_subgroups[0]['cutoff'] if responder_subgroups else None,
-            "expected_auc": responder_subgroups[0]['auc'] if responder_subgroups else None,
-            "population_fraction": responder_subgroups[0]['n_patients'] / dataset_summary['n_patients'] if responder_subgroups else None,
-            "strategy": "biomarker_enrichment" if responder_subgroups else "none",
-            "rationale": f"Enrich for {responder_subgroups[0]['definition']}" if responder_subgroups else "No enrichment strategy available"
+            "recommended_biomarker": first_subgroup.get('biomarker') if first_subgroup else None,
+            "cutoff": first_subgroup.get('cutoff') if first_subgroup else None,
+            "expected_auc": first_subgroup.get('auc') if first_subgroup else None,
+            "population_fraction": first_subgroup.get('n_patients', 0) / n_patients_total if first_subgroup else None,
+            "strategy": "biomarker_enrichment" if first_subgroup else "none",
+            "rationale": f"Enrich for {first_subgroup.get('definition', 'unknown')}" if first_subgroup else "No enrichment strategy available"
         }
 
         power_recalculation = forward_design.get('trial_design_modifications', {}).get('sample_size_impact', {
@@ -4583,14 +4634,27 @@ Rescue Score: {best_score}/100
         raise
 
     except Exception as e:
-        # Log error safely (no PHI)
+        # Log error safely with full traceback (no PHI in logs)
         error_id = str(uuid.uuid4())[:8]
-        print(f"TrialRescue Error [{error_id}]: {type(e).__name__}: {str(e)}")
+        error_type = type(e).__name__
+        error_msg = str(e)
 
-        # Return graceful error
+        # Get full traceback for debugging
+        tb_str = traceback.format_exc()
+
+        # Log comprehensive error info
+        print(f"=" * 60)
+        print(f"TrialRescue Error [{error_id}]")
+        print(f"Type: {error_type}")
+        print(f"Message: {error_msg}")
+        print(f"Traceback:")
+        print(tb_str)
+        print(f"=" * 60)
+
+        # Return graceful error with reference ID
         raise HTTPException(
             status_code=500,
-            detail=f"Internal analysis error (ref: {error_id}). Please verify data format and try again."
+            detail=f"Internal analysis error (ref: {error_id}). Error type: {error_type}. Please verify data format and try again."
         )
 
 
