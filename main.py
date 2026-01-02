@@ -105,7 +105,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.16.1"
+APP_VERSION = "5.16.2"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -4558,12 +4558,12 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
 
         forward_design = trial_rescue_engine.generate_forward_trial_design(
             analysis_results, responder_subgroups
-        )
+        ) or {}  # Ensure forward_design is never None
 
         # Generate rescue strategies
         strategies = trial_rescue_engine.generate_rescue_strategies(
             responder_subgroups, confounders
-        )
+        ) or []  # Ensure strategies is never None
 
         # ============================================================
         # FINAL RESPONSE
@@ -4591,15 +4591,22 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
             "rationale": f"Enrich for {first_subgroup.get('definition', 'unknown')}" if first_subgroup else "No enrichment strategy available"
         }
 
-        power_recalculation = forward_design.get('trial_design_modifications', {}).get('sample_size_impact', {
+        # Safe access to power_recalculation with null checks
+        trial_mods = (forward_design or {}).get('trial_design_modifications') or {}
+        power_recalculation = trial_mods.get('sample_size_impact', {
             "observed_event_rate": float(y.mean()),
             "note": "Power recalculation requires protocol assumptions"
         })
 
-        narrative = f"""
-TrialRescue™ analysis complete. Analyzed {dataset_summary['n_patients']} patients with {dataset_summary['n_biomarkers']} biomarkers.
+        # Safe extraction for narrative
+        n_patients_display = dataset_summary.get('n_patients', 0) or 0
+        n_biomarkers_display = dataset_summary.get('n_biomarkers', 0) or 0
+        auc_display = overall_performance.get('auc', 0) or 0
 
-Overall Performance: AUC={overall_performance['auc']:.3f} ({classification})
+        narrative = f"""
+TrialRescue™ analysis complete. Analyzed {n_patients_display} patients with {n_biomarkers_display} biomarkers.
+
+Overall Performance: AUC={auc_display:.3f} ({classification})
 Treatment Effect: {treatment_effect:.1%} difference between arms
 
 {'Found ' + str(len(responder_subgroups)) + ' potential rescue subgroup(s).' if responder_subgroups else 'No stable rescue subgroups identified.'}
@@ -4609,24 +4616,27 @@ Top Recommendation: {recommendation}
 Rescue Score: {best_score}/100
 """
 
+        # Safe access for return values
+        safe_audit_trail = audit_trail or {}
+
         return TrialRescueResult(
-            analysis_id=audit_trail["analysis_id"],
-            timestamp=audit_trail["timestamp"],
+            analysis_id=safe_audit_trail.get("analysis_id", str(uuid.uuid4())),
+            timestamp=safe_audit_trail.get("timestamp", datetime.now(timezone.utc).isoformat()),
             futility_flag=futility_flag,
             rescue_score=float(best_score),
             recommendation=recommendation,
-            overall_performance=overall_performance,
-            biomarker_rankings=biomarker_analysis[:10],
-            responder_subgroups=responder_subgroups[:5],
-            confounders=confounders,
+            overall_performance=overall_performance or {},
+            biomarker_rankings=(biomarker_analysis or [])[:10],
+            responder_subgroups=(responder_subgroups or [])[:5],
+            confounders=confounders or [],
             truth_gradient=truth_gradient,
-            executive_summary=executive_memo,
-            forward_trial_design=forward_design,
-            audit_trail=audit_trail,
-            enrichment_strategy=enrichment_strategy,
-            power_recalculation=power_recalculation,
-            strategies=strategies,
-            narrative=narrative.strip()
+            executive_summary=executive_memo or "",
+            forward_trial_design=forward_design or {},
+            audit_trail=safe_audit_trail,
+            enrichment_strategy=enrichment_strategy or {},
+            power_recalculation=power_recalculation or {},
+            strategies=strategies or [],
+            narrative=narrative.strip() if narrative else ""
         )
 
     except HTTPException:
