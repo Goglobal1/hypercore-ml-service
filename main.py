@@ -123,7 +123,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.17.0"
+APP_VERSION = "5.18.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -737,6 +737,28 @@ class PatientReportResponse(BaseModel):
     questions_for_doctor: List[str]
     reading_level: str
     word_count: int
+
+
+class CrossLoopRequest(BaseModel):
+    """Request model for cross-loop meta-analysis across all endpoints."""
+    endpoint_results: Dict[str, Any]  # Results from multiple endpoints
+    original_data: Optional[Any] = None  # Optional original data for context
+
+
+class CrossLoopResponse(BaseModel):
+    """Response model for cross-loop meta-analysis."""
+    cross_loop_id: str
+    timestamp: str
+    endpoints_analyzed: List[str]
+    cross_validated_findings: List[Dict[str, Any]]
+    emergent_patterns: List[Dict[str, Any]]
+    contradictions: List[Dict[str, Any]]
+    coverage_gaps: List[Dict[str, Any]]
+    confidence_assessment: Dict[str, Any]
+    super_insights: List[Dict[str, Any]]
+    executive_summary: str
+    recommended_actions: List[Dict[str, Any]]
+    alerts: List[Dict[str, Any]]
 
 
 # ---------------------------------------------------------------------
@@ -1825,16 +1847,25 @@ def enrich_clinical_signals(feature_importance: List[Dict], explainability: Dict
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
     try:
-        df = pd.read_csv(io.StringIO(req.csv))
+        # SmartFormatter integration for flexible data input
+        if BUG_FIXES_AVAILABLE:
+            formatted = format_for_endpoint(req.dict(), "analyze")
+            csv_data = formatted.get("csv", req.csv)
+            label_col = formatted.get("label_column", req.label_column)
+        else:
+            csv_data = req.csv
+            label_col = req.label_column
+
+        df = pd.read_csv(io.StringIO(csv_data))
         context = normalize_context(req.context)
 
-        if req.label_column not in df.columns:
-            raise HTTPException(status_code=400, detail=f"label_column '{req.label_column}' not found in dataset")
+        if label_col not in df.columns:
+            raise HTTPException(status_code=400, detail=f"label_column '{label_col}' not found in dataset")
 
         # Ingest + canonicalize
         labs_long, ingest_meta = ingest_labs(
             df=df,
-            label_column=req.label_column,
+            label_column=label_col,
             patient_id_column=req.patient_id_column,
             time_column=req.time_column,
             lab_name_column=req.lab_name_column,
@@ -2655,13 +2686,22 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
     Shows when risk became detectable vs when clinical event occurred.
     """
     try:
+        # SmartFormatter integration for flexible data input
+        if BUG_FIXES_AVAILABLE:
+            formatted = format_for_endpoint(req.dict(), "early_risk_discovery")
+            csv_data = formatted.get("csv", req.csv)
+            label_col = formatted.get("label_column", req.label_column)
+        else:
+            csv_data = req.csv
+            label_col = req.label_column
+
         # Parse CSV
-        df = pd.read_csv(io.StringIO(req.csv))
+        df = pd.read_csv(io.StringIO(csv_data))
 
         # Run standard analysis first
         analysis_req = AnalyzeRequest(
-            csv=req.csv,
-            label_column=req.label_column,
+            csv=csv_data,
+            label_column=label_col,
             patient_id_column=req.patient_id_column,
             time_column=req.time_column
         )
@@ -2776,10 +2816,21 @@ def mean_safe(x: List[float]) -> float:
 
 @app.post("/multi_omic_fusion", response_model=MultiOmicFusionResult)
 def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(f.dict(), "multi_omic_fusion")
+        immune_data = formatted.get("immune", f.immune)
+        metabolic_data = formatted.get("metabolic", f.metabolic)
+        microbiome_data = formatted.get("microbiome", f.microbiome)
+    else:
+        immune_data = f.immune
+        metabolic_data = f.metabolic
+        microbiome_data = f.microbiome
+
     scores = {
-        "immune": mean_safe(f.immune),
-        "metabolic": mean_safe(f.metabolic),
-        "microbiome": mean_safe(f.microbiome),
+        "immune": mean_safe(immune_data),
+        "metabolic": mean_safe(metabolic_data),
+        "microbiome": mean_safe(microbiome_data),
     }
     fused = float(np.mean(list(scores.values()))) if scores else 0.0
     total = float(sum(abs(v) for v in scores.values()) or 1.0)
@@ -2811,17 +2862,44 @@ def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
 @app.post("/confounder_detection", response_model=List[ConfounderFlag])
 def confounder_detection(req: ConfounderDetectionRequest) -> List[ConfounderFlag]:
     # Report-grade: flags confounders that distort interpretation (simple + deterministic)
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(req.dict(), "confounder_detection")
+        csv_data = formatted.get("csv", req.csv)
+        label_col = formatted.get("label_column", req.label_column)
+        treatment_col = formatted.get("treatment_column", getattr(req, 'treatment_column', None))
+    else:
+        csv_data = req.csv
+        label_col = req.label_column
+        treatment_col = getattr(req, 'treatment_column', None)
+
     try:
-        df = pd.read_csv(io.StringIO(req.csv))
+        df = pd.read_csv(io.StringIO(csv_data))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {e}")
 
-    if req.label_column not in df.columns:
-        raise HTTPException(status_code=400, detail=f"label_column '{req.label_column}' not found")
+    if label_col not in df.columns:
+        raise HTTPException(status_code=400, detail=f"label_column '{label_col}' not found")
 
-    y = pd.to_numeric(df[req.label_column], errors="coerce").fillna(0.0)
+    y = pd.to_numeric(df[label_col], errors="coerce").fillna(0.0)
 
     flags: List[ConfounderFlag] = []
+
+    # FIX: Use detect_confounders_improved for better confounder detection
+    # This checks correlation with BOTH treatment AND outcome
+    if BUG_FIXES_AVAILABLE and treatment_col and treatment_col in df.columns:
+        improved_confounders = detect_confounders_improved(
+            df, label_col, treatment_col, correlation_threshold=0.3
+        )
+        for conf in improved_confounders:
+            flags.append(
+                ConfounderFlag(
+                    type=conf.get("type", "statistical_confounder"),
+                    explanation=conf.get("explanation", ""),
+                    strength=conf.get("strength"),
+                    recommendation=conf.get("recommendation", ""),
+                )
+            )
 
     # 1) Class imbalance
     counts = y.value_counts(normalize=True)
@@ -2916,14 +2994,25 @@ def emerging_phenotype(req: EmergingPhenotypeRequest) -> EmergingPhenotypeResult
 
 @app.post("/responder_prediction", response_model=ResponderPredictionResult)
 def responder_prediction(req: ResponderPredictionRequest) -> ResponderPredictionResult:
-    df = pd.read_csv(io.StringIO(req.csv))
-    if req.label_column not in df.columns:
-        raise HTTPException(status_code=400, detail=f"label_column '{req.label_column}' not found")
-    if req.treatment_column not in df.columns:
-        raise HTTPException(status_code=400, detail=f"treatment_column '{req.treatment_column}' not found")
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(req.dict(), "responder_prediction")
+        csv_data = formatted.get("csv", req.csv)
+        label_col = formatted.get("label_column", req.label_column)
+        treatment_col = formatted.get("treatment_column", req.treatment_column)
+    else:
+        csv_data = req.csv
+        label_col = req.label_column
+        treatment_col = req.treatment_column
 
-    y = pd.to_numeric(df[req.label_column], errors="coerce").fillna(0.0).astype(int)
-    treat = df[req.treatment_column].astype(str)
+    df = pd.read_csv(io.StringIO(csv_data))
+    if label_col not in df.columns:
+        raise HTTPException(status_code=400, detail=f"label_column '{label_col}' not found")
+    if treatment_col not in df.columns:
+        raise HTTPException(status_code=400, detail=f"treatment_column '{treatment_col}' not found")
+
+    y = pd.to_numeric(df[label_col], errors="coerce").fillna(0.0).astype(int)
+    treat = df[treatment_col].astype(str)
 
     # Lift proxy: difference in event rate by arm
     arms = treat.unique().tolist()
@@ -2936,29 +3025,41 @@ def responder_prediction(req: ResponderPredictionRequest) -> ResponderPrediction
         )
 
     arm_rates = {a: float(y[treat == a].mean()) if (treat == a).any() else 0.0 for a in arms}
-    # define “lift” as best-arm improvement over worst
-    best = min(arm_rates, key=arm_rates.get)
-    worst = max(arm_rates, key=arm_rates.get)
-    lift = float(arm_rates[worst] - arm_rates[best])
+
+    # FIX: Use fix_responder_subgroup_summary to correctly identify best/worst arms
+    # Best arm = HIGHEST response rate, Worst arm = LOWEST response rate
+    if BUG_FIXES_AVAILABLE:
+        subgroup_summary = fix_responder_subgroup_summary(arm_rates)
+        best = subgroup_summary["best_arm"]
+        worst = subgroup_summary["worst_arm"]
+    else:
+        # Fallback with corrected logic (was inverted before)
+        best = max(arm_rates, key=arm_rates.get)  # HIGHEST rate = best
+        worst = min(arm_rates, key=arm_rates.get)  # LOWEST rate = worst
+        subgroup_summary = {"arms": arm_rates, "best_arm": best, "worst_arm": worst}
+
+    # Define "lift" as best-arm improvement over worst
+    lift = float(arm_rates[best] - arm_rates[worst]) if best and worst else 0.0
 
     # biomarkers proxy: top numeric mean differences between arms
-    numeric = df.select_dtypes(include=[np.number]).drop(columns=[req.label_column], errors="ignore").fillna(0.0)
+    numeric = df.select_dtypes(include=[np.number]).drop(columns=[label_col], errors="ignore").fillna(0.0)
     diffs: Dict[str, float] = {}
-    if numeric.shape[1] > 0:
+    if numeric.shape[1] > 0 and best and worst:
         mean_best = numeric[treat == best].mean()
         mean_worst = numeric[treat == worst].mean()
-        delta = (mean_worst - mean_best).abs().sort_values(ascending=False).head(6)
+        delta = (mean_best - mean_worst).abs().sort_values(ascending=False).head(6)
         diffs = {str(k): float(v) for k, v in delta.items()}
 
     narrative = (
-        f"Responder scan executed across arms. Observed outcome-rate separation between '{best}' and '{worst}' "
-        f"supports enrichment targeting; verify with confounder detection and trial rescue."
+        f"Responder scan executed across arms. Best arm '{best}' has {arm_rates.get(best, 0):.1%} response rate vs "
+        f"worst arm '{worst}' at {arm_rates.get(worst, 0):.1%}. Lift: {lift:.1%}. "
+        f"Verify with confounder detection and trial rescue."
     )
 
     return ResponderPredictionResult(
         response_lift=lift,
         key_biomarkers=diffs,
-        subgroup_summary={"arms": arm_rates, "best_arm": best, "worst_arm": worst},
+        subgroup_summary=subgroup_summary,
         narrative=narrative,
     )
 
@@ -4412,9 +4513,16 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
         # MODULE 1: DATA INGESTION & VALIDATION
         # ============================================================
 
+        # SmartFormatter integration for flexible data input
+        if BUG_FIXES_AVAILABLE:
+            formatted = format_for_endpoint(req.dict(), "trial_rescue")
+            csv_data = formatted.get("csv", req.csv)
+        else:
+            csv_data = req.csv
+
         # Parse CSV
         try:
-            data = pd.read_csv(io.StringIO(req.csv))
+            data = pd.read_csv(io.StringIO(csv_data))
         except Exception as e:
             raise HTTPException(
                 status_code=422,
@@ -4700,22 +4808,56 @@ Rescue Score: {best_score}/100
 
 @app.post("/outbreak_detection", response_model=OutbreakDetectionResult)
 def outbreak_detection(req: OutbreakDetectionRequest) -> OutbreakDetectionResult:
-    df = pd.read_csv(io.StringIO(req.csv))
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(req.dict(), "outbreak_detection")
+        csv_data = formatted.get("csv", req.csv)
+    else:
+        csv_data = req.csv
+
+    df = pd.read_csv(io.StringIO(csv_data))
     for c in [req.region_column, req.time_column, req.case_count_column]:
         if c not in df.columns:
             raise HTTPException(status_code=400, detail=f"Required column '{c}' not found")
 
-    series = df[[req.region_column, req.case_count_column]].copy()
-    series[req.case_count_column] = pd.to_numeric(series[req.case_count_column], errors="coerce").fillna(0.0)
+    # Ensure numeric case counts
+    df[req.case_count_column] = pd.to_numeric(df[req.case_count_column], errors="coerce").fillna(0.0)
 
-    grouped = series.groupby(req.region_column)[req.case_count_column].mean()
-    threshold = float(grouped.mean() + 2.0 * grouped.std())
+    # FIX: Use detect_outbreak_regions for better sensitivity
+    if BUG_FIXES_AVAILABLE:
+        outbreak_data = detect_outbreak_regions(
+            df,
+            region_column=req.region_column,
+            time_column=req.time_column,
+            case_column=req.case_count_column,
+            threshold_multiplier=1.5,  # Lower threshold = more sensitive
+            min_percent_increase=50.0
+        )
+        outbreak_regions = [d["region"] for d in outbreak_data]
+        signals = {
+            d["region"]: {
+                "baseline_cases": d["baseline_cases"],
+                "recent_cases": d["recent_cases"],
+                "multiplier": d["multiplier"],
+                "percent_increase": d["percent_increase"],
+                "severity": d["severity"]
+            }
+            for d in outbreak_data
+        }
+    else:
+        # Fallback with improved threshold
+        series = df[[req.region_column, req.case_count_column]].copy()
+        grouped = series.groupby(req.region_column)[req.case_count_column].mean()
+        threshold = float(grouped.mean() + 1.5 * grouped.std())  # Lower threshold
+        outbreak_regions = [str(r) for r, v in grouped.items() if float(v) > threshold]
+        signals = {str(r): {"avg_cases": float(v), "threshold": threshold} for r, v in grouped.items() if str(r) in outbreak_regions}
 
-    outbreak_regions = [str(r) for r, v in grouped.items() if float(v) > threshold]
-    signals = {str(r): {"avg_cases": float(v), "threshold": threshold} for r, v in grouped.items() if str(r) in outbreak_regions}
-
-    confidence = 0.8 if outbreak_regions else 0.6
-    narrative = "Outbreak scan executed using anomaly thresholding; confirm with local epi review."
+    confidence = 0.85 if len(outbreak_regions) > 0 else 0.6
+    narrative = (
+        f"Outbreak detection complete. Found {len(outbreak_regions)} region(s) with elevated case trends. "
+        f"Uses baseline comparison, percent increase, and consecutive increase detection. "
+        f"Confirm with local epidemiological review."
+    )
 
     return OutbreakDetectionResult(
         outbreak_regions=outbreak_regions,
@@ -4757,15 +4899,24 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
 
 @app.post("/synthetic_cohort", response_model=SyntheticCohortResult)
 def synthetic_cohort(req: SyntheticCohortRequest) -> SyntheticCohortResult:
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(req.dict(), "synthetic_cohort")
+        distributions = formatted.get("real_data_distributions", req.real_data_distributions)
+        n_subjects = formatted.get("n_subjects", req.n_subjects)
+    else:
+        distributions = req.real_data_distributions
+        n_subjects = req.n_subjects
+
     # FIX: Use proper randomization instead of just mean values
     if BUG_FIXES_AVAILABLE:
-        out = generate_synthetic_cohort(req.real_data_distributions, int(req.n_subjects))
+        out = generate_synthetic_cohort(distributions, int(n_subjects))
     else:
         # Fallback with basic randomization
         out: List[Dict[str, float]] = []
-        for _ in range(int(req.n_subjects)):
+        for _ in range(int(n_subjects)):
             row = {}
-            for k, v in req.real_data_distributions.items():
+            for k, v in distributions.items():
                 mean = v.get("mean", 0.0)
                 std = v.get("std", 1.0)
                 min_val = v.get("min", float("-inf"))
@@ -4777,7 +4928,7 @@ def synthetic_cohort(req: SyntheticCohortRequest) -> SyntheticCohortResult:
 
     # Calculate distribution match scores
     distribution_match = {}
-    for k, v in req.real_data_distributions.items():
+    for k, v in distributions.items():
         generated_values = [r.get(k, 0) for r in out]
         if generated_values:
             gen_mean = np.mean(generated_values)
@@ -4820,17 +4971,26 @@ def digital_twin(req: DigitalTwinSimulationRequest) -> DigitalTwinSimulationResu
 
 @app.post("/population_risk", response_model=PopulationRiskResult)
 def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
-    scores = [float(a.get("risk_score", 0.5)) for a in req.analyses if isinstance(a, dict)]
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(req.dict(), "population_risk")
+        analyses = formatted.get("analyses", req.analyses)
+        region = formatted.get("region", req.region)
+    else:
+        analyses = req.analyses
+        region = req.region
+
+    scores = [float(a.get("risk_score", 0.5)) for a in analyses if isinstance(a, dict)]
     avg = float(np.mean(scores)) if scores else 0.0
     trend = "increasing" if avg > 0.6 else "stable" if avg > 0.3 else "decreasing"
 
     # FIX: Use identify_top_biomarkers to find actual top biomarkers by CV
-    if BUG_FIXES_AVAILABLE and req.analyses:
-        biomarkers = identify_top_biomarkers(req.analyses, n_top=5)
+    if BUG_FIXES_AVAILABLE and analyses:
+        biomarkers = identify_top_biomarkers(analyses, n_top=5)
     else:
         # Fallback: extract from existing analyses or identify from numeric columns
         biomarkers = []
-        for a in req.analyses:
+        for a in analyses:
             if isinstance(a, dict):
                 if isinstance(a.get("top_biomarkers"), list):
                     biomarkers.extend([str(x) for x in a["top_biomarkers"]])
@@ -4843,7 +5003,7 @@ def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
         biomarkers = sorted(list(dict.fromkeys(biomarkers)))[:5]
 
     return PopulationRiskResult(
-        region=str(req.region),
+        region=str(region),
         risk_score=float(avg),
         trend=str(trend),
         confidence=float(0.6 + 0.3 * min(1.0, avg)),
@@ -4853,7 +5013,14 @@ def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
 
 @app.post("/fluview_ingest", response_model=FluViewIngestionResult)
 def fluview_ingest(req: FluViewIngestionRequest) -> FluViewIngestionResult:
-    df = pd.json_normalize(req.fluview_json)
+    # SmartFormatter integration for flexible data input
+    if BUG_FIXES_AVAILABLE:
+        formatted = format_for_endpoint(req.dict(), "fluview_ingest")
+        fluview_data = formatted.get("fluview_json", req.fluview_json)
+    else:
+        fluview_data = req.fluview_json
+
+    df = pd.json_normalize(fluview_data)
     if df.empty:
         raise HTTPException(status_code=400, detail="FluView payload contained no records")
 
@@ -5063,8 +5230,15 @@ def medication_interaction(req: MedicationInteractionRequest) -> MedicationInter
     Uses deterministic rules-based engine.
     """
     try:
+        # SmartFormatter integration for flexible data input
+        if BUG_FIXES_AVAILABLE:
+            formatted = format_for_endpoint(req.dict(), "medication_interaction")
+            medications = formatted.get("medications", req.medications)
+        else:
+            medications = req.medications
+
         result = drug_interaction_simulator(
-            medications=req.medications,
+            medications=medications,
             weight_kg=req.patient_weight_kg,
             age=req.patient_age,
             egfr=req.egfr,
@@ -5413,16 +5587,21 @@ JARGON_MAP = {
 def simplify_text(text: str, reading_level: str = "6th_grade") -> str:
     """Convert medical text to patient-friendly language"""
 
-    result = text.lower()
+    # FIX: Use improved simplify_medical_text with comprehensive jargon dictionary
+    if BUG_FIXES_AVAILABLE:
+        result = simplify_medical_text(text, reading_level)
+    else:
+        # Fallback to original logic
+        result = text.lower()
 
-    # Replace jargon
-    for jargon, plain in JARGON_MAP.items():
-        result = result.replace(jargon.lower(), plain)
+        # Replace jargon
+        for jargon, plain in JARGON_MAP.items():
+            result = result.replace(jargon.lower(), plain)
 
-    # Capitalize first letter of sentences
-    sentences = result.split(". ")
-    sentences = [s.capitalize() if s else s for s in sentences]
-    result = ". ".join(sentences)
+        # Capitalize first letter of sentences
+        sentences = result.split(". ")
+        sentences = [s.capitalize() if s else s for s in sentences]
+        result = ". ".join(sentences)
 
     # Simplify numbers for 6th grade
     if reading_level == "6th_grade":
@@ -5442,21 +5621,26 @@ def generate_patient_report(
     # Simplify executive summary
     simplified = simplify_text(executive_summary, reading_level)
 
-    # Extract key findings from clinical signals
+    # FIX: Use generate_key_findings for better clinical signal extraction
     key_findings = []
     if clinical_signals:
-        for signal in clinical_signals[:5]:
-            name = signal.get("signal_name", "Test result")
-            direction = signal.get("direction", "changed")
+        if BUG_FIXES_AVAILABLE:
+            # Use improved key findings generator with comprehensive jargon handling
+            key_findings = generate_key_findings(clinical_signals, reading_level)
+        else:
+            # Fallback to original logic
+            for signal in clinical_signals[:5]:
+                name = signal.get("signal_name", "Test result")
+                direction = signal.get("direction", "changed")
 
-            if direction == "rising":
-                finding = f"Your {name.lower()} levels are higher than normal"
-            elif direction == "falling":
-                finding = f"Your {name.lower()} levels are lower than normal"
-            else:
-                finding = f"Your {name.lower()} levels show changes"
+                if direction == "rising":
+                    finding = f"Your {name.lower()} levels are higher than normal"
+                elif direction == "falling":
+                    finding = f"Your {name.lower()} levels are lower than normal"
+                else:
+                    finding = f"Your {name.lower()} levels show changes"
 
-            key_findings.append(finding)
+                key_findings.append(finding)
 
     if not key_findings:
         key_findings = ["Your test results are being reviewed by your care team"]
@@ -5502,13 +5686,66 @@ def patient_report(req: PatientReportRequest) -> PatientReportResponse:
     Removes medical jargon and simplifies language.
     """
     try:
+        # SmartFormatter integration for flexible data input
+        if BUG_FIXES_AVAILABLE:
+            formatted = format_for_endpoint(req.dict(), "patient_report")
+            exec_summary = formatted.get("executive_summary", req.executive_summary)
+            clinical_sigs = formatted.get("clinical_signals", req.clinical_signals)
+            recs = formatted.get("recommendations", req.recommendations)
+            reading_lvl = formatted.get("reading_level", req.reading_level)
+        else:
+            exec_summary = req.executive_summary
+            clinical_sigs = req.clinical_signals
+            recs = req.recommendations
+            reading_lvl = req.reading_level
+
         result = generate_patient_report(
-            executive_summary=req.executive_summary,
-            clinical_signals=req.clinical_signals,
-            recommendations=req.recommendations,
-            reading_level=req.reading_level
+            executive_summary=exec_summary,
+            clinical_signals=clinical_sigs,
+            recommendations=recs,
+            reading_level=reading_lvl
         )
         return PatientReportResponse(**result)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+# ---------------------------------------------------------------------
+# CROSS-LOOP META-ANALYSIS ENDPOINT
+# ---------------------------------------------------------------------
+
+@app.post("/cross_loop", response_model=CrossLoopResponse)
+def cross_loop(req: CrossLoopRequest) -> CrossLoopResponse:
+    """
+    Cross-Loop Meta-Analysis Engine.
+
+    Performs meta-analysis across results from multiple HyperCore endpoints:
+    - Cross-validates findings that appear in multiple analyses
+    - Identifies emergent patterns only visible when combining results
+    - Detects contradictions between endpoint conclusions
+    - Identifies coverage gaps where endpoints are missing
+    - Generates super-insights from the combined analysis
+    - Provides executive summary and recommended actions
+    """
+    try:
+        if not BUG_FIXES_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="CrossLoopEngine not available. Ensure app/core module is installed."
+            )
+
+        # Run cross-loop analysis
+        result = run_cross_loop_analysis(
+            endpoint_results=req.endpoint_results,
+            original_data=req.original_data
+        )
+
+        return CrossLoopResponse(**result)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
