@@ -40,7 +40,7 @@ random.seed(RANDOM_SEED)
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import traceback
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -123,7 +123,7 @@ except ImportError:
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.18.0"
+APP_VERSION = "5.18.1"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -334,8 +334,20 @@ def _sanitize_for_json(obj: Any) -> Any:
 # ---------------------------------------------------------------------
 
 class AnalyzeRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
+
+    # Alternative field names for csv
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    csv_content: Optional[str] = None
+
+    # Alternative field names for label_column
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+    outcome: Optional[str] = None
+    label: Optional[str] = None
 
     # Optional schema mapping helpers
     patient_id_column: Optional[str] = None
@@ -348,6 +360,31 @@ class AnalyzeRequest(BaseModel):
     sex: Optional[str] = None
     age: Optional[float] = None
     context: Optional[Dict[str, Any]] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        # Map alternative csv field names
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data', 'csv_content']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+
+        # Map alternative label_column field names
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column', 'outcome', 'label']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+
+        # Validate required fields
+        if not values.get('csv'):
+            raise ValueError('csv field is required (alternatives: data, csv_data, csv_content)')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required (alternatives: target, outcome_column, outcome, label)')
+
+        return values
 
 
 class FeatureImportance(BaseModel):
@@ -476,13 +513,41 @@ class AnalyzeResponse(BaseModel):
 
 
 class EarlyRiskRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+
+    # Optional fields
     patient_id_column: Optional[str] = "patient_id"
     time_column: Optional[str] = "time"
     outcome_type: str = "sepsis"  # sepsis, mortality, ICU_transfer, etc.
     cohort: str = "all"  # all, sepsis, heart_failure, COPD
     time_window_hours: int = 48
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        return values
 
 
 class EarlyRiskResponse(BaseModel):
@@ -509,8 +574,42 @@ class MultiOmicFusionResult(BaseModel):
 
 
 class ConfounderDetectionRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
+    treatment_column: Optional[str] = None
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+    treatment: Optional[str] = None
+    arm: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('treatment_column'):
+            for alt in ['treatment', 'arm']:
+                if values.get(alt):
+                    values['treatment_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        return values
 
 
 class ConfounderFlag(BaseModel):
@@ -521,8 +620,34 @@ class ConfounderFlag(BaseModel):
 
 
 class EmergingPhenotypeRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        return values
 
 
 class EmergingPhenotypeResult(BaseModel):
@@ -533,9 +658,45 @@ class EmergingPhenotypeResult(BaseModel):
 
 
 class ResponderPredictionRequest(BaseModel):
-    csv: str
-    label_column: str
-    treatment_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
+    treatment_column: Optional[str] = None
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+    treatment: Optional[str] = None
+    arm: Optional[str] = None
+    arm_column: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('treatment_column'):
+            for alt in ['treatment', 'arm', 'arm_column']:
+                if values.get(alt):
+                    values['treatment_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        if not values.get('treatment_column'):
+            raise ValueError('treatment_column field is required')
+        return values
 
 
 class ResponderPredictionResult(BaseModel):
@@ -546,10 +707,49 @@ class ResponderPredictionResult(BaseModel):
 
 
 class TrialRescueRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
     treatment_column: Optional[str] = None
     patient_id_column: Optional[str] = None
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+    treatment: Optional[str] = None
+    arm: Optional[str] = None
+    subject_id: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('treatment_column'):
+            for alt in ['treatment', 'arm']:
+                if values.get(alt):
+                    values['treatment_column'] = values[alt]
+                    break
+        if not values.get('patient_id_column'):
+            for alt in ['subject_id']:
+                if values.get(alt):
+                    values['patient_id_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        return values
 
 
 class TrialRescueResult(BaseModel):
@@ -573,10 +773,54 @@ class TrialRescueResult(BaseModel):
 
 
 class OutbreakDetectionRequest(BaseModel):
-    csv: str
-    region_column: str
-    time_column: str
-    case_count_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    region_column: Optional[str] = None
+    time_column: Optional[str] = None
+    case_count_column: Optional[str] = None
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    region: Optional[str] = None
+    location: Optional[str] = None
+    time: Optional[str] = None
+    date_column: Optional[str] = None
+    cases: Optional[str] = None
+    count_column: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('region_column'):
+            for alt in ['region', 'location']:
+                if values.get(alt):
+                    values['region_column'] = values[alt]
+                    break
+        if not values.get('time_column'):
+            for alt in ['time', 'date_column']:
+                if values.get(alt):
+                    values['time_column'] = values[alt]
+                    break
+        if not values.get('case_count_column'):
+            for alt in ['cases', 'count_column']:
+                if values.get(alt):
+                    values['case_count_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('region_column'):
+            raise ValueError('region_column field is required')
+        if not values.get('time_column'):
+            raise ValueError('time_column field is required')
+        if not values.get('case_count_column'):
+            raise ValueError('case_count_column field is required')
+        return values
 
 
 class OutbreakDetectionResult(BaseModel):
@@ -587,9 +831,35 @@ class OutbreakDetectionResult(BaseModel):
 
 
 class PredictiveModelingRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
     forecast_horizon_days: int = 30
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        return values
 
 
 class PredictiveModelingResult(BaseModel):
@@ -688,11 +958,37 @@ class MedicationInteractionResponse(BaseModel):
 
 
 class ForecastTimelineRequest(BaseModel):
-    csv: str
-    label_column: str
+    # Standard fields (Optional for flexible input)
+    csv: Optional[str] = None
+    label_column: Optional[str] = None
     patient_id_column: Optional[str] = "patient_id"
     time_column: Optional[str] = "time"
     forecast_days: int = 90
+
+    # Alternative field names
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    target: Optional[str] = None
+    outcome_column: Optional[str] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        if not values.get('csv'):
+            for alt in ['data', 'csv_data']:
+                if values.get(alt):
+                    values['csv'] = values[alt]
+                    break
+        if not values.get('label_column'):
+            for alt in ['target', 'outcome_column']:
+                if values.get(alt):
+                    values['label_column'] = values[alt]
+                    break
+        if not values.get('csv'):
+            raise ValueError('csv field is required')
+        if not values.get('label_column'):
+            raise ValueError('label_column field is required')
+        return values
 
 
 class ForecastTimelineResponse(BaseModel):
