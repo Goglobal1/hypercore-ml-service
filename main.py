@@ -1566,13 +1566,21 @@ def _choose_cv_strategy(y: np.ndarray) -> Dict[str, Any]:
     return {"type": "split", "test_size": 0.3}
 
 def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    sensitivity = float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0
-    specificity = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
-    return {
-        "sensitivity": sensitivity,
-        "specificity": specificity,
-    }
+    try:
+        cm = confusion_matrix(y_true, y_pred)
+        if cm.size == 1:
+            # Only one class in predictions
+            return {"sensitivity": 0.0, "specificity": 0.0, "warning": "single_class_in_test"}
+        elif cm.size == 4:
+            tn, fp, fn, tp = cm.ravel()
+            sensitivity = float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0
+            specificity = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
+            return {"sensitivity": sensitivity, "specificity": specificity}
+        else:
+            # Unexpected shape
+            return {"sensitivity": 0.0, "specificity": 0.0, "warning": "unexpected_cm_shape"}
+    except Exception as e:
+        return {"sensitivity": 0.0, "specificity": 0.0, "error": str(e)}
 
 def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
     Xc, dropped = _sanitize_matrix(X)
