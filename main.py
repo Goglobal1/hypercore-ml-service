@@ -3056,37 +3056,59 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             csv_data = req.csv
             label_col = req.label_column
 
-        # Parse CSV
-        df = pd.read_csv(io.StringIO(csv_data))
-
-        # Clean column names: strip whitespace and normalize
-        df.columns = df.columns.str.strip()
+        # Parse CSV BEFORE SmartFormatter transformation to get original columns
+        df_raw = pd.read_csv(io.StringIO(csv_data))
+        df_raw.columns = df_raw.columns.str.strip()
+        original_columns = df_raw.columns.tolist()
 
         # Get requested column names
-        patient_col = req.patient_id_column.strip() if req.patient_id_column else "patient_id"
-        time_col = req.time_column.strip() if req.time_column else "day"
+        patient_col_req = req.patient_id_column.strip() if req.patient_id_column else "patient_id"
+        time_col_req = req.time_column.strip() if req.time_column else "day"
 
-        # Case-insensitive column matching
-        def find_column(df, col_name):
-            """Find column with case-insensitive match."""
-            col_name_lower = col_name.lower().strip()
-            for c in df.columns:
-                if c.lower().strip() == col_name_lower:
-                    return c
+        # SmartFormatter aliases: these columns get renamed
+        # "day" -> "time", "patient" -> "patient_id", etc.
+        COLUMN_ALIASES = {
+            "time": ["time", "date", "timestamp", "datetime", "day", "timepoint", "visit"],
+            "patient_id": ["patient_id", "patientid", "patient", "subject_id", "id", "pt_id"],
+            "outcome": ["outcome", "label", "target", "response", "event", "sepsis", "death"]
+        }
+
+        def find_column(df, requested_col):
+            """Find column with alias support for common time columns."""
+            # Direct match
+            if requested_col in df.columns:
+                return requested_col
+
+            # Common time column aliases (SmartFormatter may rename these)
+            time_aliases = ['day', 'time', 'week', 'visit', 'timepoint', 'date']
+            if requested_col.lower() in time_aliases:
+                for alias in time_aliases:
+                    if alias in df.columns:
+                        return alias
+
+            # Case-insensitive match
+            for col in df.columns:
+                if col.lower() == requested_col.lower():
+                    return col
+
             return None
 
-        # Find actual column names (case-insensitive)
+        # Now use the formatted CSV (which may have renamed columns)
+        df = pd.read_csv(io.StringIO(csv_data))
+        df.columns = df.columns.str.strip()
+
+        # Find actual column names (handles SmartFormatter renaming)
         actual_label_col = find_column(df, label_col)
-        actual_patient_col = find_column(df, patient_col)
-        actual_time_col = find_column(df, time_col)
+        actual_patient_col = find_column(df, patient_col_req)
+        actual_time_col = find_column(df, time_col_req)
 
         # Validate required columns with helpful error messages
         if actual_label_col is None:
-            raise ValueError(f"Label column '{label_col}' not found. Available columns: {df.columns.tolist()}")
+            raise ValueError(f"Label column '{label_col}' not found. Available: {df.columns.tolist()}, Original: {original_columns}")
         if actual_patient_col is None:
-            raise ValueError(f"Patient ID column '{patient_col}' not found. Available columns: {df.columns.tolist()}")
+            raise ValueError(f"Patient ID column '{patient_col_req}' not found. Available: {df.columns.tolist()}, Original: {original_columns}")
         if actual_time_col is None:
-            raise ValueError(f"Time column '{time_col}' not found. Available columns: {df.columns.tolist()}")
+            raise ValueError(f"Time column '{time_col_req}' not found. Available: {df.columns.tolist()}, Original: {original_columns}")
 
         # Use the actual column names found
         label_col = actual_label_col
