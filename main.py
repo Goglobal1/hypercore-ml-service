@@ -3058,16 +3058,40 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
 
         # Parse CSV
         df = pd.read_csv(io.StringIO(csv_data))
-        patient_col = req.patient_id_column
-        time_col = req.time_column
 
-        # Validate required columns
-        if label_col not in df.columns:
-            raise ValueError(f"Label column '{label_col}' not found in data")
-        if patient_col not in df.columns:
-            raise ValueError(f"Patient ID column '{patient_col}' not found in data")
-        if time_col not in df.columns:
-            raise ValueError(f"Time column '{time_col}' not found in data")
+        # Clean column names: strip whitespace and normalize
+        df.columns = df.columns.str.strip()
+
+        # Get requested column names
+        patient_col = req.patient_id_column.strip() if req.patient_id_column else "patient_id"
+        time_col = req.time_column.strip() if req.time_column else "day"
+
+        # Case-insensitive column matching
+        def find_column(df, col_name):
+            """Find column with case-insensitive match."""
+            col_name_lower = col_name.lower().strip()
+            for c in df.columns:
+                if c.lower().strip() == col_name_lower:
+                    return c
+            return None
+
+        # Find actual column names (case-insensitive)
+        actual_label_col = find_column(df, label_col)
+        actual_patient_col = find_column(df, patient_col)
+        actual_time_col = find_column(df, time_col)
+
+        # Validate required columns with helpful error messages
+        if actual_label_col is None:
+            raise ValueError(f"Label column '{label_col}' not found. Available columns: {df.columns.tolist()}")
+        if actual_patient_col is None:
+            raise ValueError(f"Patient ID column '{patient_col}' not found. Available columns: {df.columns.tolist()}")
+        if actual_time_col is None:
+            raise ValueError(f"Time column '{time_col}' not found. Available columns: {df.columns.tolist()}")
+
+        # Use the actual column names found
+        label_col = actual_label_col
+        patient_col = actual_patient_col
+        time_col = actual_time_col
 
         # Find numeric biomarker columns (exclude ID, time, label columns)
         exclude_cols = {patient_col, time_col, label_col, 'patient_id', 'id', 'time', 'day', 'date'}
