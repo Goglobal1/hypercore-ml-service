@@ -170,7 +170,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.19.0"
+APP_VERSION = "5.19.1"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
