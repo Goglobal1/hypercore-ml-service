@@ -13715,9 +13715,9 @@ oracle_engine.agent_registry.register_agent(
 # ============================================
 
 @app.post("/predict")
-async def predict_endpoint(request: PredictRequest):
+async def predict_endpoint(payload: PredictRequest):
     """DiviScan Predictive Core - SmartFormatter enabled."""
-    body = request.model_dump(exclude_none=True)
+    body = payload.model_dump(exclude_none=True)
 
     # SmartFormatter: Extract task from multiple possible fields
     task = smart_extract(body, ['task', 'action', 'operation', 'type'])
