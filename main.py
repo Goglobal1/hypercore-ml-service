@@ -3079,17 +3079,20 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             if requested_col in df.columns:
                 return requested_col
 
+            # Build case-insensitive lookup
+            col_lower_map = {c.lower().strip(): c for c in df.columns}
+
             # Common time column aliases (SmartFormatter may rename these)
             time_aliases = ['day', 'time', 'week', 'visit', 'timepoint', 'date']
             if requested_col.lower() in time_aliases:
                 for alias in time_aliases:
-                    if alias in df.columns:
-                        return alias
+                    if alias in col_lower_map:
+                        return col_lower_map[alias]
 
             # Case-insensitive match
-            for col in df.columns:
-                if col.lower() == requested_col.lower():
-                    return col
+            req_lower = requested_col.lower().strip()
+            if req_lower in col_lower_map:
+                return col_lower_map[req_lower]
 
             return None
 
