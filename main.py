@@ -1567,6 +1567,16 @@ def _choose_cv_strategy(y: np.ndarray) -> Dict[str, Any]:
 
 def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     try:
+        # Early check: ensure we have both classes in test set
+        unique_classes = np.unique(y_true)
+        if len(unique_classes) < 2:
+            return {
+                "warning": "Test set contains only one class - metrics may be unreliable",
+                "sensitivity": 0.0,
+                "specificity": 0.0,
+                "recommendation": "Provide larger dataset with more outcome variety"
+            }
+
         cm = confusion_matrix(y_true, y_pred)
         if cm.size == 1:
             # Only one class in predictions
