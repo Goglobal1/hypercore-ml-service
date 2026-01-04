@@ -371,6 +371,21 @@ def _sanitize_for_json(obj: Any) -> Any:
 # Pydantic MODELS
 # ---------------------------------------------------------------------
 
+class PredictRequest(BaseModel):
+    task: Optional[str] = None
+    params: Optional[dict] = None
+    # Flat params also accepted
+    n_patients: Optional[int] = None
+    disease_prevalence: Optional[float] = None
+    forecast_days: Optional[int] = None
+    region: Optional[str] = None
+    sequence: Optional[str] = None
+    generations: Optional[int] = None
+
+    class Config:
+        extra = "allow"  # Accept any additional fields
+
+
 class AnalyzeRequest(BaseModel):
     # Standard fields (Optional for flexible input)
     csv: Optional[str] = None
@@ -13700,12 +13715,9 @@ oracle_engine.agent_registry.register_agent(
 # ============================================
 
 @app.post("/predict")
-async def predict_endpoint(request: Request):
+async def predict_endpoint(request: PredictRequest):
     """DiviScan Predictive Core - SmartFormatter enabled."""
-    try:
-        body = await request.json()
-    except:
-        body = {}
+    body = request.model_dump(exclude_none=True)
 
     # SmartFormatter: Extract task from multiple possible fields
     task = smart_extract(body, ['task', 'action', 'operation', 'type'])
