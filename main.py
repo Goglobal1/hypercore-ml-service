@@ -3044,7 +3044,7 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
 def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
     """
     Hospital early risk discovery endpoint.
-    Shows when risk became detectable vs when clinical event occurred.
+    Analyzes patient trajectories to find early warning signals BEFORE clinical events.
     """
     try:
         # SmartFormatter integration for flexible data input
@@ -3058,96 +3058,200 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
 
         # Parse CSV
         df = pd.read_csv(io.StringIO(csv_data))
+        patient_col = req.patient_id_column
+        time_col = req.time_column
 
-        # Run standard analysis first
-        analysis_req = AnalyzeRequest(
-            csv=csv_data,
-            label_column=label_col,
-            patient_id_column=req.patient_id_column,
-            time_column=req.time_column
-        )
-        analysis_result = analyze(analysis_req)
+        # Validate required columns
+        if label_col not in df.columns:
+            raise ValueError(f"Label column '{label_col}' not found in data")
+        if patient_col not in df.columns:
+            raise ValueError(f"Patient ID column '{patient_col}' not found in data")
+        if time_col not in df.columns:
+            raise ValueError(f"Time column '{time_col}' not found in data")
 
-        # Calculate detection window (simplified - uses fixed 5.2 days for demo)
-        detection_window_days = 5.2
-        detection_window_hours = detection_window_days * 24
+        # Find numeric biomarker columns (exclude ID, time, label columns)
+        exclude_cols = {patient_col, time_col, label_col, 'patient_id', 'id', 'time', 'day', 'date'}
+        biomarker_cols = [c for c in df.columns if c.lower() not in exclude_cols
+                         and pd.api.types.is_numeric_dtype(df[c])]
 
+        # Sort by patient and time
+        df = df.sort_values([patient_col, time_col])
+
+        # Find patients with events (label = 1)
+        patients_with_events = df[df[label_col] == 1][patient_col].unique()
+        patients_without_events = df[df[label_col] == 0][patient_col].unique()
+        total_patients = df[patient_col].nunique()
+
+        # Analyze trajectories for patients with events
+        early_warning_signals = []
+        lead_times = []
+        detection_count = 0
+
+        for patient_id in patients_with_events:
+            patient_data = df[df[patient_col] == patient_id].sort_values(time_col)
+
+            if len(patient_data) < 2:
+                continue  # Need at least 2 time points
+
+            # Find the event time point (last row with label=1, or max time)
+            event_rows = patient_data[patient_data[label_col] == 1]
+            if len(event_rows) == 0:
+                continue
+            event_time = event_rows[time_col].max()
+
+            # Get pre-event data (before the event)
+            pre_event_data = patient_data[patient_data[time_col] < event_time]
+            if len(pre_event_data) < 1:
+                # Use all data before last row
+                pre_event_data = patient_data.iloc[:-1]
+
+            if len(pre_event_data) < 1:
+                continue
+
+            # Analyze each biomarker for rising patterns
+            for biomarker in biomarker_cols:
+                values = pre_event_data[biomarker].dropna().values
+                times = pre_event_data[time_col].values[:len(values)]
+
+                if len(values) < 2:
+                    continue
+
+                # Calculate trend
+                first_val = values[0]
+                last_val = values[-1]
+
+                if first_val == 0:
+                    first_val = 0.001  # Avoid division by zero
+
+                pct_change = ((last_val - first_val) / abs(first_val)) * 100
+
+                # Detect significant rising pattern (>20% increase)
+                if pct_change > 20:
+                    # Calculate lead time (days before event)
+                    try:
+                        first_time = float(times[0])
+                        event_time_val = float(event_time)
+                        lead_time = event_time_val - first_time
+                    except:
+                        lead_time = len(values)  # Fallback to number of time points
+
+                    lead_times.append(lead_time)
+                    detection_count += 1
+
+                    # Add to early warning signals
+                    signal = {
+                        "biomarker": biomarker.lower(),
+                        "pattern": "rising",
+                        "days_before_event": round(lead_time, 1),
+                        "change": f"+{pct_change:.0f}%",
+                        "first_value": round(first_val, 2),
+                        "last_pre_event_value": round(last_val, 2),
+                        "patient_id": str(patient_id)
+                    }
+                    early_warning_signals.append(signal)
+
+        # Aggregate signals by biomarker (find most common early warning biomarkers)
+        biomarker_counts = {}
+        biomarker_avg_lead = {}
+        biomarker_avg_change = {}
+
+        for signal in early_warning_signals:
+            bm = signal["biomarker"]
+            if bm not in biomarker_counts:
+                biomarker_counts[bm] = 0
+                biomarker_avg_lead[bm] = []
+                biomarker_avg_change[bm] = []
+            biomarker_counts[bm] += 1
+            biomarker_avg_lead[bm].append(signal["days_before_event"])
+            # Parse change percentage
+            try:
+                change_val = float(signal["change"].replace("+", "").replace("%", ""))
+                biomarker_avg_change[bm].append(change_val)
+            except:
+                pass
+
+        # Create aggregated signals (top biomarkers)
+        aggregated_signals = []
+        for bm, count in sorted(biomarker_counts.items(), key=lambda x: x[1], reverse=True)[:10]:
+            avg_lead = SafeMath.safe_mean(biomarker_avg_lead[bm], 0)
+            avg_change = SafeMath.safe_mean(biomarker_avg_change[bm], 0)
+            aggregated_signals.append({
+                "biomarker": bm,
+                "pattern": "rising",
+                "days_before_event": round(avg_lead, 1),
+                "change": f"+{avg_change:.0f}%",
+                "patients_affected": count,
+                "detection_rate": round(count / len(patients_with_events), 2) if len(patients_with_events) > 0 else 0
+            })
+
+        # Calculate overall lead time
+        avg_lead_time = SafeMath.safe_mean(lead_times, 0) if lead_times else 0
+
+        # Detection rate
+        detection_rate = SafeMath.safe_divide(detection_count, len(patients_with_events), 0)
+
+        # Build response
         executive_summary = (
-            f"Patient showed early risk signals {detection_window_days} days before {req.outcome_type} diagnosis. "
-            f"While standard NEWS and qSOFA remained reassuring, HyperCore detected multi-axis convergence "
-            f"(inflammatory + metabolic + nutritional stress) indicating high risk before clinical manifestation."
+            f"Analyzed {total_patients} patients, found {len(patients_with_events)} with {req.outcome_type} events. "
+            f"HyperCore detected early warning signals averaging {avg_lead_time:.1f} days before clinical manifestation. "
+            f"Top early indicators: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
+        ) if aggregated_signals else (
+            f"Analyzed {total_patients} patients with {len(patients_with_events)} events. "
+            f"Insufficient longitudinal data to detect early warning patterns. Need more time points per patient."
         )
 
         risk_timing_delta = {
-            "detection_window_days": detection_window_days,
-            "detection_window_hours": detection_window_hours,
-            "risk_detectable_date": "2024-12-15T08:30:00Z",
-            "event_date": "2024-12-20T13:15:00Z",
-            "outcome": f"{req.outcome_type.capitalize()} with ICU admission",
-            "standard_system_status_at_detection": "NEWS ≤4, qSOFA ≤1 (No alerts)",
-            "hypercore_status_at_detection": "Multi-axis convergence flagged (risk score: 0.78)"
+            "detection_window_days": round(avg_lead_time, 1),
+            "detection_window_hours": round(avg_lead_time * 24, 1),
+            "lead_time_days": round(avg_lead_time, 1),
+            "early_warning_signals": aggregated_signals[:5],
+            "patients_analyzed": total_patients,
+            "events_detected": len(patients_with_events),
+            "detection_rate": round(detection_rate, 2),
+            "outcome": req.outcome_type
         }
 
-        # Use signals from analysis
-        explainable_signals = analysis_result.clinical_signals[:5] if analysis_result.clinical_signals else []
+        # Explainable signals with patient-level detail
+        explainable_signals = aggregated_signals[:5]
 
         missed_risk_summary = {
-            "standard_system_status": "At T-5.2d: NEWS=3, qSOFA=1, SIRS=1. No electronic alerts triggered.",
-            "standard_system_blind_spot": "Single-variable thresholds missed converging pattern.",
-            "hypercore_detection_mechanism": "Multi-axis convergence: Inflammatory + Nutritional + Metabolic + Microbial axes deteriorating simultaneously.",
-            "hypercore_alert_at_t_minus_5d": "Risk score: 0.78. Alert: Multi-system deterioration pattern detected.",
-            "potential_impact": "Early detection allows antibiotic escalation, albumin replacement, increased monitoring.",
-            "cost_avoidance_per_case": "ICU admission cost avoidance: $13.5K-$35.5K per case"
+            "standard_system_status": f"Standard scoring (NEWS/qSOFA) may not detect these patterns {avg_lead_time:.1f} days early.",
+            "hypercore_detection_mechanism": f"Multi-biomarker trajectory analysis across {len(biomarker_cols)} variables.",
+            "biomarkers_analyzed": biomarker_cols,
+            "early_warning_biomarkers_found": len(biomarker_counts),
+            "potential_impact": f"Early detection could enable intervention {avg_lead_time:.1f} days before event."
         }
-
-        # Calculate clinical impact from data
-        patients_analyzed = len(df)
-        patients_with_events = int(df[req.label_column].sum()) if req.label_column in df.columns else 0
-        patients_flagged_early = int(patients_with_events * 0.92) if patients_with_events > 0 else 0
 
         clinical_impact = {
-            "patients_analyzed": patients_analyzed,
-            "patients_with_events": patients_with_events,
-            "patients_flagged_early": patients_flagged_early,
-            "average_detection_window_days": 4.8,
-            "detection_window_range_days": [2.1, 7.3],
-            "potential_icu_admissions_prevented": f"{int(patients_with_events * 0.58)} of {patients_with_events} (58%)" if patients_with_events > 0 else "0 of 0 (N/A)",
-            "estimated_cost_avoidance_total": f"${int(patients_with_events * 7875):,} - ${int(patients_with_events * 20708):,} across cohort" if patients_with_events > 0 else "$0",
-            "mortality_reduction_estimate": "15-25% relative risk reduction"
+            "patients_analyzed": total_patients,
+            "patients_with_events": len(patients_with_events),
+            "patients_flagged_early": detection_count,
+            "average_lead_time_days": round(avg_lead_time, 1),
+            "lead_time_range_days": [round(min(lead_times), 1), round(max(lead_times), 1)] if lead_times else [0, 0],
+            "detection_rate": round(detection_rate, 2),
+            "early_warning_signals_count": len(early_warning_signals),
+            "unique_biomarkers_flagged": len(biomarker_counts)
         }
 
-        # Get AUC from analysis result
-        auc = _safe_float(analysis_result.metrics.get('linear', {}).get('roc_auc', 0.85))
-
         comparator_performance = {
-            "news": {
-                "sensitivity_at_t_minus_5d": 0.25,
-                "specificity_at_t_minus_5d": 0.89,
-                "auc_retrospective": 0.72,
-                "missed_cases": int(patients_with_events * 0.75),
-                "interpretation": "NEWS designed for immediate crisis, not 5+ day early detection."
-            },
-            "qsofa": {
-                "sensitivity_at_t_minus_5d": 0.17,
-                "specificity_at_t_minus_5d": 0.92,
-                "auc_retrospective": 0.63,
-                "missed_cases": int(patients_with_events * 0.83),
-                "interpretation": "qSOFA focuses on organ dysfunction not yet manifest at T-5d."
-            },
             "hypercore": {
-                "sensitivity_at_t_minus_5d": 0.92,
-                "specificity_at_t_minus_5d": 0.78,
-                "auc_retrospective": auc,
-                "missed_cases": int(patients_with_events * 0.08),
-                "interpretation": "Multi-axis convergence detects physiologic deterioration before clinical signs."
+                "sensitivity": round(detection_rate, 2),
+                "lead_time_days": round(avg_lead_time, 1),
+                "biomarkers_tracked": len(biomarker_cols),
+                "signals_detected": len(aggregated_signals),
+                "interpretation": f"Detected rising patterns in {len(biomarker_counts)} biomarkers before {req.outcome_type}."
             }
         }
 
         narrative = (
-            "This retrospective analysis demonstrates the 'silent risk' phenomenon in hospital early warning systems. "
-            "Standard tools excel at detecting imminent crisis but miss the multi-day window when physiologic "
-            "deterioration is building. HyperCore's multi-axis approach provides an average 4.8-day early warning, "
-            "enabling interventions that could prevent ICU admission in 58% of cases and reduce mortality by 15-25%."
+            f"Early risk discovery analyzed {total_patients} patients with {len(biomarker_cols)} biomarkers. "
+            f"Found {len(patients_with_events)} patients with {req.outcome_type} events. "
+            f"Detected {len(early_warning_signals)} early warning signals across {len(biomarker_counts)} unique biomarkers, "
+            f"with an average lead time of {avg_lead_time:.1f} days before clinical event. "
+            f"Top early warning biomarkers: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
+        ) if aggregated_signals else (
+            f"Analyzed {total_patients} patients but insufficient longitudinal data for trajectory analysis. "
+            f"Need multiple time points per patient to detect rising biomarker patterns."
         )
 
         return EarlyRiskResponse(
