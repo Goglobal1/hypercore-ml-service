@@ -118,6 +118,15 @@ try:
 except ImportError:
     CRYPTO_AVAILABLE = False
 
+# BULLETPROOF SAFETY LAYER - v5.19.0
+from ml_safety import (
+    bulletproof_endpoint,
+    DataValidator,
+    SafeML,
+    SafeMath,
+    validate_request
+)
+
 
 # ---------------------------------------------------------------------
 # SMARTFORMATTER HELPERS - Universal Field Extraction
@@ -161,7 +170,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.18.3"
+APP_VERSION = "5.19.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -1566,31 +1575,14 @@ def _choose_cv_strategy(y: np.ndarray) -> Dict[str, Any]:
     return {"type": "split", "test_size": 0.3}
 
 def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
-    try:
-        # Early check: ensure we have both classes in test set
-        unique_classes = np.unique(y_true)
-        if len(unique_classes) < 2:
-            return {
-                "warning": "Test set contains only one class - metrics may be unreliable",
-                "sensitivity": 0.0,
-                "specificity": 0.0,
-                "recommendation": "Provide larger dataset with more outcome variety"
-            }
-
-        cm = confusion_matrix(y_true, y_pred)
-        if cm.size == 1:
-            # Only one class in predictions
-            return {"sensitivity": 0.0, "specificity": 0.0, "warning": "single_class_in_test"}
-        elif cm.size == 4:
-            tn, fp, fn, tp = cm.ravel()
-            sensitivity = float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0
-            specificity = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
-            return {"sensitivity": sensitivity, "specificity": specificity}
-        else:
-            # Unexpected shape
-            return {"sensitivity": 0.0, "specificity": 0.0, "warning": "unexpected_cm_shape"}
-    except Exception as e:
-        return {"sensitivity": 0.0, "specificity": 0.0, "error": str(e)}
+    """Compute sensitivity/specificity using SafeML for bulletproof operation."""
+    # Use SafeML.safe_confusion_metrics for bulletproof operation
+    metrics = SafeML.safe_confusion_metrics(y_true, y_pred)
+    return {
+        "sensitivity": metrics["sensitivity"],
+        "specificity": metrics["specificity"],
+        "warning": metrics.get("warning")
+    }
 
 def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
     Xc, dropped = _sanitize_matrix(X)
@@ -2212,6 +2204,7 @@ def enrich_clinical_signals(feature_importance: List[Dict], explainability: Dict
 # ---------------------------------------------------------------------
 
 @app.post("/analyze", response_model=AnalyzeResponse)
+@bulletproof_endpoint("analyze", min_rows=5)
 def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
     try:
         # SmartFormatter integration for flexible data input
@@ -3047,6 +3040,7 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
 # ---------------------------------------------------------------------
 
 @app.post("/early_risk_discovery", response_model=EarlyRiskResponse)
+@bulletproof_endpoint("early_risk_discovery", min_rows=10)
 def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
     """
     Hospital early risk discovery endpoint.
@@ -3182,6 +3176,7 @@ def mean_safe(x: List[float]) -> float:
 
 
 @app.post("/multi_omic_fusion", response_model=MultiOmicFusionResult)
+@bulletproof_endpoint("multi_omic_fusion", min_rows=1)
 def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
     # SmartFormatter integration for flexible data input
     if BUG_FIXES_AVAILABLE:
@@ -3227,6 +3222,7 @@ def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
 
 
 @app.post("/confounder_detection", response_model=List[ConfounderFlag])
+@bulletproof_endpoint("confounder_detection", min_rows=10)
 def confounder_detection(req: ConfounderDetectionRequest) -> List[ConfounderFlag]:
     # Report-grade: flags confounders that distort interpretation (simple + deterministic)
     # SmartFormatter integration for flexible data input
@@ -3320,6 +3316,7 @@ def confounder_detection(req: ConfounderDetectionRequest) -> List[ConfounderFlag
 
 
 @app.post("/emerging_phenotype", response_model=EmergingPhenotypeResult)
+@bulletproof_endpoint("emerging_phenotype", min_rows=10)
 def emerging_phenotype(req: EmergingPhenotypeRequest) -> EmergingPhenotypeResult:
     # Minimal clustering proxy (report-grade narrative), without claiming diagnosis.
     df = pd.read_csv(io.StringIO(req.csv))
@@ -3360,6 +3357,7 @@ def emerging_phenotype(req: EmergingPhenotypeRequest) -> EmergingPhenotypeResult
 
 
 @app.post("/responder_prediction", response_model=ResponderPredictionResult)
+@bulletproof_endpoint("responder_prediction", min_rows=20)
 def responder_prediction(req: ResponderPredictionRequest) -> ResponderPredictionResult:
     # SmartFormatter integration for flexible data input
     if BUG_FIXES_AVAILABLE:
@@ -4844,6 +4842,7 @@ trial_rescue_engine = TrialRescueEngine()
 
 
 @app.post("/trial_rescue", response_model=TrialRescueResult)
+@bulletproof_endpoint("trial_rescue", min_rows=20)
 def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
     """
     TrialRescue™ MVP v1.0 - Complete Trial Rescue Analysis
@@ -5174,6 +5173,7 @@ Rescue Score: {best_score}/100
 
 
 @app.post("/outbreak_detection", response_model=OutbreakDetectionResult)
+@bulletproof_endpoint("outbreak_detection", min_rows=5)
 def outbreak_detection(req: OutbreakDetectionRequest) -> OutbreakDetectionResult:
     # SmartFormatter integration for flexible data input
     if BUG_FIXES_AVAILABLE:
@@ -5235,6 +5235,7 @@ def outbreak_detection(req: OutbreakDetectionRequest) -> OutbreakDetectionResult
 
 
 @app.post("/predictive_modeling", response_model=PredictiveModelingResult)
+@bulletproof_endpoint("predictive_modeling", min_rows=10)
 def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingResult:
     df = pd.read_csv(io.StringIO(req.csv))
     if req.label_column not in df.columns:
@@ -5265,6 +5266,7 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
 
 
 @app.post("/synthetic_cohort", response_model=SyntheticCohortResult)
+@bulletproof_endpoint("synthetic_cohort", min_rows=0)
 def synthetic_cohort(req: SyntheticCohortRequest) -> SyntheticCohortResult:
     # SmartFormatter integration for flexible data input
     if BUG_FIXES_AVAILABLE:
@@ -5320,6 +5322,7 @@ def synthetic_cohort(req: SyntheticCohortRequest) -> SyntheticCohortResult:
 
 
 @app.post("/digital_twin_simulation", response_model=DigitalTwinSimulationResult)
+@bulletproof_endpoint("digital_twin_simulation", min_rows=1)
 def digital_twin(req: DigitalTwinSimulationRequest) -> DigitalTwinSimulationResult:
     horizon = int(req.simulation_horizon_days)
     timeline = [{"day": int(d), "risk": float(0.30 + 0.001 * d)} for d in range(0, max(10, horizon + 1), 10)]
@@ -5337,6 +5340,7 @@ def digital_twin(req: DigitalTwinSimulationRequest) -> DigitalTwinSimulationResu
 
 
 @app.post("/population_risk", response_model=PopulationRiskResult)
+@bulletproof_endpoint("population_risk", min_rows=1)
 def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
     # SmartFormatter integration for flexible data input
     if BUG_FIXES_AVAILABLE:
@@ -5379,6 +5383,7 @@ def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
 
 
 @app.post("/fluview_ingest", response_model=FluViewIngestionResult)
+@bulletproof_endpoint("fluview_ingest", min_rows=1)
 def fluview_ingest(req: FluViewIngestionRequest) -> FluViewIngestionResult:
     # SmartFormatter integration for flexible data input
     if BUG_FIXES_AVAILABLE:
@@ -5413,6 +5418,7 @@ def fluview_ingest(req: FluViewIngestionRequest) -> FluViewIngestionResult:
 
 
 @app.post("/create_digital_twin", response_model=DigitalTwinStorageResult)
+@bulletproof_endpoint("create_digital_twin", min_rows=1)
 def create_digital_twin(req: DigitalTwinStorageRequest) -> DigitalTwinStorageResult:
     fingerprint = hashlib.sha256(req.csv_content.encode("utf-8")).hexdigest()
     twin_id = f"{req.dataset_id}-{req.analysis_id}"
@@ -5591,6 +5597,7 @@ def drug_interaction_simulator(
 
 
 @app.post("/medication_interaction", response_model=MedicationInteractionResponse)
+@bulletproof_endpoint("medication_interaction", min_rows=0)
 def medication_interaction(req: MedicationInteractionRequest) -> MedicationInteractionResponse:
     """
     Analyze drug interactions and metabolic burden.
@@ -5714,6 +5721,7 @@ def forecast_risk_timeline(
 
 
 @app.post("/forecast_timeline", response_model=ForecastTimelineResponse)
+@bulletproof_endpoint("forecast_timeline", min_rows=5)
 def forecast_timeline(req: ForecastTimelineRequest) -> ForecastTimelineResponse:
     """
     Generate 90-day risk forecast with trend extrapolation.
@@ -5890,6 +5898,7 @@ def simulate_root_cause(
 
 
 @app.post("/root_cause_sim", response_model=RootCauseSimResponse)
+@bulletproof_endpoint("root_cause_sim", min_rows=0)
 def root_cause_sim(req: RootCauseSimRequest) -> RootCauseSimResponse:
     """
     Simulate root cause analysis for clinical conditions.
@@ -6047,6 +6056,7 @@ def generate_patient_report(
 
 
 @app.post("/patient_report", response_model=PatientReportResponse)
+@bulletproof_endpoint("patient_report", min_rows=0)
 def patient_report(req: PatientReportRequest) -> PatientReportResponse:
     """
     Generate patient-friendly report at specified reading level.
@@ -6085,6 +6095,7 @@ def patient_report(req: PatientReportRequest) -> PatientReportResponse:
 # ---------------------------------------------------------------------
 
 @app.post("/cross_loop", response_model=CrossLoopResponse)
+@bulletproof_endpoint("cross_loop", min_rows=1)
 def cross_loop(req: CrossLoopRequest) -> CrossLoopResponse:
     """
     Cross-Loop Meta-Analysis Engine.
@@ -7125,6 +7136,7 @@ class LeadTimeResponse(BaseModel):
 
 # Endpoints for Clinical Intelligence Layer
 @app.post("/confounder_analysis", response_model=ConfounderResponse)
+@bulletproof_endpoint("confounder_analysis", min_rows=10)
 def confounder_analysis(req: ConfounderRequest) -> ConfounderResponse:
     """
     Comprehensive confounder analysis including stratification,
@@ -7165,6 +7177,7 @@ def confounder_analysis(req: ConfounderRequest) -> ConfounderResponse:
 
 
 @app.post("/shap_explain", response_model=SHAPResponse)
+@bulletproof_endpoint("shap_explain", min_rows=10)
 def shap_explain(req: SHAPRequest) -> SHAPResponse:
     """
     SHAP-based explainability including attribution, causal pathways,
@@ -7202,6 +7215,7 @@ def shap_explain(req: SHAPRequest) -> SHAPResponse:
 
 
 @app.post("/change_point_detect", response_model=ChangePointResponse)
+@bulletproof_endpoint("change_point_detect", min_rows=5)
 def change_point_detect(req: ChangePointRequest) -> ChangePointResponse:
     """
     Detect significant change points in biomarker time series.
@@ -7223,6 +7237,7 @@ def change_point_detect(req: ChangePointRequest) -> ChangePointResponse:
 
 
 @app.post("/lead_time_analysis", response_model=LeadTimeResponse)
+@bulletproof_endpoint("lead_time_analysis", min_rows=10)
 def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
     """
     Calculate biomarker lead time for early warning of clinical events.
@@ -8883,6 +8898,7 @@ class SurveillanceResponse(BaseModel):
 # ---------------------------------------------------------------------
 
 @app.post("/surveillance/unknown_diseases", response_model=Dict[str, Any])
+@bulletproof_endpoint("surveillance/unknown_diseases", min_rows=10)
 def detect_unknown_diseases(req: SurveillanceRequest) -> Dict[str, Any]:
     """
     Detect unknown/novel disease patterns from multi-patient data.
@@ -8908,6 +8924,7 @@ def detect_unknown_diseases(req: SurveillanceRequest) -> Dict[str, Any]:
 
 
 @app.post("/surveillance/outbreak_detection", response_model=Dict[str, Any])
+@bulletproof_endpoint("surveillance/outbreak_detection", min_rows=5)
 def detect_outbreaks(req: SurveillanceRequest) -> Dict[str, Any]:
     """
     Detect outbreak patterns using spatial-temporal analysis.
@@ -8933,6 +8950,7 @@ def detect_outbreaks(req: SurveillanceRequest) -> Dict[str, Any]:
 
 
 @app.post("/surveillance/multisite_synthesis", response_model=Dict[str, Any])
+@bulletproof_endpoint("surveillance/multisite_synthesis", min_rows=1)
 def synthesize_multisite(req: SurveillanceRequest) -> Dict[str, Any]:
     """
     Synthesize patterns across multiple sites for population-level intelligence.
@@ -8956,6 +8974,7 @@ def synthesize_multisite(req: SurveillanceRequest) -> Dict[str, Any]:
 
 
 @app.post("/surveillance/comprehensive", response_model=SurveillanceResponse)
+@bulletproof_endpoint("surveillance/comprehensive", min_rows=10)
 def comprehensive_surveillance(req: SurveillanceRequest) -> SurveillanceResponse:
     """
     Comprehensive population surveillance combining all modules:
@@ -10571,6 +10590,7 @@ proteus_twin = ProteusDigitalTwin()
 # ============================================
 
 @app.post("/oracle/execute")
+@bulletproof_endpoint("oracle/execute", min_rows=0)
 def oracle_execute(request: Dict[str, Any]):
     """Execute command through Oracle orchestration."""
     try:
@@ -10584,6 +10604,7 @@ def oracle_execute(request: Dict[str, Any]):
 
 
 @app.get("/oracle/agents")
+@bulletproof_endpoint("oracle/agents", min_rows=0)
 def oracle_list_agents():
     """List all registered agents and their capabilities."""
     return {
@@ -10594,6 +10615,7 @@ def oracle_list_agents():
 
 
 @app.get("/oracle/performance")
+@bulletproof_endpoint("oracle/performance", min_rows=0)
 def oracle_performance():
     """Get Oracle performance report."""
     return {
@@ -10603,6 +10625,7 @@ def oracle_performance():
 
 
 @app.post("/proteus/generate_cohort")
+@bulletproof_endpoint("proteus/generate_cohort", min_rows=0)
 def proteus_generate_cohort(request: Dict[str, Any]):
     """Generate synthetic patient cohort."""
     try:
@@ -10619,6 +10642,7 @@ def proteus_generate_cohort(request: Dict[str, Any]):
 
 
 @app.post("/proteus/validate_model")
+@bulletproof_endpoint("proteus/validate_model", min_rows=5)
 def proteus_validate_model(request: Dict[str, Any]):
     """Validate model update in Digital Twin."""
     try:
@@ -10636,6 +10660,7 @@ def proteus_validate_model(request: Dict[str, Any]):
 
 
 @app.post("/proteus/ab_test")
+@bulletproof_endpoint("proteus/ab_test", min_rows=10)
 def proteus_ab_test(request: Dict[str, Any]):
     """Run A/B test comparing two model variants."""
     try:
@@ -11854,6 +11879,7 @@ military_encryption = MilitaryGradeEncryption()
 # ============================================
 
 @app.post("/sentinel/assess")
+@bulletproof_endpoint("sentinel/assess", min_rows=0)
 def sentinel_assess_threat(request: Dict[str, Any]):
     """Assess threat level for a request."""
     try:
@@ -11870,6 +11896,7 @@ def sentinel_assess_threat(request: Dict[str, Any]):
 
 
 @app.get("/sentinel/statistics")
+@bulletproof_endpoint("sentinel/statistics", min_rows=0)
 def sentinel_statistics():
     """Get Sentinel threat statistics."""
     return {
@@ -11879,6 +11906,7 @@ def sentinel_statistics():
 
 
 @app.post("/honeypot/interact")
+@bulletproof_endpoint("honeypot/interact", min_rows=0)
 def honeypot_interact(request: Dict[str, Any]):
     """Interact with honeypot system (for testing)."""
     try:
@@ -11904,6 +11932,7 @@ def honeypot_interact(request: Dict[str, Any]):
 
 
 @app.get("/honeypot/telemetry")
+@bulletproof_endpoint("honeypot/telemetry", min_rows=0)
 def honeypot_telemetry():
     """Get honeypot telemetry summary."""
     return {
@@ -11913,6 +11942,7 @@ def honeypot_telemetry():
 
 
 @app.get("/oracle/health")
+@bulletproof_endpoint("oracle/health", min_rows=0)
 def oracle_health():
     """Get Oracle health status."""
     try:
@@ -11929,6 +11959,7 @@ def oracle_health():
 
 
 @app.post("/oracle/activate_clone")
+@bulletproof_endpoint("oracle/activate_clone", min_rows=0)
 def oracle_activate_clone():
     """Activate cold clone Oracle (emergency recovery)."""
     try:
@@ -11946,6 +11977,7 @@ def oracle_activate_clone():
 # ============================================
 
 @app.post("/lucian/respond")
+@bulletproof_endpoint("lucian/respond", min_rows=0)
 def lucian_respond(request: Dict[str, Any]):
     """Execute Lucian threat response."""
     try:
@@ -11983,6 +12015,7 @@ def lucian_respond(request: Dict[str, Any]):
 
 
 @app.get("/lucian/statistics")
+@bulletproof_endpoint("lucian/statistics", min_rows=0)
 def lucian_statistics():
     """Get Lucian response statistics."""
     return {
@@ -11996,6 +12029,7 @@ def lucian_statistics():
 # ============================================
 
 @app.get("/obsidian/validate")
+@bulletproof_endpoint("obsidian/validate", min_rows=0)
 def obsidian_validate():
     """Validate blockchain integrity."""
     return {
@@ -12005,6 +12039,7 @@ def obsidian_validate():
 
 
 @app.get("/obsidian/summary")
+@bulletproof_endpoint("obsidian/summary", min_rows=0)
 def obsidian_summary():
     """Get blockchain summary."""
     return {
@@ -12014,6 +12049,7 @@ def obsidian_summary():
 
 
 @app.post("/obsidian/add_block")
+@bulletproof_endpoint("obsidian/add_block", min_rows=0)
 def obsidian_add_block(request: Dict[str, Any]):
     """Add decision block to blockchain."""
     try:
@@ -12034,6 +12070,7 @@ def obsidian_add_block(request: Dict[str, Any]):
 # ============================================
 
 @app.post("/trinity/process")
+@bulletproof_endpoint("trinity/process", min_rows=0)
 def trinity_process(request: Dict[str, Any]):
     """Process request through Cybersecurity Trinity."""
     try:
@@ -12051,6 +12088,7 @@ def trinity_process(request: Dict[str, Any]):
 
 
 @app.get("/trinity/posture")
+@bulletproof_endpoint("trinity/posture", min_rows=0)
 def trinity_posture():
     """Get security posture from Trinity."""
     try:
@@ -12103,6 +12141,7 @@ def _get_default_security_posture() -> Dict[str, Any]:
 
 
 @app.get("/trinity/integrity")
+@bulletproof_endpoint("trinity/integrity", min_rows=0)
 def trinity_integrity():
     """Validate Trinity system integrity."""
     try:
@@ -12141,6 +12180,7 @@ def trinity_integrity():
 # ============================================
 
 @app.get("/encryption/status")
+@bulletproof_endpoint("encryption/status", min_rows=0)
 def encryption_status():
     """Get military-grade encryption status."""
     return {
@@ -12150,6 +12190,7 @@ def encryption_status():
 
 
 @app.post("/encryption/hash")
+@bulletproof_endpoint("encryption/hash", min_rows=0)
 def encryption_hash(request: Dict[str, Any]):
     """Compute SHA-3 hash."""
     try:
@@ -12174,6 +12215,7 @@ def encryption_hash(request: Dict[str, Any]):
 
 
 @app.post("/encryption/split_secret")
+@bulletproof_endpoint("encryption/split_secret", min_rows=0)
 def encryption_split_secret(request: Dict[str, Any]):
     """Split secret using Shamir's Secret Sharing."""
     try:
@@ -13113,6 +13155,7 @@ app.add_middleware(GovernanceMiddleware)
 # ============================================
 
 @app.post("/governance/policy/evaluate")
+@bulletproof_endpoint("governance/policy/evaluate", min_rows=0)
 async def governance_policy_evaluate(request: Dict[str, Any]):
     """Evaluate policy for a request."""
     try:
@@ -13137,6 +13180,7 @@ async def governance_policy_evaluate(request: Dict[str, Any]):
 
 
 @app.get("/governance/audit/{session_id}")
+@bulletproof_endpoint("governance/audit", min_rows=0)
 async def governance_audit_get(session_id: str):
     """Get audit events for a session."""
     events = await audit_ledger.get_session_events(session_id)
@@ -13152,6 +13196,7 @@ async def governance_audit_get(session_id: str):
 
 
 @app.get("/governance/audit/{session_id}/verify")
+@bulletproof_endpoint("governance/audit/verify", min_rows=0)
 async def governance_audit_verify(session_id: str):
     """Verify audit chain integrity."""
     verification = await audit_ledger.verify_chain(session_id)
@@ -13159,6 +13204,7 @@ async def governance_audit_verify(session_id: str):
 
 
 @app.post("/governance/audit/append")
+@bulletproof_endpoint("governance/audit/append", min_rows=0)
 async def governance_audit_append(request: Dict[str, Any]):
     """Append event to audit ledger."""
     try:
@@ -13169,6 +13215,7 @@ async def governance_audit_append(request: Dict[str, Any]):
 
 
 @app.post("/governance/evidence/build")
+@bulletproof_endpoint("governance/evidence/build", min_rows=0)
 async def governance_evidence_build(request: Dict[str, Any]):
     """Build evidence packet for a session.
 
@@ -13193,6 +13240,7 @@ async def governance_evidence_build(request: Dict[str, Any]):
 
 
 @app.post("/governance/blockchain/anchor")
+@bulletproof_endpoint("governance/blockchain/anchor", min_rows=0)
 async def governance_blockchain_anchor(request: Dict[str, Any]):
     """Anchor session to blockchain.
 
@@ -13219,6 +13267,7 @@ async def governance_blockchain_anchor(request: Dict[str, Any]):
 
 
 @app.post("/governance/blockchain/verify")
+@bulletproof_endpoint("governance/blockchain/verify", min_rows=0)
 async def governance_blockchain_verify(request: Dict[str, Any]):
     """Verify blockchain anchor."""
     try:
@@ -13237,6 +13286,7 @@ async def governance_blockchain_verify(request: Dict[str, Any]):
 # ============================================
 
 @app.post("/governance/consent/record")
+@bulletproof_endpoint("governance/consent/record", min_rows=0)
 async def governance_consent_record(request: Dict[str, Any]):
     """Record patient consent on blockchain."""
     try:
@@ -13263,6 +13313,7 @@ async def governance_consent_record(request: Dict[str, Any]):
 
 
 @app.post("/governance/consent/withdraw")
+@bulletproof_endpoint("governance/consent/withdraw", min_rows=0)
 async def governance_consent_withdraw(request: Dict[str, Any]):
     """Withdraw patient consent (GDPR right to withdraw).
 
@@ -13284,6 +13335,7 @@ async def governance_consent_withdraw(request: Dict[str, Any]):
 
 
 @app.get("/governance/consent/{patient_ref}")
+@bulletproof_endpoint("governance/consent", min_rows=0)
 def governance_consent_get(patient_ref: str, purpose: Optional[str] = None):
     """Get active consents for a patient."""
     try:
@@ -13300,6 +13352,7 @@ def governance_consent_get(patient_ref: str, purpose: Optional[str] = None):
 
 
 @app.get("/governance/status")
+@bulletproof_endpoint("governance/status", min_rows=0)
 def governance_status():
     """Get governance system status."""
     return {
@@ -13733,6 +13786,7 @@ oracle_engine.agent_registry.register_agent(
 # ============================================
 
 @app.post("/predict")
+@bulletproof_endpoint("predict", min_rows=0)
 async def predict_endpoint(payload: PredictRequest):
     """DiviScan Predictive Core - SmartFormatter enabled."""
     body = payload.model_dump(exclude_none=True)
@@ -13869,6 +13923,7 @@ async def predict_endpoint(payload: PredictRequest):
 
 
 @app.get("/predict/capabilities")
+@bulletproof_endpoint("predict/capabilities", min_rows=0)
 def predictive_core_capabilities():
     """Get Predictive Core capabilities and status."""
     return {
@@ -14389,6 +14444,7 @@ oracle_engine.agent_registry.register_agent(
 # ============================================
 
 @app.post("/astra/query")
+@bulletproof_endpoint("astra/query", min_rows=0)
 async def astra_query(request: Dict[str, Any]):
     """Process a natural language query through Astra."""
     try:
@@ -14412,6 +14468,7 @@ async def astra_query(request: Dict[str, Any]):
 
 
 @app.get("/astra/conversation/{session_id}")
+@bulletproof_endpoint("astra/conversation", min_rows=0)
 async def astra_conversation(session_id: str):
     """Get conversation history and context for a session."""
     try:
@@ -14431,6 +14488,7 @@ async def astra_conversation(session_id: str):
 
 
 @app.get("/astra/capabilities")
+@bulletproof_endpoint("astra/capabilities", min_rows=0)
 def astra_capabilities():
     """Get Astra interface capabilities."""
     return {
@@ -14440,6 +14498,7 @@ def astra_capabilities():
 
 
 @app.get("/astra/status")
+@bulletproof_endpoint("astra/status", min_rows=0)
 def astra_status():
     """Get Astra interface status."""
     active_sessions = len(astra.conversation_manager.sessions)
@@ -14491,6 +14550,7 @@ class DeidentifyResponse(BaseModel):
 
 
 @app.post("/security/phi-scan", response_model=PHIScanResponse)
+@bulletproof_endpoint("security/phi-scan", min_rows=1)
 async def scan_for_phi(request: Request):
     """
     HIPAA PHI Detection Endpoint
@@ -14546,6 +14606,7 @@ async def scan_for_phi(request: Request):
 
 
 @app.post("/security/deidentify", response_model=DeidentifyResponse)
+@bulletproof_endpoint("security/deidentify", min_rows=1)
 async def deidentify_data(request: Request):
     """
     HIPAA De-Identification Endpoint
@@ -14596,6 +14657,7 @@ async def deidentify_data(request: Request):
 
 
 @app.get("/security/audit-logs")
+@bulletproof_endpoint("security/audit-logs", min_rows=0)
 def get_audit_logs(
     limit: int = 100,
     endpoint: Optional[str] = None,
@@ -14634,6 +14696,7 @@ def get_audit_logs(
 
 
 @app.get("/security/status")
+@bulletproof_endpoint("security/status", min_rows=0)
 def security_status():
     """
     HIPAA Security Module Status
@@ -14678,6 +14741,7 @@ def security_status():
 
 
 @app.get("/health")
+@bulletproof_endpoint("health", min_rows=0)
 def health() -> Dict[str, Any]:
     return {"status": "ok", "version": APP_VERSION}
 
