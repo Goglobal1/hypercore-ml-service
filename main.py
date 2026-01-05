@@ -958,8 +958,19 @@ class DigitalTwinSimulationResult(BaseModel):
 
 
 class PopulationRiskRequest(BaseModel):
-    analyses: List[Dict[str, Any]]
-    region: str
+    # Original fields - now Optional
+    analyses: Optional[List[Dict[str, Any]]] = None
+    region: Optional[str] = None
+    # SmartFormatter fields
+    csv: Optional[str] = None
+    text: Optional[str] = None
+    data: Optional[str] = None
+    # Column identifiers
+    label_column: Optional[str] = None
+    target_column: Optional[str] = None
+    outcome_column: Optional[str] = None
+    risk_factors: Optional[List[str]] = None
+    patient_id_column: Optional[str] = None
 
 
 class PopulationRiskResult(BaseModel):
@@ -5495,14 +5506,94 @@ def digital_twin(req: DigitalTwinSimulationRequest) -> DigitalTwinSimulationResu
 @app.post("/population_risk", response_model=PopulationRiskResult)
 @bulletproof_endpoint("population_risk", min_rows=1)
 def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
-    # SmartFormatter integration for flexible data input
+    """
+    Analyze population-level risk factors.
+    Accepts either analyses array or csv string input.
+    """
+    # =========================================================================
+    # SMARTFORMATTER: Handle CSV input
+    # =========================================================================
+    csv_data = req.csv or req.text or req.data
+
+    if csv_data:
+        df = pd.read_csv(io.StringIO(csv_data))
+
+        # Resolve label column
+        label_col = req.label_column or req.target_column or req.outcome_column
+        if not label_col:
+            for col in df.columns:
+                if col.lower() in ['outcome', 'label', 'target', 'event']:
+                    label_col = col
+                    break
+
+        if not label_col:
+            raise HTTPException(400, "Could not determine label column. Specify 'label_column'")
+
+        # Get risk factors or auto-detect numeric columns
+        risk_factors = req.risk_factors
+        if not risk_factors:
+            skip_patterns = ['id', 'patient', 'outcome', 'label', 'target']
+            risk_factors = [
+                col for col in df.select_dtypes(include=[np.number]).columns
+                if not any(p in col.lower() for p in skip_patterns) and col != label_col
+            ]
+
+        # Calculate population risk metrics
+        total_patients = len(df)
+        outcome_rate = float(df[label_col].mean()) if label_col in df.columns else 0.0
+
+        # Calculate risk factor correlations
+        risk_analysis = {}
+        for factor in risk_factors:
+            if factor in df.columns:
+                corr = df[factor].corr(df[label_col]) if label_col in df.columns else 0
+                risk_analysis[factor] = {
+                    "mean": float(df[factor].mean()),
+                    "std": float(df[factor].std()),
+                    "correlation_with_outcome": float(corr) if not np.isnan(corr) else 0,
+                    "risk_contribution": abs(float(corr)) if not np.isnan(corr) else 0
+                }
+
+        # Sort by risk contribution
+        top_biomarkers = sorted(
+            risk_analysis.keys(),
+            key=lambda x: risk_analysis[x]["risk_contribution"],
+            reverse=True
+        )[:5]
+
+        # Calculate overall risk score
+        risk_score = outcome_rate * 100
+
+        # Determine trend
+        trend = "elevated" if outcome_rate > 0.5 else "moderate" if outcome_rate > 0.3 else "stable"
+
+        return PopulationRiskResult(
+            region=req.region or "cohort",
+            risk_score=float(risk_score),
+            trend=trend,
+            confidence=0.85,
+            top_biomarkers=list(top_biomarkers),
+        )
+
+    # =========================================================================
+    # ORIGINAL FORMAT: Handle analyses + region
+    # =========================================================================
     if BUG_FIXES_AVAILABLE:
         formatted = format_for_endpoint(req.dict(), "population_risk")
-        analyses = formatted.get("analyses", req.analyses)
-        region = formatted.get("region", req.region)
+        analyses = formatted.get("analyses", req.analyses) or []
+        region = formatted.get("region", req.region) or "unknown"
     else:
-        analyses = req.analyses
-        region = req.region
+        analyses = req.analyses or []
+        region = req.region or "unknown"
+
+    if not analyses:
+        return PopulationRiskResult(
+            region=str(region),
+            risk_score=0.0,
+            trend="stable",
+            confidence=0.5,
+            top_biomarkers=[],
+        )
 
     scores = [float(a.get("risk_score", 0.5)) for a in analyses if isinstance(a, dict)]
     avg = float(np.mean(scores)) if scores else 0.0
@@ -5512,14 +5603,12 @@ def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
     if BUG_FIXES_AVAILABLE and analyses:
         biomarkers = identify_top_biomarkers(analyses, n_top=5)
     else:
-        # Fallback: extract from existing analyses or identify from numeric columns
         biomarkers = []
         for a in analyses:
             if isinstance(a, dict):
                 if isinstance(a.get("top_biomarkers"), list):
                     biomarkers.extend([str(x) for x in a["top_biomarkers"]])
                 else:
-                    # Identify numeric fields as potential biomarkers
                     for k, v in a.items():
                         if isinstance(v, (int, float)) and k.lower() not in ["patient_id", "id", "age", "sex", "gender", "risk_score"]:
                             if k not in biomarkers:
@@ -7245,10 +7334,22 @@ class ConfounderResponse(BaseModel):
 
 
 class SHAPRequest(BaseModel):
-    patient_data: List[Dict[str, Any]]
-    feature_keys: List[str]
-    outcome_key: str = "outcome"
-    patient_index: int = 0
+    # Original fields - now Optional
+    patient_data: Optional[List[Dict[str, Any]]] = None
+    feature_keys: Optional[List[str]] = None
+    outcome_key: Optional[str] = "outcome"
+    patient_index: Optional[int] = 0
+    # SmartFormatter fields
+    csv: Optional[str] = None
+    text: Optional[str] = None
+    data: Optional[str] = None
+    # Column identifiers
+    label_column: Optional[str] = None
+    target_column: Optional[str] = None
+    outcome_column: Optional[str] = None
+    # Which row to explain
+    explain_row: Optional[int] = 0
+    patient_id: Optional[str] = None
 
 
 class SHAPResponse(BaseModel):
@@ -7351,32 +7452,137 @@ def confounder_analysis(req: ConfounderRequest) -> ConfounderResponse:
 def shap_explain(req: SHAPRequest) -> SHAPResponse:
     """
     SHAP-based explainability including attribution, causal pathways,
-    and risk decomposition.
+    and risk decomposition. Accepts either patient_data array or csv string.
     """
     try:
+        # =====================================================================
+        # SMARTFORMATTER: Handle CSV input
+        # =====================================================================
+        csv_data = req.csv or req.text or req.data
+
+        if csv_data:
+            df = pd.read_csv(io.StringIO(csv_data))
+
+            # Resolve label column
+            label_col = req.label_column or req.target_column or req.outcome_column or req.outcome_key
+            if not label_col:
+                for col in df.columns:
+                    if col.lower() in ['outcome', 'label', 'target', 'event']:
+                        label_col = col
+                        break
+
+            # Determine which row to explain
+            explain_idx = req.explain_row or req.patient_index or 0
+
+            # If patient_id specified, find that row
+            if req.patient_id:
+                patient_col = None
+                for col in df.columns:
+                    if 'patient' in col.lower() or col.lower() == 'id':
+                        patient_col = col
+                        break
+                if patient_col:
+                    matches = df[df[patient_col].astype(str) == str(req.patient_id)]
+                    if len(matches) > 0:
+                        explain_idx = matches.index[0]
+
+            if explain_idx >= len(df):
+                explain_idx = 0
+
+            # Get feature columns (exclude ID and label)
+            skip_patterns = ['id', 'patient', 'outcome', 'label', 'target']
+            feature_cols = [
+                col for col in df.columns
+                if not any(p in col.lower() for p in skip_patterns) and col != label_col
+            ]
+
+            # Get the row to explain
+            row_data = df.iloc[explain_idx]
+
+            # Calculate pseudo-SHAP values
+            attribution = {}
+            pathways = {}
+            decomposition = {}
+
+            if label_col and label_col in df.columns:
+                for feature in feature_cols:
+                    if feature in df.columns and pd.api.types.is_numeric_dtype(df[feature]):
+                        corr = df[feature].corr(df[label_col])
+                        if np.isnan(corr):
+                            corr = 0
+
+                        value = float(row_data[feature])
+                        pop_mean = float(df[feature].mean())
+                        pop_std = float(df[feature].std()) or 1
+                        z_score = (value - pop_mean) / pop_std
+                        attr_value = corr * z_score
+
+                        attribution[feature] = {
+                            "shap_value": float(attr_value),
+                            "feature_value": value,
+                            "population_mean": pop_mean,
+                            "direction": "increases_risk" if attr_value > 0 else "decreases_risk"
+                        }
+
+                        if abs(attr_value) > 0.1:
+                            pathways[feature] = {
+                                "influence": "high" if abs(attr_value) > 0.5 else "moderate",
+                                "mechanism": f"{feature} deviation from normal range"
+                            }
+
+                        decomposition[feature] = {
+                            "contribution": float(abs(attr_value)),
+                            "percentage": 0
+                        }
+
+                # Calculate percentage contributions
+                total_contrib = sum(d["contribution"] for d in decomposition.values()) or 1
+                for feature in decomposition:
+                    decomposition[feature]["percentage"] = round(
+                        decomposition[feature]["contribution"] / total_contrib * 100, 1
+                    )
+
+            return SHAPResponse(
+                attribution=attribution,
+                pathways=pathways,
+                decomposition=decomposition
+            )
+
+        # =====================================================================
+        # ORIGINAL FORMAT: Handle patient_data + feature_keys
+        # =====================================================================
+        if not req.patient_data or not req.feature_keys:
+            raise HTTPException(400,
+                "Provide either:\n"
+                "- 'csv' with patient data and 'label_column'\n"
+                "- 'patient_data' list and 'feature_keys' list"
+            )
+
         result = SHAPResponse()
 
         result.attribution = compute_shap_attribution(
             req.patient_data,
             req.feature_keys,
-            req.outcome_key,
-            req.patient_index
+            req.outcome_key or "outcome",
+            req.patient_index or 0
         )
 
         result.pathways = trace_causal_pathways(
             req.patient_data,
             req.feature_keys,
-            req.outcome_key
+            req.outcome_key or "outcome"
         )
 
         result.decomposition = decompose_risk_score(
             req.patient_data,
             req.feature_keys,
-            req.outcome_key,
-            req.patient_index
+            req.outcome_key or "outcome",
+            req.patient_index or 0
         )
 
         return result
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
