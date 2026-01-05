@@ -7273,11 +7273,27 @@ class ChangePointResponse(BaseModel):
 
 
 class LeadTimeRequest(BaseModel):
-    patient_events: List[Dict[str, Any]]
-    marker_key: str
-    event_key: str
-    time_key: str = "timestamp"
+    # Original fields (now optional for backwards compatibility)
+    patient_events: Optional[List[Dict[str, Any]]] = None
+    marker_key: Optional[str] = None
+    event_key: Optional[str] = None
+    time_key: Optional[str] = "timestamp"
     threshold: Optional[float] = None
+    # SmartFormatter fields - accept CSV input
+    csv: Optional[str] = None
+    # Field aliases for marker/value
+    marker_column: Optional[str] = None
+    value_key: Optional[str] = None
+    # Field aliases for event/outcome
+    event_column: Optional[str] = None
+    label_column: Optional[str] = None
+    outcome_column: Optional[str] = None
+    # Field aliases for time
+    time_column: Optional[str] = None
+    # Field aliases for patient ID
+    patient_key: Optional[str] = None
+    patient_id_column: Optional[str] = None
+    patient_column: Optional[str] = None
 
 
 class LeadTimeResponse(BaseModel):
@@ -7429,63 +7445,125 @@ def change_point_detect(req: ChangePointRequest) -> ChangePointResponse:
 def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
     """
     Calculate biomarker lead time for early warning of clinical events.
+    Accepts either patient_events array or csv string input.
     """
     try:
-        if not req.patient_events:
+        # ================================================================
+        # SMARTFORMATTER: Resolve field aliases
+        # ================================================================
+        # Marker/value: marker_key, marker_column, value_key
+        marker_key = req.marker_key or req.marker_column or req.value_key
+
+        # Event/outcome: event_key, event_column, label_column, outcome_column
+        event_key = req.event_key or req.event_column or req.label_column or req.outcome_column
+
+        # Time: time_key, time_column
+        time_key = req.time_key or req.time_column or "timestamp"
+
+        # Patient ID: patient_key, patient_id_column, patient_column
+        patient_id_col = req.patient_key or req.patient_id_column or req.patient_column
+
+        # ================================================================
+        # SMARTFORMATTER: Convert CSV to patient_events if provided
+        # ================================================================
+        patient_events = req.patient_events
+
+        if req.csv and not patient_events:
+            df = pd.read_csv(io.StringIO(req.csv))
+
+            # Auto-detect columns if not provided
+            if not marker_key:
+                # Find first numeric column that's not time/id/event
+                exclude = ['time', 'timestamp', 'day', 'date', 'id', 'patient_id', 'patient',
+                           'outcome', 'event', 'label', 'sepsis', 'readmission', 'death']
+                for col in df.columns:
+                    if col.lower() not in exclude and pd.api.types.is_numeric_dtype(df[col]):
+                        marker_key = col
+                        break
+
+            if not event_key:
+                # Find binary outcome column
+                for col in df.columns:
+                    if col.lower() in ['sepsis', 'readmission', 'outcome', 'event', 'label', 'death']:
+                        event_key = col
+                        break
+
+            if not patient_id_col:
+                # Find patient ID column
+                for col in df.columns:
+                    if 'patient' in col.lower() or 'subject' in col.lower() or col.lower() == 'id':
+                        patient_id_col = col
+                        break
+
+            # Convert DataFrame to patient_events format
+            patient_events = [row.to_dict() for _, row in df.iterrows()]
+
+        # ================================================================
+        # Validation
+        # ================================================================
+        if not patient_events:
             return LeadTimeResponse(
                 lead_times=[],
                 average_lead_time=None,
                 detection_rate=0.0,
-                marker=req.marker_key,
-                event=req.event_key
+                marker=marker_key or "",
+                event=event_key or ""
             )
 
+        if not marker_key:
+            raise HTTPException(status_code=400, detail="Provide marker_key, marker_column, or value_key")
+        if not event_key:
+            raise HTTPException(status_code=400, detail="Provide event_key, event_column, label_column, or outcome_column")
+
         # Convert patient events to DataFrame for analysis
-        df = pd.DataFrame(req.patient_events)
+        df = pd.DataFrame(patient_events)
 
         # Validate required columns exist
-        if req.marker_key not in df.columns:
-            raise HTTPException(status_code=400, detail=f"marker_key '{req.marker_key}' not found in data")
-        if req.event_key not in df.columns:
-            raise HTTPException(status_code=400, detail=f"event_key '{req.event_key}' not found in data")
+        if marker_key not in df.columns:
+            raise HTTPException(status_code=400, detail=f"marker_key '{marker_key}' not found in data. Available: {df.columns.tolist()}")
+        if event_key not in df.columns:
+            raise HTTPException(status_code=400, detail=f"event_key '{event_key}' not found in data. Available: {df.columns.tolist()}")
 
+        # ================================================================
+        # Calculate lead times
+        # ================================================================
         # Determine threshold (use provided or calculate from data)
         threshold = req.threshold
         if threshold is None:
-            marker_values = pd.to_numeric(df[req.marker_key], errors='coerce').dropna()
+            marker_values = pd.to_numeric(df[marker_key], errors='coerce').dropna()
             if len(marker_values) > 0:
                 threshold = float(marker_values.mean() + marker_values.std())
             else:
                 threshold = 0.5
 
-        # Calculate lead times for patients with events
         lead_times = []
         events_detected = 0
         total_events = 0
 
         # Group by patient if patient_id column exists
-        patient_col = None
-        for col in df.columns:
-            if 'patient' in col.lower() or 'subject' in col.lower() or col.lower() == 'id':
-                patient_col = col
-                break
+        patient_col = patient_id_col
+        if not patient_col:
+            for col in df.columns:
+                if 'patient' in col.lower() or 'subject' in col.lower() or col.lower() == 'id':
+                    patient_col = col
+                    break
 
-        if patient_col:
+        if patient_col and patient_col in df.columns:
             groups = df.groupby(patient_col)
         else:
             groups = [(0, df)]
 
         for patient_id, patient_df in groups:
             # Check if event occurred for this patient
-            event_col = pd.to_numeric(patient_df[req.event_key], errors='coerce').fillna(0)
-            if event_col.max() <= 0:
+            event_col_data = pd.to_numeric(patient_df[event_key], errors='coerce').fillna(0)
+            if event_col_data.max() <= 0:
                 continue  # No event for this patient
 
             total_events += 1
 
             # Find when marker first exceeded threshold
-            marker_col = pd.to_numeric(patient_df[req.marker_key], errors='coerce').fillna(0)
-            high_marker = marker_col >= threshold
+            marker_col_data = pd.to_numeric(patient_df[marker_key], errors='coerce').fillna(0)
+            high_marker = marker_col_data >= threshold
 
             if not high_marker.any():
                 continue  # Marker never exceeded threshold
@@ -7494,27 +7572,33 @@ def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
 
             # Find first detection index and event index
             first_detection_idx = high_marker.idxmax()
-            event_idx = event_col.idxmax()
+            event_idx = event_col_data.idxmax()
 
             # Calculate lead time in index units (or hours if time column exists)
-            if req.time_key in patient_df.columns:
+            lead_time_hours = float(event_idx - first_detection_idx)
+
+            # Try to use time column for better lead time calculation
+            time_col_to_use = time_key if time_key in patient_df.columns else None
+            if not time_col_to_use:
+                for tc in ['time', 'timestamp', 'day', 'date']:
+                    if tc in patient_df.columns:
+                        time_col_to_use = tc
+                        break
+
+            if time_col_to_use:
                 try:
-                    times = pd.to_datetime(patient_df[req.time_key], errors='coerce')
+                    times = pd.to_datetime(patient_df[time_col_to_use], errors='coerce')
                     if not times.isna().all():
                         detection_time = times.loc[first_detection_idx]
                         event_time = times.loc[event_idx]
                         lead_time_hours = (event_time - detection_time).total_seconds() / 3600
-                    else:
-                        lead_time_hours = float(event_idx - first_detection_idx)
                 except:
-                    lead_time_hours = float(event_idx - first_detection_idx)
-            else:
-                lead_time_hours = float(event_idx - first_detection_idx)
+                    pass  # Keep index-based lead time
 
             lead_times.append({
                 "patient_id": str(patient_id),
                 "lead_time_hours": round(lead_time_hours, 2),
-                "marker_value_at_detection": float(marker_col.loc[first_detection_idx]),
+                "marker_value_at_detection": float(marker_col_data.loc[first_detection_idx]),
                 "threshold_used": threshold
             })
 
@@ -7529,8 +7613,8 @@ def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
             lead_times=lead_times,
             average_lead_time=round(avg_lead_time, 2) if avg_lead_time else None,
             detection_rate=round(detection_rate, 3),
-            marker=req.marker_key,
-            event=req.event_key
+            marker=marker_key,
+            event=event_key
         )
     except HTTPException:
         raise
