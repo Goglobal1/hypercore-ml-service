@@ -7258,8 +7258,9 @@ class SHAPResponse(BaseModel):
 
 
 class ChangePointRequest(BaseModel):
-    time_series: List[Dict[str, Any]]
-    value_key: str
+    time_series: Optional[List[Dict[str, Any]]] = None  # Now optional
+    csv: Optional[str] = None  # Accept CSV input
+    value_key: Optional[str] = None
     time_key: str = "timestamp"
     n_breakpoints: int = 3
     model_type: str = "rbf"
@@ -7372,16 +7373,50 @@ def shap_explain(req: SHAPRequest) -> SHAPResponse:
 def change_point_detect(req: ChangePointRequest) -> ChangePointResponse:
     """
     Detect significant change points in biomarker time series.
+    Accepts either time_series array or csv string input.
     """
     try:
+        time_series = req.time_series
+        value_key = req.value_key
+
+        # If CSV provided, convert to time_series
+        if req.csv and not time_series:
+            df = pd.read_csv(io.StringIO(req.csv))
+            time_series = [row.to_dict() for _, row in df.iterrows()]
+
+            # Auto-detect value_key if not provided
+            if not value_key:
+                # Find first numeric column that's not time/id
+                exclude = ['time', 'timestamp', 'day', 'date', 'id', 'patient_id', 'index']
+                for col in df.columns:
+                    if col.lower() not in exclude and pd.api.types.is_numeric_dtype(df[col]):
+                        value_key = col
+                        break
+                if not value_key and len(df.select_dtypes(include=[np.number]).columns) > 0:
+                    value_key = df.select_dtypes(include=[np.number]).columns[0]
+
+        if not time_series:
+            raise HTTPException(
+                status_code=400,
+                detail="Provide either 'time_series' array or 'csv' string"
+            )
+
+        if not value_key:
+            raise HTTPException(
+                status_code=400,
+                detail="Provide 'value_key' or include numeric columns in CSV"
+            )
+
         result = detect_change_points(
-            req.time_series,
-            req.value_key,
+            time_series,
+            value_key,
             req.time_key,
             req.n_breakpoints,
             req.model_type
         )
         return ChangePointResponse(**result)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,
