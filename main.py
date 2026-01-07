@@ -3240,6 +3240,8 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         biomarker_counts = {}
         biomarker_avg_lead = {}
         biomarker_avg_change = {}
+        biomarker_baseline_vals = {}
+        biomarker_current_vals = {}
 
         for signal in early_warning_signals:
             bm = signal["biomarker"]
@@ -3247,8 +3249,12 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 biomarker_counts[bm] = 0
                 biomarker_avg_lead[bm] = []
                 biomarker_avg_change[bm] = []
+                biomarker_baseline_vals[bm] = []
+                biomarker_current_vals[bm] = []
             biomarker_counts[bm] += 1
             biomarker_avg_lead[bm].append(signal["days_before_event"])
+            biomarker_baseline_vals[bm].append(signal.get("first_value", 0))
+            biomarker_current_vals[bm].append(signal.get("last_pre_event_value", 0))
             # Parse change percentage
             try:
                 change_val = float(signal["change"].replace("+", "").replace("%", ""))
@@ -3256,13 +3262,27 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             except:
                 pass
 
+        # Calculate contribution scores (based on detection frequency and change magnitude)
+        total_detections = sum(biomarker_counts.values()) or 1
+
         # Create aggregated signals (top biomarkers)
         aggregated_signals = []
         for bm, count in sorted(biomarker_counts.items(), key=lambda x: x[1], reverse=True)[:10]:
             avg_lead = SafeMath.safe_mean(biomarker_avg_lead[bm], 0)
             avg_change = SafeMath.safe_mean(biomarker_avg_change[bm], 0)
+            avg_baseline = SafeMath.safe_mean(biomarker_baseline_vals[bm], 0)
+            avg_current = SafeMath.safe_mean(biomarker_current_vals[bm], 0)
+
+            # Contribution score: weighted by frequency and change magnitude
+            contribution = (count / total_detections) * (abs(avg_change) / 100)
+
             aggregated_signals.append({
-                "biomarker": bm,
+                "marker": bm,
+                "biomarker": bm,  # Keep for backwards compat
+                "contribution": round(contribution, 3),
+                "baseline_value": round(avg_baseline, 2),
+                "current_value": round(avg_current, 2),
+                "percent_change": round(avg_change, 1),
                 "pattern": "rising",
                 "days_before_event": round(avg_lead, 1),
                 "change": f"+{avg_change:.0f}%",
@@ -3308,6 +3328,18 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             "potential_impact": f"Early detection could enable intervention {avg_lead_time:.1f} days before event."
         }
 
+        # Build early_markers list with contribution scores and values
+        early_markers = [
+            {
+                "marker": s["marker"],
+                "contribution": s["contribution"],
+                "baseline_value": s["baseline_value"],
+                "current_value": s["current_value"],
+                "percent_change": s["percent_change"]
+            }
+            for s in aggregated_signals[:10]
+        ]
+
         clinical_impact = {
             "patients_analyzed": total_patients,
             "patients_with_events": len(patients_with_events),
@@ -3316,7 +3348,8 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             "lead_time_range_days": [round(min(lead_times), 1), round(max(lead_times), 1)] if lead_times else [0, 0],
             "detection_rate": round(detection_rate, 2),
             "early_warning_signals_count": len(early_warning_signals),
-            "unique_biomarkers_flagged": len(biomarker_counts)
+            "unique_biomarkers_flagged": len(biomarker_counts),
+            "early_markers": early_markers
         }
 
         comparator_performance = {
