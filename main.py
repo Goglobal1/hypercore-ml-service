@@ -170,7 +170,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.19.1"
+APP_VERSION = "5.19.2"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -623,9 +623,13 @@ class EarlyRiskResponse(BaseModel):
 
 
 class MultiOmicFeatures(BaseModel):
-    immune: List[float]
-    metabolic: List[float]
-    microbiome: List[float]
+    # Accept either list of floats OR dict of marker:value pairs
+    immune: Optional[Union[List[float], Dict[str, float]]] = None
+    metabolic: Optional[Union[List[float], Dict[str, float]]] = None
+    microbiome: Optional[Union[List[float], Dict[str, float]]] = None
+    # SmartFormatter: accept CSV input
+    csv: Optional[str] = None
+    omics_data: Optional[Dict[str, Dict[str, float]]] = None
 
 
 class MultiOmicFusionResult(BaseModel):
@@ -1600,9 +1604,16 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
     if Xc.shape[1] == 0:
         raise ValueError("No usable numeric features after cleaning")
 
+    # Handle multiclass by binarizing (common in clinical analysis)
+    n_classes = len(np.unique(y))
+    if n_classes > 2:
+        # Convert to binary: 0 stays 0, anything else becomes 1
+        y = (y > 0).astype(int)
+
     policy = _choose_cv_strategy(y)
 
-    lr = LogisticRegression(max_iter=2000, solver="liblinear", class_weight="balanced")
+    # Use lbfgs for better convergence
+    lr = LogisticRegression(max_iter=2000, solver="lbfgs", class_weight="balanced")
 
     if policy["type"] == "skf":
         cv = StratifiedKFold(n_splits=policy["n_splits"], shuffle=True, random_state=42)
@@ -3342,16 +3353,39 @@ def mean_safe(x: List[float]) -> float:
 @app.post("/multi_omic_fusion", response_model=MultiOmicFusionResult)
 @bulletproof_endpoint("multi_omic_fusion", min_rows=1)
 def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
-    # SmartFormatter integration for flexible data input
-    if BUG_FIXES_AVAILABLE:
-        formatted = format_for_endpoint(f.dict(), "multi_omic_fusion")
-        immune_data = formatted.get("immune", f.immune)
-        metabolic_data = formatted.get("metabolic", f.metabolic)
-        microbiome_data = formatted.get("microbiome", f.microbiome)
+    """
+    Multi-omic data fusion. Accepts multiple input formats:
+    - Lists: {"immune": [1.5, 2.0], "metabolic": [3.0], "microbiome": [0.5]}
+    - Dicts: {"immune": {"IL6": 15.2, "TNFa": 8.1}, ...}
+    - omics_data: {"immune": {...}, "metabolic": {...}, ...}
+    """
+
+    def extract_values(data) -> List[float]:
+        """Convert dict or list to list of float values."""
+        if data is None:
+            return []
+        if isinstance(data, dict):
+            return [float(v) for v in data.values() if isinstance(v, (int, float))]
+        if isinstance(data, list):
+            return [float(v) for v in data if isinstance(v, (int, float))]
+        return []
+
+    # Handle omics_data format: {"immune": {...}, "metabolic": {...}}
+    if f.omics_data:
+        immune_data = extract_values(f.omics_data.get("immune"))
+        metabolic_data = extract_values(f.omics_data.get("metabolic"))
+        microbiome_data = extract_values(f.omics_data.get("microbiome"))
     else:
-        immune_data = f.immune
-        metabolic_data = f.metabolic
-        microbiome_data = f.microbiome
+        # SmartFormatter integration for flexible data input
+        if BUG_FIXES_AVAILABLE:
+            formatted = format_for_endpoint(f.dict(), "multi_omic_fusion")
+            immune_data = extract_values(formatted.get("immune", f.immune))
+            metabolic_data = extract_values(formatted.get("metabolic", f.metabolic))
+            microbiome_data = extract_values(formatted.get("microbiome", f.microbiome))
+        else:
+            immune_data = extract_values(f.immune)
+            metabolic_data = extract_values(f.metabolic)
+            microbiome_data = extract_values(f.microbiome)
 
     scores = {
         "immune": mean_safe(immune_data),
