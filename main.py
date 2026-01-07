@@ -1609,6 +1609,21 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
     if n_classes > 2:
         # Convert to binary: 0 stays 0, anything else becomes 1
         y = (y > 0).astype(int)
+        n_classes = len(np.unique(y))
+
+    # Check for single class - can't train classifier
+    if n_classes < 2:
+        return {
+            "cv_method": "none (single class)",
+            "metrics": {"roc_auc": 0.0, "pr_auc": 0.0, "accuracy": 1.0, "sensitivity": 0.0, "specificity": 1.0},
+            "coefficients": {},
+            "feature_importance": [],
+            "roc_curve_data": {"fpr": [0.0, 1.0], "tpr": [0.0, 1.0], "thresholds": [1.0, 0.0]},
+            "pr_curve_data": {"precision": [1.0], "recall": [0.0], "thresholds": []},
+            "probabilities": [0.0] * len(y),
+            "dropped_features": dropped,
+            "warning": "Only 1 class in target - classification not possible"
+        }
 
     policy = _choose_cv_strategy(y)
 
