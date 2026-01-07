@@ -15055,11 +15055,13 @@ class PHIScanRequest(BaseModel):
 
 
 class PHIScanResponse(BaseModel):
-    contains_phi: bool
+    phi_detected: bool  # Primary field name
+    contains_phi: bool  # Alias for backwards compatibility
     is_clean: bool
     total_violations: int
     violations: List[Dict[str, Any]]
     blocked_columns: List[str]
+    phi_fields: List[str] = []  # List of field names containing PHI
     risk_level: str
     recommendation: str
     dataset_fingerprint: str
@@ -15097,11 +15099,13 @@ async def scan_for_phi(request: Request):
 
     if not csv_data:
         return PHIScanResponse(
+            phi_detected=False,
             contains_phi=False,
             is_clean=True,
             total_violations=0,
             violations=[],
             blocked_columns=[],
+            phi_fields=[],
             risk_level="unknown",
             recommendation="No data provided. Send data in 'csv', 'text', 'data', 'content', 'input', or 'payload' field.",
             dataset_fingerprint="",
@@ -15119,12 +15123,17 @@ async def scan_for_phi(request: Request):
         result_status="blocked" if result.get('contains_phi') else "clean"
     )
 
+    # Extract PHI field names from violations
+    phi_fields = list(set(v.get('column', '') for v in result.get('violations', []) if v.get('column')))
+
     return PHIScanResponse(
+        phi_detected=result.get('contains_phi', False),
         contains_phi=result.get('contains_phi', False),
         is_clean=result.get('is_clean', True),
         total_violations=result.get('total_violations', 0),
         violations=result.get('violations', []),
         blocked_columns=result.get('blocked_columns', []),
+        phi_fields=phi_fields,
         risk_level=result.get('risk_level', 'low'),
         recommendation=result.get('recommendation', ''),
         dataset_fingerprint=result.get('dataset_fingerprint', ''),
