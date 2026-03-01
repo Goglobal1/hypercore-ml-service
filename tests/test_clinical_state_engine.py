@@ -6,7 +6,7 @@ Run with: pytest tests/test_clinical_state_engine.py -v
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import sys
 import os
 
@@ -99,7 +99,7 @@ class TestVelocityCalculation:
 
     def test_velocity_with_history(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # Score went from 0.4 to 0.6 in 30 minutes = 0.4/hr
         last_scores = [(now - timedelta(minutes=30), 0.4)]
@@ -109,14 +109,14 @@ class TestVelocityCalculation:
 
     def test_velocity_no_history(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         velocity = engine.calculate_velocity(0.5, now, [])
         assert velocity == 0.0
 
     def test_velocity_within_window(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # Multiple scores, should use earliest in window
         last_scores = [
@@ -161,7 +161,7 @@ class TestAlertFiring:
 
     def test_escalation_fires_alert(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         should_fire, rationale = engine.should_fire_alert(
             from_state=ClinicalState.S1_WATCH,
@@ -177,7 +177,7 @@ class TestAlertFiring:
 
     def test_deescalation_no_alert(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         should_fire, rationale = engine.should_fire_alert(
             from_state=ClinicalState.S2_ESCALATING,
@@ -193,7 +193,7 @@ class TestAlertFiring:
 
     def test_cooldown_suppression(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         should_fire, rationale = engine.should_fire_alert(
             from_state=ClinicalState.S1_WATCH,
@@ -209,7 +209,7 @@ class TestAlertFiring:
 
     def test_velocity_override(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         should_fire, rationale = engine.should_fire_alert(
             from_state=ClinicalState.S1_WATCH,
@@ -225,7 +225,7 @@ class TestAlertFiring:
 
     def test_novelty_override(self):
         engine = ClinicalStateEngine()
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         should_fire, rationale = engine.should_fire_alert(
             from_state=ClinicalState.S1_WATCH,
@@ -249,7 +249,7 @@ class TestFullEvaluation:
         self.engine = ClinicalStateEngine(storage=self.storage)
 
     def test_first_evaluation_watch_state(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         result = self.engine.evaluate(
             patient_id="P001",
@@ -266,7 +266,7 @@ class TestFullEvaluation:
         assert result["severity"] == "WARNING"
 
     def test_first_evaluation_stable_no_alert(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         result = self.engine.evaluate(
             patient_id="P002",
@@ -280,7 +280,7 @@ class TestFullEvaluation:
         assert result["alert_event"] is None
 
     def test_escalation_sequence(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # First: Watch state
         r1 = self.engine.evaluate(
@@ -316,7 +316,7 @@ class TestFullEvaluation:
         assert r3["severity"] == "CRITICAL"
 
     def test_same_episode_tracking(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         r1 = self.engine.evaluate(
             patient_id="P004",
@@ -343,7 +343,7 @@ class TestAPIHelpers:
     def test_evaluate_patient_alert(self):
         result = evaluate_patient_alert(
             patient_id="TEST001",
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             risk_domain="sepsis",
             current_scores={"risk": 0.55}
         )
@@ -368,7 +368,7 @@ class TestAuditLog:
         self.engine = ClinicalStateEngine(storage=self.storage)
 
     def test_events_logged(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         self.engine.evaluate(
             patient_id="P010",
@@ -382,7 +382,7 @@ class TestAuditLog:
         assert events[0].event_type in [EventType.ALERT_FIRED, EventType.ALERT_SUPPRESSED]
 
     def test_multiple_events_logged(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         for i in range(5):
             self.engine.evaluate(
