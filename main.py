@@ -141,6 +141,50 @@ from ml_safety import (
 
 
 # ---------------------------------------------------------------------
+# AUTO-ALERT HELPER - Zero-workflow CSE integration
+# ---------------------------------------------------------------------
+
+def _auto_evaluate_alert(
+    patient_id: str,
+    risk_score: float,
+    risk_domain: str,
+    biomarkers: Optional[List[str]] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Automatically evaluate alerting after any risk analysis.
+
+    This function runs silently after risk-generating endpoints to:
+    - Track patient clinical state transitions
+    - Fire alerts on escalation
+    - Maintain audit trail
+
+    Args:
+        patient_id: Unique patient identifier
+        risk_score: Computed risk score (0.0-1.0)
+        risk_domain: Risk category (e.g., "sepsis", "cardiac")
+        biomarkers: Top contributing biomarkers
+
+    Returns:
+        Alert evaluation result or None if CSE unavailable/error
+    """
+    if not CSE_AVAILABLE or not patient_id:
+        return None
+
+    try:
+        result = evaluate_patient_alert(
+            patient_id=str(patient_id),
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            risk_domain=risk_domain,
+            current_scores={"composite": float(risk_score)},
+            contributing_biomarkers=biomarkers or []
+        )
+        return result
+    except Exception:
+        # Don't break analysis if alerting fails
+        return None
+
+
+# ---------------------------------------------------------------------
 # SMARTFORMATTER HELPERS - Universal Field Extraction
 # Philosophy: The system adapts to the data, NOT the other way around
 # ---------------------------------------------------------------------
@@ -3014,6 +3058,22 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         except Exception:
             pass  # Silent fail for entire Batch 3A if critical error
 
+        # Auto-alert: Evaluate each patient in the cohort
+        # Use label (outcome) as risk proxy, top biomarkers from feature importance
+        try:
+            top_biomarkers = [fi["feature"] for fi in feature_importance_list[:5]] if feature_importance_list else []
+            auc = metrics.get("linear", {}).get("auc", 0.5)
+            for patient_id in label_by_patient.index:
+                patient_risk = float(label_by_patient[patient_id]) * auc  # Scale by model AUC
+                _auto_evaluate_alert(
+                    patient_id=str(patient_id),
+                    risk_score=min(1.0, patient_risk),
+                    risk_domain="cohort_analysis",
+                    biomarkers=top_biomarkers
+                )
+        except Exception:
+            pass  # Don't break analysis if alerting fails
+
         # Return response (Base44 can be updated to read pipeline + manifest)
         # Sanitize all data to ensure no inf/nan values in JSON response
         return AnalyzeResponse(
@@ -3385,6 +3445,17 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             f"Need multiple time points per patient to detect rising biomarker patterns."
         )
 
+        # Auto-alert: Evaluate patients with early warning signals
+        top_biomarker_names = [s.get("marker") or s.get("biomarker") for s in aggregated_signals[:5]]
+        for patient_id in patients_with_events:
+            # Use detection rate as risk proxy (patients with events are high-risk)
+            _auto_evaluate_alert(
+                patient_id=str(patient_id),
+                risk_score=min(1.0, 0.5 + detection_rate),  # Base 0.5 + detection rate
+                risk_domain=req.outcome_type,
+                biomarkers=top_biomarker_names
+            )
+
         return EarlyRiskResponse(
             executive_summary=executive_summary,
             risk_timing_delta=_sanitize_for_json(risk_timing_delta),
@@ -3470,6 +3541,19 @@ def multi_omic_fusion(f: MultiOmicFeatures) -> MultiOmicFusionResult:
             confidence = float(max(0.1, min(0.95, (coverage * 0.4) + (balance * 0.6))))
         else:
             confidence = 0.1
+
+    # Auto-alert: Use fused score as risk indicator
+    # Patient ID can come from omics_data context if provided
+    patient_id = None
+    if f.omics_data and isinstance(f.omics_data, dict):
+        patient_id = f.omics_data.get("patient_id") or f.omics_data.get("id")
+    if patient_id:
+        _auto_evaluate_alert(
+            patient_id=str(patient_id),
+            risk_score=min(1.0, fused / 10.0),  # Normalize to 0-1 range
+            risk_domain="multi_omic",
+            biomarkers=list(contrib.keys())
+        )
 
     return MultiOmicFusionResult(
         fused_score=float(fused),
@@ -3678,6 +3762,27 @@ def responder_prediction(req: ResponderPredictionRequest) -> ResponderPrediction
         f"worst arm '{worst}' at {arm_rates.get(worst, 0):.1%}. Lift: {lift:.1%}. "
         f"Verify with confounder detection and trial rescue."
     )
+
+    # Auto-alert: Evaluate patients in non-responding cohort
+    # Find patient_id column
+    patient_col = None
+    for col in df.columns:
+        if col.lower() in ('patient_id', 'patientid', 'id', 'subject_id', 'patient'):
+            patient_col = col
+            break
+    if patient_col:
+        top_biomarkers = list(diffs.keys())[:5] if diffs else []
+        for idx, row in df.iterrows():
+            patient_id = row.get(patient_col)
+            # Use label as risk (non-responders have higher risk)
+            patient_risk = 1.0 - float(row.get(label_col, 0))  # Non-response = higher risk
+            if patient_id:
+                _auto_evaluate_alert(
+                    patient_id=str(patient_id),
+                    risk_score=patient_risk,
+                    risk_domain="trial_response",
+                    biomarkers=top_biomarkers
+                )
 
     return ResponderPredictionResult(
         response_lift=lift,
@@ -5588,6 +5693,22 @@ def digital_twin(req: DigitalTwinSimulationRequest) -> DigitalTwinSimulationResu
 
     narrative = "Digital twin simulation executed in scaffold mode; wire to /analyze axis drift for physiologic realism."
 
+    # Auto-alert: Use max risk from timeline
+    patient_id = req.baseline_profile.get("patient_id") or req.baseline_profile.get("id")
+    if patient_id and timeline:
+        max_risk = max(float(t.get("risk", 0)) for t in timeline)
+        top_biomarkers = sorted(
+            [(k, v) for k, v in req.baseline_profile.items() if isinstance(v, (int, float)) and k not in ("patient_id", "id")],
+            key=lambda x: abs(x[1]),
+            reverse=True
+        )[:5]
+        _auto_evaluate_alert(
+            patient_id=str(patient_id),
+            risk_score=max_risk,
+            risk_domain="digital_twin",
+            biomarkers=[b[0] for b in top_biomarkers]
+        )
+
     return DigitalTwinSimulationResult(
         timeline=timeline,
         predicted_outcome="stable",
@@ -5661,6 +5782,20 @@ def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
         # Determine trend
         trend = "elevated" if outcome_rate > 0.5 else "moderate" if outcome_rate > 0.3 else "stable"
 
+        # Auto-alert: Evaluate each patient in the population
+        patient_col = req.patient_id_column
+        if patient_col and patient_col in df.columns:
+            for _, row in df.iterrows():
+                patient_id = row.get(patient_col)
+                patient_risk = float(row.get(label_col, 0)) if label_col in df.columns else outcome_rate
+                if patient_id:
+                    _auto_evaluate_alert(
+                        patient_id=str(patient_id),
+                        risk_score=patient_risk,
+                        risk_domain="population_risk",
+                        biomarkers=list(top_biomarkers)
+                    )
+
         return PopulationRiskResult(
             region=req.region or "cohort",
             risk_score=float(risk_score),
@@ -5708,6 +5843,19 @@ def population_risk(req: PopulationRiskRequest) -> PopulationRiskResult:
                             if k not in biomarkers:
                                 biomarkers.append(k)
         biomarkers = sorted(list(dict.fromkeys(biomarkers)))[:5]
+
+    # Auto-alert: Evaluate each patient in the analyses array
+    for a in analyses:
+        if isinstance(a, dict):
+            patient_id = a.get("patient_id") or a.get("id")
+            patient_risk = float(a.get("risk_score", avg))
+            if patient_id:
+                _auto_evaluate_alert(
+                    patient_id=str(patient_id),
+                    risk_score=patient_risk,
+                    risk_domain="population_risk",
+                    biomarkers=biomarkers
+                )
 
     return PopulationRiskResult(
         region=str(region),
@@ -6066,6 +6214,24 @@ def forecast_timeline(req: ForecastTimelineRequest) -> ForecastTimelineResponse:
     try:
         df = pd.read_csv(io.StringIO(req.csv))
         result = forecast_risk_timeline(df, req.label_column, req.forecast_days)
+
+        # Auto-alert: Evaluate patients based on their forecasted risk
+        patient_col = req.patient_id_column
+        if patient_col and patient_col in df.columns:
+            # Get max weekly risk as the alert threshold
+            max_risk = max(result.get("weekly_risk_scores", [0]))
+            # Get numeric columns as potential biomarkers
+            numeric_cols = [c for c in df.select_dtypes(include=[np.number]).columns
+                          if c.lower() not in ('patient_id', 'id', 'time', 'day', 'outcome', 'label')][:5]
+            # Alert each unique patient with forecasted risk
+            for patient_id in df[patient_col].unique():
+                _auto_evaluate_alert(
+                    patient_id=str(patient_id),
+                    risk_score=max_risk,
+                    risk_domain="forecast_risk",
+                    biomarkers=numeric_cols
+                )
+
         return ForecastTimelineResponse(**result)
     except Exception as e:
         raise HTTPException(
