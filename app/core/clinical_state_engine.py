@@ -121,7 +121,7 @@ Suppressed Candidate:
 """
 
 from typing import Dict, Any, List, Optional, Tuple
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from dataclasses import dataclass, asdict, field
 import uuid
@@ -731,7 +731,7 @@ def evaluate_patient_alert(
         try:
             ts = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
         except ValueError:
-            ts = datetime.utcnow()
+            ts = datetime.now(timezone.utc)
     else:
         ts = timestamp
 
@@ -766,7 +766,7 @@ def get_alert_history(
     limit: int = 100
 ) -> List[Dict[str, Any]]:
     """Get alert history with filters."""
-    since = datetime.utcnow() - timedelta(hours=since_hours)
+    since = datetime.now(timezone.utc) - timedelta(hours=since_hours)
     events = get_storage().get_events(
         patient_id=patient_id,
         risk_domain=risk_domain,
