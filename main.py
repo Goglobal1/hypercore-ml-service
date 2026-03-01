@@ -73,9 +73,21 @@ try:
     )
     from app.core.smart_formatter import SmartFormatter, format_for_endpoint
     from app.core.cross_loop_engine import CrossLoopEngine, run_cross_loop_analysis
+    from app.core.clinical_state_engine import (
+        ClinicalStateEngine,
+        evaluate_patient_alert,
+        get_patient_state,
+        get_alert_history,
+        get_atc_config,
+        ATCConfig,
+        ClinicalState,
+        AlertSeverity
+    )
+    CSE_AVAILABLE = True
     BUG_FIXES_AVAILABLE = True
 except ImportError:
     BUG_FIXES_AVAILABLE = False
+    CSE_AVAILABLE = False
 
 # Optional imports for Clinical Intelligence Layer
 try:
@@ -6452,6 +6464,233 @@ def cross_loop(req: CrossLoopRequest) -> CrossLoopResponse:
         raise HTTPException(
             status_code=500,
             detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+# ---------------------------------------------------------------------
+# CLINICAL STATE ENGINE (CSE) - ALERT EVALUATION
+# Alert Trigger Contract v1 Implementation
+# ---------------------------------------------------------------------
+
+class AlertEvaluateRequest(BaseModel):
+    """Request model for /alerts/evaluate endpoint."""
+    patient_id: str
+    timestamp: str  # ISO8601 format
+    risk_domain: str  # e.g., "sepsis", "cardiac", "respiratory"
+    current_scores: Dict[str, float]  # score_name -> value
+    contributing_biomarkers: Optional[List[str]] = None
+    config: Optional[Dict[str, Any]] = None  # Optional ATC config overrides
+
+
+class AlertEvaluateResponse(BaseModel):
+    """Response model for /alerts/evaluate endpoint."""
+    patient_id: str
+    risk_domain: str
+    timestamp: str
+    risk_score: float
+    state_now: str  # S0, S1, S2, S3
+    state_name: str  # Stable, Watch, Escalating, Critical
+    state_transition: bool
+    state_from: Optional[str] = None
+    velocity: float
+    novelty_detected: bool
+    new_biomarkers: List[str]
+    episode_id: str
+    severity: str  # INFO, WARNING, URGENT, CRITICAL
+    rationale: str
+    suggested_cooldown_minutes: int
+    alert_event: Optional[Dict[str, Any]] = None
+    suppressed_event: Optional[Dict[str, Any]] = None
+
+
+class PatientStateRequest(BaseModel):
+    """Request model for /alerts/state endpoint."""
+    patient_id: str
+    risk_domain: str
+
+
+class AlertHistoryRequest(BaseModel):
+    """Request model for /alerts/history endpoint."""
+    patient_id: Optional[str] = None
+    risk_domain: Optional[str] = None
+    since_hours: float = 24
+    limit: int = 100
+
+
+@app.post("/alerts/evaluate", response_model=AlertEvaluateResponse)
+def alerts_evaluate(req: AlertEvaluateRequest) -> AlertEvaluateResponse:
+    """
+    Clinical State Engine - Evaluate patient risk and determine alert firing.
+
+    Implements Alert Trigger Contract (ATC) v1:
+    - 4-state model: S0 Stable, S1 Watch, S2 Escalating, S3 Critical
+    - State transitions trigger alerts on escalation
+    - Dedupe via cooldown windows (configurable)
+    - Re-alert on velocity spikes or novelty detection
+    - Full audit trail of fired and suppressed alerts
+
+    Args:
+        patient_id: Unique patient identifier
+        timestamp: Observation timestamp (ISO8601)
+        risk_domain: Risk category (sepsis, cardiac, respiratory, etc.)
+        current_scores: Dict of score_name -> value (max used for state mapping)
+        contributing_biomarkers: Top biomarkers driving the risk score
+        config: Optional threshold/cooldown overrides
+
+    Returns:
+        State evaluation result with alert_event (if fired) or suppressed_event
+    """
+    try:
+        if not CSE_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="ClinicalStateEngine not available. Ensure app/core/clinical_state_engine.py is installed."
+            )
+
+        result = evaluate_patient_alert(
+            patient_id=req.patient_id,
+            timestamp=req.timestamp,
+            risk_domain=req.risk_domain,
+            current_scores=req.current_scores,
+            contributing_biomarkers=req.contributing_biomarkers,
+            config=req.config
+        )
+
+        return AlertEvaluateResponse(**result)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+@app.post("/alerts/state")
+def alerts_state(req: PatientStateRequest) -> Dict[str, Any]:
+    """
+    Get current clinical state for a patient + risk domain.
+
+    Returns the persisted state including:
+    - Current state (S0-S3)
+    - Risk score
+    - Episode ID
+    - Last alert time
+    - Contributing biomarkers
+    - Alert count in current episode
+    """
+    try:
+        if not CSE_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="ClinicalStateEngine not available."
+            )
+
+        state = get_patient_state(req.patient_id, req.risk_domain)
+
+        if state is None:
+            return {
+                "patient_id": req.patient_id,
+                "risk_domain": req.risk_domain,
+                "state": None,
+                "message": "No state found for this patient/domain combination"
+            }
+
+        return state
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e)}
+        )
+
+
+@app.post("/alerts/history")
+def alerts_history(req: AlertHistoryRequest) -> Dict[str, Any]:
+    """
+    Query alert history with optional filters.
+
+    Returns list of alert events (both fired and suppressed) for audit trail.
+    """
+    try:
+        if not CSE_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="ClinicalStateEngine not available."
+            )
+
+        events = get_alert_history(
+            patient_id=req.patient_id,
+            risk_domain=req.risk_domain,
+            since_hours=req.since_hours,
+            limit=req.limit
+        )
+
+        return {
+            "patient_id": req.patient_id,
+            "risk_domain": req.risk_domain,
+            "since_hours": req.since_hours,
+            "total_events": len(events),
+            "events": events
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e)}
+        )
+
+
+@app.get("/alerts/config")
+def alerts_config() -> Dict[str, Any]:
+    """
+    Get current Alert Trigger Contract (ATC) configuration.
+
+    Returns all configurable thresholds and settings for the alerting system.
+    """
+    try:
+        if not CSE_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="ClinicalStateEngine not available."
+            )
+
+        return {
+            "atc_version": "v1",
+            "config": get_atc_config(),
+            "state_model": {
+                "S0": {"name": "Stable", "range": "0.00 - 0.29", "severity": "INFO"},
+                "S1": {"name": "Watch", "range": "0.30 - 0.54", "severity": "WARNING"},
+                "S2": {"name": "Escalating", "range": "0.55 - 0.79", "severity": "URGENT"},
+                "S3": {"name": "Critical", "range": "0.80 - 1.00", "severity": "CRITICAL"}
+            },
+            "alert_firing_rules": [
+                "S0 -> S2: Skip-level escalation",
+                "S0 -> S3: Critical jump",
+                "S1 -> S2: Standard escalation",
+                "S1 -> S3: Critical jump from watch",
+                "S2 -> S3: Escalation to critical",
+                "Same state + velocity spike: Re-alert",
+                "Same state + novelty: Re-alert"
+            ],
+            "non_firing_rules": [
+                "De-escalation: Log only",
+                "Same state within cooldown: Suppress",
+                "S0 stable: No alert"
+            ]
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e)}
         )
 
 
