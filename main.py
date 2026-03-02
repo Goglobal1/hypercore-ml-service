@@ -148,7 +148,9 @@ def _auto_evaluate_alert(
     patient_id: str,
     risk_score: float,
     risk_domain: str,
-    biomarkers: Optional[List[str]] = None
+    biomarkers: Optional[List[str]] = None,
+    feature_values: Optional[Dict[str, float]] = None,
+    auto_discover_domain: bool = False
 ) -> Optional[Dict[str, Any]]:
     """
     Automatically evaluate alerting after any risk analysis.
@@ -157,12 +159,16 @@ def _auto_evaluate_alert(
     - Track patient clinical state transitions
     - Fire alerts on escalation
     - Maintain audit trail
+    - Auto-discover clinical domain from biomarkers (when enabled)
+    - Use domain-specific alerting configurations
 
     Args:
         patient_id: Unique patient identifier
         risk_score: Computed risk score (0.0-1.0)
-        risk_domain: Risk category (e.g., "sepsis", "cardiac")
+        risk_domain: Risk category (e.g., "sepsis", "cardiac") or "auto" for discovery
         biomarkers: Top contributing biomarkers
+        feature_values: Optional dict of feature name -> value for better domain classification
+        auto_discover_domain: If True or risk_domain is "auto", auto-classify domain
 
     Returns:
         Alert evaluation result or None if CSE unavailable/error
@@ -176,7 +182,9 @@ def _auto_evaluate_alert(
             timestamp=datetime.now(timezone.utc).isoformat(),
             risk_domain=risk_domain,
             current_scores={"composite": float(risk_score)},
-            contributing_biomarkers=biomarkers or []
+            contributing_biomarkers=biomarkers or [],
+            feature_values=feature_values,
+            auto_discover_domain=auto_discover_domain or (risk_domain == "auto")
         )
         return result
     except Exception:
@@ -3654,6 +3662,26 @@ def confounder_detection(req: ConfounderDetectionRequest) -> List[ConfounderFlag
             )
             break
 
+    # Auto-alert: Evaluate dataset based on confounder severity
+    # More confounders or higher severity = higher risk of invalid analysis
+    n_confounders = len(flags)
+    max_strength = max([f.strength or 0 for f in flags], default=0)
+    if n_confounders >= 3 or max_strength >= 0.9:
+        confounder_risk = 0.8
+    elif n_confounders >= 2 or max_strength >= 0.7:
+        confounder_risk = 0.6
+    elif n_confounders >= 1:
+        confounder_risk = 0.4
+    else:
+        confounder_risk = 0.1
+    confounder_types = [f.type for f in flags[:5]]
+    _auto_evaluate_alert(
+        patient_id=f"dataset:{label_col}",
+        risk_score=confounder_risk,
+        risk_domain="confounder_analysis",
+        biomarkers=confounder_types if confounder_types else ["none"]
+    )
+
     return flags
 
 
@@ -5487,6 +5515,33 @@ Rescue Score: {best_score}/100
         # Safe access for return values
         safe_audit_trail = audit_trail or {}
 
+        # Auto-alert: Evaluate trial rescue at cohort level
+        # Use futility_flag as risk indicator (futility = need for rescue = elevated state)
+        # Invert rescue_score: low rescue = high risk of trial failure
+        trial_risk = 1.0 - (best_score / 100.0) if best_score else 0.5
+        if futility_flag:
+            trial_risk = min(1.0, trial_risk + 0.2)
+        top_biomarkers = [b.get("biomarker", "") for b in (biomarker_analysis or [])[:5]]
+        analysis_id = safe_audit_trail.get("analysis_id", str(uuid.uuid4())[:8])
+        _auto_evaluate_alert(
+            patient_id=f"trial:{analysis_id}",
+            risk_score=trial_risk,
+            risk_domain="trial_rescue",
+            biomarkers=top_biomarkers
+        )
+
+        # Also alert on individual responder subgroups if they have patient-level data
+        for subgroup in (responder_subgroups or [])[:5]:
+            subgroup_id = subgroup.get("subgroup_id") or subgroup.get("name", "unknown")
+            subgroup_response = subgroup.get("response_rate", 0.5)
+            # Non-responders have higher risk
+            _auto_evaluate_alert(
+                patient_id=f"subgroup:{subgroup_id}",
+                risk_score=1.0 - subgroup_response,
+                risk_domain="trial_subgroup",
+                biomarkers=subgroup.get("defining_features", top_biomarkers)[:5]
+            )
+
         return TrialRescueResult(
             analysis_id=safe_audit_trail.get("analysis_id", str(uuid.uuid4())),
             timestamp=safe_audit_trail.get("timestamp", datetime.now(timezone.utc).isoformat()),
@@ -5588,6 +5643,23 @@ def outbreak_detection(req: OutbreakDetectionRequest) -> OutbreakDetectionResult
         f"Uses baseline comparison, percent increase, and consecutive increase detection. "
         f"Confirm with local epidemiological review."
     )
+
+    # Auto-alert: Evaluate each outbreak region as a "patient" (region-level alerting)
+    for region in outbreak_regions:
+        region_signal = signals.get(region, {})
+        # Use severity or multiplier to determine risk score
+        severity = region_signal.get("severity", "moderate")
+        severity_map = {"low": 0.3, "moderate": 0.55, "high": 0.75, "critical": 0.9}
+        risk_score = severity_map.get(severity, 0.5)
+        # Use multiplier if available (higher multiplier = higher risk)
+        multiplier = region_signal.get("multiplier", 1.0)
+        risk_score = min(1.0, risk_score * (1 + (multiplier - 1) * 0.1))
+        _auto_evaluate_alert(
+            patient_id=f"region:{region}",
+            risk_score=risk_score,
+            risk_domain="outbreak",
+            biomarkers=["case_count", "percent_increase", "multiplier"]
+        )
 
     return OutbreakDetectionResult(
         outbreak_regions=outbreak_regions,
@@ -6102,6 +6174,27 @@ def medication_interaction(req: MedicationInteractionRequest) -> MedicationInter
             egfr=req.egfr,
             liver_function=req.liver_function
         )
+
+        # Auto-alert: Use metabolic_burden_score as risk indicator
+        # Patient ID can be passed via a custom field or generated from medications
+        patient_id = "-".join(sorted(medications[:3])) if medications else "unknown"
+        metabolic_burden = result.get("metabolic_burden_score", 0)
+        # Normalize metabolic burden to 0-1 range (assume max ~10)
+        risk_score = min(1.0, metabolic_burden / 10.0)
+        # Increase risk if renal/hepatic adjustment needed
+        if result.get("renal_adjustment_needed"):
+            risk_score = min(1.0, risk_score + 0.15)
+        if result.get("hepatic_adjustment_needed"):
+            risk_score = min(1.0, risk_score + 0.15)
+        # Get high-risk combinations as biomarkers
+        high_risk_combos = [c.get("drugs", ["unknown"])[0] for c in result.get("high_risk_combinations", [])[:5]]
+        _auto_evaluate_alert(
+            patient_id=f"med:{patient_id}",
+            risk_score=risk_score,
+            risk_domain="medication_interaction",
+            biomarkers=high_risk_combos if high_risk_combos else medications[:5]
+        )
+
         return MedicationInteractionResponse(**result)
     except Exception as e:
         raise HTTPException(
@@ -8123,6 +8216,31 @@ def change_point_detect(req: ChangePointRequest) -> ChangePointResponse:
             req.n_breakpoints,
             req.model_type
         )
+
+        # Auto-alert: Evaluate based on change point significance
+        # More change points or higher magnitude = higher risk of instability
+        change_points = result.get("change_points", [])
+        n_changes = len(change_points)
+        # Risk based on number of significant changes (more instability = higher risk)
+        if n_changes >= 3:
+            risk_score = 0.8
+        elif n_changes >= 2:
+            risk_score = 0.6
+        elif n_changes >= 1:
+            risk_score = 0.4
+        else:
+            risk_score = 0.15
+        # If there's a patient_id in the time series, use it
+        patient_id = "timeseries"
+        if time_series and isinstance(time_series[0], dict):
+            patient_id = time_series[0].get("patient_id", time_series[0].get("id", "timeseries"))
+        _auto_evaluate_alert(
+            patient_id=str(patient_id),
+            risk_score=risk_score,
+            risk_domain="change_point",
+            biomarkers=[value_key] if value_key else ["signal"]
+        )
+
         return ChangePointResponse(**result)
     except HTTPException:
         raise
@@ -8301,6 +8419,28 @@ def lead_time_analysis(req: LeadTimeRequest) -> LeadTimeResponse:
             avg_lead_time = float(np.mean([lt["lead_time_hours"] for lt in lead_times]))
 
         detection_rate = events_detected / total_events if total_events > 0 else 0.0
+
+        # Auto-alert: Evaluate each patient based on lead time
+        # Shorter lead time = higher risk (less time to intervene)
+        for lt in lead_times:
+            patient_id = lt.get("patient_id", "unknown")
+            lead_hours = lt.get("lead_time_hours", 24)
+            # Risk inversely proportional to lead time (max 48h for low risk)
+            # <6h = critical (0.85+), 6-12h = escalating (0.6-0.85), 12-24h = watch (0.35-0.6), >24h = stable
+            if lead_hours <= 6:
+                risk_score = 0.85 + (6 - lead_hours) / 40  # 0.85-1.0
+            elif lead_hours <= 12:
+                risk_score = 0.6 + (12 - lead_hours) / 24  # 0.6-0.85
+            elif lead_hours <= 24:
+                risk_score = 0.35 + (24 - lead_hours) / 48  # 0.35-0.6
+            else:
+                risk_score = max(0.1, 0.35 - (lead_hours - 24) / 100)  # 0.1-0.35
+            _auto_evaluate_alert(
+                patient_id=str(patient_id),
+                risk_score=min(1.0, risk_score),
+                risk_domain="lead_time",
+                biomarkers=[marker_key, event_key]
+            )
 
         return LeadTimeResponse(
             lead_times=lead_times,
@@ -9976,6 +10116,7 @@ def comprehensive_surveillance(req: SurveillanceRequest) -> SurveillanceResponse
         )
 
         # Generate summary
+        alert_level = _determine_alert_level(unknown_diseases, outbreak)
         summary = {
             "total_patients_analyzed": len(df),
             "anomalies_detected": unknown_diseases.get("total_anomalies", 0),
@@ -9984,9 +10125,34 @@ def comprehensive_surveillance(req: SurveillanceRequest) -> SurveillanceResponse
             "r0_estimate": outbreak.get("r0_estimation", {}).get("r0_estimate"),
             "sites_analyzed": multisite.get("total_sites", 0),
             "cross_site_patterns": len(multisite.get("cross_site_patterns", [])),
-            "alert_level": _determine_alert_level(unknown_diseases, outbreak),
+            "alert_level": alert_level,
             "recommended_actions": _get_comprehensive_actions(unknown_diseases, outbreak)
         }
+
+        # Auto-alert: Evaluate surveillance at population level
+        alert_level_map = {"CRITICAL": 0.9, "HIGH": 0.7, "MODERATE": 0.5, "LOW": 0.2}
+        surveillance_risk = alert_level_map.get(alert_level, 0.3)
+        # Increase risk based on R0 estimate
+        r0 = outbreak.get("r0_estimation", {}).get("r0_estimate", 0) or 0
+        if r0 >= 2.0:
+            surveillance_risk = min(1.0, surveillance_risk + 0.15)
+        _auto_evaluate_alert(
+            patient_id=f"surveillance:{len(df)}",
+            risk_score=surveillance_risk,
+            risk_domain="surveillance",
+            biomarkers=["novel_clusters", "r0", "outbreak_detected"]
+        )
+
+        # Also alert on individual novel clusters
+        for i, cluster in enumerate(unknown_diseases.get("novel_clusters", [])[:5]):
+            cluster_id = cluster.get("cluster_id", i)
+            novelty_score = cluster.get("novelty_score", 0.5)
+            _auto_evaluate_alert(
+                patient_id=f"cluster:{cluster_id}",
+                risk_score=min(1.0, novelty_score),
+                risk_domain="novel_disease",
+                biomarkers=cluster.get("defining_features", [])[:5]
+            )
 
         return SurveillanceResponse(
             unknown_disease_detection=_sanitize_for_json(unknown_diseases),
@@ -14814,6 +14980,16 @@ async def predict_endpoint(payload: PredictRequest):
                     "risk_score": round(random.uniform(0, 1), 3),
                     "outcome": 1 if random.random() < prev else 0
                 })
+
+            # Auto-alert: Evaluate synthetic patients with elevated risk
+            for patient in cohort:
+                if patient["risk_score"] >= 0.3:  # Only alert on non-stable patients
+                    _auto_evaluate_alert(
+                        patient_id=patient["patient_id"],
+                        risk_score=patient["risk_score"],
+                        risk_domain="synthetic_cohort",
+                        biomarkers=["age", "outcome"]
+                    )
 
             return {
                 "status": "success",

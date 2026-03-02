@@ -120,13 +120,22 @@ Suppressed Candidate:
 ```
 """
 
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from dataclasses import dataclass, asdict, field
 import uuid
 import json
 from collections import defaultdict
+
+# Import domain classifier (optional, for enhanced mode)
+try:
+    from app.core.domain_classifier import classify_domains, get_primary_domain
+    DOMAIN_CLASSIFIER_AVAILABLE = True
+except ImportError:
+    DOMAIN_CLASSIFIER_AVAILABLE = False
+    classify_domains = None
+    get_primary_domain = None
 
 
 # =============================================================================
@@ -207,6 +216,376 @@ class ATCConfig:
 
 
 DEFAULT_CONFIG = ATCConfig()
+
+
+# =============================================================================
+# DOMAIN-SPECIFIC CONFIGURATIONS
+# =============================================================================
+
+DOMAIN_CONFIGS: Dict[str, ATCConfig] = {
+    # Sepsis - aggressive alerting due to rapid deterioration risk
+    "sepsis": ATCConfig(
+        s0_upper=0.25,
+        s1_upper=0.50,
+        s2_upper=0.75,
+        default_cooldown_minutes=30,
+        escalation_cooldown_minutes=10,
+        critical_cooldown_minutes=5,
+        velocity_threshold=0.12
+    ),
+
+    # Cardiac - balanced thresholds
+    "deterioration_cardiac": ATCConfig(
+        s0_upper=0.30,
+        s1_upper=0.55,
+        s2_upper=0.80,
+        default_cooldown_minutes=45,
+        escalation_cooldown_minutes=15,
+        critical_cooldown_minutes=5,
+        velocity_threshold=0.15
+    ),
+
+    # Kidney injury - slightly higher thresholds (slower progression typical)
+    "kidney_injury": ATCConfig(
+        s0_upper=0.35,
+        s1_upper=0.60,
+        s2_upper=0.82,
+        default_cooldown_minutes=60,
+        escalation_cooldown_minutes=20,
+        critical_cooldown_minutes=10,
+        velocity_threshold=0.10
+    ),
+
+    # Respiratory failure - aggressive like sepsis
+    "respiratory_failure": ATCConfig(
+        s0_upper=0.25,
+        s1_upper=0.50,
+        s2_upper=0.75,
+        default_cooldown_minutes=30,
+        escalation_cooldown_minutes=10,
+        critical_cooldown_minutes=5,
+        velocity_threshold=0.15
+    ),
+
+    # Hepatic dysfunction - moderate alerting
+    "hepatic_dysfunction": ATCConfig(
+        s0_upper=0.32,
+        s1_upper=0.58,
+        s2_upper=0.82,
+        default_cooldown_minutes=60,
+        escalation_cooldown_minutes=20,
+        critical_cooldown_minutes=10,
+        velocity_threshold=0.12
+    ),
+
+    # Neurological - aggressive due to time-sensitive nature
+    "neurological": ATCConfig(
+        s0_upper=0.25,
+        s1_upper=0.50,
+        s2_upper=0.75,
+        default_cooldown_minutes=20,
+        escalation_cooldown_minutes=10,
+        critical_cooldown_minutes=3,
+        velocity_threshold=0.10
+    ),
+
+    # Metabolic - moderate alerting
+    "metabolic": ATCConfig(
+        s0_upper=0.30,
+        s1_upper=0.55,
+        s2_upper=0.80,
+        default_cooldown_minutes=45,
+        escalation_cooldown_minutes=15,
+        critical_cooldown_minutes=10,
+        velocity_threshold=0.15
+    ),
+
+    # Hematologic - moderate alerting
+    "hematologic": ATCConfig(
+        s0_upper=0.30,
+        s1_upper=0.55,
+        s2_upper=0.80,
+        default_cooldown_minutes=60,
+        escalation_cooldown_minutes=20,
+        critical_cooldown_minutes=10,
+        velocity_threshold=0.12
+    ),
+
+    # Oncology inception - higher thresholds (requires pattern confirmation)
+    "oncology_inception": ATCConfig(
+        s0_upper=0.40,
+        s1_upper=0.65,
+        s2_upper=0.85,
+        default_cooldown_minutes=120,
+        escalation_cooldown_minutes=60,
+        critical_cooldown_minutes=30,
+        velocity_threshold=0.08
+    ),
+
+    # Multi-system - most aggressive (multiple organ involvement)
+    "multi_system": ATCConfig(
+        s0_upper=0.20,
+        s1_upper=0.45,
+        s2_upper=0.70,
+        default_cooldown_minutes=20,
+        escalation_cooldown_minutes=10,
+        critical_cooldown_minutes=3,
+        velocity_threshold=0.10
+    ),
+
+    # Unknown domain - use defaults
+    "unknown": DEFAULT_CONFIG
+}
+
+
+def get_domain_config(domain: str) -> ATCConfig:
+    """Get configuration for a specific clinical domain."""
+    return DOMAIN_CONFIGS.get(domain.lower(), DEFAULT_CONFIG)
+
+
+# =============================================================================
+# CLINICAL RATIONALE TEMPLATES
+# =============================================================================
+
+# Biomarker display names for clinical language
+BIOMARKER_DISPLAY_NAMES: Dict[str, str] = {
+    # Sepsis markers
+    "lactate": "lactate",
+    "crp": "C-reactive protein",
+    "c_reactive_protein": "C-reactive protein",
+    "wbc": "white blood cell count",
+    "white_blood_cell": "white blood cell count",
+    "procalcitonin": "procalcitonin",
+    "pct": "procalcitonin",
+    "il6": "interleukin-6",
+
+    # Cardiac markers
+    "troponin": "troponin",
+    "troponin_i": "troponin I",
+    "troponin_t": "troponin T",
+    "bnp": "BNP",
+    "nt_probnp": "NT-proBNP",
+    "ck_mb": "CK-MB",
+
+    # Kidney markers
+    "creatinine": "creatinine",
+    "bun": "BUN",
+    "egfr": "eGFR",
+    "cystatin_c": "cystatin C",
+
+    # Respiratory markers
+    "pao2": "PaO2",
+    "spo2": "SpO2",
+    "fio2": "FiO2",
+    "pf_ratio": "P/F ratio",
+    "paco2": "PaCO2",
+
+    # Hepatic markers
+    "alt": "ALT",
+    "ast": "AST",
+    "bilirubin": "bilirubin",
+    "inr": "INR",
+    "albumin": "albumin",
+
+    # Neurological markers
+    "gcs": "Glasgow Coma Scale",
+    "icp": "intracranial pressure",
+
+    # Metabolic markers
+    "glucose": "glucose",
+    "sodium": "sodium",
+    "potassium": "potassium",
+    "ph": "blood pH",
+
+    # Hematologic markers
+    "hemoglobin": "hemoglobin",
+    "platelets": "platelet count",
+    "fibrinogen": "fibrinogen",
+    "d_dimer": "D-dimer"
+}
+
+
+# Clinical headline templates by domain and state
+RATIONALE_TEMPLATES: Dict[str, Dict[str, str]] = {
+    "sepsis": {
+        "S1": "Early infection markers detected - recommend enhanced monitoring",
+        "S2": "Sepsis indicators escalating - consider cultures and source control",
+        "S3": "Severe sepsis pattern - immediate sepsis bundle initiation recommended",
+        "escalation": "Sepsis markers worsening: {drivers} trending up ({velocity}/hr)",
+        "velocity": "Rapid inflammatory marker rise detected ({velocity}/hr)",
+        "novelty": "New sepsis marker active: {new_markers} now contributing"
+    },
+    "deterioration_cardiac": {
+        "S1": "Cardiac stress indicators elevated - monitor for ACS/HF",
+        "S2": "Significant myocardial injury pattern - cardiology consultation advised",
+        "S3": "Critical cardiac event likely - immediate evaluation required",
+        "escalation": "Cardiac markers rising: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid cardiac marker elevation ({velocity}/hr)",
+        "novelty": "New cardiac marker active: {new_markers}"
+    },
+    "kidney_injury": {
+        "S1": "Early renal function decline - optimize volume/nephrotoxin exposure",
+        "S2": "Acute kidney injury developing - consider nephrology input",
+        "S3": "Severe AKI - urgent renal support evaluation needed",
+        "escalation": "Renal function declining: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid creatinine/urea rise ({velocity}/hr)",
+        "novelty": "New renal marker involved: {new_markers}"
+    },
+    "respiratory_failure": {
+        "S1": "Oxygenation impairment noted - assess respiratory status",
+        "S2": "Respiratory failure developing - prepare for escalation",
+        "S3": "Critical hypoxemia - immediate ventilatory support needed",
+        "escalation": "Oxygenation worsening: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid respiratory decline ({velocity}/hr)",
+        "novelty": "New respiratory marker: {new_markers}"
+    },
+    "hepatic_dysfunction": {
+        "S1": "Liver enzyme elevation - monitor for hepatotoxicity",
+        "S2": "Hepatic dysfunction progressing - assess etiology",
+        "S3": "Acute liver failure pattern - hepatology consultation urgent",
+        "escalation": "Liver markers rising: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid liver enzyme elevation ({velocity}/hr)",
+        "novelty": "New hepatic marker: {new_markers}"
+    },
+    "neurological": {
+        "S1": "Neurological changes detected - frequent neuro checks",
+        "S2": "Significant neurological decline - urgent evaluation needed",
+        "S3": "Critical neurological event - immediate neurology/neurosurgery",
+        "escalation": "Neuro status declining: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid neurological change ({velocity}/hr)",
+        "novelty": "New neurological finding: {new_markers}"
+    },
+    "metabolic": {
+        "S1": "Metabolic derangement detected - correct electrolytes",
+        "S2": "Significant metabolic imbalance - frequent monitoring",
+        "S3": "Critical metabolic emergency - immediate correction needed",
+        "escalation": "Metabolic markers abnormal: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid metabolic change ({velocity}/hr)",
+        "novelty": "New metabolic abnormality: {new_markers}"
+    },
+    "hematologic": {
+        "S1": "Hematologic abnormality noted - monitor counts",
+        "S2": "Significant cytopenias/coagulopathy - hematology input",
+        "S3": "Critical hematologic emergency - immediate intervention",
+        "escalation": "Blood counts/coagulation worsening: {drivers}",
+        "velocity": "Rapid hematologic change ({velocity}/hr)",
+        "novelty": "New hematologic marker: {new_markers}"
+    },
+    "oncology_inception": {
+        "S1": "Tumor marker elevation - further workup recommended",
+        "S2": "Pattern concerning for malignancy - expedite evaluation",
+        "S3": "High-probability malignancy - urgent oncology referral",
+        "escalation": "Tumor markers rising: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid tumor marker rise ({velocity}/hr)",
+        "novelty": "New tumor marker elevated: {new_markers}"
+    },
+    "multi_system": {
+        "S1": "Multi-organ stress detected - comprehensive assessment needed",
+        "S2": "Multi-organ dysfunction developing - ICU evaluation",
+        "S3": "Multi-organ failure - immediate critical care intervention",
+        "escalation": "Multiple systems declining: {drivers}",
+        "velocity": "Rapid multi-system deterioration ({velocity}/hr)",
+        "novelty": "Additional organ system involved: {new_markers}"
+    },
+    # Default for unknown domains
+    "default": {
+        "S1": "Risk indicators elevated - enhanced monitoring recommended",
+        "S2": "Risk score escalating - clinical evaluation advised",
+        "S3": "Critical risk level - immediate evaluation required",
+        "escalation": "Risk markers worsening: {drivers} ({velocity}/hr)",
+        "velocity": "Rapid risk increase ({velocity}/hr)",
+        "novelty": "New risk factor identified: {new_markers}"
+    }
+}
+
+
+def format_biomarker_list(biomarkers: List[str], max_display: int = 3) -> str:
+    """Format biomarker list for clinical display."""
+    display_names = []
+    for marker in biomarkers[:max_display]:
+        normalized = marker.lower().strip().replace("-", "_").replace(" ", "_")
+        display_name = BIOMARKER_DISPLAY_NAMES.get(normalized, marker)
+        display_names.append(display_name)
+
+    if len(biomarkers) > max_display:
+        display_names.append(f"+{len(biomarkers) - max_display} more")
+
+    return ", ".join(display_names)
+
+
+def generate_clinical_rationale(
+    domain: str,
+    state: ClinicalState,
+    velocity: float,
+    contributing_biomarkers: List[str],
+    is_escalation: bool = False,
+    is_velocity_trigger: bool = False,
+    is_novelty_trigger: bool = False,
+    new_markers: Optional[List[str]] = None
+) -> Dict[str, str]:
+    """
+    Generate clinical-language rationale and headline for alert.
+
+    Returns:
+        {
+            "headline": "Short clinical summary for display",
+            "rationale": "Detailed explanation for clinicians",
+            "suggested_action": "Recommended clinical action"
+        }
+    """
+    templates = RATIONALE_TEMPLATES.get(domain, RATIONALE_TEMPLATES["default"])
+    drivers_str = format_biomarker_list(contributing_biomarkers)
+    velocity_str = f"{velocity:+.2f}"
+
+    # Determine headline based on trigger type
+    if is_escalation:
+        headline = templates["escalation"].format(
+            drivers=drivers_str,
+            velocity=velocity_str
+        )
+    elif is_velocity_trigger:
+        headline = templates["velocity"].format(velocity=velocity_str)
+    elif is_novelty_trigger and new_markers:
+        new_markers_str = format_biomarker_list(new_markers)
+        headline = templates["novelty"].format(new_markers=new_markers_str)
+    else:
+        # State-based headline
+        headline = templates.get(state.value, templates.get("S1", "Risk alert"))
+
+    # Build detailed rationale
+    state_desc = {
+        "S0": "stable",
+        "S1": "watch",
+        "S2": "escalating",
+        "S3": "critical"
+    }.get(state.value, "elevated")
+
+    rationale_parts = [
+        f"Patient risk state is {state_desc} ({state.value}).",
+        f"Primary drivers: {drivers_str}." if contributing_biomarkers else "",
+        f"Score velocity: {velocity_str}/hour." if abs(velocity) > 0.01 else ""
+    ]
+
+    if is_novelty_trigger and new_markers:
+        new_markers_str = format_biomarker_list(new_markers)
+        rationale_parts.append(f"New markers detected: {new_markers_str}.")
+
+    rationale = " ".join(p for p in rationale_parts if p)
+
+    # Suggested action based on state
+    action_map = {
+        "S0": "Continue routine monitoring.",
+        "S1": "Increase monitoring frequency. Review recent labs and vitals.",
+        "S2": "Evaluate patient bedside. Consider specialist consultation.",
+        "S3": "Immediate bedside evaluation. Activate rapid response if appropriate."
+    }
+    suggested_action = action_map.get(state.value, "Review patient status.")
+
+    return {
+        "headline": headline,
+        "rationale": rationale,
+        "suggested_action": suggested_action
+    }
 
 
 # =============================================================================
@@ -670,6 +1049,36 @@ class ClinicalStateEngine:
         )
         self.storage.save_state(updated_state)
 
+        # Generate clinical rationale
+        is_escalation = self.is_escalation(from_state, new_state)
+        is_velocity_trigger = abs(velocity) > self.config.velocity_threshold
+        is_novelty_trigger = novelty_detected
+
+        clinical_rationale = generate_clinical_rationale(
+            domain=risk_domain,
+            state=new_state,
+            velocity=velocity,
+            contributing_biomarkers=contributing_biomarkers,
+            is_escalation=is_escalation,
+            is_velocity_trigger=is_velocity_trigger,
+            is_novelty_trigger=is_novelty_trigger,
+            new_markers=new_markers if novelty_detected else None
+        )
+
+        # Domain discovery (if available)
+        domain_discovery = None
+        if DOMAIN_CLASSIFIER_AVAILABLE and classify_domains and contributing_biomarkers:
+            try:
+                domains = classify_domains(contributing_biomarkers)
+                if domains:
+                    domain_discovery = {
+                        "detected_domains": domains,
+                        "primary_domain": domains[0]["domain"] if domains else risk_domain,
+                        "confidence": domains[0]["confidence"] if domains else 0.0
+                    }
+            except Exception:
+                pass  # Domain discovery is optional
+
         # Build response
         result = {
             "patient_id": patient_id,
@@ -686,8 +1095,30 @@ class ClinicalStateEngine:
             "episode_id": episode_id,
             "severity": severity.value,
             "rationale": rationale,
-            "suggested_cooldown_minutes": cooldown
+            "suggested_cooldown_minutes": cooldown,
+            # Enhanced fields
+            "clinical_headline": clinical_rationale["headline"],
+            "clinical_rationale": clinical_rationale["rationale"],
+            "suggested_action": clinical_rationale["suggested_action"],
+            "contributing_biomarkers": contributing_biomarkers,
+            "domain_config_used": {
+                "thresholds": {
+                    "s0_upper": self.config.s0_upper,
+                    "s1_upper": self.config.s1_upper,
+                    "s2_upper": self.config.s2_upper
+                },
+                "cooldowns": {
+                    "default": self.config.default_cooldown_minutes,
+                    "escalation": self.config.escalation_cooldown_minutes,
+                    "critical": self.config.critical_cooldown_minutes
+                },
+                "velocity_threshold": self.config.velocity_threshold
+            }
         }
+
+        # Add domain discovery if available
+        if domain_discovery:
+            result["domain_discovery"] = domain_discovery
 
         if should_fire:
             result["alert_event"] = event.to_dict()
@@ -719,12 +1150,27 @@ def evaluate_patient_alert(
     risk_domain: str,
     current_scores: Dict[str, float],
     contributing_biomarkers: Optional[List[str]] = None,
-    config: Optional[Dict[str, Any]] = None
+    config: Optional[Dict[str, Any]] = None,
+    feature_values: Optional[Dict[str, float]] = None,
+    auto_discover_domain: bool = False
 ) -> Dict[str, Any]:
     """
     Convenience function for API endpoint.
 
     Parses timestamp string and delegates to engine.
+
+    Args:
+        patient_id: Unique patient identifier
+        timestamp: ISO8601 timestamp string
+        risk_domain: Risk category (e.g., "sepsis", "cardiac") or "auto" for auto-discovery
+        current_scores: Dict of score_name -> value
+        contributing_biomarkers: Top biomarkers driving the score
+        config: Optional custom configuration override
+        feature_values: Optional feature values for domain discovery
+        auto_discover_domain: If True or risk_domain is "auto", auto-classify domain
+
+    Returns:
+        Evaluation result with enhanced schema
     """
     # Parse timestamp
     if isinstance(timestamp, str):
@@ -735,22 +1181,48 @@ def evaluate_patient_alert(
     else:
         ts = timestamp
 
-    # Build config if provided
-    engine_config = DEFAULT_CONFIG
+    # Auto-discover domain if requested
+    effective_domain = risk_domain
+    domain_auto_discovered = False
+
+    if (auto_discover_domain or risk_domain == "auto") and DOMAIN_CLASSIFIER_AVAILABLE and get_primary_domain:
+        if contributing_biomarkers:
+            try:
+                discovered_domain, confidence, drivers = get_primary_domain(
+                    contributing_biomarkers,
+                    feature_values or {}
+                )
+                if confidence > 0.3:
+                    effective_domain = discovered_domain
+                    domain_auto_discovered = True
+            except Exception:
+                pass  # Fall back to provided domain
+
+    # Use domain-specific config if no explicit config provided
     if config:
         engine_config = ATCConfig(**{
             k: v for k, v in config.items()
             if hasattr(DEFAULT_CONFIG, k)
         })
+    else:
+        # Try domain-specific config
+        engine_config = get_domain_config(effective_domain)
 
     engine = ClinicalStateEngine(config=engine_config)
-    return engine.evaluate(
+    result = engine.evaluate(
         patient_id=patient_id,
         timestamp=ts,
-        risk_domain=risk_domain,
+        risk_domain=effective_domain,
         current_scores=current_scores,
         contributing_biomarkers=contributing_biomarkers
     )
+
+    # Add auto-discovery metadata if used
+    if domain_auto_discovered:
+        result["domain_auto_discovered"] = True
+        result["original_risk_domain"] = risk_domain
+
+    return result
 
 
 def get_patient_state(patient_id: str, risk_domain: str) -> Optional[Dict[str, Any]]:
@@ -779,3 +1251,18 @@ def get_alert_history(
 def get_atc_config() -> Dict[str, Any]:
     """Get current ATC configuration."""
     return DEFAULT_CONFIG.to_dict()
+
+
+def get_all_domain_configs() -> Dict[str, Dict[str, Any]]:
+    """Get all domain-specific configurations."""
+    return {domain: config.to_dict() for domain, config in DOMAIN_CONFIGS.items()}
+
+
+def get_domain_config_for_api(domain: str) -> Dict[str, Any]:
+    """Get configuration for a specific domain."""
+    config = get_domain_config(domain)
+    return {
+        "domain": domain,
+        "config": config.to_dict(),
+        "is_default": config == DEFAULT_CONFIG
+    }

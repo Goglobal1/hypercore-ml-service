@@ -396,5 +396,199 @@ class TestAuditLog:
         assert len(events) == 5
 
 
+class TestDomainConfigs:
+    """Test domain-specific configurations."""
+
+    def test_sepsis_config_more_aggressive(self):
+        from app.core.clinical_state_engine import DOMAIN_CONFIGS, DEFAULT_CONFIG
+
+        sepsis_config = DOMAIN_CONFIGS["sepsis"]
+
+        # Sepsis should have lower thresholds (more aggressive)
+        assert sepsis_config.s0_upper <= DEFAULT_CONFIG.s0_upper
+        assert sepsis_config.default_cooldown_minutes <= DEFAULT_CONFIG.default_cooldown_minutes
+
+    def test_oncology_config_higher_thresholds(self):
+        from app.core.clinical_state_engine import DOMAIN_CONFIGS, DEFAULT_CONFIG
+
+        oncology_config = DOMAIN_CONFIGS["oncology_inception"]
+
+        # Oncology should have higher thresholds (needs more confirmation)
+        assert oncology_config.s0_upper >= DEFAULT_CONFIG.s0_upper
+        assert oncology_config.default_cooldown_minutes >= DEFAULT_CONFIG.default_cooldown_minutes
+
+    def test_get_domain_config_returns_correct_config(self):
+        from app.core.clinical_state_engine import get_domain_config, DOMAIN_CONFIGS
+
+        sepsis_config = get_domain_config("sepsis")
+        assert sepsis_config == DOMAIN_CONFIGS["sepsis"]
+
+    def test_get_domain_config_unknown_returns_default(self):
+        from app.core.clinical_state_engine import get_domain_config, DEFAULT_CONFIG
+
+        unknown_config = get_domain_config("nonexistent_domain")
+        assert unknown_config == DEFAULT_CONFIG
+
+
+class TestClinicalRationale:
+    """Test clinical rationale generation."""
+
+    def test_generate_rationale_returns_required_fields(self):
+        from app.core.clinical_state_engine import generate_clinical_rationale, ClinicalState
+
+        result = generate_clinical_rationale(
+            domain="sepsis",
+            state=ClinicalState.S2_ESCALATING,
+            velocity=0.3,
+            contributing_biomarkers=["lactate", "crp", "wbc"],
+            is_escalation=True
+        )
+
+        assert "headline" in result
+        assert "rationale" in result
+        assert "suggested_action" in result
+
+    def test_escalation_headline_includes_drivers(self):
+        from app.core.clinical_state_engine import generate_clinical_rationale, ClinicalState
+
+        result = generate_clinical_rationale(
+            domain="sepsis",
+            state=ClinicalState.S2_ESCALATING,
+            velocity=0.3,
+            contributing_biomarkers=["lactate", "crp"],
+            is_escalation=True
+        )
+
+        # Should mention markers in escalation
+        assert "lactate" in result["headline"].lower() or "trending" in result["headline"].lower()
+
+    def test_critical_state_urgent_action(self):
+        from app.core.clinical_state_engine import generate_clinical_rationale, ClinicalState
+
+        result = generate_clinical_rationale(
+            domain="cardiac",
+            state=ClinicalState.S3_CRITICAL,
+            velocity=0.5,
+            contributing_biomarkers=["troponin", "bnp"]
+        )
+
+        # Critical state should suggest immediate action
+        assert "immediate" in result["suggested_action"].lower()
+
+    def test_unknown_domain_uses_defaults(self):
+        from app.core.clinical_state_engine import generate_clinical_rationale, ClinicalState
+
+        result = generate_clinical_rationale(
+            domain="unknown_domain",
+            state=ClinicalState.S1_WATCH,
+            velocity=0.1,
+            contributing_biomarkers=["marker1"]
+        )
+
+        # Should still return valid response
+        assert len(result["headline"]) > 0
+        assert len(result["suggested_action"]) > 0
+
+
+class TestEnhancedEvaluate:
+    """Test enhanced evaluate response schema."""
+
+    def setup_method(self):
+        self.storage = StateStorage()
+        self.engine = ClinicalStateEngine(storage=self.storage)
+
+    def test_evaluate_includes_clinical_headline(self):
+        now = datetime.now(timezone.utc)
+
+        result = self.engine.evaluate(
+            patient_id="P100",
+            timestamp=now,
+            risk_domain="sepsis",
+            current_scores={"composite": 0.65},
+            contributing_biomarkers=["lactate", "crp"]
+        )
+
+        assert "clinical_headline" in result
+        assert len(result["clinical_headline"]) > 0
+
+    def test_evaluate_includes_clinical_rationale(self):
+        now = datetime.now(timezone.utc)
+
+        result = self.engine.evaluate(
+            patient_id="P101",
+            timestamp=now,
+            risk_domain="cardiac",
+            current_scores={"composite": 0.55},
+            contributing_biomarkers=["troponin"]
+        )
+
+        assert "clinical_rationale" in result
+        assert "suggested_action" in result
+
+    def test_evaluate_includes_domain_config_used(self):
+        now = datetime.now(timezone.utc)
+
+        result = self.engine.evaluate(
+            patient_id="P102",
+            timestamp=now,
+            risk_domain="sepsis",
+            current_scores={"composite": 0.45}
+        )
+
+        assert "domain_config_used" in result
+        assert "thresholds" in result["domain_config_used"]
+        assert "cooldowns" in result["domain_config_used"]
+
+    def test_evaluate_includes_contributing_biomarkers(self):
+        now = datetime.now(timezone.utc)
+        biomarkers = ["lactate", "crp", "wbc"]
+
+        result = self.engine.evaluate(
+            patient_id="P103",
+            timestamp=now,
+            risk_domain="sepsis",
+            current_scores={"composite": 0.55},
+            contributing_biomarkers=biomarkers
+        )
+
+        assert "contributing_biomarkers" in result
+        assert result["contributing_biomarkers"] == biomarkers
+
+
+class TestAutoDiscoverDomain:
+    """Test auto domain discovery in API helpers."""
+
+    def test_auto_discover_from_biomarkers(self):
+        from app.core.clinical_state_engine import evaluate_patient_alert
+
+        result = evaluate_patient_alert(
+            patient_id="AUTO001",
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            risk_domain="auto",
+            current_scores={"composite": 0.65},
+            contributing_biomarkers=["lactate", "crp", "wbc"],
+            auto_discover_domain=True
+        )
+
+        # Should auto-discover sepsis domain
+        # Note: May fall back if domain classifier not available
+        assert "risk_domain" in result
+
+    def test_auto_discover_uses_domain_config(self):
+        from app.core.clinical_state_engine import evaluate_patient_alert
+
+        result = evaluate_patient_alert(
+            patient_id="AUTO002",
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            risk_domain="auto",
+            current_scores={"composite": 0.50},
+            contributing_biomarkers=["troponin", "bnp"],
+            auto_discover_domain=True
+        )
+
+        # Should have domain config info
+        assert "domain_config_used" in result
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
