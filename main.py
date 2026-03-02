@@ -6760,6 +6760,15 @@ class AlertEvaluateResponse(BaseModel):
     suggested_cooldown_minutes: int
     alert_event: Optional[Dict[str, Any]] = None
     suppressed_event: Optional[Dict[str, Any]] = None
+    # Enhanced fields (CSE v2)
+    clinical_headline: Optional[str] = None
+    clinical_rationale: Optional[str] = None
+    suggested_action: Optional[str] = None
+    contributing_biomarkers: Optional[List[str]] = None
+    domain_config_used: Optional[Dict[str, Any]] = None
+    domain_discovery: Optional[Dict[str, Any]] = None
+    domain_auto_discovered: Optional[bool] = None
+    original_risk_domain: Optional[str] = None
 
 
 class PatientStateRequest(BaseModel):
