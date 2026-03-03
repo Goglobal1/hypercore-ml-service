@@ -6752,6 +6752,8 @@ class AlertEvaluateRequest(BaseModel):
     current_scores: Dict[str, float]  # score_name -> value
     contributing_biomarkers: Optional[List[str]] = None
     config: Optional[Dict[str, Any]] = None  # Optional ATC config overrides
+    # Optional: biomarker trajectories for Time-to-Harm prediction
+    biomarker_trajectories: Optional[Dict[str, List[Dict[str, Any]]]] = None
 
 
 class AlertEvaluateResponse(BaseModel):
@@ -6782,6 +6784,8 @@ class AlertEvaluateResponse(BaseModel):
     domain_discovery: Optional[Dict[str, Any]] = None
     domain_auto_discovered: Optional[bool] = None
     original_risk_domain: Optional[str] = None
+    # Time-to-Harm integration (when biomarker_trajectories provided)
+    time_to_harm: Optional[Dict[str, Any]] = None
 
 
 class PatientStateRequest(BaseModel):
@@ -6838,6 +6842,8 @@ def alerts_evaluate(req: AlertEvaluateRequest) -> AlertEvaluateResponse:
     - Re-alert on velocity spikes or novelty detection
     - Full audit trail of fired and suppressed alerts
 
+    Optionally includes Time-to-Harm prediction when biomarker_trajectories provided.
+
     Args:
         patient_id: Unique patient identifier
         timestamp: Observation timestamp (ISO8601)
@@ -6845,9 +6851,11 @@ def alerts_evaluate(req: AlertEvaluateRequest) -> AlertEvaluateResponse:
         current_scores: Dict of score_name -> value (max used for state mapping)
         contributing_biomarkers: Top biomarkers driving the risk score
         config: Optional threshold/cooldown overrides
+        biomarker_trajectories: Optional trajectories for Time-to-Harm prediction
 
     Returns:
-        State evaluation result with alert_event (if fired) or suppressed_event
+        State evaluation result with alert_event (if fired) or suppressed_event,
+        plus time_to_harm prediction if trajectories provided
     """
     try:
         if not CSE_AVAILABLE:
@@ -6864,6 +6872,20 @@ def alerts_evaluate(req: AlertEvaluateRequest) -> AlertEvaluateResponse:
             contributing_biomarkers=req.contributing_biomarkers,
             config=req.config
         )
+
+        # Time-to-Harm integration: predict trajectory if biomarker data provided
+        if req.biomarker_trajectories and TTH_AVAILABLE:
+            try:
+                tth_result = predict_time_to_harm(
+                    patient_id=req.patient_id,
+                    domain=result.get("risk_domain", req.risk_domain),
+                    biomarker_trajectories=req.biomarker_trajectories,
+                    current_timestamp=req.timestamp
+                )
+                result["time_to_harm"] = tth_result
+            except Exception:
+                # Don't fail alert evaluation if TTH fails
+                result["time_to_harm"] = None
 
         return AlertEvaluateResponse(**result)
 
