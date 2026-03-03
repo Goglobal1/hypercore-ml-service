@@ -89,6 +89,19 @@ except ImportError:
     BUG_FIXES_AVAILABLE = False
     CSE_AVAILABLE = False
 
+# Time-to-Harm Prediction Engine
+try:
+    from app.core.time_to_harm import (
+        predict_time_to_harm,
+        get_supported_domains as get_tth_domains,
+        get_domain_biomarkers,
+        TimeToHarmEngine,
+        HarmType
+    )
+    TTH_AVAILABLE = True
+except ImportError:
+    TTH_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -6785,6 +6798,34 @@ class AlertHistoryRequest(BaseModel):
     limit: int = 100
 
 
+# Time-to-Harm Prediction Models
+class TimeToHarmRequest(BaseModel):
+    """Request model for /predict/time-to-harm endpoint."""
+    patient_id: str
+    domain: str  # sepsis, cardiac, kidney, respiratory, hepatic, neurological, hematologic
+    biomarker_trajectories: Dict[str, List[Dict[str, Any]]]
+    current_timestamp: Optional[str] = None
+
+
+class TimeToHarmResponse(BaseModel):
+    """Response model for /predict/time-to-harm endpoint."""
+    patient_id: str
+    domain: str
+    harm_type: str
+    hours_to_harm: float
+    confidence: float
+    trajectory_velocity: float
+    critical_threshold: float
+    current_value: float
+    projected_value_24h: float
+    projected_value_48h: float
+    key_drivers: List[str]
+    intervention_window: str
+    intervention_window_hours: float
+    rationale: str
+    recommendations: List[str]
+
+
 @app.post("/alerts/evaluate", response_model=AlertEvaluateResponse)
 def alerts_evaluate(req: AlertEvaluateRequest) -> AlertEvaluateResponse:
     """
@@ -6953,6 +6994,84 @@ def alerts_config() -> Dict[str, Any]:
             ]
         }
 
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": str(e)}
+        )
+
+
+# ---------------------------------------------------------------------
+# TIME-TO-HARM PREDICTION ENDPOINTS
+# ---------------------------------------------------------------------
+
+@app.post("/predict/time-to-harm", response_model=TimeToHarmResponse)
+def time_to_harm_endpoint(req: TimeToHarmRequest) -> Dict[str, Any]:
+    """
+    Predict time until clinical harm based on biomarker trajectories.
+
+    This is the Synthetic Intelligence (SI) component that projects
+    "what happens if current trends continue?"
+
+    Supported domains: sepsis, cardiac, kidney, respiratory, hepatic, neurological, hematologic
+
+    Example biomarker_trajectories:
+    {
+        "lactate": [
+            {"timestamp": "2026-03-03T10:00:00Z", "value": 1.5},
+            {"timestamp": "2026-03-03T14:00:00Z", "value": 2.2},
+            {"timestamp": "2026-03-03T18:00:00Z", "value": 3.1}
+        ],
+        "crp": [
+            {"timestamp": "2026-03-03T10:00:00Z", "value": 25.0},
+            {"timestamp": "2026-03-03T14:00:00Z", "value": 45.0},
+            {"timestamp": "2026-03-03T18:00:00Z", "value": 72.0}
+        ]
+    }
+    """
+    try:
+        if not TTH_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="Time-to-Harm Engine not available. Ensure app/core/time_to_harm.py is installed."
+            )
+
+        result = predict_time_to_harm(
+            patient_id=req.patient_id,
+            domain=req.domain,
+            biomarker_trajectories=req.biomarker_trajectories,
+            current_timestamp=req.current_timestamp
+        )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail={"error": f"Time-to-harm prediction failed: {str(e)}"}
+        )
+
+
+@app.get("/predict/time-to-harm/domains")
+def get_time_to_harm_domains() -> Dict[str, Any]:
+    """Get list of supported clinical domains and their biomarkers."""
+    try:
+        if not TTH_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="Time-to-Harm Engine not available."
+            )
+
+        domains = get_tth_domains()
+        result = {}
+        for domain in domains:
+            result[domain] = {
+                "biomarkers": get_domain_biomarkers(domain),
+                "description": f"Biomarkers tracked for {domain} deterioration"
+            }
+        return {"supported_domains": result}
     except HTTPException:
         raise
     except Exception as e:
