@@ -50,8 +50,8 @@ def call_api(url, payload):
     return None
 
 
-def test_single_patient(hadm_id, trajectories):
-    """Test TTH prediction for a single patient."""
+def run_single_patient(hadm_id, trajectories):
+    """Run TTH prediction for a single patient."""
     traj = trajectories.get(str(hadm_id))
     if not traj:
         print(f"No trajectory found for hadm_id {hadm_id}")
@@ -69,8 +69,8 @@ def test_single_patient(hadm_id, trajectories):
     return call_api(TTH_URL, payload)
 
 
-def test_with_alerts(hadm_id, trajectories):
-    """Test with /alerts/evaluate endpoint (CSE + TTH)."""
+def run_with_alerts(hadm_id, trajectories):
+    """Run /alerts/evaluate endpoint (CSE + TTH)."""
     traj = trajectories.get(str(hadm_id))
     if not traj:
         return None
@@ -127,7 +127,7 @@ def main():
         print(f"  Hours to deterioration: {case['hours_to_deterioration']:.1f}")
         print(f"{'-' * 70}")
 
-        result = test_single_patient(hadm_id, trajectories)
+        result = run_single_patient(hadm_id, trajectories)
         if result:
             print(f"\n  TTH PREDICTION:")
             print(f"    Hours to Harm: {result.get('hours_to_harm', 'N/A')}")
@@ -150,7 +150,7 @@ def main():
     hadm_id = case["hadm_id"]
     print(f"\nPatient hadm_id={hadm_id}")
 
-    result = test_with_alerts(hadm_id, trajectories)
+    result = run_with_alerts(hadm_id, trajectories)
     if result:
         print(f"\n  CLINICAL STATE ENGINE:")
         print(f"    State: {result.get('state_now')} ({result.get('state_name')})")
