@@ -102,6 +102,58 @@ try:
 except ImportError:
     TTH_AVAILABLE = False
 
+# Genomics Integration Pipeline
+try:
+    from app.routers.genomics_router import router as genomics_router
+    from app.core.genomics_integration import (
+        get_gene_expression,
+        get_gene_variants,
+        analyze_genomics
+    )
+    GENOMICS_AVAILABLE = True
+except ImportError:
+    GENOMICS_AVAILABLE = False
+
+# Multi-Omic Fusion Engine
+try:
+    from app.routers.multiomic_router import router as multiomic_router
+    from app.core.multiomic_fusion import (
+        get_source_status,
+        unified_query,
+        fusion_analysis
+    )
+    MULTIOMIC_AVAILABLE = True
+except ImportError:
+    MULTIOMIC_AVAILABLE = False
+
+# Drug Response Predictor
+try:
+    from app.routers.pharmaceutical_router import router as pharmaceutical_router
+    from app.core.drug_response_predictor import (
+        get_drug_profile,
+        predict_drug_response,
+        check_drug_interactions,
+        get_adverse_events
+    )
+    PHARMA_AVAILABLE = True
+except ImportError:
+    PHARMA_AVAILABLE = False
+
+# Pathogen Detection Engine
+try:
+    from app.routers.pathogen_router import router as pathogen_router
+    from app.core.pathogen_detection import (
+        get_pathogen_info,
+        get_disease_pathogens,
+        detect_outbreaks,
+        analyze_amr,
+        get_vaccination_coverage,
+        search_surveillance
+    )
+    PATHOGEN_AVAILABLE = True
+except ImportError:
+    PATHOGEN_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -264,6 +316,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include genomics router if available
+if GENOMICS_AVAILABLE:
+    app.include_router(genomics_router)
+
+# Include multi-omic fusion router if available
+if MULTIOMIC_AVAILABLE:
+    app.include_router(multiomic_router)
+
+# Include pharmaceutical router if available
+if PHARMA_AVAILABLE:
+    app.include_router(pharmaceutical_router)
+
+# Include pathogen detection router if available
+if PATHOGEN_AVAILABLE:
+    app.include_router(pathogen_router)
+
 
 # ---------------------------------------------------------------------
 # CONSTANTS / CANONICALIZATION
@@ -278,6 +346,7 @@ AXES: List[str] = [
     "cardiovascular",
     "neurologic",
     "nutritional",
+    "genomic",  # Added for genomics integration pipeline
 ]
 
 # Canonical axis map must use CANONICAL lab keys, not raw strings.
@@ -290,6 +359,7 @@ AXIS_LAB_MAP: Dict[str, List[str]] = {
     "cardiovascular": ["troponin", "bnp", "ntprobnp", "creatinine"],
     "neurologic": ["sodium", "potassium", "calcium", "glucose"],
     "nutritional": ["albumin", "vitamin_d", "folate", "b12"],
+    "genomic": ["apoe", "brca1", "brca2", "tp53", "egfr", "kras", "mthfr", "cyp2d6"],  # Gene expression markers
 }
 
 # Minimal ref ranges (expand later). Values are conservative placeholders for normalization.
