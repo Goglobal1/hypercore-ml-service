@@ -8,11 +8,13 @@ Provides:
 4. Drug-drug interaction checking
 5. Integration with genomics pipeline
 6. PharmGKB pharmacogenomics integration
+7. ChEMBL drug-target relationships
 
 Data sources:
 - F:/DATASETS/PHARMACEUTICAL/FDA_FAERS/
 - F:/DATASETS/PHARMACEUTICAL/ClinicalTrials_AACT/
 - F:/DATASETS/PHARMACEUTICAL/PharmGKB/
+- F:/DATASETS/PHARMACEUTICAL/ChEMBL/
 """
 
 import os
@@ -42,6 +44,22 @@ try:
 except ImportError:
     PHARMGKB_AVAILABLE = False
     logger.warning("PharmGKB integration not available")
+
+# Import ChEMBL integration
+try:
+    from app.core.chembl_integration import (
+        get_compound_info as chembl_compound,
+        get_drug_targets as chembl_targets,
+        get_drug_mechanisms as chembl_mechanisms,
+        search_compounds_by_name as chembl_search,
+        get_bioactivities as chembl_activities,
+        check_chembl_status,
+        CHEMBL_AVAILABLE as _chembl_db_available,
+    )
+    CHEMBL_AVAILABLE = _chembl_db_available
+except ImportError:
+    CHEMBL_AVAILABLE = False
+    logger.warning("ChEMBL integration not available")
 
 # Data paths
 FAERS_PATH = Path("F:/DATASETS/PHARMACEUTICAL/FDA_FAERS")
@@ -505,6 +523,27 @@ class DrugResponsePredictor:
                 "fda_label_testing": pharmgkb_data.get("fda_label_testing", ""),
             }
 
+        # Get ChEMBL data if available
+        result["chembl_available"] = CHEMBL_AVAILABLE
+        if CHEMBL_AVAILABLE:
+            try:
+                # Get drug targets from ChEMBL
+                chembl_data = chembl_targets(drug_name)
+                if chembl_data and not chembl_data.get("error"):
+                    result["chembl"] = {
+                        "chembl_id": chembl_data.get("chembl_id"),
+                        "pref_name": chembl_data.get("pref_name"),
+                        "targets": chembl_data.get("targets", [])[:10],
+                        "total_targets": chembl_data.get("total_targets", 0),
+                    }
+                    # Also get mechanisms
+                    mech_data = chembl_mechanisms(drug_name)
+                    if mech_data and not mech_data.get("error"):
+                        result["chembl"]["mechanisms"] = mech_data.get("mechanisms", [])[:5]
+                        result["chembl"]["total_mechanisms"] = mech_data.get("total_mechanisms", 0)
+            except Exception as e:
+                logger.debug(f"ChEMBL lookup failed: {e}")
+
         return result
 
     def _find_interactions(self, drug: str) -> List[Dict]:
@@ -796,6 +835,14 @@ def get_data_status() -> Dict[str, Any]:
         except Exception as e:
             logger.debug(f"PharmGKB status check failed: {e}")
 
+    # Get ChEMBL status
+    chembl_status = None
+    if CHEMBL_AVAILABLE:
+        try:
+            chembl_status = check_chembl_status()
+        except Exception as e:
+            logger.debug(f"ChEMBL status check failed: {e}")
+
     return {
         "faers_available": FAERS_PATH.exists(),
         "faers_quarters": len(faers_quarters),
@@ -806,4 +853,6 @@ def get_data_status() -> Dict[str, Any]:
         "interaction_pairs": len(DRUG_INTERACTIONS),
         "pharmgkb_available": PHARMGKB_AVAILABLE,
         "pharmgkb_status": pharmgkb_status,
+        "chembl_available": CHEMBL_AVAILABLE,
+        "chembl_status": chembl_status,
     }
