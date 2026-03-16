@@ -7,10 +7,12 @@ Provides:
 3. Pharmacogenomic drug response prediction
 4. Drug-drug interaction checking
 5. Integration with genomics pipeline
+6. PharmGKB pharmacogenomics integration
 
 Data sources:
 - F:/DATASETS/PHARMACEUTICAL/FDA_FAERS/
 - F:/DATASETS/PHARMACEUTICAL/ClinicalTrials_AACT/
+- F:/DATASETS/PHARMACEUTICAL/PharmGKB/
 """
 
 import os
@@ -24,6 +26,22 @@ from dataclasses import dataclass, asdict
 import time
 
 logger = logging.getLogger(__name__)
+
+# Import PharmGKB integration
+try:
+    from app.core.pharmgkb_integration import (
+        get_drug_gene_interactions as pharmgkb_drug_genes,
+        get_variant_annotations as pharmgkb_variants,
+        get_clinical_guidelines as pharmgkb_guidelines,
+        get_haplotype_frequencies as pharmgkb_haplotypes,
+        get_gene_drug_summary as pharmgkb_gene_summary,
+        search_pharmgkb,
+        check_pharmgkb_status,
+    )
+    PHARMGKB_AVAILABLE = True
+except ImportError:
+    PHARMGKB_AVAILABLE = False
+    logger.warning("PharmGKB integration not available")
 
 # Data paths
 FAERS_PATH = Path("F:/DATASETS/PHARMACEUTICAL/FDA_FAERS")
@@ -457,15 +475,37 @@ class DrugResponsePredictor:
         # Find drug interactions
         interactions = self._find_interactions(drug_lower)
 
-        return {
+        # Get PharmGKB data if available
+        pharmgkb_data = None
+        if PHARMGKB_AVAILABLE:
+            try:
+                pharmgkb_data = pharmgkb_drug_genes(drug_name)
+            except Exception as e:
+                logger.debug(f"PharmGKB lookup failed: {e}")
+
+        result = {
             "drug_name": drug_name,
             "pharmacogenomic_genes": pgx_genes,
             "adverse_events": faers_data.get("top_adverse_events", [])[:10],
             "total_faers_reports": faers_data.get("total_reports", 0),
             "clinical_trials": len(trials),
             "trial_details": trials[:5],
-            "known_interactions": interactions
+            "known_interactions": interactions,
+            "pharmgkb_available": PHARMGKB_AVAILABLE,
         }
+
+        # Add PharmGKB data if available
+        if pharmgkb_data:
+            result["pharmgkb"] = {
+                "pharmgkb_id": pharmgkb_data.get("pharmgkb_id"),
+                "gene_interactions": pharmgkb_data.get("gene_interactions", [])[:10],
+                "total_interactions": pharmgkb_data.get("total_interactions", 0),
+                "clinical_annotation_count": pharmgkb_data.get("clinical_annotation_count", 0),
+                "has_dosing_guideline": pharmgkb_data.get("dosing_guideline", False),
+                "fda_label_testing": pharmgkb_data.get("fda_label_testing", ""),
+            }
+
+        return result
 
     def _find_interactions(self, drug: str) -> List[Dict]:
         """Find known interactions for a drug."""
@@ -748,6 +788,14 @@ def get_data_status() -> Dict[str, Any]:
     faers_quarters = predictor.faers.list_available_quarters()
     aact_trials = predictor.aact.get_trial_count()
 
+    # Get PharmGKB status
+    pharmgkb_status = None
+    if PHARMGKB_AVAILABLE:
+        try:
+            pharmgkb_status = check_pharmgkb_status()
+        except Exception as e:
+            logger.debug(f"PharmGKB status check failed: {e}")
+
     return {
         "faers_available": FAERS_PATH.exists(),
         "faers_quarters": len(faers_quarters),
@@ -755,5 +803,7 @@ def get_data_status() -> Dict[str, Any]:
         "aact_available": AACT_PATH.exists(),
         "aact_trials_indexed": aact_trials,
         "pharmacogenomic_genes": len(PHARMACOGENOMIC_MAP),
-        "interaction_pairs": len(DRUG_INTERACTIONS)
+        "interaction_pairs": len(DRUG_INTERACTIONS),
+        "pharmgkb_available": PHARMGKB_AVAILABLE,
+        "pharmgkb_status": pharmgkb_status,
     }
