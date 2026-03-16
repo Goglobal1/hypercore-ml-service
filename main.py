@@ -154,6 +154,20 @@ try:
 except ImportError:
     PATHOGEN_AVAILABLE = False
 
+# Diagnostic Agents
+try:
+    from app.routers.agents_router import router as agents_router
+    from app.agents import (
+        BiomarkerAgent,
+        DiagnosticAgent,
+        TrialRescueAgent,
+        SurveillanceAgent,
+        AgentRegistry,
+    )
+    AGENTS_AVAILABLE = True
+except ImportError:
+    AGENTS_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -331,6 +345,10 @@ if PHARMA_AVAILABLE:
 # Include pathogen detection router if available
 if PATHOGEN_AVAILABLE:
     app.include_router(pathogen_router)
+
+# Include diagnostic agents router if available
+if AGENTS_AVAILABLE:
+    app.include_router(agents_router)
 
 
 # ---------------------------------------------------------------------
