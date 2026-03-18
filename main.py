@@ -23,6 +23,7 @@ import hmac
 import json
 import math
 import random
+import asyncio
 from datetime import datetime, timezone
 from itertools import combinations
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -1049,9 +1050,15 @@ class TrialRescueRequest(BaseModel):
                     values['patient_id_column'] = values[alt]
                     break
         if not values.get('csv'):
-            raise ValueError('csv field is required')
+            raise ValueError(
+                "csv field is required. Provide CSV data as a string using 'csv', 'data', or 'csv_data' field. "
+                "The CSV should contain trial data with outcome and optionally treatment columns."
+            )
         if not values.get('label_column'):
-            raise ValueError('label_column field is required')
+            raise ValueError(
+                "label_column field is required. Specify the outcome column name using 'label_column', "
+                "'target', or 'outcome_column' field."
+            )
         return values
 
 
@@ -1334,10 +1341,32 @@ class RootCauseSimResponse(BaseModel):
 
 
 class PatientReportRequest(BaseModel):
-    executive_summary: str
+    executive_summary: Optional[str] = None
     clinical_signals: Optional[List[Dict[str, Any]]] = None
     recommendations: Optional[List[str]] = None
     reading_level: str = "6th_grade"  # "6th_grade", "8th_grade", "adult"
+    # Alternative field names for flexibility
+    summary: Optional[str] = None
+    findings: Optional[List[Dict[str, Any]]] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        # Map alternative field names
+        if not values.get('executive_summary'):
+            if values.get('summary'):
+                values['executive_summary'] = values['summary']
+            elif values.get('findings'):
+                # Generate summary from findings
+                findings = values['findings']
+                if isinstance(findings, list) and findings:
+                    values['executive_summary'] = "; ".join(
+                        str(f.get('description', f)) if isinstance(f, dict) else str(f)
+                        for f in findings[:5]
+                    )
+        if not values.get('clinical_signals') and values.get('findings'):
+            values['clinical_signals'] = values['findings']
+        return values
 
 
 class PatientReportResponse(BaseModel):
@@ -3246,12 +3275,33 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             auc = metrics.get("linear", {}).get("auc", 0.5)
             for patient_id in label_by_patient.index:
                 patient_risk = float(label_by_patient[patient_id]) * auc  # Scale by model AUC
+                # Call legacy CSE for backward compatibility
                 _auto_evaluate_alert(
                     patient_id=str(patient_id),
                     risk_score=min(1.0, patient_risk),
                     risk_domain="cohort_analysis",
                     biomarkers=top_biomarkers
                 )
+                # Also trigger new unified alert system pipeline (11-step)
+                if ALERT_SYSTEM_AVAILABLE:
+                    try:
+                        # Create new event loop for sync context
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        try:
+                            loop.run_until_complete(
+                                process_patient_intake(
+                                    patient_id=str(patient_id),
+                                    risk_domain="cohort_analysis",
+                                    risk_score=min(1.0, patient_risk),
+                                    clinical_data={"top_biomarkers": top_biomarkers},
+                                    metadata={"source": "analyze_endpoint", "auc": auc}
+                                )
+                            )
+                        finally:
+                            loop.close()
+                    except Exception:
+                        pass  # Silent fail for new alert system
         except Exception:
             pass  # Don't break analysis if alerting fails
 
@@ -6843,6 +6893,13 @@ def patient_report(req: PatientReportRequest) -> PatientReportResponse:
             clinical_sigs = req.clinical_signals
             recs = req.recommendations
             reading_lvl = req.reading_level
+
+        # Provide default if no summary provided
+        if not exec_summary:
+            if clinical_sigs:
+                exec_summary = "Clinical findings detected. See details below."
+            else:
+                exec_summary = "No specific findings to report."
 
         result = generate_patient_report(
             executive_summary=exec_summary,

@@ -42,12 +42,36 @@ try:
     from app.core.genomics_integration import (
         get_gene_expression,
         get_gene_variants,
-        GenomicsIntegrationEngine,
+        GenomicsIntegration,
     )
     GENOMICS_AVAILABLE = True
 except ImportError:
     GENOMICS_AVAILABLE = False
     logger.warning("Genomics integration pipeline not available")
+
+# Import ChEMBL for drug-target interactions
+try:
+    from app.core.chembl_integration import (
+        get_drug_targets,
+        get_drug_mechanisms,
+        search_compounds_by_name,
+    )
+    CHEMBL_AVAILABLE = True
+except ImportError:
+    CHEMBL_AVAILABLE = False
+    logger.warning("ChEMBL integration not available")
+
+# Import PharmGKB for pharmacogenomics
+try:
+    from app.core.pharmgkb_integration import (
+        get_drug_gene_interactions,
+        get_clinical_guidelines,
+        get_variant_annotations,
+    )
+    PHARMGKB_AVAILABLE = True
+except ImportError:
+    PHARMGKB_AVAILABLE = False
+    logger.warning("PharmGKB integration not available")
 
 
 # Biomarker reference ranges and clinical significance
@@ -116,7 +140,7 @@ class BiomarkerAgent(BaseAgent):
 
         if GENOMICS_AVAILABLE:
             try:
-                self._genomics_engine = GenomicsIntegrationEngine()
+                self._genomics_engine = GenomicsIntegration()
             except Exception as e:
                 logger.error(f"Failed to initialize genomics engine: {e}")
 
@@ -166,7 +190,19 @@ class BiomarkerAgent(BaseAgent):
             gene_findings = await self._analyze_genes(genes)
             findings.extend(gene_findings)
 
-        # 3. Cross-correlate findings
+        # 3. Analyze medications if provided (auto-query ChEMBL/PharmGKB)
+        medications = input_data.get("medications", [])
+        patient_context = input_data.get("patient_context", {})
+        # Also check for medications in patient context
+        if not medications and patient_context:
+            medications = patient_context.get("medications", [])
+            medications.extend(patient_context.get("current_medications", []))
+            medications.extend(patient_context.get("drugs", []))
+        if medications:
+            medication_findings = await self._analyze_medications(medications, genes)
+            findings.extend(medication_findings)
+
+        # 4. Cross-correlate findings
         if len(findings) > 1:
             correlation_findings = self._cross_correlate_findings(findings)
             findings.extend(correlation_findings)
@@ -202,9 +238,142 @@ class BiomarkerAgent(BaseAgent):
             "correlation_id": correlation_id,
             "pipelines_used": {
                 "multiomic": MULTIOMIC_AVAILABLE,
-                "genomics": GENOMICS_AVAILABLE
+                "genomics": GENOMICS_AVAILABLE,
+                "chembl": CHEMBL_AVAILABLE,
+                "pharmgkb": PHARMGKB_AVAILABLE
             }
         }
+
+    async def _analyze_medications(
+        self, medications: List[str], genes: List[str] = None
+    ) -> List[AgentFinding]:
+        """
+        Analyze medications by querying ChEMBL and PharmGKB.
+
+        Args:
+            medications: List of medication names
+            genes: Optional list of genes for pharmacogenomics correlation
+
+        Returns:
+            List of findings from drug databases
+        """
+        findings = []
+
+        for medication in medications:
+            if not medication:
+                continue
+            medication = medication.strip()
+
+            # Query ChEMBL for drug-target interactions
+            if CHEMBL_AVAILABLE:
+                try:
+                    targets = get_drug_targets(medication)
+                    if targets.get("targets"):
+                        target_names = [t.get("target_name", "Unknown") for t in targets["targets"][:5]]
+                        finding = self.create_finding(
+                            category="drug_target_interaction",
+                            description=f"{medication} targets: {', '.join(target_names)}",
+                            confidence=0.85,
+                            evidence=[
+                                f"Source: ChEMBL database",
+                                f"Total targets: {len(targets['targets'])}",
+                                f"Drug: {medication}"
+                            ],
+                            related_entities={
+                                "drug": medication,
+                                "targets": target_names,
+                                "source": "chembl"
+                            }
+                        )
+                        findings.append(finding)
+
+                    # Get drug mechanisms
+                    mechanisms = get_drug_mechanisms(medication)
+                    if mechanisms.get("mechanisms"):
+                        mech_names = [m.get("mechanism", "Unknown") for m in mechanisms["mechanisms"][:3]]
+                        finding = self.create_finding(
+                            category="drug_mechanism",
+                            description=f"{medication} mechanism: {', '.join(mech_names)}",
+                            confidence=0.80,
+                            evidence=[
+                                f"Source: ChEMBL database",
+                                f"Mechanism count: {len(mechanisms['mechanisms'])}"
+                            ],
+                            related_entities={
+                                "drug": medication,
+                                "mechanisms": mech_names,
+                                "source": "chembl"
+                            }
+                        )
+                        findings.append(finding)
+                except Exception as e:
+                    logger.debug(f"ChEMBL query failed for {medication}: {e}")
+
+            # Query PharmGKB for pharmacogenomics
+            if PHARMGKB_AVAILABLE:
+                try:
+                    # Get drug-gene interactions
+                    interactions = get_drug_gene_interactions(medication)
+                    if interactions.get("interactions"):
+                        gene_names = [i.get("gene", "Unknown") for i in interactions["interactions"][:5]]
+                        finding = self.create_finding(
+                            category="pharmacogenomics",
+                            description=f"{medication} has interactions with genes: {', '.join(gene_names)}",
+                            confidence=0.90,
+                            evidence=[
+                                f"Source: PharmGKB database",
+                                f"Total gene interactions: {len(interactions['interactions'])}",
+                                f"Clinical relevance: pharmacogenomic dosing guidance may apply"
+                            ],
+                            related_entities={
+                                "drug": medication,
+                                "genes": gene_names,
+                                "source": "pharmgkb"
+                            }
+                        )
+                        findings.append(finding)
+
+                        # Check if any patient genes are affected
+                        if genes:
+                            affected_genes = set(gene_names) & set(g.upper() for g in genes)
+                            if affected_genes:
+                                finding = self.create_finding(
+                                    category="pharmacogenomics_alert",
+                                    description=f"Patient genes {affected_genes} may affect {medication} response",
+                                    confidence=0.95,
+                                    evidence=[
+                                        f"Patient has variants in drug-interacting genes",
+                                        f"Recommend pharmacogenomic testing",
+                                        f"Source: PharmGKB"
+                                    ],
+                                    related_entities={
+                                        "drug": medication,
+                                        "affected_genes": list(affected_genes),
+                                        "source": "pharmgkb"
+                                    }
+                                )
+                                findings.append(finding)
+
+                    # Get clinical guidelines
+                    guidelines = get_clinical_guidelines(medication)
+                    if guidelines.get("guidelines"):
+                        guideline_summaries = [g.get("summary", "")[:100] for g in guidelines["guidelines"][:2]]
+                        finding = self.create_finding(
+                            category="clinical_guideline",
+                            description=f"Clinical guidelines available for {medication}",
+                            confidence=0.85,
+                            evidence=guideline_summaries + [f"Source: PharmGKB"],
+                            related_entities={
+                                "drug": medication,
+                                "guideline_count": len(guidelines["guidelines"]),
+                                "source": "pharmgkb"
+                            }
+                        )
+                        findings.append(finding)
+                except Exception as e:
+                    logger.debug(f"PharmGKB query failed for {medication}: {e}")
+
+        return findings
 
     def _analyze_biomarkers(self, biomarkers: Dict[str, float]) -> List[AgentFinding]:
         """Analyze individual biomarker levels."""

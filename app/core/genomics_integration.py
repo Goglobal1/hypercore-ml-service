@@ -17,6 +17,7 @@ import gzip
 import json
 import os
 import re
+import threading
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
@@ -259,6 +260,8 @@ class GEOParser:
 class ClinVarLoader:
     """Loader for ClinVar variant_summary.txt.gz."""
 
+    _load_lock = threading.Lock()  # Class-level lock for thread-safe loading
+
     def __init__(self, clinvar_path: Path = CLINVAR_PATH):
         self.clinvar_path = clinvar_path
         self._variant_cache: Dict[str, List[ClinVarVariantRecord]] = {}
@@ -267,58 +270,65 @@ class ClinVarLoader:
         self._all_variants: List[ClinVarVariantRecord] = []
 
     def _load_variants(self):
-        """Load and index all variants from ClinVar."""
+        """Load and index all variants from ClinVar (thread-safe)."""
+        # Quick check without lock
         if self._loaded:
             return
 
-        if not self.clinvar_path.exists():
-            logger.warning(f"ClinVar file not found: {self.clinvar_path}")
-            self._loaded = True
-            return
+        # Thread-safe loading with lock - entire loading happens inside lock
+        with ClinVarLoader._load_lock:
+            # Double-check after acquiring lock (another thread may have loaded)
+            if self._loaded:
+                return
 
-        logger.info(f"Loading ClinVar variants from {self.clinvar_path}")
+            if not self.clinvar_path.exists():
+                logger.warning(f"ClinVar file not found: {self.clinvar_path}")
+                self._loaded = True
+                return
 
-        try:
-            with gzip.open(self.clinvar_path, 'rt', encoding='utf-8', errors='replace') as f:
-                header = None
-                for line_num, line in enumerate(f):
-                    if line_num == 0:
-                        header = line.strip().split('\t')
-                        continue
+            logger.info(f"Loading ClinVar variants from {self.clinvar_path}")
 
-                    parts = line.strip().split('\t')
-                    if len(parts) < 15:
-                        continue
+            try:
+                with gzip.open(self.clinvar_path, 'rt', encoding='utf-8', errors='replace') as f:
+                    header = None
+                    for line_num, line in enumerate(f):
+                        if line_num == 0:
+                            header = line.strip().split('\t')
+                            continue
 
-                    try:
-                        record = ClinVarVariantRecord(
-                            allele_id=int(parts[0]) if parts[0].isdigit() else 0,
-                            gene_symbol=parts[4],
-                            gene_id=int(parts[3]) if parts[3].isdigit() else 0,
-                            variant_name=parts[2],
-                            variant_type=parts[1],
-                            clinical_significance=parts[6],
-                            phenotypes=parts[13].split('|') if parts[13] else [],
-                            review_status=parts[24] if len(parts) > 24 else "",
-                            chromosome=parts[18] if len(parts) > 18 else None,
-                            start=int(parts[19]) if len(parts) > 19 and parts[19].isdigit() else None,
-                            end=int(parts[20]) if len(parts) > 20 and parts[20].isdigit() else None,
-                            rs_id=parts[9] if len(parts) > 9 and parts[9] != "-" else None
-                        )
+                        parts = line.strip().split('\t')
+                        if len(parts) < 15:
+                            continue
 
-                        idx = len(self._all_variants)
-                        self._all_variants.append(record)
-                        self._gene_index[record.gene_symbol.upper()].append(idx)
+                        try:
+                            record = ClinVarVariantRecord(
+                                allele_id=int(parts[0]) if parts[0].isdigit() else 0,
+                                gene_symbol=parts[4],
+                                gene_id=int(parts[3]) if parts[3].isdigit() else 0,
+                                variant_name=parts[2],
+                                variant_type=parts[1],
+                                clinical_significance=parts[6],
+                                phenotypes=parts[13].split('|') if parts[13] else [],
+                                review_status=parts[24] if len(parts) > 24 else "",
+                                chromosome=parts[18] if len(parts) > 18 else None,
+                                start=int(parts[19]) if len(parts) > 19 and parts[19].isdigit() else None,
+                                end=int(parts[20]) if len(parts) > 20 and parts[20].isdigit() else None,
+                                rs_id=parts[9] if len(parts) > 9 and parts[9] != "-" else None
+                            )
 
-                    except Exception as e:
-                        continue
+                            idx = len(self._all_variants)
+                            self._all_variants.append(record)
+                            self._gene_index[record.gene_symbol.upper()].append(idx)
 
-            logger.info(f"Loaded {len(self._all_variants)} ClinVar variants")
-            self._loaded = True
+                        except Exception as e:
+                            continue
 
-        except Exception as e:
-            logger.error(f"Error loading ClinVar: {e}")
-            self._loaded = True
+                logger.info(f"Loaded {len(self._all_variants)} ClinVar variants")
+                self._loaded = True
+
+            except Exception as e:
+                logger.error(f"Error loading ClinVar: {e}")
+                self._loaded = True
 
     def get_variants_for_gene(
         self,
