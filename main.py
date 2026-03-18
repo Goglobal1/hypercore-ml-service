@@ -168,6 +168,21 @@ try:
 except ImportError:
     AGENTS_AVAILABLE = False
 
+# Unified Alert System (merged hypercore + cse.py)
+try:
+    from app.core.alert_system import (
+        alert_router,
+        get_pipeline,
+        get_hub,
+        init_storage,
+        process_patient_intake,
+        ClinicalState as AlertClinicalState,
+        AlertSeverity as AlertAlertSeverity,
+    )
+    ALERT_SYSTEM_AVAILABLE = True
+except ImportError:
+    ALERT_SYSTEM_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -349,6 +364,63 @@ if PATHOGEN_AVAILABLE:
 # Include diagnostic agents router if available
 if AGENTS_AVAILABLE:
     app.include_router(agents_router)
+
+# Include unified alert system router if available
+if ALERT_SYSTEM_AVAILABLE:
+    app.include_router(alert_router)
+
+# Startup event handler - preload data for faster first requests
+@app.on_event("startup")
+async def startup_preload():
+    """Preload datasets on startup. Heavy datasets load in background."""
+    import logging
+    import threading
+    logger = logging.getLogger("hypercore_startup")
+    
+    def _preload_clinvar():
+        """Background thread to load ClinVar (416MB file)."""
+        try:
+            from app.core.genomics_integration import get_clinvar_loader
+            logger.info("Background: Loading ClinVar variants...")
+            loader = get_clinvar_loader()
+            loader._load_variants()
+            logger.info(f"Background: ClinVar loaded - {len(loader._all_variants)} variants indexed")
+        except Exception as e:
+            logger.warning(f"ClinVar preload failed: {e}")
+    
+    # Start ClinVar loading in background thread (doesn't block startup)
+    if GENOMICS_AVAILABLE:
+        clinvar_thread = threading.Thread(target=_preload_clinvar, daemon=True)
+        clinvar_thread.start()
+        logger.info("ClinVar loading started in background thread")
+    
+    # Preload PharmGKB relationships (fast, do synchronously)
+    if PHARMA_AVAILABLE:
+        try:
+            from app.core.pharmgkb_integration import _ensure_relationships_loaded
+            logger.info("Preloading PharmGKB...")
+            _ensure_relationships_loaded()
+            logger.info("PharmGKB preloaded")
+        except Exception as e:
+            logger.warning(f"PharmGKB preload failed: {e}")
+
+    # Initialize unified alert system
+    if ALERT_SYSTEM_AVAILABLE:
+        try:
+            # Initialize storage (in-memory for now, can switch to PostgreSQL)
+            init_storage(backend="memory")
+            # Start real-time hub for WebSocket/SSE
+            hub = get_hub()
+            await hub.start()
+            # Connect pipeline to hub for real-time notifications
+            pipeline = get_pipeline()
+            pipeline.register_dashboard_callback(hub.get_dashboard_callback())
+            logger.info("Alert system initialized (storage: memory, realtime: active)")
+        except Exception as e:
+            logger.warning(f"Alert system initialization failed: {e}")
+
+    logger.info("Server startup complete (ClinVar loading in background)")
+
 
 
 # ---------------------------------------------------------------------
