@@ -5,7 +5,7 @@ Provides the unified /patient/intake endpoint and all alert-related APIs.
 
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 import logging
 
 from fastapi import APIRouter, HTTPException, Query, WebSocket, Depends
@@ -47,8 +47,8 @@ class PatientIntakeRequest(BaseModel):
     encounter_id: Optional[str] = Field(None, description="Encounter/visit ID")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "patient_id": "P12345",
                 "risk_domain": "sepsis",
@@ -67,6 +67,7 @@ class PatientIntakeRequest(BaseModel):
                 "location": "ICU-2A"
             }
         }
+    )
 
 
 class EvaluateRequest(BaseModel):
