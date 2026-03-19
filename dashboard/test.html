@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSE Alert Dashboard - Test Page</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Recharts -->
+  <script src="https://unpkg.com/recharts@2.10.3/umd/Recharts.js"></script>
+
+  <style>
+    .animate-pulse-slow {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // =============================================================================
+    // CONFIGURATION
+    // =============================================================================
+
+    const API_BASE_URL = 'http://localhost:8000';
+    const WS_URL = 'ws://localhost:8000/alerts/ws';
+    const SSE_URL = 'http://localhost:8000/alerts/sse';
+
+    // All 15 risk domains
+    const RISK_DOMAINS = [
+      { id: 'sepsis', name: 'Sepsis', color: '#ef4444', icon: '🦠' },
+      { id: 'cardiac', name: 'Cardiac', color: '#f97316', icon: '❤️' },
+      { id: 'kidney', name: 'Kidney', color: '#eab308', icon: '🫘' },
+      { id: 'respiratory', name: 'Respiratory', color: '#22c55e', icon: '🫁' },
+      { id: 'hepatic', name: 'Hepatic', color: '#14b8a6', icon: '🔬' },
+      { id: 'neurological', name: 'Neurological', color: '#3b82f6', icon: '🧠' },
+      { id: 'metabolic', name: 'Metabolic', color: '#8b5cf6', icon: '⚗️' },
+      { id: 'hematologic', name: 'Hematologic', color: '#ec4899', icon: '🩸' },
+      { id: 'oncology', name: 'Oncology', color: '#6366f1', icon: '🎗️' },
+      { id: 'multi_system', name: 'Multi-System', color: '#dc2626', icon: '⚠️' },
+      { id: 'deterioration', name: 'Deterioration', color: '#b91c1c', icon: '📉' },
+      { id: 'infection', name: 'Infection', color: '#ca8a04', icon: '🔴' },
+      { id: 'outbreak', name: 'Outbreak', color: '#7c3aed', icon: '🌐' },
+      { id: 'trial_confounder', name: 'Trial Confounder', color: '#0891b2', icon: '🧪' },
+      { id: 'custom', name: 'Custom', color: '#64748b', icon: '⚙️' },
+    ];
+
+    const CLINICAL_STATES = {
+      S0: { name: 'Stable', color: '#22c55e', bgColor: '#dcfce7' },
+      S1: { name: 'Watch', color: '#eab308', bgColor: '#fef9c3' },
+      S2: { name: 'Escalating', color: '#f97316', bgColor: '#ffedd5' },
+      S3: { name: 'Critical', color: '#ef4444', bgColor: '#fee2e2' },
+    };
+
+    const SEVERITY_LEVELS = {
+      INFO: { color: '#3b82f6', bgColor: '#dbeafe' },
+      WARNING: { color: '#eab308', bgColor: '#fef9c3' },
+      URGENT: { color: '#f97316', bgColor: '#ffedd5' },
+      CRITICAL: { color: '#ef4444', bgColor: '#fee2e2' },
+    };
+
+    // =============================================================================
+    // API FUNCTIONS
+    // =============================================================================
+
+    async function fetchHealth() {
+      const response = await fetch(`${API_BASE_URL}/alerts/health`);
+      return response.json();
+    }
+
+    async function fetchStats() {
+      const response = await fetch(`${API_BASE_URL}/alerts/stats`);
+      return response.json();
+    }
+
+    async function fetchPatientState(patientId) {
+      const response = await fetch(`${API_BASE_URL}/alerts/patient/${patientId}/state`);
+      if (response.status === 404) return null;
+      return response.json();
+    }
+
+    async function fetchEvents(filters = {}) {
+      const params = new URLSearchParams();
+      if (filters.limit) params.append('limit', filters.limit);
+      const response = await fetch(`${API_BASE_URL}/alerts/events?${params}`);
+      return response.json();
+    }
+
+    async function acknowledgeAlert(alertId, acknowledgedBy) {
+      const response = await fetch(`${API_BASE_URL}/alerts/acknowledge`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          alert_id: alertId,
+          acknowledged_by: acknowledgedBy,
+          close_episode: false
+        })
+      });
+      return response.json();
+    }
+
+    async function submitPatientIntake(data) {
+      const response = await fetch(`${API_BASE_URL}/alerts/patient/intake`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+
+    // =============================================================================
+    // COMPONENTS
+    // =============================================================================
+
+    function ConnectionStatus({ status, type, onReconnect }) {
+      const statusConfig = {
+        connected: { color: 'text-green-500', bg: 'bg-green-100', text: 'Connected' },
+        disconnected: { color: 'text-red-500', bg: 'bg-red-100', text: 'Disconnected' },
+        error: { color: 'text-red-500', bg: 'bg-red-100', text: 'Error' },
+      };
+      const config = statusConfig[status] || statusConfig.disconnected;
+
+      return (
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${config.bg}`}>
+          <span className={`w-2 h-2 rounded-full ${status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
+          <span className={`text-sm font-medium ${config.color}`}>
+            {config.text} {type && `(${type.toUpperCase()})`}
+          </span>
+          {status !== 'connected' && (
+            <button onClick={onReconnect} className="ml-2 text-xs underline">Reconnect</button>
+          )}
+        </div>
+      );
+    }
+
+    function StateBadge({ state, size = 'md' }) {
+      const config = CLINICAL_STATES[state] || CLINICAL_STATES.S0;
+      const sizeClasses = { sm: 'px-2 py-0.5 text-xs', md: 'px-3 py-1 text-sm', lg: 'px-4 py-2 text-base' };
+
+      return (
+        <span
+          className={`inline-flex items-center font-semibold rounded-full ${sizeClasses[size]}`}
+          style={{ backgroundColor: config.bgColor, color: config.color }}
+        >
+          {state} - {config.name}
+        </span>
+      );
+    }
+
+    function SeverityBadge({ severity }) {
+      const config = SEVERITY_LEVELS[severity] || SEVERITY_LEVELS.INFO;
+      return (
+        <span
+          className="px-2 py-0.5 text-xs font-semibold rounded"
+          style={{ backgroundColor: config.bgColor, color: config.color }}
+        >
+          {severity}
+        </span>
+      );
+    }
+
+    function DomainBadge({ domain }) {
+      const config = RISK_DOMAINS.find(d => d.id === domain) || { name: domain, color: '#64748b', icon: '?' };
+      return (
+        <span
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded text-white"
+          style={{ backgroundColor: config.color }}
+        >
+          <span>{config.icon}</span>
+          {config.name}
+        </span>
+      );
+    }
+
+    function TimeToHarm({ hours, window }) {
+      const getColor = () => {
+        if (hours <= 1) return 'text-red-600 bg-red-100';
+        if (hours <= 6) return 'text-orange-600 bg-orange-100';
+        if (hours <= 24) return 'text-yellow-600 bg-yellow-100';
+        return 'text-green-600 bg-green-100';
+      };
+      const formatTime = () => {
+        if (hours < 1) return `${Math.round(hours * 60)} min`;
+        if (hours < 24) return `${hours.toFixed(1)} hrs`;
+        return `${Math.round(hours / 24)} days`;
+      };
+
+      return (
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${getColor()}`}>
+          <span>⏱️</span>
+          <span className="font-semibold">{formatTime()}</span>
+          <span className="text-xs opacity-75">({window})</span>
+        </div>
+      );
+    }
+
+    function PatientStatePanel({ patientId, state, onRefresh }) {
+      if (!state) {
+        return (
+          <div className="bg-gray-50 rounded-lg p-4 text-center text-gray-500">
+            No state data for patient {patientId}
+          </div>
+        );
+      }
+
+      // Handle multi-domain state response
+      const firstDomain = state.states ? Object.values(state.states)[0] : state;
+
+      return (
+        <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-gray-900">Patient: {patientId}</h3>
+            <button onClick={onRefresh} className="p-1 hover:bg-gray-100 rounded text-sm">🔄</button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Clinical State</p>
+              <StateBadge state={firstDomain.state_now || 'S0'} size="lg" />
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Risk Score</p>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold">
+                  {((firstDomain.risk_score || 0) * 100).toFixed(0)}%
+                </span>
+              </div>
+            </div>
+
+            {firstDomain.time_to_harm && (
+              <div className="col-span-2">
+                <p className="text-xs text-gray-500 mb-1">Time to Harm</p>
+                <TimeToHarm
+                  hours={firstDomain.time_to_harm.hours}
+                  window={firstDomain.time_to_harm.intervention_window}
+                />
+              </div>
+            )}
+
+            {firstDomain.contributing_biomarkers && firstDomain.contributing_biomarkers.length > 0 && (
+              <div className="col-span-2">
+                <p className="text-xs text-gray-500 mb-1">Contributing Biomarkers</p>
+                <div className="flex flex-wrap gap-1">
+                  {firstDomain.contributing_biomarkers.map((marker, i) => (
+                    <span key={i} className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">
+                      {marker}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {firstDomain.clinical_headline && (
+              <div className="col-span-2">
+                <p className="text-xs text-gray-500 mb-1">Assessment</p>
+                <p className="text-sm text-gray-700">{firstDomain.clinical_headline}</p>
+              </div>
+            )}
+
+            {firstDomain.suggested_action && (
+              <div className="col-span-2 bg-blue-50 rounded p-2">
+                <p className="text-xs text-blue-600 font-medium">Suggested Action</p>
+                <p className="text-sm text-blue-800">{firstDomain.suggested_action}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function AlertCard({ alert, onAcknowledge, expanded, onToggleExpand }) {
+      const [acknowledging, setAcknowledging] = React.useState(false);
+      const severityConfig = SEVERITY_LEVELS[alert.severity] || SEVERITY_LEVELS.INFO;
+      const isInterruptive = alert.alert_type === 'interruptive';
+
+      const handleAcknowledge = async () => {
+        setAcknowledging(true);
+        try {
+          await onAcknowledge(alert.event_id);
+        } finally {
+          setAcknowledging(false);
+        }
+      };
+
+      return (
+        <div
+          className={`bg-white rounded-lg shadow-sm border-l-4 p-3 transition-all ${isInterruptive ? 'animate-pulse-slow' : ''}`}
+          style={{ borderLeftColor: severityConfig.color }}
+        >
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="font-semibold text-gray-900">{alert.patient_id}</span>
+                <DomainBadge domain={alert.risk_domain} />
+                <SeverityBadge severity={alert.severity} />
+              </div>
+              <p className="text-sm text-gray-600 truncate">
+                {alert.clinical_headline || `State: ${alert.state_current}`}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                {new Date(alert.timestamp).toLocaleString()}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {isInterruptive && !alert.acknowledged && (
+                <button
+                  onClick={handleAcknowledge}
+                  disabled={acknowledging}
+                  className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:opacity-50"
+                >
+                  {acknowledging ? 'ACK...' : 'ACK'}
+                </button>
+              )}
+              <button onClick={onToggleExpand} className="p-1 hover:bg-gray-100 rounded">
+                {expanded ? '▲' : '▼'}
+              </button>
+            </div>
+          </div>
+
+          {expanded && (
+            <div className="mt-3 pt-3 border-t text-sm space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-gray-500">State Transition:</span>{' '}
+                  <span>{alert.state_previous || '—'} → {alert.state_current}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">Risk Score:</span>{' '}
+                  <span>{((alert.risk_score || 0) * 100).toFixed(1)}%</span>
+                </div>
+              </div>
+
+              {alert.recommendations && alert.recommendations.length > 0 && (
+                <div>
+                  <p className="text-gray-500 font-medium mb-1">Recommendations:</p>
+                  <ul className="list-disc list-inside text-gray-600 space-y-0.5">
+                    {alert.recommendations.slice(0, 3).map((rec, i) => (
+                      <li key={i}>{rec}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function AlertFeed({ alerts, onAcknowledge }) {
+      const [expandedId, setExpandedId] = React.useState(null);
+
+      return (
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="p-3 border-b flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span>🔔</span>
+              <h3 className="font-semibold">Alert Feed</h3>
+              <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                {alerts.length}
+              </span>
+            </div>
+          </div>
+
+          <div className="max-h-[500px] overflow-y-auto p-3 space-y-2">
+            {alerts.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">No alerts to display</p>
+            ) : (
+              alerts.map(alert => (
+                <AlertCard
+                  key={alert.event_id}
+                  alert={alert}
+                  onAcknowledge={onAcknowledge}
+                  expanded={expandedId === alert.event_id}
+                  onToggleExpand={() => setExpandedId(expandedId === alert.event_id ? null : alert.event_id)}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    function StatisticsPanel({ stats, isLoading }) {
+      if (isLoading) {
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="bg-white rounded-lg shadow-sm border p-4 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      const storage = stats?.storage || {};
+
+      const statItems = [
+        { label: 'Patients Tracked', value: storage.patient_states || 0, icon: '👥', color: 'text-blue-500' },
+        { label: 'Active Episodes', value: storage.open_episodes || 0, icon: '📋', color: 'text-orange-500' },
+        { label: 'Events (24h)', value: storage.events || 0, icon: '🔔', color: 'text-purple-500' },
+        { label: 'Pending Escalations', value: stats?.escalations?.pending || 0, icon: '⚠️', color: 'text-red-500' },
+      ];
+
+      return (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {statItems.map((item, i) => (
+            <div key={i} className="bg-white rounded-lg shadow-sm border p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span>{item.icon}</span>
+                <span className="text-sm text-gray-500">{item.label}</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function PatientSearchPanel({ onSelectPatient, onSubmitIntake }) {
+      const [patientId, setPatientId] = React.useState('');
+      const [domain, setDomain] = React.useState('sepsis');
+      const [showIntakeForm, setShowIntakeForm] = React.useState(false);
+      const [labData, setLabData] = React.useState('{"lactate": 3.2, "WBC": 14.5, "CRP": 85.0}');
+      const [vitalsData, setVitalsData] = React.useState('{"heart_rate": 112, "temperature": 38.5}');
+      const [submitting, setSubmitting] = React.useState(false);
+      const [result, setResult] = React.useState(null);
+
+      const handleSearch = () => {
+        if (patientId.trim()) onSelectPatient(patientId.trim());
+      };
+
+      const handleSubmitIntake = async () => {
+        setSubmitting(true);
+        setResult(null);
+        try {
+          const data = {
+            patient_id: patientId || `TEST-${Date.now()}`,
+            risk_domain: domain,
+            lab_data: labData ? JSON.parse(labData) : null,
+            vitals_data: vitalsData ? JSON.parse(vitalsData) : null,
+          };
+          const res = await onSubmitIntake(data);
+          setResult(res);
+          setPatientId(data.patient_id);
+        } catch (e) {
+          setResult({ error: e.message });
+        } finally {
+          setSubmitting(false);
+        }
+      };
+
+      return (
+        <div className="bg-white rounded-lg shadow-sm border p-4">
+          <div className="flex gap-2 mb-3">
+            <input
+              type="text"
+              value={patientId}
+              onChange={(e) => setPatientId(e.target.value)}
+              placeholder="Enter Patient ID"
+              className="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <button onClick={handleSearch} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Search
+            </button>
+            <button
+              onClick={() => setShowIntakeForm(!showIntakeForm)}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              + Intake
+            </button>
+          </div>
+
+          {showIntakeForm && (
+            <div className="space-y-3 pt-3 border-t">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Risk Domain</label>
+                <select
+                  value={domain}
+                  onChange={(e) => setDomain(e.target.value)}
+                  className="w-full px-3 py-2 border rounded"
+                >
+                  {RISK_DOMAINS.map(d => (
+                    <option key={d.id} value={d.id}>{d.icon} {d.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Lab Data (JSON)</label>
+                <textarea
+                  value={labData}
+                  onChange={(e) => setLabData(e.target.value)}
+                  className="w-full px-3 py-2 border rounded font-mono text-sm"
+                  rows={2}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Vitals Data (JSON)</label>
+                <textarea
+                  value={vitalsData}
+                  onChange={(e) => setVitalsData(e.target.value)}
+                  className="w-full px-3 py-2 border rounded font-mono text-sm"
+                  rows={2}
+                />
+              </div>
+
+              <button
+                onClick={handleSubmitIntake}
+                disabled={submitting}
+                className="w-full py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+              >
+                {submitting ? 'Processing...' : 'Submit Intake'}
+              </button>
+
+              {result && (
+                <div className={`p-3 rounded text-sm ${result.error ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                  {result.error ? (
+                    <p>Error: {result.error}</p>
+                  ) : (
+                    <div>
+                      <p className="font-semibold">✅ Pipeline Complete ({result.total_duration_ms?.toFixed(1)}ms)</p>
+                      <p>State: {result.evaluation_result?.state_now} | Alert: {result.evaluation_result?.alert_fired ? 'FIRED' : 'None'}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // =============================================================================
+    // MAIN DASHBOARD
+    // =============================================================================
+
+    function CSEAlertDashboard() {
+      const [health, setHealth] = React.useState(null);
+      const [stats, setStats] = React.useState(null);
+      const [alerts, setAlerts] = React.useState([]);
+      const [selectedPatient, setSelectedPatient] = React.useState(null);
+      const [patientState, setPatientState] = React.useState(null);
+      const [isLoading, setIsLoading] = React.useState(true);
+      const [connectionStatus, setConnectionStatus] = React.useState('disconnected');
+      const [connectionType, setConnectionType] = React.useState(null);
+      const [lastUpdate, setLastUpdate] = React.useState(null);
+      const wsRef = React.useRef(null);
+
+      // WebSocket connection
+      const connectWebSocket = React.useCallback(() => {
+        try {
+          const ws = new WebSocket(WS_URL);
+          wsRef.current = ws;
+
+          ws.onopen = () => {
+            setConnectionStatus('connected');
+            setConnectionType('websocket');
+            console.log('[Dashboard] WebSocket connected');
+            ws.send(JSON.stringify({
+              type: 'subscribe',
+              risk_domains: RISK_DOMAINS.map(d => d.id),
+              roles: ['dashboard']
+            }));
+          };
+
+          ws.onmessage = (event) => {
+            try {
+              const data = JSON.parse(event.data);
+              console.log('[Dashboard] Message:', data);
+              setLastUpdate(new Date());
+
+              if (data.type === 'alert' || data.type === 'evaluation') {
+                setAlerts(prev => [data.data, ...prev].slice(0, 100));
+              }
+              if (data.type === 'acknowledgment') {
+                setAlerts(prev => prev.map(a =>
+                  a.event_id === data.data?.alert_id ? { ...a, acknowledged: true } : a
+                ));
+              }
+            } catch (e) {
+              console.error('[Dashboard] Parse error:', e);
+            }
+          };
+
+          ws.onerror = () => {
+            console.warn('[Dashboard] WebSocket error');
+            setConnectionStatus('error');
+          };
+
+          ws.onclose = () => {
+            setConnectionStatus('disconnected');
+            setTimeout(connectWebSocket, 5000);
+          };
+        } catch (e) {
+          console.error('[Dashboard] WebSocket failed:', e);
+          setConnectionStatus('error');
+        }
+      }, []);
+
+      // Load initial data
+      React.useEffect(() => {
+        async function loadData() {
+          setIsLoading(true);
+          try {
+            const [h, s, e] = await Promise.all([
+              fetchHealth().catch(() => null),
+              fetchStats().catch(() => null),
+              fetchEvents({ limit: 50 }).catch(() => ({ events: [] })),
+            ]);
+            setHealth(h);
+            setStats(s);
+            setAlerts(e.events || []);
+          } catch (e) {
+            console.error('[Dashboard] Load error:', e);
+          } finally {
+            setIsLoading(false);
+          }
+        }
+        loadData();
+        connectWebSocket();
+
+        const interval = setInterval(() => {
+          fetchStats().then(setStats).catch(console.error);
+        }, 30000);
+
+        return () => {
+          clearInterval(interval);
+          if (wsRef.current) wsRef.current.close();
+        };
+      }, [connectWebSocket]);
+
+      const loadPatientState = async (patientId) => {
+        try {
+          const state = await fetchPatientState(patientId);
+          setPatientState(state);
+        } catch (e) {
+          setPatientState(null);
+        }
+      };
+
+      const handleSelectPatient = (patientId) => {
+        setSelectedPatient(patientId);
+        loadPatientState(patientId);
+      };
+
+      const handleAcknowledge = async (alertId) => {
+        await acknowledgeAlert(alertId, 'dashboard_user');
+        setAlerts(prev => prev.map(a => a.event_id === alertId ? { ...a, acknowledged: true } : a));
+      };
+
+      const handlePatientIntake = async (data) => {
+        const result = await submitPatientIntake(data);
+        if (result.success) {
+          setSelectedPatient(data.patient_id);
+          if (result.evaluation_result) setPatientState(result.evaluation_result);
+          if (result.evaluation_result?.alert_event) {
+            setAlerts(prev => [result.evaluation_result.alert_event, ...prev].slice(0, 100));
+          }
+        }
+        return result;
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-100">
+          {/* Header */}
+          <header className="bg-white shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🏥</span>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">CSE Alert Dashboard</h1>
+                  <p className="text-sm text-gray-500">Clinical State Engine Real-Time Monitoring</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                {lastUpdate && (
+                  <span className="text-xs text-gray-400">
+                    Last update: {lastUpdate.toLocaleTimeString()}
+                  </span>
+                )}
+                <ConnectionStatus
+                  status={connectionStatus}
+                  type={connectionType}
+                  onReconnect={connectWebSocket}
+                />
+                {health && (
+                  <div className={`flex items-center gap-1 px-2 py-1 rounded ${
+                    health.status === 'healthy' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    <span>{health.status === 'healthy' ? '✅' : '❌'}</span>
+                    <span className="text-sm font-medium">
+                      {health.status === 'healthy' ? 'System Healthy' : 'System Error'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <StatisticsPanel stats={stats} isLoading={isLoading} />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="space-y-4">
+                <PatientSearchPanel
+                  onSelectPatient={handleSelectPatient}
+                  onSubmitIntake={handlePatientIntake}
+                />
+
+                {selectedPatient && (
+                  <PatientStatePanel
+                    patientId={selectedPatient}
+                    state={patientState}
+                    onRefresh={() => loadPatientState(selectedPatient)}
+                  />
+                )}
+
+                <div className="bg-white rounded-lg shadow-sm border p-4">
+                  <h3 className="font-semibold mb-3">Risk Domains</h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {RISK_DOMAINS.map(domain => (
+                      <div
+                        key={domain.id}
+                        className="flex flex-col items-center p-2 rounded hover:bg-gray-50 cursor-pointer"
+                        title={domain.name}
+                      >
+                        <span className="text-xl">{domain.icon}</span>
+                        <span className="text-xs text-gray-600 truncate w-full text-center">{domain.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-2">
+                <AlertFeed alerts={alerts} onAcknowledge={handleAcknowledge} />
+              </div>
+            </div>
+          </main>
+
+          <footer className="bg-white border-t mt-8 py-4">
+            <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
+              HyperCore ML Service - CSE Alert Dashboard v2.0.0 | Test Page
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    // Render
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<CSEAlertDashboard />);
+  </script>
+</body>
+</html>
