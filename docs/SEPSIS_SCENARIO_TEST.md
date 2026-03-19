@@ -1,21 +1,29 @@
 # Sepsis Patient Scenario Test Report
 
-**Patient ID**: SEPSIS-DEMO-001
-**Test Date**: 2026-03-19
+**Patient ID**: AUTO-SEPSIS-001
+**Test Date**: 2026-03-19 (Updated with auto risk scoring)
 **Risk Domain**: Sepsis
-**Test Purpose**: Demonstrate 3-stage clinical deterioration with alert escalation
+**Test Purpose**: Demonstrate 3-stage clinical deterioration with **automatic risk scoring**
 
 ---
 
 ## Executive Summary
 
-Successfully demonstrated the Clinical State Engine (CSE) alert system processing a simulated sepsis deterioration case. The system correctly:
+Successfully demonstrated the Clinical State Engine (CSE) alert system processing a simulated sepsis deterioration case **without providing explicit risk_score values**. The system now:
 
-1. Detected initial critical state (S3) on first presentation
-2. Tracked state transitions through multiple evaluations
-3. Fired appropriate INTERRUPTIVE/CRITICAL alerts
-4. Routed alerts to correct clinical roles
-5. Generated actionable sepsis bundle recommendations
+1. **Auto-calculates risk scores** from raw lab and vital values
+2. Detected initial critical state (S3) on first presentation
+3. Tracked state transitions through multiple evaluations
+4. Fired appropriate INTERRUPTIVE/CRITICAL alerts
+5. Routed alerts to correct clinical roles
+6. Generated actionable sepsis bundle recommendations
+
+### Auto Risk Scoring Feature (NEW)
+Risk scores are now automatically calculated using weighted threshold analysis:
+- Direction-aware scoring (rising vs falling thresholds)
+- Case-insensitive biomarker name matching
+- Domain-specific threshold lookup
+- Weight-based composite scoring
 
 ---
 
@@ -145,23 +153,25 @@ Successfully demonstrated the Clinical State Engine (CSE) alert system processin
 
 ---
 
-## Side-by-Side Comparison
+## Side-by-Side Comparison (WITH AUTO RISK SCORING)
 
 | Metric | Eval 1 (t=0) | Eval 2 (t+2h) | Eval 3 (t+4h) |
 |--------|--------------|---------------|---------------|
-| **State** | S3 | S0* | S3 |
-| **Risk Score** | 100% | 0%* | 85% |
-| **Alert Type** | INTERRUPTIVE | non_interruptive | INTERRUPTIVE |
-| **Severity** | CRITICAL | INFO | CRITICAL |
-| **TTH Hours** | 1.0 | 108 | 1.3 |
-| **Window** | IMMEDIATE | ROUTINE | IMMEDIATE |
+| **State** | S3 | S3 | S3 |
+| **Risk Score** | 99.37% (AUTO) | 100% (AUTO) | 100% (AUTO) |
+| **Alert Type** | INTERRUPTIVE | suppressed (cooldown) | non_interruptive |
+| **Severity** | CRITICAL | CRITICAL | CRITICAL |
+| **TTH Hours** | 1.0 | - | 0.5 |
+| **Window** | IMMEDIATE | - | IMMEDIATE |
 | **Lactate** | 3.2 | 4.5 | 6.8 |
 | **WBC** | 15.5 | 18.5 | 22.0 |
+| **CRP** | 180 | 220 | 280 |
+| **Procalcitonin** | 8.5 | 12.0 | 15.0 |
 | **Creatinine** | 1.5 | 1.8 | 2.5 |
 | **Heart Rate** | 105 | 115 | 130 |
 | **BP Systolic** | 95 | 88 | 75 |
 
-*Eval 2 showed S0/0% because no explicit risk_score was provided; raw lab values alone don't calculate risk.
+**Note**: All risk scores are now auto-calculated from raw biomarker values. No explicit risk_score was provided in any evaluation.
 
 ---
 
