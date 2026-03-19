@@ -83,6 +83,14 @@ from .realtime import (
     get_hub,
     set_hub,
 )
+from .risk_calculator import (
+    calculate_risk_score,
+    quick_risk_score,
+    calculate_biomarker_score,
+    normalize_biomarker_name,
+    get_domain_thresholds,
+    BIOMARKER_ALIASES,
+)
 from .router import router as alert_router
 
 __all__ = [
@@ -154,6 +162,13 @@ __all__ = [
     "MessageType",
     "get_hub",
     "set_hub",
+    # Risk Calculator
+    "calculate_risk_score",
+    "quick_risk_score",
+    "calculate_biomarker_score",
+    "normalize_biomarker_name",
+    "get_domain_thresholds",
+    "BIOMARKER_ALIASES",
     # FastAPI Router
     "alert_router",
 ]

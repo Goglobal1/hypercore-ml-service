@@ -22,6 +22,7 @@ from .engine import ClinicalStateEngine, get_engine
 from .storage import StorageBackend, get_storage
 from .routing import AlertRouter, EscalationManager, get_router, get_escalation_manager
 from .config import DOMAIN_CONFIGS, get_domain_config
+from .risk_calculator import calculate_risk_score as calc_risk, quick_risk_score
 
 logger = logging.getLogger(__name__)
 
@@ -279,30 +280,18 @@ class AgentIntegration:
         risk_domain: str,
     ) -> Dict[str, Any]:
         """Default biomarker analysis when agent not available."""
-        from .config import BIOMARKER_THRESHOLDS
+        from .risk_calculator import calculate_risk_score, normalize_biomarker_name, get_domain_thresholds
 
-        abnormal = []
-        critical = []
-        domain_thresholds = BIOMARKER_THRESHOLDS.get(risk_domain, {})
-
-        for biomarker, value in lab_data.items():
-            if biomarker in domain_thresholds:
-                threshold = domain_thresholds[biomarker]
-                if threshold.direction == "high":
-                    if value >= threshold.critical:
-                        critical.append(biomarker)
-                    elif value >= threshold.warning:
-                        abnormal.append(biomarker)
-                elif threshold.direction == "low":
-                    if value <= threshold.critical:
-                        critical.append(biomarker)
-                    elif value <= threshold.warning:
-                        abnormal.append(biomarker)
+        # Use the risk calculator for detailed analysis
+        result = calculate_risk_score(
+            risk_domain=risk_domain,
+            lab_data=lab_data,
+        )
 
         return {
-            "abnormal_biomarkers": abnormal,
-            "critical_biomarkers": critical,
-            "total_checked": len(lab_data),
+            "abnormal_biomarkers": result.get("warning_biomarkers", []),
+            "critical_biomarkers": result.get("critical_biomarkers", []),
+            "total_checked": result.get("matched_biomarkers", len(lab_data)),
             "source": "default_analysis",
         }
 
@@ -840,46 +829,20 @@ class AlertPipeline:
         lab_data: Optional[Dict[str, Any]],
         vitals_data: Optional[Dict[str, Any]],
     ) -> float:
-        """Default risk score calculation."""
-        from .config import BIOMARKER_THRESHOLDS
+        """
+        Default risk score calculation using the risk calculator.
 
-        if not lab_data and not vitals_data:
-            return 0.0
-
-        domain_thresholds = BIOMARKER_THRESHOLDS.get(risk_domain, {})
-        total_score = 0.0
-        total_weight = 0.0
-
-        all_data = {**(lab_data or {}), **(vitals_data or {})}
-
-        for biomarker, value in all_data.items():
-            if biomarker in domain_thresholds:
-                threshold = domain_thresholds[biomarker]
-                weight = threshold.weight
-
-                # Calculate normalized score
-                if threshold.direction == "high":
-                    if value >= threshold.critical:
-                        score = 1.0
-                    elif value >= threshold.warning:
-                        score = 0.5 + 0.5 * (value - threshold.warning) / (threshold.critical - threshold.warning)
-                    else:
-                        score = 0.0
-                else:  # low
-                    if value <= threshold.critical:
-                        score = 1.0
-                    elif value <= threshold.warning:
-                        score = 0.5 + 0.5 * (threshold.warning - value) / (threshold.warning - threshold.critical)
-                    else:
-                        score = 0.0
-
-                total_score += score * weight
-                total_weight += weight
-
-        if total_weight == 0:
-            return 0.0
-
-        return min(total_score / total_weight, 1.0)
+        Uses weighted threshold analysis with:
+        - Direction-aware scoring (rising vs falling)
+        - Case-insensitive biomarker matching
+        - Weight-based composite scoring
+        """
+        # Use the risk calculator module
+        return quick_risk_score(
+            risk_domain=risk_domain,
+            lab_data=lab_data,
+            vital_signs=vitals_data,
+        )
 
     def _calculate_combined_confidence(
         self,
