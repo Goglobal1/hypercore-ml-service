@@ -91,6 +91,16 @@ from .risk_calculator import (
     get_domain_thresholds,
     BIOMARKER_ALIASES,
 )
+from .email_config import (
+    SMTPSettings,
+    get_smtp_settings,
+    reset_smtp_settings,
+)
+from .email_notifier import (
+    EmailNotifier,
+    EmailResult,
+    create_email_callback,
+)
 from .router import router as alert_router
 
 __all__ = [
@@ -169,6 +179,13 @@ __all__ = [
     "normalize_biomarker_name",
     "get_domain_thresholds",
     "BIOMARKER_ALIASES",
+    # Email Notifications
+    "SMTPSettings",
+    "get_smtp_settings",
+    "reset_smtp_settings",
+    "EmailNotifier",
+    "EmailResult",
+    "create_email_callback",
     # FastAPI Router
     "alert_router",
 ]

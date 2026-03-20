@@ -416,6 +416,20 @@ async def startup_preload():
             # Connect pipeline to hub for real-time notifications
             pipeline = get_pipeline()
             pipeline.register_dashboard_callback(hub.get_dashboard_callback())
+
+            # Register email notification callback if configured
+            try:
+                from app.core.alert_system import get_smtp_settings, get_router, create_email_callback
+                smtp_settings = get_smtp_settings()
+                if smtp_settings.enabled and smtp_settings.is_configured():
+                    router = get_router()
+                    router.register_notification_callback("email", create_email_callback())
+                    logger.info(f"Email notifications enabled: {smtp_settings.server}:{smtp_settings.port}")
+                else:
+                    logger.info("Email notifications not configured (set SMTP_SERVER env var to enable)")
+            except Exception as e:
+                logger.warning(f"Email notification setup failed: {e}")
+
             logger.info("Alert system initialized (storage: memory, realtime: active)")
         except Exception as e:
             logger.warning(f"Alert system initialization failed: {e}")
