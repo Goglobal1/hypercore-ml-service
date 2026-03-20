@@ -3,6 +3,7 @@
 **Audit Date:** 2026-03-20
 **Auditor:** Claude Opus 4.5
 **Status:** COMPLETE
+**Last Updated:** 2026-03-20 (Email system implemented)
 
 ---
 
@@ -11,7 +12,7 @@
 | Area | Status | Notes |
 |------|--------|-------|
 | **Graceful Fallbacks** | PASS | All modules handle missing data without crashing |
-| **Email Notifications** | NOT IMPLEMENTED | Callback system exists but no SMTP implementation |
+| **Email Notifications** | IMPLEMENTED | SMTP-based email system with env var configuration |
 | **Alert System** | PASS | Works without external data (code-based thresholds) |
 
 ---
@@ -153,7 +154,7 @@ class AlertRouter:
 | `dashboard` | All rules | WORKING (WebSocket/SSE) |
 | `pager` | Critical, Urgent | NOT IMPLEMENTED |
 | `sms` | Critical | NOT IMPLEMENTED |
-| `email` | Kidney, Oncology, Watch | NOT IMPLEMENTED |
+| `email` | Kidney, Oncology, Watch | **IMPLEMENTED** |
 
 ### 2.3 Email in Routing Rules
 
@@ -182,19 +183,38 @@ RoutingRule(
 )
 ```
 
-### 2.4 SMTP/Email Configuration
+### 2.4 Email Implementation (COMPLETED)
 
-**SEARCH RESULT: NO SMTP CONFIGURATION FOUND**
+**Files Created:**
 
-```bash
-grep -rn "SMTP|EMAIL|MAIL" app/ --include="*.py"
-# Only found "email" in notification_channels definitions
-# No smtplib, sendgrid, mailgun, or email sending code
-```
+| File | Purpose |
+|------|---------|
+| `app/core/alert_system/email_config.py` | SMTP settings from environment variables |
+| `app/core/alert_system/email_notifier.py` | EmailNotifier class with SMTP sending |
+
+**Features:**
+- SMTP with TLS/SSL support
+- Retry logic (3 attempts with 1s delay)
+- HTML + plain text email formatting
+- Role-to-email mapping via environment variables
+- Graceful degradation when not configured
 
 ### 2.5 Current Notification Behavior
 
-When an alert is routed to email:
+**When SMTP is configured:**
+
+```json
+{
+  "notifications_sent": {
+    "email": true,
+    "sms": "no_callback_registered",
+    "pager": "no_callback_registered",
+    "dashboard": true
+  }
+}
+```
+
+**When SMTP is NOT configured:**
 
 ```json
 {
@@ -207,62 +227,51 @@ When an alert is routed to email:
 }
 ```
 
-**Only `dashboard` works** (via WebSocket/SSE in `realtime.py`).
+### 2.6 Email Configuration
 
-### 2.6 What Needs to be Implemented
-
-To enable email notifications, you need to:
-
-1. **Create an email sender module:**
-
-```python
-# Example: app/core/alert_system/email_notifier.py
-import smtplib
-from email.mime.text import MIMEText
-
-def send_email_alert(event, targets):
-    """Send email notification for alert."""
-    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_pass = os.getenv("SMTP_PASS")
-
-    # Build email content from event
-    subject = f"[{event.severity}] Alert: {event.risk_domain} - {event.patient_id}"
-    body = f"""
-    Patient: {event.patient_id}
-    Domain: {event.risk_domain}
-    State: {event.state_current}
-    Risk Score: {event.risk_score}
-    Action: {event.suggested_action}
-    """
-
-    # Send to each target (would need email lookup)
-    ...
-    return True
-```
-
-2. **Register the callback at startup:**
-
-```python
-# In main.py startup
-from app.core.alert_system.email_notifier import send_email_alert
-
-alert_router = get_router()
-alert_router.register_notification_callback("email", send_email_alert)
-alert_router.register_notification_callback("sms", send_sms_alert)
-alert_router.register_notification_callback("pager", send_pager_alert)
-```
-
-3. **Add environment variables:**
+**Environment Variables:**
 
 ```bash
+# SMTP Server Settings
 SMTP_SERVER=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=alerts@hospital.com
-SMTP_PASS=xxx
-SMTP_FROM=hypercore-alerts@hospital.com
+SMTP_USERNAME=alerts@hospital.com
+SMTP_PASSWORD=your-app-password
+SMTP_FROM_ADDRESS=hypercore-alerts@hospital.com
+SMTP_FROM_NAME=HyperCore Alert System
+SMTP_USE_TLS=true
+SMTP_ENABLED=true
+
+# Recipient Mapping (comma-separated)
+ALERT_DEFAULT_RECIPIENTS=admin@hospital.com
+ALERT_NEPHROLOGY_RECIPIENTS=nephro-team@hospital.com
+ALERT_ONCOLOGY_RECIPIENTS=onco-team@hospital.com
 ```
+
+**Startup Registration (main.py):**
+
+```python
+# Register email notification callback if configured
+from app.core.alert_system import get_smtp_settings, get_router, create_email_callback
+
+smtp_settings = get_smtp_settings()
+if smtp_settings.enabled and smtp_settings.is_configured():
+    router = get_router()
+    router.register_notification_callback("email", create_email_callback())
+    logger.info(f"Email notifications enabled: {smtp_settings.server}:{smtp_settings.port}")
+```
+
+### 2.7 Email Format
+
+**Subject:** `[CRITICAL] Sepsis risk escalation - Patient PT-123`
+
+**HTML Body includes:**
+- Severity-colored header (red=CRITICAL, orange=URGENT, yellow=WARNING)
+- Clinical headline and rationale
+- Suggested action box
+- Time to harm warning
+- Contributing biomarkers list
+- Routing information
 
 ---
 
@@ -276,26 +285,26 @@ All modules properly handle missing data files:
 - Don't crash or raise exceptions
 - Alert system works 100% without external files
 
-### Email Notification Status: NOT IMPLEMENTED
+### Email Notification Status: IMPLEMENTED
 
 | Component | Status |
 |-----------|--------|
 | Routing rules with email | Defined |
 | Callback registration system | Working |
-| SMTP configuration | Missing |
-| Email sending code | Missing |
-| Environment variables | Missing |
+| SMTP configuration | **Implemented** (`email_config.py`) |
+| Email sending code | **Implemented** (`email_notifier.py`) |
+| Environment variables | **Documented** |
+| Startup registration | **Implemented** (`main.py`) |
 
 ### Recommendations
 
 1. **No action needed for fallbacks** - System is properly designed
-2. **For email notifications:**
-   - Create `app/core/alert_system/email_notifier.py`
-   - Register callback in `main.py` startup
-   - Add SMTP environment variables
-   - Consider using SendGrid/Mailgun for production
 
-3. **For SMS/Pager:**
+2. **Email notifications** - COMPLETE
+   - Set SMTP environment variables on Railway/production
+   - Configure recipient mappings for each clinical role
+
+3. **For SMS/Pager (still needed):**
    - Integrate Twilio for SMS
    - Integrate PagerDuty for pager notifications
 
@@ -303,4 +312,4 @@ All modules properly handle missing data files:
 
 **Audit Complete**
 **Date:** 2026-03-20
-**Result:** System is resilient to missing data. Email notifications need implementation.
+**Result:** System is resilient to missing data. Email notifications are now implemented.
