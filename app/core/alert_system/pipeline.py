@@ -754,6 +754,42 @@ class AlertPipeline:
                 evaluation_result.alert_event.intervention_window = tth_prediction.get("intervention_window")
             evaluation_result.time_to_harm = tth_prediction
 
+            # Step 6.5: Cascade detection - extend detection window with multi-omic signals
+            if specialized_results.get("modules_invoked"):
+                cascade_detection = self._calculate_cascade_detection(
+                    specialized_results=specialized_results,
+                    traditional_tth_hours=tth_prediction.get("hours", 24.0),
+                    lab_data=lab_data or {},
+                )
+
+                # Add cascade detection step
+                steps.append(PipelineStepResult(
+                    step_name="cascade_detection",
+                    success=True,
+                    duration_ms=0.01,
+                    data={
+                        "earliest_level": cascade_detection.get("earliest_signal_level"),
+                        "improvement_days": cascade_detection.get("detection_improvement_days"),
+                        "levels_detected": cascade_detection.get("levels_detected"),
+                    }
+                ))
+
+                # Store cascade detection in evaluation result
+                evaluation_result.cascade_detection = cascade_detection
+
+                # Update time_to_harm with integrated values
+                if cascade_detection.get("integrated_detection_hours"):
+                    evaluation_result.time_to_harm["integrated_hours"] = cascade_detection["integrated_detection_hours"]
+                    evaluation_result.time_to_harm["traditional_hours"] = cascade_detection["traditional_detection_hours"]
+                    evaluation_result.time_to_harm["improvement_hours"] = cascade_detection["detection_improvement_hours"]
+                    evaluation_result.time_to_harm["improvement_days"] = cascade_detection["detection_improvement_days"]
+
+                # Add cascade recommendations to alert
+                cascade_recs = self._generate_cascade_recommendations(cascade_detection)
+                if evaluation_result.alert_event and cascade_recs:
+                    existing_recs = evaluation_result.alert_event.recommendations or []
+                    evaluation_result.alert_event.recommendations = cascade_recs + existing_recs
+
             # Step 7: Confidence scoring across sources
             step_start = datetime.now(timezone.utc)
             final_confidence = self._calculate_combined_confidence(
@@ -1189,6 +1225,178 @@ class AlertPipeline:
 
         if not recommendations:
             recommendations.append("No specific pathogen alerts - continue standard infection workup")
+
+        return recommendations
+
+    # =========================================================================
+    # CASCADE DETECTION - MULTI-OMIC EARLY WARNING
+    # =========================================================================
+
+    def _calculate_cascade_detection(
+        self,
+        specialized_results: Dict[str, Any],
+        traditional_tth_hours: float,
+        lab_data: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Calculate extended detection window based on cascade signals.
+
+        CASCADE LEVELS (disease progression order):
+        - Level 1 (Genomic): Genetic predisposition - always present
+        - Level 2 (Metabolic): Lactate, amino acid shifts - Day 1-2
+        - Level 3 (Proteomic): Cytokine precursors - Day 2-3
+        - Level 4 (Inflammatory): CRP, WBC, PCT elevated - Day 3-4 (current)
+        - Level 5 (Clinical): Vitals deteriorating - Day 5+ (too late)
+
+        Returns extended detection window when multi-omic signals are found.
+        """
+        levels_detected = []
+        contributing_factors = []
+        detection_extension_hours = 0.0
+        earliest_level = "inflammatory"  # Default - where we typically detect
+        confounders = []
+
+        # Check genomics (Level 1 - earliest possible detection)
+        genomics = specialized_results.get("genomics", {})
+        if genomics.get("invoked"):
+            variants = genomics.get("variant_impacts", [])
+            genes = genomics.get("genes_analyzed", [])
+
+            # Pathogenic variants = +72 hours (3 days earlier detection)
+            pathogenic = [
+                v for v in variants
+                if "pathogenic" in str(v.get("significance", "")).lower()
+            ]
+            if pathogenic:
+                levels_detected.append("genomic")
+                detection_extension_hours += 72.0
+                for v in pathogenic[:3]:
+                    contributing_factors.append(
+                        f"pathogenic_variant_{v.get('gene', 'unknown')}"
+                    )
+                earliest_level = "genomic"
+
+            # Drug metabolism variants = +48 hours (2 days earlier)
+            metabolism_genes = {"CYP2D6", "CYP2C19", "CYP2C9", "DPYD", "TPMT", "UGT1A1"}
+            metabolism_found = [g for g in genes if g.upper() in metabolism_genes]
+            if metabolism_found and not pathogenic:
+                levels_detected.append("genomic")
+                detection_extension_hours += 48.0
+                for g in metabolism_found[:2]:
+                    contributing_factors.append(f"metabolism_variant_{g}")
+                earliest_level = "genomic"
+
+        # Check multiomic (Level 2-3 - metabolic/proteomic patterns)
+        multiomic = specialized_results.get("multiomic", {})
+        if multiomic.get("invoked"):
+            integrated_score = multiomic.get("integrated_score", 0)
+            biomarker_candidates = multiomic.get("biomarker_candidates", [])
+
+            # High integrated score = +48 hours (cross-layer correlation)
+            if integrated_score > 0.5:
+                if "metabolic" not in levels_detected:
+                    levels_detected.append("metabolic")
+                detection_extension_hours += 48.0
+                contributing_factors.append(f"multiomic_score_{integrated_score:.2f}")
+                if earliest_level == "inflammatory":
+                    earliest_level = "metabolic"
+
+            # Biomarker candidates identified = +24 hours
+            if biomarker_candidates:
+                detection_extension_hours += 24.0
+                for bc in biomarker_candidates[:2]:
+                    contributing_factors.append(f"biomarker_candidate_{bc}")
+
+        # Check pathogen (Level 3-4 - regional surveillance adds lead time)
+        pathogen = specialized_results.get("pathogen", {})
+        if pathogen.get("invoked"):
+            alert_count = pathogen.get("alert_count", 0)
+            outbreak_risk = pathogen.get("outbreak_risk", "low")
+
+            # Regional outbreak alerts = +36 hours (1.5 days)
+            if alert_count > 0 or outbreak_risk in ["high", "moderate"]:
+                if "proteomic" not in levels_detected:
+                    levels_detected.append("proteomic")
+                detection_extension_hours += 36.0
+                contributing_factors.append(f"regional_pathogen_alert_{outbreak_risk}")
+                if earliest_level == "inflammatory":
+                    earliest_level = "proteomic"
+
+            # Elevated infection markers (inflammatory level - standard detection)
+            if pathogen.get("infection_markers_elevated"):
+                if "inflammatory" not in levels_detected:
+                    levels_detected.append("inflammatory")
+                for marker in ["procalcitonin", "pct", "wbc", "crp"]:
+                    val = lab_data.get(marker, 0)
+                    if isinstance(val, (int, float)) and val > 0:
+                        contributing_factors.append(f"elevated_{marker}")
+
+        # Check pharma for confounders (drug interactions may mask symptoms)
+        pharma = specialized_results.get("pharma", {})
+        if pharma.get("invoked"):
+            interactions = pharma.get("interactions_found", [])
+            max_severity = pharma.get("max_severity", "none")
+
+            if max_severity in ["major", "contraindicated"]:
+                confounders.append("major_drug_interaction")
+                contributing_factors.append(f"drug_interaction_{max_severity}")
+
+            if interactions:
+                confounders.append("potential_symptom_masking")
+
+        # Ensure inflammatory is in levels if we have lab data with values
+        if lab_data and "inflammatory" not in levels_detected:
+            for marker in ["procalcitonin", "pct", "wbc", "crp", "lactate"]:
+                val = lab_data.get(marker, 0)
+                if isinstance(val, (int, float)) and val > 0:
+                    levels_detected.append("inflammatory")
+                    break
+
+        # Calculate final integrated detection hours
+        integrated_hours = traditional_tth_hours + detection_extension_hours
+        improvement_hours = detection_extension_hours
+
+        return {
+            "primary_detection_level": "inflammatory",
+            "earliest_signal_level": earliest_level,
+            "levels_detected": levels_detected,
+            "traditional_detection_hours": round(traditional_tth_hours, 1),
+            "integrated_detection_hours": round(integrated_hours, 1),
+            "detection_improvement_hours": round(improvement_hours, 1),
+            "detection_improvement_days": round(improvement_hours / 24.0, 1),
+            "contributing_factors": contributing_factors[:10],
+            "confounders": confounders,
+        }
+
+    def _generate_cascade_recommendations(
+        self,
+        cascade_detection: Dict[str, Any],
+    ) -> List[str]:
+        """Generate clinical recommendations based on cascade detection results."""
+        recommendations = []
+
+        improvement_days = cascade_detection.get("detection_improvement_days", 0)
+        improvement_hours = cascade_detection.get("detection_improvement_hours", 0)
+        earliest = cascade_detection.get("earliest_signal_level", "inflammatory")
+
+        if improvement_hours > 0:
+            if earliest == "genomic":
+                recommendations.append(
+                    f"Early genomic signal detected - {improvement_days} days earlier "
+                    f"detection than inflammatory markers alone"
+                )
+            elif earliest in ["metabolic", "proteomic"]:
+                recommendations.append(
+                    f"Multi-omic fusion identified risk pattern {improvement_hours:.0f} hours "
+                    f"before clinical deterioration"
+                )
+
+        # Add confounder warnings
+        confounders = cascade_detection.get("confounders", [])
+        if "major_drug_interaction" in confounders:
+            recommendations.append(
+                "CAUTION: Major drug interaction may mask or alter symptom presentation"
+            )
 
         return recommendations
 
