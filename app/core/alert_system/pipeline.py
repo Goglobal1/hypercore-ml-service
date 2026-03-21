@@ -24,6 +24,31 @@ from .routing import AlertRouter, EscalationManager, get_router, get_escalation_
 from .config import DOMAIN_CONFIGS, get_domain_config
 from .risk_calculator import calculate_risk_score as calc_risk, quick_risk_score
 
+# Specialized module imports for integrated pipeline
+try:
+    from ..genomics_integration import analyze_genomics, get_gene_variants
+    GENOMICS_AVAILABLE = True
+except ImportError:
+    GENOMICS_AVAILABLE = False
+
+try:
+    from ..drug_response_predictor import check_drug_interactions, get_drug_profile
+    PHARMA_AVAILABLE = True
+except ImportError:
+    PHARMA_AVAILABLE = False
+
+try:
+    from ..pathogen_detection import detect_outbreaks, get_pathogen_info
+    PATHOGEN_AVAILABLE = True
+except ImportError:
+    PATHOGEN_AVAILABLE = False
+
+try:
+    from ..multiomic_fusion import fusion_analysis, unified_query
+    MULTIOMIC_AVAILABLE = True
+except ImportError:
+    MULTIOMIC_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -671,6 +696,41 @@ class AlertPipeline:
                     data={"skipped": True, "reason": "no_state_transition_or_low_severity"}
                 ))
 
+            # Step 5.5: Run specialized modules (genomics, pharma, pathogen, multiomic)
+            step_start = datetime.now(timezone.utc)
+            specialized_results = await self._run_specialized_modules(
+                patient_id=patient_id,
+                risk_domain=risk_domain,
+                lab_data=lab_data or {},
+                clinical_data=clinical_data or {},
+                contributing_biomarkers=evaluation_result.contributing_biomarkers or [],
+            )
+            modules_invoked = specialized_results.get("modules_invoked", [])
+            if modules_invoked:
+                steps.append(PipelineStepResult(
+                    step_name="specialized_modules",
+                    success=True,
+                    duration_ms=specialized_results.get("duration_ms", 0),
+                    data={
+                        "modules_invoked": modules_invoked,
+                        "genomics": specialized_results.get("genomics", {}).get("invoked", False),
+                        "pharma": specialized_results.get("pharma", {}).get("invoked", False),
+                        "pathogen": specialized_results.get("pathogen", {}).get("invoked", False),
+                        "multiomic": specialized_results.get("multiomic", {}).get("invoked", False),
+                    }
+                ))
+                # Add specialized results to agent_findings
+                if evaluation_result.agent_findings is None:
+                    evaluation_result.agent_findings = {}
+                evaluation_result.agent_findings["specialized_modules"] = specialized_results
+            else:
+                steps.append(PipelineStepResult(
+                    step_name="specialized_modules",
+                    success=True,
+                    duration_ms=(datetime.now(timezone.utc) - step_start).total_seconds() * 1000,
+                    data={"skipped": True, "reason": "no_modules_triggered"}
+                ))
+
             # Step 6: Time-to-harm prediction
             step_start = datetime.now(timezone.utc)
             tth_result = await self.tth.predict_tth(
@@ -910,6 +970,227 @@ class AlertPipeline:
                 logger.error(f"Dashboard callback failed: {e}")
 
         return notified
+
+    # =========================================================================
+    # SPECIALIZED MODULE INTEGRATION
+    # =========================================================================
+
+    def _should_invoke_genomics(
+        self,
+        clinical_data: Dict[str, Any],
+        biomarkers: List[str],
+    ) -> bool:
+        """Check if genomics module should be invoked."""
+        if not GENOMICS_AVAILABLE:
+            return False
+        genetic_markers = {"CYP2D6", "CYP2C19", "BRCA1", "BRCA2", "HLA-B", "TPMT", "DPYD", "VKORC1"}
+        return bool(
+            clinical_data.get("genetic_data") or
+            clinical_data.get("genes") or
+            any(bm.upper() in genetic_markers for bm in biomarkers)
+        )
+
+    def _should_invoke_pharma(self, clinical_data: Dict[str, Any]) -> bool:
+        """Check if pharma module should be invoked."""
+        if not PHARMA_AVAILABLE:
+            return False
+        meds = clinical_data.get("medications", [])
+        return len(meds) >= 2  # Need at least 2 drugs for interaction check
+
+    def _should_invoke_pathogen(self, lab_data: Dict[str, Any]) -> bool:
+        """Check if pathogen module should be invoked based on infection markers."""
+        if not PATHOGEN_AVAILABLE:
+            return False
+        infection_thresholds = {
+            "procalcitonin": 0.5,
+            "pct": 0.5,
+            "wbc": 12.0,
+            "crp": 10.0,
+            "lactate": 2.0,
+        }
+        for marker, threshold in infection_thresholds.items():
+            value = lab_data.get(marker, 0)
+            if isinstance(value, (int, float)) and value > threshold:
+                return True
+        return False
+
+    def _should_invoke_multiomic(
+        self,
+        risk_domain: str,
+        clinical_data: Dict[str, Any],
+    ) -> bool:
+        """Check if multiomic module should be invoked."""
+        if not MULTIOMIC_AVAILABLE:
+            return False
+        genomic_domains = {"oncology", "hematologic", "metabolic", "oncology_inception"}
+        return bool(
+            risk_domain in genomic_domains or
+            clinical_data.get("genetic_data") or
+            clinical_data.get("genes") or
+            len(clinical_data) > 2
+        )
+
+    async def _run_specialized_modules(
+        self,
+        patient_id: str,
+        risk_domain: str,
+        lab_data: Dict[str, Any],
+        clinical_data: Dict[str, Any],
+        contributing_biomarkers: List[str],
+    ) -> Dict[str, Any]:
+        """
+        Run specialized modules (genomics, pharma, pathogen, multiomic) based on data.
+
+        Returns results from all invoked modules.
+        """
+        start_time = datetime.now(timezone.utc)
+        results = {}
+        modules_invoked = []
+
+        # Genomics analysis
+        if self._should_invoke_genomics(clinical_data, contributing_biomarkers):
+            modules_invoked.append("genomics")
+            try:
+                genes = clinical_data.get("genes", [])
+                if not genes:
+                    # Extract genes from genetic_data if present
+                    genetic_data = clinical_data.get("genetic_data", {})
+                    genes = list(genetic_data.keys()) if isinstance(genetic_data, dict) else []
+                if genes:
+                    genomics_result = analyze_genomics(
+                        genes=genes[:10],  # Limit to 10 genes
+                        include_variants=True,
+                        include_expression=True,
+                        max_expression_files=5,
+                    )
+                    results["genomics"] = {
+                        "invoked": True,
+                        "genes_analyzed": genes[:10],
+                        "variant_impacts": genomics_result.get("variant_impacts", [])[:5],
+                        "expression_patterns": genomics_result.get("expression_patterns", [])[:3],
+                        "recommendations": self._extract_genomics_recommendations(genomics_result),
+                    }
+                else:
+                    results["genomics"] = {"invoked": False, "reason": "no_genes_specified"}
+            except Exception as e:
+                logger.warning(f"Genomics analysis failed: {e}")
+                results["genomics"] = {"invoked": False, "error": str(e)}
+
+        # Pharma interactions check
+        if self._should_invoke_pharma(clinical_data):
+            modules_invoked.append("pharma")
+            try:
+                medications = clinical_data.get("medications", [])
+                pharma_result = check_drug_interactions(medications)
+                results["pharma"] = {
+                    "invoked": True,
+                    "drugs_checked": medications,
+                    "interactions_found": pharma_result.get("interactions", [])[:5],
+                    "interaction_count": pharma_result.get("total_interactions", 0),
+                    "max_severity": pharma_result.get("max_severity", "none"),
+                    "recommendations": pharma_result.get("recommendations", []),
+                }
+            except Exception as e:
+                logger.warning(f"Pharma interaction check failed: {e}")
+                results["pharma"] = {"invoked": False, "error": str(e)}
+
+        # Pathogen detection
+        if self._should_invoke_pathogen(lab_data):
+            modules_invoked.append("pathogen")
+            try:
+                pathogen_result = detect_outbreaks(
+                    threshold_multiplier=1.5,
+                    lookback_years=3,
+                )
+                alerts = pathogen_result.get("alerts", [])
+                results["pathogen"] = {
+                    "invoked": True,
+                    "alerts": alerts[:3],
+                    "alert_count": len(alerts),
+                    "outbreak_risk": "high" if len(alerts) > 2 else "moderate" if alerts else "low",
+                    "infection_markers_elevated": True,
+                    "recommendations": self._extract_pathogen_recommendations(pathogen_result, lab_data),
+                }
+            except Exception as e:
+                logger.warning(f"Pathogen detection failed: {e}")
+                results["pathogen"] = {"invoked": False, "error": str(e)}
+
+        # Multi-omic fusion
+        if self._should_invoke_multiomic(risk_domain, clinical_data):
+            modules_invoked.append("multiomic")
+            try:
+                # Build query based on available data
+                genes = clinical_data.get("genes", [])
+                target_gene = genes[0] if genes else None
+
+                multiomic_result = fusion_analysis(
+                    target_gene=target_gene,
+                    target_disease=risk_domain,
+                    include_genomic=True,
+                    include_clinical=True,
+                    include_pharmacological=True,
+                )
+                results["multiomic"] = {
+                    "invoked": True,
+                    "target": target_gene or risk_domain,
+                    "layers_analyzed": multiomic_result.get("layers_analyzed", []),
+                    "integrated_score": multiomic_result.get("integrated_score", 0),
+                    "biomarker_candidates": multiomic_result.get("biomarker_candidates", [])[:5],
+                    "drug_candidates": multiomic_result.get("drug_candidates", [])[:5],
+                    "clinical_implications": multiomic_result.get("clinical_implications", [])[:3],
+                }
+            except Exception as e:
+                logger.warning(f"Multi-omic fusion failed: {e}")
+                results["multiomic"] = {"invoked": False, "error": str(e)}
+
+        # Calculate duration
+        duration_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+        results["modules_invoked"] = modules_invoked
+        results["duration_ms"] = round(duration_ms, 2)
+
+        return results
+
+    def _extract_genomics_recommendations(self, genomics_result: Dict[str, Any]) -> List[str]:
+        """Extract clinical recommendations from genomics analysis."""
+        recommendations = []
+
+        variants = genomics_result.get("variant_impacts", [])
+        for variant in variants[:3]:
+            if variant.get("clinical_significance") in ["Pathogenic", "Likely_pathogenic"]:
+                gene = variant.get("gene", "Unknown")
+                recommendations.append(f"Pathogenic variant in {gene} - consider genetic counseling")
+
+        if not recommendations:
+            recommendations.append("No actionable genomic variants detected")
+
+        return recommendations
+
+    def _extract_pathogen_recommendations(
+        self,
+        pathogen_result: Dict[str, Any],
+        lab_data: Dict[str, Any],
+    ) -> List[str]:
+        """Extract clinical recommendations from pathogen analysis."""
+        recommendations = []
+
+        # Check infection markers
+        if lab_data.get("procalcitonin", 0) > 2.0 or lab_data.get("pct", 0) > 2.0:
+            recommendations.append("High procalcitonin suggests bacterial infection - consider broad-spectrum antibiotics")
+        elif lab_data.get("procalcitonin", 0) > 0.5 or lab_data.get("pct", 0) > 0.5:
+            recommendations.append("Elevated procalcitonin - monitor for bacterial infection")
+
+        if lab_data.get("lactate", 0) > 2.0:
+            recommendations.append("Elevated lactate - assess tissue perfusion and consider sepsis protocol")
+
+        alerts = pathogen_result.get("alerts", [])
+        for alert in alerts[:2]:
+            pathogen_name = alert.get("pathogen", "Unknown pathogen")
+            recommendations.append(f"Regional alert for {pathogen_name} - consider in differential")
+
+        if not recommendations:
+            recommendations.append("No specific pathogen alerts - continue standard infection workup")
+
+        return recommendations
 
 
 # =============================================================================
