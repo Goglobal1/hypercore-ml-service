@@ -3,7 +3,7 @@ Alert System Pipeline - Unified Integration Layer
 Connects all components: scoring, CSE, agents, TTH, routing, persistence.
 """
 
-from typing import Dict, List, Optional, Any, Callable
+from typing import Dict, List, Optional, Any, Callable, Tuple
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
 import logging
@@ -50,6 +50,59 @@ except ImportError:
     MULTIOMIC_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
+
+
+# =============================================================================
+# BIOMARKER-TO-GENE PATTERN MAPPINGS (for intelligent inference)
+# =============================================================================
+
+BIOMARKER_GENE_PATTERNS = {
+    "sepsis": {
+        "triggers": {"procalcitonin": 0.5, "pct": 0.5, "wbc": 12.0, "crp": 10.0, "lactate": 2.0},
+        "min_markers": 2,
+        "genes": ["CYP2D6", "DPYD", "IL6", "TNF", "HMGB1"],
+        "rationale": "Sepsis-associated metabolism and inflammatory genes",
+    },
+    "cardiac": {
+        "triggers": {"troponin": 0.04, "troponin_i": 0.04, "troponin_t": 0.1, "bnp": 100, "nt_probnp": 300},
+        "min_markers": 1,
+        "genes": ["VKORC1", "CYP2C19", "CYP2C9", "APOE"],
+        "rationale": "Cardiac drug metabolism and risk genes",
+    },
+    "oncology": {
+        "triggers": {"cea": 5.0, "ca125": 35, "ca199": 37, "psa": 4.0, "afp": 10},
+        "min_markers": 1,
+        "genes": ["BRCA1", "BRCA2", "TP53", "DPYD", "UGT1A1"],
+        "rationale": "Oncology risk and chemotherapy metabolism genes",
+    },
+    "metabolic": {
+        "triggers": {"glucose": 126, "hba1c": 6.5, "triglycerides": 150, "ldl": 130},
+        "min_markers": 2,
+        "genes": ["CYP2C9", "SLCO1B1", "APOE"],
+        "rationale": "Metabolic and statin response genes",
+    },
+    "hepatic": {
+        "triggers": {"alt": 40, "ast": 40, "bilirubin": 1.2, "albumin_low": 3.5, "inr": 1.1},
+        "min_markers": 2,
+        "genes": ["CYP2D6", "CYP3A4", "NAT2", "UGT1A1"],
+        "rationale": "Hepatic metabolism genes",
+    },
+    "renal": {
+        "triggers": {"creatinine": 1.2, "bun": 20, "egfr_low": 60},
+        "min_markers": 1,
+        "genes": ["CYP2D6", "SLCO1B1", "ABCB1"],
+        "rationale": "Renal clearance and drug transport genes",
+    },
+}
+
+# Domain-to-gene mappings for risk domain inference
+DOMAIN_GENE_MAPPINGS = {
+    "sepsis": ["CYP2D6", "IL6", "TNF"],
+    "cardiac": ["VKORC1", "CYP2C19"],
+    "oncology": ["BRCA1", "BRCA2", "DPYD"],
+    "kidney": ["SLCO1B1", "ABCB1"],
+    "hepatic": ["CYP2D6", "UGT1A1"],
+}
 
 
 # =============================================================================
@@ -697,6 +750,7 @@ class AlertPipeline:
                 ))
 
             # Step 5.5: Run specialized modules (genomics, pharma, pathogen, multiomic)
+            # Now intelligently infers genes from biomarker patterns
             step_start = datetime.now(timezone.utc)
             specialized_results = await self._run_specialized_modules(
                 patient_id=patient_id,
@@ -704,6 +758,7 @@ class AlertPipeline:
                 lab_data=lab_data or {},
                 clinical_data=clinical_data or {},
                 contributing_biomarkers=evaluation_result.contributing_biomarkers or [],
+                risk_score=risk_score,
             )
             modules_invoked = specialized_results.get("modules_invoked", [])
             if modules_invoked:
@@ -1011,20 +1066,100 @@ class AlertPipeline:
     # SPECIALIZED MODULE INTEGRATION
     # =========================================================================
 
+    def _infer_relevant_factors(
+        self,
+        lab_data: Dict[str, Any],
+        risk_domain: str,
+    ) -> Dict[str, Any]:
+        """
+        Infer relevant genetic factors from biomarker patterns.
+
+        Returns genes to check and rationale based on detected patterns.
+        This allows the system to intelligently invoke genomics/pharma even
+        when genes aren't explicitly provided in input.
+        """
+        inferred_genes = set()
+        matched_patterns = []
+        rationales = []
+
+        for pattern_name, pattern in BIOMARKER_GENE_PATTERNS.items():
+            triggers = pattern["triggers"]
+            min_markers = pattern["min_markers"]
+
+            # Count elevated markers for this pattern
+            elevated_count = 0
+            elevated_markers = []
+
+            for marker, threshold in triggers.items():
+                # Handle "low" thresholds (e.g., albumin_low, egfr_low)
+                if marker.endswith("_low"):
+                    actual_marker = marker.replace("_low", "")
+                    value = lab_data.get(actual_marker, float('inf'))
+                    if isinstance(value, (int, float)) and value < threshold:
+                        elevated_count += 1
+                        elevated_markers.append(actual_marker)
+                else:
+                    value = lab_data.get(marker, 0)
+                    if isinstance(value, (int, float)) and value > threshold:
+                        elevated_count += 1
+                        elevated_markers.append(marker)
+
+            # Check if pattern matches
+            if elevated_count >= min_markers:
+                matched_patterns.append(pattern_name)
+                inferred_genes.update(pattern["genes"])
+                rationales.append(pattern["rationale"])
+
+        # Also check risk domain for additional genes
+        if risk_domain in DOMAIN_GENE_MAPPINGS:
+            inferred_genes.update(DOMAIN_GENE_MAPPINGS[risk_domain])
+            if risk_domain not in matched_patterns:
+                matched_patterns.append(f"domain_{risk_domain}")
+
+        return {
+            "inferred_genes": list(inferred_genes),
+            "matched_patterns": matched_patterns,
+            "rationales": rationales,
+            "should_check_genomics": len(inferred_genes) > 0,
+        }
+
     def _should_invoke_genomics(
         self,
         clinical_data: Dict[str, Any],
         biomarkers: List[str],
-    ) -> bool:
-        """Check if genomics module should be invoked."""
+        lab_data: Dict[str, Any] = None,
+        risk_domain: str = None,
+    ) -> Tuple[bool, List[str]]:
+        """
+        Check if genomics module should be invoked.
+
+        Returns (should_invoke, genes_to_check).
+        Now intelligently infers genes from biomarker patterns.
+        """
         if not GENOMICS_AVAILABLE:
-            return False
+            return False, []
+
+        genes_to_check = []
         genetic_markers = {"CYP2D6", "CYP2C19", "BRCA1", "BRCA2", "HLA-B", "TPMT", "DPYD", "VKORC1"}
-        return bool(
-            clinical_data.get("genetic_data") or
-            clinical_data.get("genes") or
-            any(bm.upper() in genetic_markers for bm in biomarkers)
-        )
+
+        # Explicit genes from input
+        if clinical_data.get("genetic_data"):
+            genes_to_check.extend(list(clinical_data.get("genetic_data", {}).keys()))
+        if clinical_data.get("genes"):
+            genes_to_check.extend(clinical_data.get("genes", []))
+        if any(bm.upper() in genetic_markers for bm in biomarkers):
+            genes_to_check.extend([bm for bm in biomarkers if bm.upper() in genetic_markers])
+
+        # Infer genes from biomarker patterns
+        if lab_data:
+            inferred = self._infer_relevant_factors(lab_data, risk_domain or "")
+            if inferred["should_check_genomics"]:
+                genes_to_check.extend(inferred["inferred_genes"])
+
+        # Deduplicate
+        genes_to_check = list(set(genes_to_check))
+
+        return len(genes_to_check) > 0, genes_to_check
 
     def _should_invoke_pharma(self, clinical_data: Dict[str, Any]) -> bool:
         """Check if pharma module should be invoked."""
@@ -1054,10 +1189,16 @@ class AlertPipeline:
         self,
         risk_domain: str,
         clinical_data: Dict[str, Any],
+        risk_score: float = 0.0,
     ) -> bool:
         """Check if multiomic module should be invoked."""
         if not MULTIOMIC_AVAILABLE:
             return False
+
+        # Always invoke for elevated risk (find similar patients)
+        if risk_score > 0.5:
+            return True
+
         genomic_domains = {"oncology", "hematologic", "metabolic", "oncology_inception"}
         return bool(
             risk_domain in genomic_domains or
@@ -1073,25 +1214,31 @@ class AlertPipeline:
         lab_data: Dict[str, Any],
         clinical_data: Dict[str, Any],
         contributing_biomarkers: List[str],
+        risk_score: float = 0.0,
     ) -> Dict[str, Any]:
         """
         Run specialized modules (genomics, pharma, pathogen, multiomic) based on data.
 
         Returns results from all invoked modules.
+        Now intelligently infers relevant genes from biomarker patterns.
         """
         start_time = datetime.now(timezone.utc)
         results = {}
         modules_invoked = []
 
-        # Genomics analysis
-        if self._should_invoke_genomics(clinical_data, contributing_biomarkers):
+        # Infer relevant factors from biomarker patterns
+        inferred_factors = self._infer_relevant_factors(lab_data, risk_domain)
+        results["inferred_factors"] = inferred_factors
+
+        # Genomics analysis - now uses inferred genes
+        should_genomics, genes_to_check = self._should_invoke_genomics(
+            clinical_data, contributing_biomarkers, lab_data, risk_domain
+        )
+        if should_genomics:
             modules_invoked.append("genomics")
             try:
-                genes = clinical_data.get("genes", [])
-                if not genes:
-                    # Extract genes from genetic_data if present
-                    genetic_data = clinical_data.get("genetic_data", {})
-                    genes = list(genetic_data.keys()) if isinstance(genetic_data, dict) else []
+                # Use inferred genes if no explicit genes provided
+                genes = genes_to_check
                 if genes:
                     genomics_result = analyze_genomics(
                         genes=genes[:10],  # Limit to 10 genes
@@ -1102,6 +1249,8 @@ class AlertPipeline:
                     results["genomics"] = {
                         "invoked": True,
                         "genes_analyzed": genes[:10],
+                        "genes_inferred": inferred_factors.get("should_check_genomics", False),
+                        "matched_patterns": inferred_factors.get("matched_patterns", []),
                         "variant_impacts": genomics_result.get("variant_impacts", [])[:5],
                         "expression_patterns": genomics_result.get("expression_patterns", [])[:3],
                         "recommendations": self._extract_genomics_recommendations(genomics_result),
@@ -1151,12 +1300,14 @@ class AlertPipeline:
                 logger.warning(f"Pathogen detection failed: {e}")
                 results["pathogen"] = {"invoked": False, "error": str(e)}
 
-        # Multi-omic fusion
-        if self._should_invoke_multiomic(risk_domain, clinical_data):
+        # Multi-omic fusion - now also triggered by elevated risk
+        if self._should_invoke_multiomic(risk_domain, clinical_data, risk_score):
             modules_invoked.append("multiomic")
             try:
-                # Build query based on available data
+                # Use inferred genes if no explicit genes provided
                 genes = clinical_data.get("genes", [])
+                if not genes and inferred_factors.get("inferred_genes"):
+                    genes = inferred_factors["inferred_genes"]
                 target_gene = genes[0] if genes else None
 
                 multiomic_result = fusion_analysis(
@@ -1169,6 +1320,7 @@ class AlertPipeline:
                 results["multiomic"] = {
                     "invoked": True,
                     "target": target_gene or risk_domain,
+                    "triggered_by_risk_score": risk_score > 0.5,
                     "layers_analyzed": multiomic_result.get("layers_analyzed", []),
                     "integrated_score": multiomic_result.get("integrated_score", 0),
                     "biomarker_candidates": multiomic_result.get("biomarker_candidates", [])[:5],
@@ -1286,6 +1438,17 @@ class AlertPipeline:
                     contributing_factors.append(f"metabolism_variant_{g}")
                 earliest_level = "genomic"
 
+        # Check pattern-inferred genetic factors (+24 hours for intelligent inference)
+        inferred = specialized_results.get("inferred_factors", {})
+        if inferred.get("should_check_genomics") and inferred.get("matched_patterns"):
+            if "pattern_inferred" not in levels_detected:
+                levels_detected.append("pattern_inferred")
+            detection_extension_hours += 24.0
+            for pattern in inferred.get("matched_patterns", [])[:3]:
+                contributing_factors.append(f"pattern_inferred_{pattern}")
+            if earliest_level == "inflammatory":
+                earliest_level = "pattern_inferred"
+
         # Check multiomic (Level 2-3 - metabolic/proteomic patterns)
         multiomic = specialized_results.get("multiomic", {})
         if multiomic.get("invoked"):
@@ -1385,6 +1548,11 @@ class AlertPipeline:
                     f"Early genomic signal detected - {improvement_days} days earlier "
                     f"detection than inflammatory markers alone"
                 )
+            elif earliest == "pattern_inferred":
+                recommendations.append(
+                    f"Biomarker patterns triggered genetic screening - "
+                    f"{improvement_hours:.0f} hours extended detection window"
+                )
             elif earliest in ["metabolic", "proteomic"]:
                 recommendations.append(
                     f"Multi-omic fusion identified risk pattern {improvement_hours:.0f} hours "
@@ -1397,6 +1565,28 @@ class AlertPipeline:
             recommendations.append(
                 "CAUTION: Major drug interaction may mask or alter symptom presentation"
             )
+
+        return recommendations
+
+    def _generate_pattern_recommendations(
+        self,
+        inferred_factors: Dict[str, Any],
+    ) -> List[str]:
+        """Generate recommendations based on inferred biomarker patterns."""
+        recommendations = []
+
+        genes = inferred_factors.get("inferred_genes", [])
+        patterns = inferred_factors.get("matched_patterns", [])
+        rationales = inferred_factors.get("rationales", [])
+
+        if genes:
+            gene_str = ", ".join(genes[:5])
+            recommendations.append(
+                f"Based on biomarker pattern, recommend screening for: {gene_str}"
+            )
+
+        for rationale in rationales[:2]:
+            recommendations.append(f"Pattern suggests: {rationale}")
 
         return recommendations
 
