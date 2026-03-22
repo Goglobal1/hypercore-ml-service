@@ -3670,6 +3670,25 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 confidence=0.0
             )
 
+        # NORMALIZE BIOMARKER COLUMN NAMES using BIOMARKER_MAPPINGS
+        try:
+            from app.core.data_ingestion import BIOMARKER_MAPPINGS
+            import re
+
+            def normalize_col_name(col: str) -> str:
+                """Normalize column name using BIOMARKER_MAPPINGS."""
+                normalized = col.lower().strip().replace("-", "_").replace(" ", "_")
+                # Strip unit suffixes
+                normalized = re.sub(r"_(?:ng|pg|ug|mg|g|mmol|umol|meq|u|iu|mu)_?(?:l|dl|ml)?$", "", normalized)
+                normalized = re.sub(r"_(?:ml|l)_(?:min|hr|sec|1_73m2)$", "", normalized)
+                return BIOMARKER_MAPPINGS.get(normalized, col)  # Return original if not found
+
+            # Create mapping of original -> normalized names
+            col_mapping = {col: normalize_col_name(col) for col in df.columns}
+            df = df.rename(columns=col_mapping)
+        except ImportError:
+            pass  # Continue without normalization if import fails
+
         # FLEXIBLE COLUMN DETECTION - try user hints first, then auto-detect
         # Outcome column
         label_col = None
