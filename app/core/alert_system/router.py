@@ -296,6 +296,11 @@ def _normalize_biomarker_name(name: str) -> str:
     if stripped in BIOMARKER_MAPPINGS:
         return BIOMARKER_MAPPINGS[stripped]
 
+    # Try stripping rate units (e.g., _ml_min, _l_min)
+    stripped = re.sub(r"_(?:ml|l)_(?:min|hr|sec|1_73m2)$", "", normalized)
+    if stripped in BIOMARKER_MAPPINGS:
+        return BIOMARKER_MAPPINGS[stripped]
+
     # Return original normalized name if no mapping found
     return normalized
 
