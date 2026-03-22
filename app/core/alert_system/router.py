@@ -31,11 +31,13 @@ try:
     from ..data_ingestion import (
         parse_any_data,
         DOMAIN_CRITICAL_BIOMARKERS,
+        BIOMARKER_MAPPINGS,
         infer_risk_domain,
     )
     DATA_INGESTION_AVAILABLE = True
 except ImportError:
     DATA_INGESTION_AVAILABLE = False
+    BIOMARKER_MAPPINGS = {}
 
 logger = logging.getLogger(__name__)
 
@@ -253,6 +255,15 @@ async def patient_intake(request: PatientIntakeRequest):
         return error_response
 
 
+def _normalize_biomarker_name(name: str) -> str:
+    """Normalize a biomarker name using BIOMARKER_MAPPINGS."""
+    # Lowercase and replace common separators with underscores
+    normalized = name.lower().strip()
+    normalized = normalized.replace("-", "_").replace(" ", "_")
+    # Look up in mappings, return normalized name or original
+    return BIOMARKER_MAPPINGS.get(normalized, normalized)
+
+
 def _calculate_data_completeness(
     lab_data: Dict[str, Any],
     risk_domain: str,
@@ -270,8 +281,8 @@ def _calculate_data_completeness(
     helpful = domain_reqs.get("helpful", set())
     genetic = domain_reqs.get("genetic", set())
 
-    # Normalize lab data keys
-    lab_keys = {k.lower() for k in lab_data.keys()}
+    # Normalize lab data keys using BIOMARKER_MAPPINGS
+    lab_keys = {_normalize_biomarker_name(k) for k in lab_data.keys()}
 
     critical_have = lab_keys & critical
     critical_missing = critical - lab_keys
