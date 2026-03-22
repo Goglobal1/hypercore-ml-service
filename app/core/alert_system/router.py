@@ -255,13 +255,48 @@ async def patient_intake(request: PatientIntakeRequest):
         return error_response
 
 
+import re
+
+# Common unit suffixes to strip
+UNIT_SUFFIXES = [
+    "_ng_l", "_ng_ml", "_pg_ml", "_ug_ml", "_mg_l", "_mg_dl", "_g_dl",
+    "_mmol_l", "_umol_l", "_meq_l", "_u_l", "_iu_l", "_mu_l",
+    "_10e9_l", "_10e12_l", "_percent", "_pct", "_ratio",
+    "_mm_hr", "_seconds", "_sec", "_ms",
+]
+
+
 def _normalize_biomarker_name(name: str) -> str:
-    """Normalize a biomarker name using BIOMARKER_MAPPINGS."""
+    """
+    Normalize a biomarker name using BIOMARKER_MAPPINGS.
+
+    Handles:
+    - Case variations
+    - Unit suffixes (ng_mL, mg_dL, mmol_L, etc.)
+    - Common prefixes and variations
+    """
     # Lowercase and replace common separators with underscores
     normalized = name.lower().strip()
     normalized = normalized.replace("-", "_").replace(" ", "_")
-    # Look up in mappings, return normalized name or original
-    return BIOMARKER_MAPPINGS.get(normalized, normalized)
+
+    # Direct lookup first
+    if normalized in BIOMARKER_MAPPINGS:
+        return BIOMARKER_MAPPINGS[normalized]
+
+    # Try stripping unit suffixes
+    for suffix in UNIT_SUFFIXES:
+        if normalized.endswith(suffix):
+            stripped = normalized[:-len(suffix)]
+            if stripped in BIOMARKER_MAPPINGS:
+                return BIOMARKER_MAPPINGS[stripped]
+
+    # Try stripping any trailing unit pattern (e.g., _ng_ml, _10e9_l)
+    stripped = re.sub(r"_(?:ng|pg|ug|mg|g|mmol|umol|meq|u|iu|mu|10e\d+)_?(?:l|dl|ml)?$", "", normalized)
+    if stripped in BIOMARKER_MAPPINGS:
+        return BIOMARKER_MAPPINGS[stripped]
+
+    # Return original normalized name if no mapping found
+    return normalized
 
 
 def _calculate_data_completeness(

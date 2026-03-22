@@ -14,10 +14,49 @@ REQUIREMENTS:
 """
 
 import logging
+import re
 from typing import Dict, List, Any, Tuple, Optional
 from dataclasses import dataclass, field
 
+# Import BIOMARKER_MAPPINGS for normalization
+from .robust_parser import BIOMARKER_MAPPINGS
+
 logger = logging.getLogger(__name__)
+
+# Common unit suffixes to strip when normalizing biomarker names
+_UNIT_SUFFIXES = [
+    "_ng_l", "_ng_ml", "_pg_ml", "_ug_ml", "_mg_l", "_mg_dl", "_g_dl",
+    "_mmol_l", "_umol_l", "_meq_l", "_u_l", "_iu_l", "_mu_l",
+    "_10e9_l", "_10e12_l", "_percent", "_pct", "_ratio",
+    "_mm_hr", "_seconds", "_sec", "_ms",
+]
+
+
+def _normalize_biomarker(name: str) -> str:
+    """
+    Normalize a biomarker name to standard form.
+
+    Handles units in name, prefixes, case variations.
+    """
+    normalized = name.lower().strip().replace("-", "_").replace(" ", "_")
+
+    # Direct lookup
+    if normalized in BIOMARKER_MAPPINGS:
+        return BIOMARKER_MAPPINGS[normalized]
+
+    # Try stripping unit suffixes
+    for suffix in _UNIT_SUFFIXES:
+        if normalized.endswith(suffix):
+            stripped = normalized[:-len(suffix)]
+            if stripped in BIOMARKER_MAPPINGS:
+                return BIOMARKER_MAPPINGS[stripped]
+
+    # Try regex stripping
+    stripped = re.sub(r"_(?:ng|pg|ug|mg|g|mmol|umol|meq|u|iu|mu|10e\d+)_?(?:l|dl|ml)?$", "", normalized)
+    if stripped in BIOMARKER_MAPPINGS:
+        return BIOMARKER_MAPPINGS[stripped]
+
+    return normalized
 
 
 # =============================================================================
@@ -243,8 +282,8 @@ class ClinicalDomainClassifier:
 
         Returns comprehensive classification with confidence scores.
         """
-        # Normalize lab data keys to lowercase
-        normalized = {k.lower().strip(): v for k, v in lab_data.items()}
+        # Normalize lab data keys using BIOMARKER_MAPPINGS
+        normalized = {_normalize_biomarker(k): v for k, v in lab_data.items()}
 
         # Score each domain
         domain_scores = []
