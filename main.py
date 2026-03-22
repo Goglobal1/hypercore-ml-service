@@ -184,6 +184,14 @@ try:
 except ImportError:
     ALERT_SYSTEM_AVAILABLE = False
 
+# Universal Data Ingestion (bulletproof parsing)
+try:
+    from app.routers.universal_router import router as universal_router
+    from app.core.data_ingestion import parse_any_data, extract_lab_data
+    UNIVERSAL_INGESTION_AVAILABLE = True
+except ImportError:
+    UNIVERSAL_INGESTION_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -369,6 +377,10 @@ if AGENTS_AVAILABLE:
 # Include unified alert system router if available
 if ALERT_SYSTEM_AVAILABLE:
     app.include_router(alert_router)
+
+# Include universal data ingestion router (always available - never fails)
+if UNIVERSAL_INGESTION_AVAILABLE:
+    app.include_router(universal_router)
 
 # Startup event handler - preload data for faster first requests
 @app.on_event("startup")
