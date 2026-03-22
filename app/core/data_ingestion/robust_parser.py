@@ -23,125 +23,901 @@ logger = logging.getLogger(__name__)
 
 # =============================================================================
 # BIOMARKER MAPPINGS - Map any possible name to standard biomarker
+# Handles: units in name, prefixes, case variations, underscores/spaces/camelCase
 # =============================================================================
 
 BIOMARKER_MAPPINGS = {
-    # CRP variants
-    "crp": "crp", "c-reactive protein": "crp", "c_reactive_protein": "crp",
-    "c reactive protein": "crp", "creactive": "crp", "c-rp": "crp",
+    # =========================================================================
+    # CARDIAC MARKERS
+    # =========================================================================
 
-    # WBC variants
-    "wbc": "wbc", "white blood cell": "wbc", "white_blood_cells": "wbc",
-    "white blood cells": "wbc", "leukocytes": "wbc", "leukocyte": "wbc",
-    "white_cell_count": "wbc", "white cell count": "wbc", "wcc": "wbc",
+    # Troponin (all variations with units and prefixes)
+    "troponin": "troponin",
+    "trop": "troponin",
+    "tnni": "troponin",
+    "tnnt": "troponin",
+    "tni": "troponin",
+    "tnt": "troponin",
+    "troponin_i": "troponin",
+    "troponin_t": "troponin",
+    "troponin i": "troponin",
+    "troponin t": "troponin",
+    "troponini": "troponin",
+    "troponint": "troponin",
+    "cardiac_troponin": "troponin",
+    "cardiac troponin": "troponin",
+    "hs_troponin": "troponin",
+    "hs-troponin": "troponin",
+    "hstroponin": "troponin",
+    "hs_trop": "troponin",
+    "hstrop": "troponin",
+    "high_sensitivity_troponin": "troponin",
+    "high sensitivity troponin": "troponin",
+    "highsensitivitytroponin": "troponin",
+    "hs_troponin_i": "troponin",
+    "hs_troponin_t": "troponin",
+    "hs_tnni": "troponin",
+    "hs_tnnt": "troponin",
+    # With units
+    "troponin_ng_l": "troponin",
+    "troponin_ng_ml": "troponin",
+    "troponin_pg_ml": "troponin",
+    "hs_troponin_ng_l": "troponin",
+    "hs_troponin_ng_ml": "troponin",
+    "hs_troponin_pg_ml": "troponin",
+    "troponin_i_ng_l": "troponin",
+    "troponin_t_ng_l": "troponin",
+    "cardiac_troponin_i": "troponin",
+    "cardiac_troponin_t": "troponin",
+    "serum_troponin": "troponin",
 
-    # Procalcitonin variants
-    "pct": "procalcitonin", "procalcitonin": "procalcitonin", "procal": "procalcitonin",
-    "pro-calcitonin": "procalcitonin", "pro_calcitonin": "procalcitonin",
-
-    # Temperature variants
-    "temp": "temperature", "temperature": "temperature", "fever": "temperature",
-    "body_temp": "temperature", "body temp": "temperature", "t": "temperature",
-
-    # Lactate variants
-    "lactate": "lactate", "lactic_acid": "lactate", "lactic acid": "lactate",
-    "lac": "lactate", "lact": "lactate",
-
-    # Troponin variants
-    "troponin": "troponin", "trop": "troponin", "tnni": "troponin",
-    "troponin_i": "troponin", "troponin i": "troponin", "tni": "troponin",
-    "troponin_t": "troponin", "troponin t": "troponin", "tnt": "troponin",
-    "hs-troponin": "troponin", "hstrop": "troponin",
-
-    # BNP variants
-    "bnp": "bnp", "ntprobnp": "bnp", "nt_probnp": "bnp", "nt-probnp": "bnp",
-    "pro_bnp": "bnp", "pro-bnp": "bnp", "brain natriuretic peptide": "bnp",
+    # BNP / NT-proBNP
+    "bnp": "bnp",
+    "ntprobnp": "bnp",
+    "nt_probnp": "bnp",
+    "nt-probnp": "bnp",
+    "nt_pro_bnp": "bnp",
+    "pro_bnp": "bnp",
+    "pro-bnp": "bnp",
+    "probnp": "bnp",
+    "n_terminal_probnp": "bnp",
+    "brain_natriuretic_peptide": "bnp",
+    "brain natriuretic peptide": "bnp",
+    "b_type_natriuretic_peptide": "bnp",
     "b-type natriuretic peptide": "bnp",
+    "btype_natriuretic_peptide": "bnp",
+    # With units
+    "bnp_pg_ml": "bnp",
+    "bnp_ng_l": "bnp",
+    "ntprobnp_pg_ml": "bnp",
+    "nt_probnp_pg_ml": "bnp",
+    "pro_bnp_pg_ml": "bnp",
+    "serum_bnp": "bnp",
+    "plasma_bnp": "bnp",
 
-    # Glucose variants
-    "glucose": "glucose", "blood_sugar": "glucose", "blood sugar": "glucose",
-    "bg": "glucose", "glu": "glucose", "fasting glucose": "glucose",
-    "fasting_glucose": "glucose", "fbs": "glucose", "rbs": "glucose",
+    # CK-MB
+    "ck_mb": "ck_mb",
+    "ckmb": "ck_mb",
+    "ck-mb": "ck_mb",
+    "creatine_kinase_mb": "ck_mb",
+    "creatine kinase mb": "ck_mb",
+    "ck_mb_ng_ml": "ck_mb",
+    "ck_mb_u_l": "ck_mb",
 
-    # HbA1c variants
-    "hba1c": "hba1c", "a1c": "hba1c", "glycated hemoglobin": "hba1c",
-    "hemoglobin a1c": "hba1c", "hgba1c": "hba1c",
+    # LDH
+    "ldh": "ldh",
+    "lactate_dehydrogenase": "ldh",
+    "lactate dehydrogenase": "ldh",
+    "lactic_dehydrogenase": "ldh",
+    "ldh_u_l": "ldh",
+    "ldh_iu_l": "ldh",
+    "serum_ldh": "ldh",
 
-    # Creatinine variants
-    "creatinine": "creatinine", "creat": "creatinine", "cr": "creatinine",
-    "crea": "creatinine", "serum creatinine": "creatinine", "scr": "creatinine",
+    # D-dimer
+    "d_dimer": "d_dimer",
+    "ddimer": "d_dimer",
+    "d-dimer": "d_dimer",
+    "d dimer": "d_dimer",
+    "fibrin_degradation": "d_dimer",
+    "d_dimer_ng_ml": "d_dimer",
+    "d_dimer_ug_ml": "d_dimer",
+    "d_dimer_mg_l": "d_dimer",
+    "ddimer_feu": "d_dimer",
 
-    # BUN variants
-    "bun": "bun", "blood urea nitrogen": "bun", "urea": "bun",
-    "urea nitrogen": "bun",
+    # QTc
+    "qtc": "qtc",
+    "qt_interval": "qtc",
+    "qtinterval": "qtc",
+    "ecg_qtc": "qtc",
+    "ecg_qtc_ms": "qtc",
+    "qtc_ms": "qtc",
+    "corrected_qt": "qtc",
 
-    # eGFR variants
-    "egfr": "egfr", "gfr": "egfr", "estimated gfr": "egfr",
+    # =========================================================================
+    # INFLAMMATORY MARKERS
+    # =========================================================================
+
+    # CRP (C-Reactive Protein)
+    "crp": "crp",
+    "c_reactive_protein": "crp",
+    "c-reactive_protein": "crp",
+    "c reactive protein": "crp",
+    "c-reactive protein": "crp",
+    "creactive": "crp",
+    "creactiveprotein": "crp",
+    "c-rp": "crp",
+    "hs_crp": "crp",
+    "hscrp": "crp",
+    "hs-crp": "crp",
+    "high_sensitivity_crp": "crp",
+    "high sensitivity crp": "crp",
+    "highsensitivitycrp": "crp",
+    "ultra_sensitive_crp": "crp",
+    "us_crp": "crp",
+    "uscrp": "crp",
+    # With units
+    "crp_mg_l": "crp",
+    "crp_mg_dl": "crp",
+    "crp_ug_ml": "crp",
+    "hs_crp_mg_l": "crp",
+    "hs_crp_mg_dl": "crp",
+    "serum_crp": "crp",
+    "plasma_crp": "crp",
+
+    # Procalcitonin
+    "procalcitonin": "procalcitonin",
+    "pct": "procalcitonin",
+    "procal": "procalcitonin",
+    "pro_calcitonin": "procalcitonin",
+    "pro-calcitonin": "procalcitonin",
+    "procalc": "procalcitonin",
+    # With units
+    "procalcitonin_ng_ml": "procalcitonin",
+    "procalcitonin_ug_l": "procalcitonin",
+    "pct_ng_ml": "procalcitonin",
+    "pct_ug_l": "procalcitonin",
+    "serum_procalcitonin": "procalcitonin",
+    "serum_pct": "procalcitonin",
+
+    # Interleukins
+    "il6": "il6",
+    "il_6": "il6",
+    "il-6": "il6",
+    "interleukin_6": "il6",
+    "interleukin 6": "il6",
+    "interleukin6": "il6",
+    "il6_pg_ml": "il6",
+    "il_6_pg_ml": "il6",
+    "serum_il6": "il6",
+
+    "il1": "il1",
+    "il_1": "il1",
+    "il-1": "il1",
+    "il1b": "il1",
+    "il_1b": "il1",
+    "il-1b": "il1",
+    "il1_beta": "il1",
+    "interleukin_1": "il1",
+    "interleukin 1": "il1",
+    "interleukin1": "il1",
+    "il1_pg_ml": "il1",
+
+    "il10": "il10",
+    "il_10": "il10",
+    "il-10": "il10",
+    "interleukin_10": "il10",
+    "interleukin 10": "il10",
+
+    # TNF-alpha
+    "tnf": "tnf",
+    "tnf_alpha": "tnf",
+    "tnf-alpha": "tnf",
+    "tnfa": "tnf",
+    "tnf_a": "tnf",
+    "tumor_necrosis_factor": "tnf",
+    "tumor necrosis factor": "tnf",
+    "tnf_pg_ml": "tnf",
+
+    # ESR
+    "esr": "esr",
+    "sed_rate": "esr",
+    "sedimentation_rate": "esr",
+    "erythrocyte_sedimentation_rate": "esr",
+    "erythrocyte sedimentation rate": "esr",
+    "esr_mm_hr": "esr",
+
+    # Ferritin
+    "ferritin": "ferritin",
+    "serum_ferritin": "ferritin",
+    "ferritin_ng_ml": "ferritin",
+    "ferritin_ug_l": "ferritin",
+    "plasma_ferritin": "ferritin",
+
+    # =========================================================================
+    # SEPSIS / INFECTION MARKERS
+    # =========================================================================
+
+    # WBC
+    "wbc": "wbc",
+    "white_blood_cell": "wbc",
+    "white_blood_cells": "wbc",
+    "white blood cell": "wbc",
+    "white blood cells": "wbc",
+    "whitebloodcells": "wbc",
+    "leukocytes": "wbc",
+    "leukocyte": "wbc",
+    "leukocyte_count": "wbc",
+    "white_cell_count": "wbc",
+    "white cell count": "wbc",
+    "wcc": "wbc",
+    "total_wbc": "wbc",
+    # With units
+    "wbc_k_ul": "wbc",
+    "wbc_10_3_ul": "wbc",
+    "wbc_x10_9_l": "wbc",
+    "wbc_thou_ul": "wbc",
+    "leukocytes_ul": "wbc",
+
+    # Lactate
+    "lactate": "lactate",
+    "lactic_acid": "lactate",
+    "lactic acid": "lactate",
+    "lacticacid": "lactate",
+    "lac": "lactate",
+    "lact": "lactate",
+    "blood_lactate": "lactate",
+    "serum_lactate": "lactate",
+    "plasma_lactate": "lactate",
+    "arterial_lactate": "lactate",
+    "venous_lactate": "lactate",
+    # With units
+    "lactate_mmol_l": "lactate",
+    "lactate_mg_dl": "lactate",
+    "lactic_acid_mmol_l": "lactate",
+
+    # Temperature
+    "temperature": "temperature",
+    "temp": "temperature",
+    "body_temp": "temperature",
+    "body_temperature": "temperature",
+    "body temp": "temperature",
+    "bodytemp": "temperature",
+    "core_temp": "temperature",
+    "core_temperature": "temperature",
+    "fever": "temperature",
+    # With units
+    "temp_c": "temperature",
+    "temp_f": "temperature",
+    "temperature_celsius": "temperature",
+    "temperature_fahrenheit": "temperature",
+
+    # =========================================================================
+    # RENAL FUNCTION
+    # =========================================================================
+
+    # Creatinine
+    "creatinine": "creatinine",
+    "creat": "creatinine",
+    "crea": "creatinine",
+    "cr": "creatinine",
+    "scr": "creatinine",
+    "serum_creatinine": "creatinine",
+    "serum_cr": "creatinine",
+    "plasma_creatinine": "creatinine",
+    "blood_creatinine": "creatinine",
+    # With units
+    "creatinine_mg_dl": "creatinine",
+    "creatinine_umol_l": "creatinine",
+    "creat_mg_dl": "creatinine",
+    "serum_creatinine_mg_dl": "creatinine",
+
+    # BUN
+    "bun": "bun",
+    "blood_urea_nitrogen": "bun",
+    "blood urea nitrogen": "bun",
+    "urea": "bun",
+    "urea_nitrogen": "bun",
+    "serum_urea": "bun",
+    "plasma_urea": "bun",
+    # With units
+    "bun_mg_dl": "bun",
+    "urea_mg_dl": "bun",
+    "urea_mmol_l": "bun",
+
+    # eGFR / GFR
+    "egfr": "egfr",
+    "gfr": "egfr",
+    "estimated_gfr": "egfr",
+    "estimated gfr": "egfr",
+    "estimatedgfr": "egfr",
+    "e_gfr": "egfr",
+    "glomerular_filtration_rate": "egfr",
     "glomerular filtration rate": "egfr",
+    "ckd_epi": "egfr",
+    "mdrd": "egfr",
+    # With units
+    "egfr_ml_min": "egfr",
+    "gfr_ml_min": "egfr",
+    "egfr_ml_min_1_73m2": "egfr",
 
-    # Liver enzymes
-    "alt": "alt", "sgpt": "alt", "alanine_transaminase": "alt",
-    "alanine transaminase": "alt", "alat": "alt",
-    "ast": "ast", "sgot": "ast", "aspartate_transaminase": "ast",
-    "aspartate transaminase": "ast", "asat": "ast",
-    "bilirubin": "bilirubin", "bili": "bilirubin", "total bilirubin": "bilirubin",
-    "tbili": "bilirubin", "t_bili": "bilirubin",
-    "albumin": "albumin", "alb": "albumin", "serum albumin": "albumin",
-    "inr": "inr", "international normalized ratio": "inr", "pt/inr": "inr",
+    # Cystatin C
+    "cystatin_c": "cystatin_c",
+    "cystatinc": "cystatin_c",
+    "cystatin": "cystatin_c",
+    "cys_c": "cystatin_c",
+    "cystatin_c_mg_l": "cystatin_c",
 
-    # Lipids
-    "ldl": "ldl", "ldl cholesterol": "ldl", "ldl-c": "ldl",
+    # =========================================================================
+    # LIVER FUNCTION
+    # =========================================================================
+
+    # ALT
+    "alt": "alt",
+    "sgpt": "alt",
+    "alat": "alt",
+    "alanine_transaminase": "alt",
+    "alanine transaminase": "alt",
+    "alaninetransaminase": "alt",
+    "alanine_aminotransferase": "alt",
+    "serum_alt": "alt",
+    # With units
+    "alt_u_l": "alt",
+    "alt_iu_l": "alt",
+    "sgpt_u_l": "alt",
+
+    # AST
+    "ast": "ast",
+    "sgot": "ast",
+    "asat": "ast",
+    "aspartate_transaminase": "ast",
+    "aspartate transaminase": "ast",
+    "aspartatetransaminase": "ast",
+    "aspartate_aminotransferase": "ast",
+    "serum_ast": "ast",
+    # With units
+    "ast_u_l": "ast",
+    "ast_iu_l": "ast",
+    "sgot_u_l": "ast",
+
+    # ALP
+    "alp": "alp",
+    "alkaline_phosphatase": "alp",
+    "alkaline phosphatase": "alp",
+    "alkalinephosphatase": "alp",
+    "alk_phos": "alp",
+    "alkphos": "alp",
+    "alp_u_l": "alp",
+    "alp_iu_l": "alp",
+
+    # GGT
+    "ggt": "ggt",
+    "gamma_gt": "ggt",
+    "gamma_glutamyl_transferase": "ggt",
+    "gamma glutamyl transferase": "ggt",
+    "gammaglutamyltransferase": "ggt",
+    "ggtp": "ggt",
+    "ggt_u_l": "ggt",
+    "ggt_iu_l": "ggt",
+
+    # Bilirubin
+    "bilirubin": "bilirubin",
+    "bili": "bilirubin",
+    "total_bilirubin": "bilirubin",
+    "total bilirubin": "bilirubin",
+    "totalbilirubin": "bilirubin",
+    "tbili": "bilirubin",
+    "t_bili": "bilirubin",
+    "serum_bilirubin": "bilirubin",
+    "direct_bilirubin": "direct_bilirubin",
+    "indirect_bilirubin": "indirect_bilirubin",
+    "conjugated_bilirubin": "direct_bilirubin",
+    "unconjugated_bilirubin": "indirect_bilirubin",
+    # With units
+    "bilirubin_mg_dl": "bilirubin",
+    "bilirubin_umol_l": "bilirubin",
+    "total_bilirubin_mg_dl": "bilirubin",
+
+    # Albumin
+    "albumin": "albumin",
+    "alb": "albumin",
+    "serum_albumin": "albumin",
+    "serum albumin": "albumin",
+    "plasma_albumin": "albumin",
+    # With units
+    "albumin_g_dl": "albumin",
+    "albumin_g_l": "albumin",
+    "serum_albumin_g_dl": "albumin",
+
+    # INR / PT
+    "inr": "inr",
+    "pt_inr": "inr",
+    "pt/inr": "inr",
+    "international_normalized_ratio": "inr",
+    "international normalized ratio": "inr",
+    "prothrombin_time_inr": "inr",
+
+    "pt": "pt",
+    "prothrombin_time": "pt",
+    "prothrombin time": "pt",
+    "pt_seconds": "pt",
+    "pt_sec": "pt",
+
+    # =========================================================================
+    # METABOLIC / DIABETES
+    # =========================================================================
+
+    # Glucose
+    "glucose": "glucose",
+    "glu": "glucose",
+    "blood_sugar": "glucose",
+    "blood sugar": "glucose",
+    "bloodsugar": "glucose",
+    "bg": "glucose",
+    "blood_glucose": "glucose",
+    "blood glucose": "glucose",
+    "bloodglucose": "glucose",
+    "serum_glucose": "glucose",
+    "plasma_glucose": "glucose",
+    "fasting_glucose": "glucose",
+    "fasting glucose": "glucose",
+    "fastingglucose": "glucose",
+    "fbs": "glucose",
+    "fasting_blood_sugar": "glucose",
+    "rbs": "glucose",
+    "random_blood_sugar": "glucose",
+    "random_glucose": "glucose",
+    "fbg": "glucose",
+    "fasting_blood_glucose": "glucose",
+    # With units
+    "glucose_mg_dl": "glucose",
+    "glucose_mmol_l": "glucose",
+    "blood_glucose_mg_dl": "glucose",
+    "fasting_glucose_mg_dl": "glucose",
+
+    # HbA1c
+    "hba1c": "hba1c",
+    "a1c": "hba1c",
+    "hgba1c": "hba1c",
+    "hb_a1c": "hba1c",
+    "hemoglobin_a1c": "hba1c",
+    "hemoglobin a1c": "hba1c",
+    "hemoglobina1c": "hba1c",
+    "glycated_hemoglobin": "hba1c",
+    "glycated hemoglobin": "hba1c",
+    "glycatedhemoglobin": "hba1c",
+    "glycohemoglobin": "hba1c",
+    # With units
+    "hba1c_percent": "hba1c",
+    "hba1c_mmol_mol": "hba1c",
+    "a1c_percent": "hba1c",
+
+    # =========================================================================
+    # LIPID PANEL
+    # =========================================================================
+
+    # Total Cholesterol
+    "cholesterol": "cholesterol",
+    "total_cholesterol": "cholesterol",
+    "total cholesterol": "cholesterol",
+    "totalcholesterol": "cholesterol",
+    "tc": "cholesterol",
+    "chol": "cholesterol",
+    "serum_cholesterol": "cholesterol",
+    # With units
+    "cholesterol_mg_dl": "cholesterol",
+    "cholesterol_mmol_l": "cholesterol",
+    "total_cholesterol_mg_dl": "cholesterol",
+
+    # LDL
+    "ldl": "ldl",
+    "ldl_c": "ldl",
+    "ldl-c": "ldl",
+    "ldlc": "ldl",
+    "ldl_cholesterol": "ldl",
+    "ldl cholesterol": "ldl",
+    "ldlcholesterol": "ldl",
+    "low_density_lipoprotein": "ldl",
     "low density lipoprotein": "ldl",
-    "hdl": "hdl", "hdl cholesterol": "hdl", "hdl-c": "hdl",
+    "lowdensitylipoprotein": "ldl",
+    # With units
+    "ldl_mg_dl": "ldl",
+    "ldl_mmol_l": "ldl",
+    "ldl_cholesterol_mg_dl": "ldl",
+
+    # HDL
+    "hdl": "hdl",
+    "hdl_c": "hdl",
+    "hdl-c": "hdl",
+    "hdlc": "hdl",
+    "hdl_cholesterol": "hdl",
+    "hdl cholesterol": "hdl",
+    "hdlcholesterol": "hdl",
+    "high_density_lipoprotein": "hdl",
     "high density lipoprotein": "hdl",
-    "triglycerides": "triglycerides", "tg": "triglycerides", "trigs": "triglycerides",
-    "cholesterol": "cholesterol", "total cholesterol": "cholesterol", "tc": "cholesterol",
+    "highdensitylipoprotein": "hdl",
+    # With units
+    "hdl_mg_dl": "hdl",
+    "hdl_mmol_l": "hdl",
+    "hdl_cholesterol_mg_dl": "hdl",
 
-    # Tumor markers
-    "cea": "cea", "carcinoembryonic antigen": "cea",
-    "ca125": "ca125", "ca-125": "ca125", "cancer antigen 125": "ca125",
-    "ca199": "ca199", "ca-199": "ca199", "ca 19-9": "ca199",
-    "psa": "psa", "prostate specific antigen": "psa",
-    "afp": "afp", "alpha fetoprotein": "afp", "alpha-fetoprotein": "afp",
+    # Triglycerides
+    "triglycerides": "triglycerides",
+    "tg": "triglycerides",
+    "trigs": "triglycerides",
+    "triglyc": "triglycerides",
+    "serum_triglycerides": "triglycerides",
+    # With units
+    "triglycerides_mg_dl": "triglycerides",
+    "triglycerides_mmol_l": "triglycerides",
+    "tg_mg_dl": "triglycerides",
 
-    # Electrolytes
-    "sodium": "sodium", "na": "sodium", "na+": "sodium",
-    "potassium": "potassium", "k": "potassium", "k+": "potassium",
-    "chloride": "chloride", "cl": "chloride", "cl-": "chloride",
-    "bicarbonate": "bicarbonate", "hco3": "bicarbonate", "co2": "bicarbonate",
-    "calcium": "calcium", "ca": "calcium", "ca2+": "calcium",
-    "magnesium": "magnesium", "mg": "magnesium", "mg2+": "magnesium",
-    "phosphate": "phosphate", "phos": "phosphate", "phosphorus": "phosphate",
+    # =========================================================================
+    # TUMOR MARKERS
+    # =========================================================================
 
-    # CBC
-    "hemoglobin": "hemoglobin", "hgb": "hemoglobin", "hb": "hemoglobin",
-    "hematocrit": "hematocrit", "hct": "hematocrit",
-    "platelets": "platelets", "plt": "platelets", "platelet count": "platelets",
-    "rbc": "rbc", "red blood cells": "rbc", "red blood cell": "rbc",
-    "mcv": "mcv", "mean corpuscular volume": "mcv",
-    "mch": "mch", "mean corpuscular hemoglobin": "mch",
+    # CEA
+    "cea": "cea",
+    "carcinoembryonic_antigen": "cea",
+    "carcinoembryonic antigen": "cea",
+    "carcinoembryonicantigen": "cea",
+    "cea_ng_ml": "cea",
+    "serum_cea": "cea",
+
+    # CA-125
+    "ca125": "ca125",
+    "ca_125": "ca125",
+    "ca-125": "ca125",
+    "ca 125": "ca125",
+    "cancer_antigen_125": "ca125",
+    "cancer antigen 125": "ca125",
+    "ca125_u_ml": "ca125",
+    "serum_ca125": "ca125",
+
+    # CA 19-9
+    "ca199": "ca199",
+    "ca_199": "ca199",
+    "ca-199": "ca199",
+    "ca_19_9": "ca199",
+    "ca-19-9": "ca199",
+    "ca 19-9": "ca199",
+    "ca19_9": "ca199",
+    "cancer_antigen_19_9": "ca199",
+    "ca199_u_ml": "ca199",
+    "serum_ca199": "ca199",
+
+    # PSA
+    "psa": "psa",
+    "prostate_specific_antigen": "psa",
+    "prostate specific antigen": "psa",
+    "prostatespecificantigen": "psa",
+    "total_psa": "psa",
+    "free_psa": "free_psa",
+    # With units
+    "psa_ng_ml": "psa",
+    "psa_ug_l": "psa",
+    "serum_psa": "psa",
+
+    # AFP
+    "afp": "afp",
+    "alpha_fetoprotein": "afp",
+    "alpha-fetoprotein": "afp",
+    "alpha fetoprotein": "afp",
+    "alphafetoprotein": "afp",
+    "a_fetoprotein": "afp",
+    # With units
+    "afp_ng_ml": "afp",
+    "afp_iu_ml": "afp",
+    "serum_afp": "afp",
+
+    # =========================================================================
+    # ELECTROLYTES
+    # =========================================================================
+
+    # Sodium
+    "sodium": "sodium",
+    "na": "sodium",
+    "na+": "sodium",
+    "serum_sodium": "sodium",
+    "plasma_sodium": "sodium",
+    # With units
+    "sodium_meq_l": "sodium",
+    "sodium_mmol_l": "sodium",
+    "na_meq_l": "sodium",
+
+    # Potassium
+    "potassium": "potassium",
+    "k": "potassium",
+    "k+": "potassium",
+    "serum_potassium": "potassium",
+    "plasma_potassium": "potassium",
+    # With units
+    "potassium_meq_l": "potassium",
+    "potassium_mmol_l": "potassium",
+    "k_meq_l": "potassium",
+
+    # Chloride
+    "chloride": "chloride",
+    "cl": "chloride",
+    "cl-": "chloride",
+    "serum_chloride": "chloride",
+    # With units
+    "chloride_meq_l": "chloride",
+    "chloride_mmol_l": "chloride",
+    "cl_meq_l": "chloride",
+
+    # Bicarbonate / CO2
+    "bicarbonate": "bicarbonate",
+    "bicarb": "bicarbonate",
+    "hco3": "bicarbonate",
+    "hco3-": "bicarbonate",
+    "co2": "bicarbonate",
+    "total_co2": "bicarbonate",
+    "tco2": "bicarbonate",
+    "serum_bicarbonate": "bicarbonate",
+    # With units
+    "bicarbonate_meq_l": "bicarbonate",
+    "bicarbonate_mmol_l": "bicarbonate",
+    "co2_meq_l": "bicarbonate",
+
+    # Calcium
+    "calcium": "calcium",
+    "ca": "calcium",
+    "ca2+": "calcium",
+    "serum_calcium": "calcium",
+    "total_calcium": "calcium",
+    "ionized_calcium": "ionized_calcium",
+    "ica": "ionized_calcium",
+    # With units
+    "calcium_mg_dl": "calcium",
+    "calcium_mmol_l": "calcium",
+    "ca_mg_dl": "calcium",
+
+    # Magnesium
+    "magnesium": "magnesium",
+    "mg": "magnesium",
+    "mg2+": "magnesium",
+    "serum_magnesium": "magnesium",
+    # With units
+    "magnesium_mg_dl": "magnesium",
+    "magnesium_meq_l": "magnesium",
+    "magnesium_mmol_l": "magnesium",
+    "mg_mg_dl": "magnesium",
+
+    # Phosphate/Phosphorus
+    "phosphate": "phosphate",
+    "phosphorus": "phosphate",
+    "phos": "phosphate",
+    "po4": "phosphate",
+    "serum_phosphate": "phosphate",
+    "serum_phosphorus": "phosphate",
+    # With units
+    "phosphate_mg_dl": "phosphate",
+    "phosphorus_mg_dl": "phosphate",
+    "phosphate_mmol_l": "phosphate",
+
+    # =========================================================================
+    # COMPLETE BLOOD COUNT (CBC)
+    # =========================================================================
+
+    # Hemoglobin
+    "hemoglobin": "hemoglobin",
+    "hgb": "hemoglobin",
+    "hb": "hemoglobin",
+    "haemoglobin": "hemoglobin",
+    "blood_hemoglobin": "hemoglobin",
+    # With units
+    "hemoglobin_g_dl": "hemoglobin",
+    "hgb_g_dl": "hemoglobin",
+    "hb_g_dl": "hemoglobin",
+
+    # Hematocrit
+    "hematocrit": "hematocrit",
+    "hct": "hematocrit",
+    "haematocrit": "hematocrit",
+    "packed_cell_volume": "hematocrit",
+    "pcv": "hematocrit",
+    # With units
+    "hematocrit_percent": "hematocrit",
+    "hct_percent": "hematocrit",
+
+    # Platelets
+    "platelets": "platelets",
+    "plt": "platelets",
+    "platelet_count": "platelets",
+    "platelet count": "platelets",
+    "plateletcount": "platelets",
+    "thrombocytes": "platelets",
+    # With units
+    "platelets_k_ul": "platelets",
+    "platelets_10_3_ul": "platelets",
+    "plt_k_ul": "platelets",
+    "platelets_thou_ul": "platelets",
+
+    # RBC
+    "rbc": "rbc",
+    "red_blood_cells": "rbc",
+    "red blood cells": "rbc",
+    "redbloodcells": "rbc",
+    "red_blood_cell": "rbc",
+    "red_cell_count": "rbc",
+    "erythrocytes": "rbc",
+    # With units
+    "rbc_m_ul": "rbc",
+    "rbc_10_6_ul": "rbc",
+
+    # MCV
+    "mcv": "mcv",
+    "mean_corpuscular_volume": "mcv",
+    "mean corpuscular volume": "mcv",
+    "meancorpuscularvolume": "mcv",
+    "mcv_fl": "mcv",
+
+    # MCH
+    "mch": "mch",
+    "mean_corpuscular_hemoglobin": "mch",
+    "mean corpuscular hemoglobin": "mch",
+    "meancorpuscularhemoglobin": "mch",
+    "mch_pg": "mch",
+
+    # MCHC
     "mchc": "mchc",
-    "rdw": "rdw", "red cell distribution width": "rdw",
+    "mean_corpuscular_hemoglobin_concentration": "mchc",
+    "mchc_g_dl": "mchc",
 
-    # Blood gases
-    "ph": "ph", "blood ph": "ph",
-    "pco2": "pco2", "partial co2": "pco2", "carbon dioxide": "pco2",
-    "po2": "po2", "partial o2": "po2", "oxygen": "po2",
-    "sao2": "sao2", "oxygen saturation": "sao2", "o2sat": "sao2", "spo2": "sao2",
+    # RDW
+    "rdw": "rdw",
+    "red_cell_distribution_width": "rdw",
+    "red cell distribution width": "rdw",
+    "rdw_cv": "rdw",
+    "rdw_percent": "rdw",
 
-    # Patient identifiers
-    "patient_id": "patient_id", "patientid": "patient_id", "patient id": "patient_id",
-    "mrn": "patient_id", "medical record number": "patient_id", "id": "patient_id",
-    "pt_id": "patient_id", "subject_id": "patient_id", "subject id": "patient_id",
+    # =========================================================================
+    # BLOOD GASES / ACID-BASE
+    # =========================================================================
 
-    # Vitals
-    "heart_rate": "heart_rate", "hr": "heart_rate", "pulse": "heart_rate",
-    "heartrate": "heart_rate", "heart rate": "heart_rate",
-    "blood_pressure": "blood_pressure", "bp": "blood_pressure",
-    "systolic": "systolic_bp", "sbp": "systolic_bp", "systolic_bp": "systolic_bp",
-    "diastolic": "diastolic_bp", "dbp": "diastolic_bp", "diastolic_bp": "diastolic_bp",
-    "respiratory_rate": "respiratory_rate", "rr": "respiratory_rate",
-    "resp_rate": "respiratory_rate", "respiration": "respiratory_rate",
+    # pH
+    "ph": "ph",
+    "blood_ph": "ph",
+    "arterial_ph": "ph",
+    "venous_ph": "ph",
+    "abg_ph": "ph",
+
+    # pCO2
+    "pco2": "pco2",
+    "partial_co2": "pco2",
+    "partial_pressure_co2": "pco2",
+    "carbon_dioxide": "pco2",
+    "arterial_pco2": "pco2",
+    "paco2": "pco2",
+    # With units
+    "pco2_mmhg": "pco2",
+
+    # pO2
+    "po2": "po2",
+    "partial_o2": "po2",
+    "partial_pressure_o2": "po2",
+    "oxygen": "po2",
+    "arterial_po2": "po2",
+    "pao2": "po2",
+    # With units
+    "po2_mmhg": "po2",
+
+    # O2 Saturation
+    "sao2": "sao2",
+    "spo2": "sao2",
+    "o2sat": "sao2",
+    "o2_sat": "sao2",
+    "oxygen_saturation": "sao2",
+    "oxygen saturation": "sao2",
+    "oxygensaturation": "sao2",
+    "sat_o2": "sao2",
+    "arterial_saturation": "sao2",
+    # With units
+    "sao2_percent": "sao2",
+    "spo2_percent": "sao2",
+
+    # Base Excess
+    "base_excess": "base_excess",
+    "be": "base_excess",
+    "base_deficit": "base_excess",
+
+    # =========================================================================
+    # COAGULATION
+    # =========================================================================
+
+    # aPTT
+    "aptt": "aptt",
+    "ptt": "aptt",
+    "activated_partial_thromboplastin_time": "aptt",
+    "partial_thromboplastin_time": "aptt",
+    "aptt_seconds": "aptt",
+    "aptt_sec": "aptt",
+
+    # Fibrinogen
+    "fibrinogen": "fibrinogen",
+    "factor_i": "fibrinogen",
+    "fibrinogen_mg_dl": "fibrinogen",
+
+    # =========================================================================
+    # PATIENT IDENTIFIERS
+    # =========================================================================
+
+    "patient_id": "patient_id",
+    "patientid": "patient_id",
+    "patient id": "patient_id",
+    "patient": "patient_id",
+    "mrn": "patient_id",
+    "medical_record_number": "patient_id",
+    "medical record number": "patient_id",
+    "id": "patient_id",
+    "pt_id": "patient_id",
+    "subject_id": "patient_id",
+    "subject id": "patient_id",
+    "subjectid": "patient_id",
+    "case_id": "patient_id",
+    "record_id": "patient_id",
+    "encounter_id": "encounter_id",
+    "visit_id": "encounter_id",
+    "admission_id": "encounter_id",
+
+    # =========================================================================
+    # VITAL SIGNS
+    # =========================================================================
+
+    # Heart Rate
+    "heart_rate": "heart_rate",
+    "heartrate": "heart_rate",
+    "heart rate": "heart_rate",
+    "hr": "heart_rate",
+    "pulse": "heart_rate",
+    "pulse_rate": "heart_rate",
+    "pulserate": "heart_rate",
+    # With units
+    "hr_bpm": "heart_rate",
+    "heart_rate_bpm": "heart_rate",
+    "pulse_bpm": "heart_rate",
+
+    # Blood Pressure
+    "blood_pressure": "blood_pressure",
+    "bloodpressure": "blood_pressure",
+    "blood pressure": "blood_pressure",
+    "bp": "blood_pressure",
+
+    # Systolic BP
+    "systolic": "systolic_bp",
+    "systolic_bp": "systolic_bp",
+    "systolicbp": "systolic_bp",
+    "systolic_blood_pressure": "systolic_bp",
+    "sbp": "systolic_bp",
+    "sys": "systolic_bp",
+    "systolic_mmhg": "systolic_bp",
+
+    # Diastolic BP
+    "diastolic": "diastolic_bp",
+    "diastolic_bp": "diastolic_bp",
+    "diastolicbp": "diastolic_bp",
+    "diastolic_blood_pressure": "diastolic_bp",
+    "dbp": "diastolic_bp",
+    "dia": "diastolic_bp",
+    "diastolic_mmhg": "diastolic_bp",
+
+    # MAP
+    "map": "map",
+    "mean_arterial_pressure": "map",
+    "mean arterial pressure": "map",
+    "meanarterialpressure": "map",
+
+    # Respiratory Rate
+    "respiratory_rate": "respiratory_rate",
+    "respiratoryrate": "respiratory_rate",
+    "respiratory rate": "respiratory_rate",
+    "rr": "respiratory_rate",
+    "resp_rate": "respiratory_rate",
+    "resprate": "respiratory_rate",
+    "respiration": "respiratory_rate",
+    "breaths_per_min": "respiratory_rate",
+    # With units
+    "rr_breaths_min": "respiratory_rate",
 }
 
 # Critical biomarkers for each domain
