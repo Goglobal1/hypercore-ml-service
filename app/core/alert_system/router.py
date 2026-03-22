@@ -26,9 +26,13 @@ from .pipeline import get_pipeline, process_patient_intake
 from .realtime import get_hub, websocket_handler, sse_generator
 from .config import DOMAIN_CONFIGS, get_domain_config, BIOMARKER_THRESHOLDS
 
-# Import robust data parser for data quality reporting
+# Import robust data parser and domain classifier
 try:
-    from ..data_ingestion import parse_any_data, DOMAIN_CRITICAL_BIOMARKERS
+    from ..data_ingestion import (
+        parse_any_data,
+        DOMAIN_CRITICAL_BIOMARKERS,
+        infer_risk_domain,
+    )
     DATA_INGESTION_AVAILABLE = True
 except ImportError:
     DATA_INGESTION_AVAILABLE = False
@@ -45,7 +49,7 @@ router = APIRouter(prefix="/alerts", tags=["Alert System"])
 class PatientIntakeRequest(BaseModel):
     """Request body for unified patient intake."""
     patient_id: Optional[str] = Field(None, description="Unique patient identifier (auto-generated if not provided)")
-    risk_domain: str = Field(..., description="Risk domain (e.g., sepsis, cardiac)")
+    risk_domain: Optional[str] = Field(None, description="Risk domain - auto-inferred from biomarkers if not provided")
     lab_data: Optional[Dict[str, float]] = Field(None, description="Lab values by biomarker name")
     vitals_data: Optional[Dict[str, float]] = Field(None, description="Vital signs")
     clinical_data: Optional[Dict[str, Any]] = Field(None, description="Additional clinical data")
@@ -129,18 +133,50 @@ async def patient_intake(request: PatientIntakeRequest):
 
     NEVER FAILS - Always returns a result with helpful information.
     If patient_id is not provided, one is auto-generated and logged for tracking.
+    If risk_domain is not provided, it is auto-inferred from biomarkers using
+    evidence-based clinical criteria (Sepsis-3, ACS, KDIGO, etc.).
     """
+    # Auto-infer risk_domain if not provided
+    risk_domain_inferred = False
+    risk_domain = request.risk_domain
+    domain_classification = None
+
+    if not risk_domain and DATA_INGESTION_AVAILABLE and request.lab_data:
+        inferred_domain, confidence, classification_info = infer_risk_domain(request.lab_data)
+        risk_domain = inferred_domain
+        domain_classification = classification_info
+        risk_domain_inferred = True
+        # Log prominently
+        logger.warning(
+            f"AUTO-INFERRED RISK DOMAIN: {risk_domain} | "
+            f"Confidence: {confidence:.1%} | "
+            f"Multi-system: {classification_info.get('multi_system', False)} | "
+            f"Involved: {classification_info.get('involved_systems', [])} | "
+            f"Timestamp: {datetime.now(timezone.utc).isoformat()}"
+        )
+    elif not risk_domain:
+        # Default to general if can't infer
+        risk_domain = "general"
+        risk_domain_inferred = True
+        domain_classification = {
+            "inferred_domain": "general",
+            "confidence": 0.0,
+            "auto_inferred": True,
+            "indeterminate": True,
+            "classification_notes": ["No lab data provided for domain inference"],
+        }
+
     # Generate patient_id if not provided
     patient_id_generated = False
     patient_id = request.patient_id
 
     if not patient_id:
-        patient_id = _generate_patient_id(request.risk_domain)
+        patient_id = _generate_patient_id(risk_domain)
         patient_id_generated = True
         # Log prominently for tracking
         logger.warning(
             f"AUTO-GENERATED PATIENT ID: {patient_id} | "
-            f"Domain: {request.risk_domain} | "
+            f"Domain: {risk_domain} | "
             f"Timestamp: {datetime.now(timezone.utc).isoformat()} | "
             f"Lab markers: {list(request.lab_data.keys()) if request.lab_data else 'none'}"
         )
@@ -148,7 +184,7 @@ async def patient_intake(request: PatientIntakeRequest):
     try:
         result = await process_patient_intake(
             patient_id=patient_id,
-            risk_domain=request.risk_domain,
+            risk_domain=risk_domain,  # Use inferred domain
             lab_data=request.lab_data,
             vitals_data=request.vitals_data,
             clinical_data=request.clinical_data,
@@ -169,11 +205,15 @@ async def patient_intake(request: PatientIntakeRequest):
                 "note": "IMPORTANT: Save this ID to track this patient. It has been logged for audit purposes."
             }
 
+        # Add domain classification info if auto-inferred
+        if risk_domain_inferred and domain_classification:
+            response["domain_classification"] = domain_classification
+
         # Add data quality assessment
         if DATA_INGESTION_AVAILABLE and request.lab_data:
             response["data_completeness"] = _calculate_data_completeness(
                 lab_data=request.lab_data or {},
-                risk_domain=request.risk_domain,
+                risk_domain=risk_domain,  # Use inferred domain
             )
 
         return response
@@ -184,12 +224,12 @@ async def patient_intake(request: PatientIntakeRequest):
         error_response = {
             "success": False,
             "patient_id": patient_id,
-            "risk_domain": request.risk_domain,
+            "risk_domain": risk_domain,  # Use inferred domain
             "error": str(e)[:200],
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "data_completeness": _calculate_data_completeness(
                 lab_data=request.lab_data or {},
-                risk_domain=request.risk_domain,
+                risk_domain=risk_domain,  # Use inferred domain
             ) if DATA_INGESTION_AVAILABLE else None,
             "recommendations": [
                 "Check input data format",
@@ -205,6 +245,10 @@ async def patient_intake(request: PatientIntakeRequest):
                 "generated_at": datetime.now(timezone.utc).isoformat(),
                 "note": "IMPORTANT: Save this ID to track this patient. It has been logged for audit purposes."
             }
+
+        # Include domain classification info even on error
+        if risk_domain_inferred and domain_classification:
+            error_response["domain_classification"] = domain_classification
 
         return error_response
 
