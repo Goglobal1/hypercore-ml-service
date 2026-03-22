@@ -323,10 +323,14 @@ BIOMARKER_MAPPINGS = {
     "urea_nitrogen": "bun",
     "serum_urea": "bun",
     "plasma_urea": "bun",
+    "serum_blood_urea_nitrogen": "bun",
+    "serum_bun": "bun",
+    "plasma_bun": "bun",
     # With units
     "bun_mg_dl": "bun",
     "urea_mg_dl": "bun",
     "urea_mmol_l": "bun",
+    "serum_blood_urea_nitrogen_mg_dl": "bun",
 
     # eGFR / GFR
     "egfr": "egfr",

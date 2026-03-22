@@ -263,6 +263,7 @@ UNIT_SUFFIXES = [
     "_mmol_l", "_umol_l", "_meq_l", "_u_l", "_iu_l", "_mu_l",
     "_10e9_l", "_10e12_l", "_percent", "_pct", "_ratio",
     "_mm_hr", "_seconds", "_sec", "_ms",
+    "_ml_min", "_ml_min_1_73m2", "_l_min", "_per_min",  # Rate units
 ]
 
 
