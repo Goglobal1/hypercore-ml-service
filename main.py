@@ -3655,9 +3655,14 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
 
         # BULLETPROOF CSV PARSING - never fails
         df = parse_csv_bulletproof(csv_data)
-        df.columns = df.columns.str.strip()
 
-        if len(df) == 0:
+        # Safely strip column names (handle non-string columns)
+        try:
+            df.columns = [str(c).strip() for c in df.columns]
+        except Exception:
+            pass  # Keep original columns if stripping fails
+
+        if len(df) == 0 or len(df.columns) < 2:
             return EarlyRiskResponse(
                 executive_summary="Unable to parse CSV data. Please check format.",
                 risk_timing_delta={"insufficient_data": True, "detection_window_days": None},
