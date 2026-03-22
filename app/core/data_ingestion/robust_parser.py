@@ -58,6 +58,10 @@ BIOMARKER_MAPPINGS = {
     "hs_troponin_t": "troponin",
     "hs_tnni": "troponin",
     "hs_tnnt": "troponin",
+    "hstni": "troponin",
+    "hstnt": "troponin",
+    "hstnni": "troponin",
+    "hstnnt": "troponin",
     # With units
     "troponin_ng_l": "troponin",
     "troponin_ng_ml": "troponin",
