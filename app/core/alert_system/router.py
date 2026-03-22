@@ -44,7 +44,7 @@ router = APIRouter(prefix="/alerts", tags=["Alert System"])
 
 class PatientIntakeRequest(BaseModel):
     """Request body for unified patient intake."""
-    patient_id: str = Field(..., description="Unique patient identifier")
+    patient_id: Optional[str] = Field(None, description="Unique patient identifier (auto-generated if not provided)")
     risk_domain: str = Field(..., description="Risk domain (e.g., sepsis, cardiac)")
     lab_data: Optional[Dict[str, float]] = Field(None, description="Lab values by biomarker name")
     vitals_data: Optional[Dict[str, float]] = Field(None, description="Vital signs")
@@ -128,10 +128,26 @@ async def patient_intake(request: PatientIntakeRequest):
     and data quality assessment.
 
     NEVER FAILS - Always returns a result with helpful information.
+    If patient_id is not provided, one is auto-generated and logged for tracking.
     """
+    # Generate patient_id if not provided
+    patient_id_generated = False
+    patient_id = request.patient_id
+
+    if not patient_id:
+        patient_id = _generate_patient_id(request.risk_domain)
+        patient_id_generated = True
+        # Log prominently for tracking
+        logger.warning(
+            f"AUTO-GENERATED PATIENT ID: {patient_id} | "
+            f"Domain: {request.risk_domain} | "
+            f"Timestamp: {datetime.now(timezone.utc).isoformat()} | "
+            f"Lab markers: {list(request.lab_data.keys()) if request.lab_data else 'none'}"
+        )
+
     try:
         result = await process_patient_intake(
-            patient_id=request.patient_id,
+            patient_id=patient_id,
             risk_domain=request.risk_domain,
             lab_data=request.lab_data,
             vitals_data=request.vitals_data,
@@ -144,6 +160,15 @@ async def patient_intake(request: PatientIntakeRequest):
 
         response = result.to_dict()
 
+        # Add patient_id tracking info if auto-generated
+        if patient_id_generated:
+            response["patient_id_info"] = {
+                "patient_id": patient_id,
+                "auto_generated": True,
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "note": "IMPORTANT: Save this ID to track this patient. It has been logged for audit purposes."
+            }
+
         # Add data quality assessment
         if DATA_INGESTION_AVAILABLE and request.lab_data:
             response["data_completeness"] = _calculate_data_completeness(
@@ -154,11 +179,11 @@ async def patient_intake(request: PatientIntakeRequest):
         return response
 
     except Exception as e:
-        logger.exception(f"Patient intake failed: {e}")
+        logger.exception(f"Patient intake failed for {patient_id}: {e}")
         # BULLETPROOF: Return helpful response even on error
-        return {
+        error_response = {
             "success": False,
-            "patient_id": request.patient_id,
+            "patient_id": patient_id,
             "risk_domain": request.risk_domain,
             "error": str(e)[:200],
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -168,10 +193,20 @@ async def patient_intake(request: PatientIntakeRequest):
             ) if DATA_INGESTION_AVAILABLE else None,
             "recommendations": [
                 "Check input data format",
-                "Ensure patient_id and risk_domain are provided",
                 "Verify lab_data contains valid biomarker values",
             ],
         }
+
+        # Include auto-generated ID info even on error
+        if patient_id_generated:
+            error_response["patient_id_info"] = {
+                "patient_id": patient_id,
+                "auto_generated": True,
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "note": "IMPORTANT: Save this ID to track this patient. It has been logged for audit purposes."
+            }
+
+        return error_response
 
 
 def _calculate_data_completeness(
@@ -226,6 +261,31 @@ def _calculate_data_completeness(
         "impact": impact,
         "recommendations": recommendations,
     }
+
+
+def _generate_patient_id(risk_domain: str) -> str:
+    """
+    Generate a unique, trackable patient ID.
+
+    Format: AUTO_{DOMAIN}_{YYYYMMDD}_{HHMMSS}_{RANDOM}
+    Example: AUTO_SEPSIS_20260322_143052_7A3F
+
+    This format allows:
+    - Easy identification as auto-generated (AUTO_ prefix)
+    - Risk domain context
+    - Timestamp for when the patient was registered
+    - Random suffix to prevent collisions
+    """
+    import secrets
+
+    now = datetime.now(timezone.utc)
+    date_part = now.strftime("%Y%m%d")
+    time_part = now.strftime("%H%M%S")
+    random_part = secrets.token_hex(2).upper()  # 4 hex chars
+
+    domain_short = risk_domain.upper()[:6] if risk_domain else "UNK"
+
+    return f"AUTO_{domain_short}_{date_part}_{time_part}_{random_part}"
 
 
 # =============================================================================
