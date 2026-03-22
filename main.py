@@ -841,7 +841,7 @@ class AnalyzeResponse(BaseModel):
 class EarlyRiskRequest(BaseModel):
     # Standard fields (Optional for flexible input)
     csv: Optional[str] = None
-    label_column: Optional[str] = None
+    label_column: Optional[str] = None  # Now truly optional - auto-detected
 
     # Alternative field names
     data: Optional[str] = None
@@ -850,8 +850,8 @@ class EarlyRiskRequest(BaseModel):
     outcome_column: Optional[str] = None
 
     # Optional fields
-    patient_id_column: Optional[str] = "patient_id"
-    time_column: Optional[str] = "time"
+    patient_id_column: Optional[str] = None  # Auto-detected if not provided
+    time_column: Optional[str] = None  # Auto-detected if not provided
     outcome_type: str = "sepsis"  # sepsis, mortality, ICU_transfer, etc.
     cohort: str = "all"  # all, sepsis, heart_failure, COPD
     time_window_hours: int = 48
@@ -865,14 +865,14 @@ class EarlyRiskRequest(BaseModel):
                     values['csv'] = values[alt]
                     break
         if not values.get('label_column'):
-            for alt in ['target', 'outcome_column']:
+            for alt in ['target', 'outcome_column', 'outcome', 'label']:
                 if values.get(alt):
                     values['label_column'] = values[alt]
                     break
         if not values.get('csv'):
             raise ValueError('csv field is required')
-        if not values.get('label_column'):
-            raise ValueError('label_column field is required')
+        # label_column is now OPTIONAL - auto-detected if not provided
+        # This enables flexible analysis modes (biomarker_only, trajectory_only, etc.)
         return values
 
 
