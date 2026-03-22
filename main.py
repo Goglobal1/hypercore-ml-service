@@ -3500,14 +3500,11 @@ def parse_csv_bulletproof(content: str) -> pd.DataFrame:
         try:
             df = strategy()
             if df is not None and len(df) > 0 and len(df.columns) > 1:
-                logger.info(f"CSV parsed with strategy {i+1}")
                 return df
-        except Exception as e:
-            logger.debug(f"CSV parse strategy {i+1} failed: {e}")
+        except Exception:
             continue
 
     # Last resort: create empty DataFrame
-    logger.warning("All CSV parsing strategies failed, returning empty DataFrame")
     return pd.DataFrame()
 
 
