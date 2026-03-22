@@ -879,11 +879,16 @@ class EarlyRiskRequest(BaseModel):
 class EarlyRiskResponse(BaseModel):
     executive_summary: str
     risk_timing_delta: Dict[str, Any]
-    explainable_signals: List[Dict[str, Any]]
-    missed_risk_summary: Dict[str, Any]
-    clinical_impact: Dict[str, Any]
-    comparator_performance: Dict[str, Any]
-    narrative: str
+    explainable_signals: Optional[List[Dict[str, Any]]] = None
+    missed_risk_summary: Optional[Dict[str, Any]] = None
+    clinical_impact: Optional[Dict[str, Any]] = None
+    comparator_performance: Optional[Dict[str, Any]] = None
+    narrative: Optional[str] = None
+    # New fields for flexible analysis
+    confidence: Optional[float] = None
+    analysis_mode: Optional[str] = None
+    data_requirements: Optional[Dict[str, Any]] = None
+    signals: Optional[List[Dict[str, Any]]] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -3402,6 +3407,232 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
 
 
 # ---------------------------------------------------------------------
+# EARLY RISK DISCOVERY - FLEXIBLE COLUMN DETECTION
+# ---------------------------------------------------------------------
+
+# Flexible outcome/label column names
+OUTCOME_COLUMN_NAMES = [
+    'label', 'outcome', 'event', 'death', 'mortality',
+    'sepsis', 'diagnosis', 'result', 'status', 'target',
+    'readmission', 'icu_admission', 'los', 'adverse_event',
+    'response', 'class', 'y', 'is_sepsis', 'is_death',
+    'has_event', 'positive', 'negative', 'case', 'control'
+]
+
+# Flexible time column names
+TIME_COLUMN_NAMES = [
+    'day', 'time', 'visit', 'date', 'timestamp', 'hour',
+    'timepoint', 'week', 'month', 'observation_time',
+    'collection_date', 'lab_date', 'admission_day',
+    'datetime', 'obs_time', 't', 'period', 'epoch'
+]
+
+# Flexible patient ID column names
+PATIENT_COLUMN_NAMES = [
+    'patient_id', 'patientid', 'patient', 'subject_id', 'id',
+    'pt_id', 'subject', 'case_id', 'record_id', 'mrn',
+    'medical_record_number', 'encounter_id', 'visit_id'
+]
+
+
+def find_outcome_column(df: pd.DataFrame) -> Optional[str]:
+    """Find outcome/label column flexibly. Returns None if not found."""
+    for col in df.columns:
+        col_lower = col.lower().strip().replace('_', '').replace('-', '')
+        for name in OUTCOME_COLUMN_NAMES:
+            name_normalized = name.replace('_', '')
+            if name_normalized in col_lower or col_lower in name_normalized:
+                return col
+    return None
+
+
+def find_time_column(df: pd.DataFrame) -> Optional[str]:
+    """Find time column flexibly. Returns None if not found."""
+    for col in df.columns:
+        col_lower = col.lower().strip()
+        for name in TIME_COLUMN_NAMES:
+            if name in col_lower or col_lower == name:
+                return col
+    return None
+
+
+def find_patient_column(df: pd.DataFrame) -> Optional[str]:
+    """Find patient ID column flexibly. Returns None if not found."""
+    for col in df.columns:
+        col_lower = col.lower().strip().replace('_', '').replace('-', '')
+        for name in PATIENT_COLUMN_NAMES:
+            name_normalized = name.replace('_', '')
+            if name_normalized in col_lower or col_lower == name_normalized:
+                return col
+    return None
+
+
+def determine_analysis_mode(has_outcome: bool, has_time: bool, has_patient: bool) -> str:
+    """Determine what type of analysis is possible given available columns."""
+    if has_outcome and has_time and has_patient:
+        return "full"  # Full longitudinal analysis with outcomes
+    elif has_outcome and has_patient:
+        return "cross_sectional"  # Single timepoint with outcomes
+    elif has_time and has_patient:
+        return "trajectory_only"  # Trajectories but no outcomes
+    elif has_outcome:
+        return "outcome_only"  # Outcomes but no patient grouping
+    else:
+        return "biomarker_only"  # Just analyze biomarker distributions
+
+
+def parse_csv_bulletproof(content: str) -> pd.DataFrame:
+    """Parse ANY CSV no matter how malformed."""
+    strategies = [
+        # Strategy 1: Standard CSV
+        lambda: pd.read_csv(io.StringIO(content)),
+        # Strategy 2: With error handling
+        lambda: pd.read_csv(io.StringIO(content), on_bad_lines='skip'),
+        # Strategy 3: Semicolon delimiter
+        lambda: pd.read_csv(io.StringIO(content), sep=';', on_bad_lines='skip'),
+        # Strategy 4: Tab delimiter
+        lambda: pd.read_csv(io.StringIO(content), sep='\t', on_bad_lines='skip'),
+        # Strategy 5: Flexible whitespace
+        lambda: pd.read_csv(io.StringIO(content), sep=r'\s+', engine='python', on_bad_lines='skip'),
+    ]
+
+    for i, strategy in enumerate(strategies):
+        try:
+            df = strategy()
+            if df is not None and len(df) > 0 and len(df.columns) > 1:
+                logger.info(f"CSV parsed with strategy {i+1}")
+                return df
+        except Exception as e:
+            logger.debug(f"CSV parse strategy {i+1} failed: {e}")
+            continue
+
+    # Last resort: create empty DataFrame
+    logger.warning("All CSV parsing strategies failed, returning empty DataFrame")
+    return pd.DataFrame()
+
+
+def generate_honest_result(
+    analysis_mode: str,
+    df: pd.DataFrame,
+    missing_columns: List[str],
+    biomarkers_found: List[str],
+    outcome_type: str = "sepsis"
+) -> Dict[str, Any]:
+    """Generate honest result when full analysis is not possible."""
+    return {
+        "status": "limited_analysis",
+        "analysis_mode": analysis_mode,
+        "message": f"Full early risk analysis not possible - missing required columns",
+        "missing_columns": missing_columns,
+        "columns_found": list(df.columns),
+        "biomarkers_detected": biomarkers_found,
+        "data_rows": len(df),
+        "recommendation": _get_data_recommendation(missing_columns, outcome_type),
+        # DO NOT include fake detection windows
+        "detection_window_days": None,
+        "confidence": 0.0,
+        "risk_timing_delta": {
+            "detection_window_days": None,
+            "detection_window_hours": None,
+            "lead_time_days": None,
+            "early_warning_signals": [],
+            "patients_analyzed": 0,
+            "events_detected": 0,
+            "insufficient_data": True,
+            "data_requirements": _get_data_requirements(outcome_type)
+        }
+    }
+
+
+def _get_data_recommendation(missing: List[str], outcome_type: str) -> str:
+    """Get specific recommendation based on what's missing."""
+    if "outcome" in missing or "label" in missing:
+        return f"Add an outcome/label column (e.g., 'sepsis', 'death', 'event') with 0/1 values indicating {outcome_type} occurrence"
+    if "time" in missing:
+        return "Add a time column (e.g., 'day', 'hour', 'visit') for longitudinal trajectory analysis"
+    if "patient_id" in missing:
+        return "Add a patient ID column to group observations by patient"
+    return "Provide more structured data with outcome, time, and patient columns"
+
+
+def _get_data_requirements(outcome_type: str) -> Dict[str, Any]:
+    """Get data requirements for proper analysis."""
+    return {
+        "required_columns": {
+            "outcome": f"Column with 0/1 values indicating {outcome_type} (e.g., 'label', 'outcome', 'sepsis')",
+            "patient_id": "Column identifying unique patients (e.g., 'patient_id', 'subject_id')",
+            "time": "Column indicating observation time (e.g., 'day', 'hour', 'visit')"
+        },
+        "minimum_requirements": {
+            "patients_with_events": "At least 5 patients with outcome=1",
+            "timepoints_per_patient": "At least 2 observations per patient",
+            "biomarkers": "At least 3 numeric biomarker columns"
+        },
+        "example_format": "patient_id,day,crp,wbc,lactate,label\\nP001,1,5.2,8.5,1.2,0\\nP001,2,12.1,15.2,2.8,1"
+    }
+
+
+def cross_validate_early_risk(
+    early_risk_result: Dict[str, Any],
+    domain_classification: Dict[str, Any],
+    data_completeness: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Cross-validate early risk results before returning to user."""
+    validations = []
+
+    # Check 1: Domain confidence
+    domain_confidence = domain_classification.get("confidence", 0)
+    if domain_confidence < 0.6:
+        validations.append({
+            "check": "domain_confidence",
+            "passed": False,
+            "message": f"Low domain confidence ({domain_confidence:.0%})",
+            "recommendation": "Additional biomarkers needed for reliable domain classification"
+        })
+
+    # Check 2: Data completeness
+    completeness_score = data_completeness.get("score", 0)
+    if completeness_score < 0.5:
+        validations.append({
+            "check": "data_completeness",
+            "passed": False,
+            "message": f"Only {completeness_score:.0%} of critical biomarkers present",
+            "recommendation": f"Add: {', '.join(data_completeness.get('missing', [])[:3])}"
+        })
+
+    # Check 3: Sufficient events
+    events_detected = early_risk_result.get("risk_timing_delta", {}).get("events_detected", 0)
+    if events_detected < 5:
+        validations.append({
+            "check": "sufficient_events",
+            "passed": False,
+            "message": f"Only {events_detected} events detected (need 5+)",
+            "recommendation": "More event cases needed for reliable pattern detection"
+        })
+
+    # Check 4: Detection window validity
+    detection_days = early_risk_result.get("risk_timing_delta", {}).get("detection_window_days")
+    if detection_days is not None and detection_days <= 0:
+        validations.append({
+            "check": "detection_window",
+            "passed": False,
+            "message": "Invalid detection window calculated",
+            "recommendation": "Review data quality and timepoint ordering"
+        })
+
+    all_passed = all(v.get("passed", True) for v in validations)
+
+    return {
+        "cross_validation": {
+            "passed": all_passed,
+            "checks": validations,
+            "confidence_level": "high" if all_passed else "low" if len(validations) > 2 else "medium",
+            "proceed_with_results": all_passed or len([v for v in validations if not v.get("passed", True)]) <= 1
+        }
+    }
+
+
+# ---------------------------------------------------------------------
 # EARLY RISK DISCOVERY ENDPOINT
 # ---------------------------------------------------------------------
 
@@ -3411,34 +3642,97 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
     """
     Hospital early risk discovery endpoint.
     Analyzes patient trajectories to find early warning signals BEFORE clinical events.
+
+    FLEXIBLE: Works with various column naming conventions.
+    HONEST: Returns clear messages when data is insufficient.
     """
     try:
         # SmartFormatter integration for flexible data input
         if BUG_FIXES_AVAILABLE:
             formatted = format_for_endpoint(req.dict(), "early_risk_discovery")
             csv_data = formatted.get("csv", req.csv)
-            label_col = formatted.get("label_column", req.label_column)
+            label_col_hint = formatted.get("label_column", req.label_column)
         else:
             csv_data = req.csv
-            label_col = req.label_column
+            label_col_hint = req.label_column
 
-        # Parse CSV BEFORE SmartFormatter transformation to get original columns
-        df_raw = pd.read_csv(io.StringIO(csv_data))
-        df_raw.columns = df_raw.columns.str.strip()
-        original_columns = df_raw.columns.tolist()
+        # BULLETPROOF CSV PARSING - never fails
+        df = parse_csv_bulletproof(csv_data)
+        df.columns = df.columns.str.strip()
 
-        # Get requested column names
-        patient_col_req = req.patient_id_column.strip() if req.patient_id_column else "patient_id"
-        time_col_req = req.time_column.strip() if req.time_column else "day"
+        if len(df) == 0:
+            return EarlyRiskResponse(
+                executive_summary="Unable to parse CSV data. Please check format.",
+                risk_timing_delta={"insufficient_data": True, "detection_window_days": None},
+                signals=[],
+                confidence=0.0
+            )
 
-        # SmartFormatter aliases: these columns get renamed
-        # "day" -> "time", "patient" -> "patient_id", etc.
-        COLUMN_ALIASES = {
-            "time": ["time", "date", "timestamp", "datetime", "day", "timepoint", "visit"],
-            "patient_id": ["patient_id", "patientid", "patient", "subject_id", "id", "pt_id"],
-            "outcome": ["outcome", "label", "target", "response", "event", "sepsis", "death"]
-        }
+        # FLEXIBLE COLUMN DETECTION - try user hints first, then auto-detect
+        # Outcome column
+        label_col = None
+        if label_col_hint and label_col_hint in df.columns:
+            label_col = label_col_hint
+        else:
+            label_col = find_outcome_column(df)
 
+        # Patient ID column
+        patient_col_hint = req.patient_id_column.strip() if req.patient_id_column else None
+        if patient_col_hint and patient_col_hint in df.columns:
+            patient_col = patient_col_hint
+        else:
+            patient_col = find_patient_column(df)
+
+        # Time column
+        time_col_hint = req.time_column.strip() if req.time_column else None
+        if time_col_hint and time_col_hint in df.columns:
+            time_col = time_col_hint
+        else:
+            time_col = find_time_column(df)
+
+        # Determine analysis mode based on available columns
+        has_outcome = label_col is not None
+        has_time = time_col is not None
+        has_patient = patient_col is not None
+        analysis_mode = determine_analysis_mode(has_outcome, has_time, has_patient)
+
+        # Find biomarker columns (numeric, not ID/time/label)
+        exclude_cols = {patient_col, time_col, label_col, 'patient_id', 'id', 'time', 'day', 'date'}
+        exclude_cols = {c for c in exclude_cols if c is not None}
+        biomarker_cols = [c for c in df.columns if c.lower() not in {e.lower() for e in exclude_cols if e}
+                         and pd.api.types.is_numeric_dtype(df[c])]
+
+        # If we can't do full analysis, return honest result
+        if analysis_mode != "full":
+            missing = []
+            if not has_outcome:
+                missing.append("outcome/label column")
+            if not has_time:
+                missing.append("time column")
+            if not has_patient:
+                missing.append("patient_id column")
+
+            honest_result = generate_honest_result(
+                analysis_mode=analysis_mode,
+                df=df,
+                missing_columns=missing,
+                biomarkers_found=biomarker_cols,
+                outcome_type=req.outcome_type
+            )
+
+            return EarlyRiskResponse(
+                executive_summary=f"Limited analysis: {honest_result['message']}. Found {len(biomarker_cols)} potential biomarker columns: {', '.join(biomarker_cols[:5])}.",
+                risk_timing_delta=honest_result["risk_timing_delta"],
+                signals=[],
+                confidence=0.0,
+                analysis_mode=analysis_mode,
+                data_requirements=honest_result["risk_timing_delta"].get("data_requirements", {})
+            )
+
+        # FULL ANALYSIS MODE - we have all required columns
+        original_columns = df.columns.tolist()
+
+        # Legacy find_column function for backwards compatibility
         def find_column(df, requested_col):
             """Find column with alias support for common time columns."""
             # Direct match
@@ -3462,33 +3756,7 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
 
             return None
 
-        # Now use the formatted CSV (which may have renamed columns)
-        df = pd.read_csv(io.StringIO(csv_data))
-        df.columns = df.columns.str.strip()
-
-        # Find actual column names (handles SmartFormatter renaming)
-        actual_label_col = find_column(df, label_col)
-        actual_patient_col = find_column(df, patient_col_req)
-        actual_time_col = find_column(df, time_col_req)
-
-        # Validate required columns with helpful error messages
-        if actual_label_col is None:
-            raise ValueError(f"Label column '{label_col}' not found. Available: {df.columns.tolist()}, Original: {original_columns}")
-        if actual_patient_col is None:
-            raise ValueError(f"Patient ID column '{patient_col_req}' not found. Available: {df.columns.tolist()}, Original: {original_columns}")
-        if actual_time_col is None:
-            raise ValueError(f"Time column '{time_col_req}' not found. Available: {df.columns.tolist()}, Original: {original_columns}")
-
-        # Use the actual column names found
-        label_col = actual_label_col
-        patient_col = actual_patient_col
-        time_col = actual_time_col
-
-        # Find numeric biomarker columns (exclude ID, time, label columns)
-        exclude_cols = {patient_col, time_col, label_col, 'patient_id', 'id', 'time', 'day', 'date'}
-        biomarker_cols = [c for c in df.columns if c.lower() not in exclude_cols
-                         and pd.api.types.is_numeric_dtype(df[c])]
-
+        # Columns already validated above - we're in full analysis mode
         # Sort by patient and time
         df = df.sort_values([patient_col, time_col])
 
@@ -3713,6 +3981,35 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 biomarkers=top_biomarker_names
             )
 
+        # CROSS-VALIDATION: Validate results before returning
+        # Build minimal domain classification and completeness for validation
+        domain_classification = {
+            "confidence": min(1.0, detection_rate + 0.3) if aggregated_signals else 0.0,
+            "inferred_domain": req.outcome_type
+        }
+        data_completeness = {
+            "score": min(1.0, len(biomarker_cols) / 5),  # 5 biomarkers = 100%
+            "missing": [] if len(biomarker_cols) >= 3 else ["additional biomarkers needed"]
+        }
+
+        cross_val = cross_validate_early_risk(
+            early_risk_result={"risk_timing_delta": risk_timing_delta},
+            domain_classification=domain_classification,
+            data_completeness=data_completeness
+        )
+
+        # If cross-validation fails badly, adjust confidence
+        confidence_level = 0.8 if cross_val["cross_validation"]["passed"] else 0.4
+        if not cross_val["cross_validation"]["proceed_with_results"]:
+            # Don't show detection windows if results are unreliable
+            risk_timing_delta["detection_window_days"] = None
+            risk_timing_delta["low_confidence_warning"] = "Results may be unreliable due to data quality"
+            executive_summary = f"LOW CONFIDENCE: {executive_summary}"
+
+        # Add cross-validation results to response
+        risk_timing_delta["cross_validation"] = cross_val["cross_validation"]
+        risk_timing_delta["analysis_mode"] = "full"
+
         return EarlyRiskResponse(
             executive_summary=executive_summary,
             risk_timing_delta=_sanitize_for_json(risk_timing_delta),
@@ -3720,7 +4017,8 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             missed_risk_summary=_sanitize_for_json(missed_risk_summary),
             clinical_impact=_sanitize_for_json(clinical_impact),
             comparator_performance=_sanitize_for_json(comparator_performance),
-            narrative=narrative
+            narrative=narrative,
+            confidence=confidence_level
         )
 
     except Exception as e:
