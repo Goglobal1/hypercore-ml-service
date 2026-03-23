@@ -337,7 +337,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.19.4"
+APP_VERSION = "5.19.5"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -2551,13 +2551,17 @@ def enrich_clinical_signals(feature_importance: List[Dict], explainability: Dict
 def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
     try:
         # SmartFormatter integration for flexible data input
+        # IMPORTANT: Only trust formatter's label_column if user EXPLICITLY provided one
+        # The formatter auto-selects last column which causes false positives
+        user_provided_label = req.label_column or req.target or req.outcome_column or req.outcome or req.label
         if BUG_FIXES_AVAILABLE:
             formatted = format_for_endpoint(req.dict(), "analyze")
             csv_data = formatted.get("csv", req.csv)
-            label_col_hint = formatted.get("label_column", req.label_column)
+            # Only use formatter's label if user explicitly provided one
+            label_col_hint = user_provided_label if user_provided_label else None
         else:
             csv_data = req.csv
-            label_col_hint = req.label_column
+            label_col_hint = user_provided_label if user_provided_label else None
 
         # BULLETPROOF CSV PARSING - use same function as early_risk_discovery
         df = parse_csv_bulletproof(csv_data)
