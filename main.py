@@ -199,6 +199,16 @@ try:
 except ImportError:
     TRAJECTORY_AVAILABLE = False
 
+# Unified Intelligence Layer
+try:
+    from app.core.intelligence import (
+        get_intelligence, UnifiedIntelligenceLayer, ViewFocus,
+        PatternType, PatternSource
+    )
+    INTELLIGENCE_AVAILABLE = True
+except ImportError:
+    INTELLIGENCE_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -344,7 +354,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.20.1"
+APP_VERSION = "5.21.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -4413,6 +4423,227 @@ async def trajectory_analysis(request: TrajectoryRequest):
             "traceback": traceback.format_exc(),
             "patients_analyzed": 0
         }
+
+
+# ---------------------------------------------------------------------
+# UNIFIED INTELLIGENCE LAYER ENDPOINTS
+# ---------------------------------------------------------------------
+
+class IntelligenceInsightRequest(BaseModel):
+    """Request for unified insight."""
+    patient_id: str
+    focus: Optional[str] = "all"  # all, timing, biomarkers, intervention, population, alert
+    max_age_hours: Optional[float] = 24.0
+
+
+class IntelligenceReportRequest(BaseModel):
+    """Report a pattern to the intelligence layer."""
+    patient_id: str
+    pattern_type: str  # trajectory, genomic, pharma, pathogen, alert, clinical
+    data: Dict[str, Any]
+
+
+@app.get("/intelligence/health")
+async def intelligence_health():
+    """Check health of the Unified Intelligence Layer."""
+    if not INTELLIGENCE_AVAILABLE:
+        return {
+            "status": "unavailable",
+            "message": "Intelligence module not installed"
+        }
+
+    intelligence = get_intelligence()
+    return intelligence.get_health()
+
+
+@app.post("/intelligence/insight")
+async def get_intelligence_insight(request: IntelligenceInsightRequest):
+    """
+    Get unified insight for a patient.
+
+    The Unified Intelligence Layer aggregates patterns from ALL modules:
+    - Trajectory analysis (rate of change, inflection points, forecasts)
+    - Genomics (variants, pharmacogenomics)
+    - Pharma (drug interactions, metabolism)
+    - Pathogen (infections, resistance)
+    - Alerts (state changes, escalations)
+
+    Returns cross-domain correlations that no single module could detect alone.
+    """
+    if not INTELLIGENCE_AVAILABLE:
+        return {"error": "Intelligence module not available"}
+
+    intelligence = get_intelligence()
+
+    # Map focus string to ViewFocus enum
+    focus_map = {
+        "all": ViewFocus.ALL,
+        "timing": ViewFocus.TIMING,
+        "biomarkers": ViewFocus.BIOMARKERS,
+        "intervention": ViewFocus.INTERVENTION,
+        "population": ViewFocus.POPULATION,
+        "alert": ViewFocus.ALERT
+    }
+    focus = focus_map.get(request.focus.lower(), ViewFocus.ALL)
+
+    insight = intelligence.get_unified_insight(
+        request.patient_id,
+        focus=focus,
+        max_age_hours=request.max_age_hours
+    )
+
+    return insight.to_dict()
+
+
+@app.post("/intelligence/correlations")
+async def get_intelligence_correlations(request: IntelligenceInsightRequest):
+    """Get cross-domain correlations for a patient."""
+    if not INTELLIGENCE_AVAILABLE:
+        return {"error": "Intelligence module not available"}
+
+    intelligence = get_intelligence()
+    correlations = intelligence.get_correlations(request.patient_id)
+
+    return {
+        "patient_id": request.patient_id,
+        "correlation_count": len(correlations),
+        "correlations": [c.to_dict() for c in correlations]
+    }
+
+
+@app.post("/intelligence/report")
+async def report_to_intelligence(request: IntelligenceReportRequest):
+    """
+    Report a pattern to the Unified Intelligence Layer.
+
+    Pattern types:
+    - trajectory: Report trajectory analysis data
+    - genomic: Report genomic variant
+    - pharma: Report drug interaction
+    - pathogen: Report infection/pathogen
+    - alert: Report alert state change
+    - clinical: Report clinical domain classification
+    """
+    if not INTELLIGENCE_AVAILABLE:
+        return {"error": "Intelligence module not available"}
+
+    intelligence = get_intelligence()
+    data = request.data
+    pattern_id = None
+
+    try:
+        if request.pattern_type == "trajectory":
+            # Expects: patient_data (dict of biomarker->values), timestamps
+            pattern_ids = intelligence.report_trajectory(
+                request.patient_id,
+                data.get("patient_data", {}),
+                data.get("timestamps", [])
+            )
+            return {"pattern_ids": pattern_ids, "count": len(pattern_ids)}
+
+        elif request.pattern_type == "genomic":
+            pattern_id = intelligence.report_genomic(
+                request.patient_id,
+                gene=data.get("gene", ""),
+                variant=data.get("variant", ""),
+                classification=data.get("classification", ""),
+                clinical_significance=data.get("clinical_significance", ""),
+                conditions=data.get("conditions"),
+                drug_implications=data.get("drug_implications")
+            )
+
+        elif request.pattern_type == "pharma":
+            pattern_id = intelligence.report_drug_interaction(
+                request.patient_id,
+                drug_a=data.get("drug_a", ""),
+                drug_b=data.get("drug_b", ""),
+                interaction_type=data.get("interaction_type", ""),
+                effect=data.get("effect", ""),
+                management=data.get("management", ""),
+                affected_gene=data.get("affected_gene")
+            )
+
+        elif request.pattern_type == "pathogen":
+            pattern_id = intelligence.report_pathogen(
+                request.patient_id,
+                pathogen=data.get("pathogen"),
+                infection_type=data.get("infection_type", ""),
+                resistance_genes=data.get("resistance_genes"),
+                outbreak_cluster=data.get("outbreak_cluster")
+            )
+
+        elif request.pattern_type == "alert":
+            pattern_id = intelligence.report_alert(
+                request.patient_id,
+                state=data.get("state", ""),
+                previous_state=data.get("previous_state"),
+                duration_hours=data.get("duration_hours", 0),
+                alert_type=data.get("alert_type", "informational")
+            )
+
+        elif request.pattern_type == "clinical":
+            pattern_id = intelligence.report_clinical_domain(
+                request.patient_id,
+                domain=data.get("domain", ""),
+                confidence=data.get("confidence", 0.5),
+                primary_markers=data.get("primary_markers", []),
+                secondary_markers=data.get("secondary_markers"),
+                missing_markers=data.get("missing_markers")
+            )
+
+        else:
+            return {"error": f"Unknown pattern type: {request.pattern_type}"}
+
+        return {"pattern_id": pattern_id, "success": True}
+
+    except Exception as e:
+        return {"error": str(e), "success": False}
+
+
+@app.get("/intelligence/population")
+async def get_population_intelligence():
+    """Get population-level intelligence summary."""
+    if not INTELLIGENCE_AVAILABLE:
+        return {"error": "Intelligence module not available"}
+
+    intelligence = get_intelligence()
+
+    summary = intelligence.get_population_summary()
+    high_risk = intelligence.get_high_risk_patients(min_severity=0.7, hours=24)
+
+    return {
+        "summary": summary,
+        "high_risk_patients": high_risk[:20],  # Top 20
+        "high_risk_count": len(high_risk)
+    }
+
+
+@app.get("/intelligence/high-risk")
+async def get_high_risk_patients(min_severity: float = 0.7, hours: float = 24):
+    """Get list of high-risk patients."""
+    if not INTELLIGENCE_AVAILABLE:
+        return {"error": "Intelligence module not available"}
+
+    intelligence = get_intelligence()
+    patients = intelligence.get_high_risk_patients(min_severity=min_severity, hours=hours)
+
+    return {
+        "patients": patients,
+        "count": len(patients),
+        "filters": {"min_severity": min_severity, "hours": hours}
+    }
+
+
+@app.post("/intelligence/cleanup")
+async def cleanup_intelligence():
+    """Run maintenance/cleanup on intelligence layer."""
+    if not INTELLIGENCE_AVAILABLE:
+        return {"error": "Intelligence module not available"}
+
+    intelligence = get_intelligence()
+    result = intelligence.cleanup()
+
+    return {"success": True, **result}
 
 
 # ---------------------------------------------------------------------
