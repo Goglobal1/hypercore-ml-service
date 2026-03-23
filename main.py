@@ -707,8 +707,7 @@ class AnalyzeRequest(BaseModel):
         # Validate required fields
         if not values.get('csv'):
             raise ValueError('csv field is required (alternatives: data, csv_data, csv_content)')
-        if not values.get('label_column'):
-            raise ValueError('label_column field is required (alternatives: target, outcome_column, outcome, label)')
+        # label_column is now OPTIONAL - will auto-detect or fall back to unsupervised analysis
 
         return values
 
@@ -719,17 +718,17 @@ class FeatureImportance(BaseModel):
 
 
 class AnalyzeResponse(BaseModel):
-    # Primary (Base44-friendly)
-    metrics: Dict[str, Any]
-    coefficients: Dict[str, float]
-    roc_curve_data: Dict[str, List[float]]
-    pr_curve_data: Dict[str, List[float]]
-    feature_importance: List[FeatureImportance]
-    dropped_features: List[str]
+    # Primary (Base44-friendly) - now optional for unsupervised mode
+    metrics: Optional[Dict[str, Any]] = None
+    coefficients: Optional[Dict[str, float]] = None
+    roc_curve_data: Optional[Dict[str, List[float]]] = None
+    pr_curve_data: Optional[Dict[str, List[float]]] = None
+    feature_importance: Optional[List[Any]] = None  # Allow dict or FeatureImportance
+    dropped_features: Optional[List[str]] = None
 
-    # HyperCore-grade outputs
-    pipeline: Dict[str, Any]
-    execution_manifest: Dict[str, Any]
+    # HyperCore-grade outputs - optional for unsupervised
+    pipeline: Optional[Dict[str, Any]] = None
+    execution_manifest: Optional[Dict[str, Any]] = None
 
     # Enhanced analysis fields
     axis_summary: Optional[Dict[str, Any]] = None
@@ -739,6 +738,16 @@ class AnalyzeResponse(BaseModel):
     missed_opportunities: Optional[List[Dict[str, Any]]] = None
     silent_risk_summary: Optional[Dict[str, Any]] = None
     comparator_benchmarking: Optional[Dict[str, Any]] = None
+
+    # New fields for flexible analysis modes
+    summary: Optional[str] = None
+    risk_score: Optional[float] = None
+    confidence: Optional[float] = None
+    analysis_mode: Optional[str] = None
+    unsupervised_results: Optional[Dict[str, Any]] = None
+    columns_found: Optional[List[str]] = None
+    numeric_columns: Optional[List[str]] = None
+    recommendation: Optional[str] = None
     executive_summary: Optional[str] = None
     narrative_insights: Optional[Dict[str, str]] = None
     explainability: Optional[Dict[str, Any]] = None
@@ -2545,17 +2554,124 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         if BUG_FIXES_AVAILABLE:
             formatted = format_for_endpoint(req.dict(), "analyze")
             csv_data = formatted.get("csv", req.csv)
-            label_col = formatted.get("label_column", req.label_column)
+            label_col_hint = formatted.get("label_column", req.label_column)
         else:
             csv_data = req.csv
-            label_col = req.label_column
+            label_col_hint = req.label_column
 
-        df = pd.read_csv(io.StringIO(csv_data))
+        # BULLETPROOF CSV PARSING - use same function as early_risk_discovery
+        df = parse_csv_bulletproof(csv_data)
+
+        # Safely strip column names
+        try:
+            df.columns = [str(c).strip() for c in df.columns]
+        except Exception:
+            pass
+
+        if len(df) == 0 or len(df.columns) < 2:
+            return AnalyzeResponse(
+                summary="Unable to parse CSV data. Please check format.",
+                risk_score=0.0,
+                confidence=0.0,
+                analysis_mode="failed"
+            )
+
+        # NORMALIZE BIOMARKER COLUMN NAMES using BIOMARKER_MAPPINGS
+        try:
+            from app.core.data_ingestion import BIOMARKER_MAPPINGS
+            import re as re_module
+
+            def normalize_analyze_col(col: str) -> str:
+                normalized = col.lower().strip().replace("-", "_").replace(" ", "_")
+                normalized = re_module.sub(r"_(?:ng|pg|ug|mg|g|mmol|umol|meq|u|iu|mu)_?(?:l|dl|ml)?$", "", normalized)
+                normalized = re_module.sub(r"_(?:ml|l)_(?:min|hr|sec|1_73m2)$", "", normalized)
+                return BIOMARKER_MAPPINGS.get(normalized, col)
+
+            col_mapping = {col: normalize_analyze_col(col) for col in df.columns}
+            df = df.rename(columns=col_mapping)
+        except ImportError:
+            pass
+
         context = normalize_context(req.context)
 
-        if label_col not in df.columns:
-            raise HTTPException(status_code=400, detail=f"label_column '{label_col}' not found in dataset")
+        # FLEXIBLE LABEL COLUMN DETECTION
+        label_col = None
+        if label_col_hint and label_col_hint in df.columns:
+            label_col = label_col_hint
+        else:
+            # Auto-detect using same logic as early_risk_discovery
+            label_col = find_outcome_column(df)
 
+        # Determine analysis mode
+        has_label = label_col is not None and label_col in df.columns
+        analysis_mode = "supervised" if has_label else "unsupervised"
+
+        # UNSUPERVISED FALLBACK: When no label column found
+        if not has_label:
+            # Do PCA, clustering, anomaly detection instead of supervised learning
+            numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+            if len(numeric_cols) < 2:
+                return AnalyzeResponse(
+                    summary="Insufficient numeric columns for analysis. Need at least 2 numeric biomarker columns.",
+                    risk_score=0.0,
+                    confidence=0.0,
+                    analysis_mode="unsupervised_failed",
+                    columns_found=list(df.columns),
+                    recommendation="Add numeric biomarker columns or provide a label/outcome column for supervised analysis"
+                )
+
+            # Basic unsupervised analysis
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.decomposition import PCA
+            from sklearn.cluster import KMeans
+
+            X = df[numeric_cols].fillna(0)
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+
+            # PCA
+            n_components = min(3, len(numeric_cols))
+            pca = PCA(n_components=n_components)
+            pca_result = pca.fit_transform(X_scaled)
+
+            # Clustering
+            n_clusters = min(3, len(df))
+            kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+            clusters = kmeans.fit_predict(X_scaled)
+
+            # Find outliers (simple z-score based)
+            from scipy import stats
+            z_scores = np.abs(stats.zscore(X_scaled, nan_policy='omit'))
+            outlier_mask = (z_scores > 2).any(axis=1)
+            n_outliers = outlier_mask.sum()
+
+            # Feature importance from PCA loadings
+            pca_importance = []
+            for i, col in enumerate(numeric_cols):
+                importance = abs(pca.components_[0, i]) if len(pca.components_) > 0 else 0
+                pca_importance.append({"feature": col, "importance": float(importance)})
+            pca_importance.sort(key=lambda x: x["importance"], reverse=True)
+
+            return AnalyzeResponse(
+                summary=f"Unsupervised analysis completed. No label column found - performed PCA, clustering, and anomaly detection on {len(numeric_cols)} biomarkers across {len(df)} samples.",
+                risk_score=float(n_outliers / len(df)) if len(df) > 0 else 0.0,
+                confidence=float(pca.explained_variance_ratio_.sum()) if hasattr(pca, 'explained_variance_ratio_') else 0.5,
+                analysis_mode="unsupervised",
+                feature_importance=pca_importance[:10],
+                unsupervised_results={
+                    "pca_variance_explained": [float(v) for v in pca.explained_variance_ratio_],
+                    "n_clusters": n_clusters,
+                    "cluster_sizes": [int((clusters == i).sum()) for i in range(n_clusters)],
+                    "n_outliers": int(n_outliers),
+                    "outlier_rate": float(n_outliers / len(df)) if len(df) > 0 else 0.0,
+                    "top_features": [f["feature"] for f in pca_importance[:5]]
+                },
+                columns_found=list(df.columns),
+                numeric_columns=numeric_cols,
+                recommendation="Add a label/outcome column (e.g., 'outcome', 'label', 'sepsis', 'death') for supervised predictive analysis"
+            )
+
+        # SUPERVISED ANALYSIS: We have a label column
         # Ingest + canonicalize
         labs_long, ingest_meta = ingest_labs(
             df=df,
@@ -2584,7 +2700,15 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         y = label_by_patient.values.astype(int)
 
         if len(np.unique(y)) < 2:
-            raise HTTPException(status_code=400, detail="Label must contain at least two classes (0/1) after aggregation.")
+            # Fall back to unsupervised if label has only one class
+            return AnalyzeResponse(
+                summary=f"Label column '{label_col}' found but contains only one class. Need both 0 and 1 values for supervised analysis.",
+                risk_score=0.0,
+                confidence=0.0,
+                analysis_mode="supervised_failed",
+                columns_found=list(df.columns),
+                recommendation="Ensure label column contains both positive (1) and negative (0) cases"
+            )
 
         # Axes + interactions + loops
         axis_scores, axis_summary = decompose_axes(labs_long)
