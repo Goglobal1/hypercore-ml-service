@@ -3561,12 +3561,39 @@ PATIENT_COLUMN_NAMES = [
 
 def find_outcome_column(df: pd.DataFrame) -> Optional[str]:
     """Find outcome/label column flexibly. Returns None if not found."""
+    # First pass: exact matches (highest priority)
     for col in df.columns:
-        col_lower = col.lower().strip().replace('_', '').replace('-', '')
+        col_lower = col.lower().strip()
+        col_normalized = col_lower.replace('_', '').replace('-', '')
         for name in OUTCOME_COLUMN_NAMES:
             name_normalized = name.replace('_', '')
-            if name_normalized in col_lower or col_lower in name_normalized:
+            if col_normalized == name_normalized or col_lower == name:
                 return col
+
+    # Second pass: prefix/suffix matches (e.g., "is_sepsis", "sepsis_flag", "has_death")
+    for col in df.columns:
+        col_lower = col.lower().strip()
+        for name in OUTCOME_COLUMN_NAMES:
+            # Only check meaningful outcome names (skip short ones like 'y', 'los')
+            if len(name) >= 4:
+                if col_lower.startswith(name) or col_lower.endswith(name):
+                    return col
+                if col_lower.startswith(f"is_{name}") or col_lower.startswith(f"has_{name}"):
+                    return col
+
+    # Third pass: check for binary columns (0/1 values only) with suggestive names
+    binary_keywords = ['label', 'outcome', 'event', 'death', 'sepsis', 'target']
+    for col in df.columns:
+        col_lower = col.lower().strip()
+        try:
+            unique_vals = set(df[col].dropna().unique())
+            if unique_vals <= {0, 1, 0.0, 1.0, '0', '1', True, False}:
+                for keyword in binary_keywords:
+                    if keyword in col_lower:
+                        return col
+        except Exception:
+            continue
+
     return None
 
 
