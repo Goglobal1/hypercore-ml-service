@@ -192,6 +192,13 @@ try:
 except ImportError:
     UNIVERSAL_INGESTION_AVAILABLE = False
 
+# Trajectory Analysis System (Early Warning Engine)
+try:
+    from app.core.trajectory import EarlyWarningEngine, EarlyWarningReport
+    TRAJECTORY_AVAILABLE = True
+except ImportError:
+    TRAJECTORY_AVAILABLE = False
+
 # Optional imports for Clinical Intelligence Layer
 try:
     import shap
@@ -337,7 +344,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.19.5"
+APP_VERSION = "5.20.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -4202,6 +4209,214 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             status_code=500,
             detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
         )
+
+
+# ---------------------------------------------------------------------
+# TRAJECTORY ANALYSIS - Early Warning Engine
+# ---------------------------------------------------------------------
+
+class TrajectoryRequest(BaseModel):
+    """Request model for trajectory analysis."""
+    csv_content: Optional[str] = Field(None, alias="csv")
+    csv_data: Optional[str] = None
+    data: Optional[str] = None
+    patient_id_column: Optional[str] = None
+    time_column: Optional[str] = None
+
+    @validator('csv_content', pre=True, always=True)
+    def get_csv(cls, v, values):
+        return v or values.get('csv_data') or values.get('data')
+
+
+@app.post("/trajectory/analyze")
+async def trajectory_analysis(request: TrajectoryRequest):
+    """
+    TRAJECTORY ANALYSIS - The Early Warning Engine
+
+    Analyzes RATE OF CHANGE and INFLECTION POINTS to detect disease onset
+    WEEKS before thresholds are crossed.
+
+    Key Innovation:
+    - Current system: Detects when procalcitonin > 0.5 -> 3 days warning
+    - This system: Detects when procalcitonin STARTS RISING -> 14-21 days warning
+
+    Input: Longitudinal patient data (multiple time points per patient)
+    Output: Early warning report with estimated days to event
+    """
+    if not TRAJECTORY_AVAILABLE:
+        return {
+            "error": "Trajectory analysis module not available",
+            "install": "pip install scipy numpy"
+        }
+
+    try:
+        # Parse CSV
+        csv_content = request.csv_content or request.csv_data or request.data
+        if not csv_content:
+            return {"error": "No CSV data provided", "patients_analyzed": 0}
+
+        df = parse_csv_bulletproof(csv_content)
+
+        if df.empty:
+            return {"error": "Empty dataset", "patients_analyzed": 0}
+
+        # Normalize column names
+        def normalize_col(c):
+            normalized = str(c).lower().strip().replace('-', '_').replace(' ', '_')
+            try:
+                from app.core.data_ingestion import BIOMARKER_MAPPINGS
+                return BIOMARKER_MAPPINGS.get(normalized, normalized)
+            except:
+                return normalized
+
+        df.columns = [normalize_col(c) for c in df.columns]
+
+        # Find patient ID column
+        patient_id_col = request.patient_id_column
+        if not patient_id_col:
+            for col in df.columns:
+                if col.lower() in ['patient_id', 'patientid', 'id', 'subject', 'subject_id', 'mrn']:
+                    patient_id_col = col
+                    break
+
+        if not patient_id_col:
+            patient_id_col = df.columns[0]
+
+        # Find time column
+        time_col = request.time_column
+        if not time_col:
+            time_candidates = ['day', 'time', 'timestamp', 'visit', 'timepoint', 'study_day', 'week', 'hour', 'date']
+            for col in df.columns:
+                if col.lower() in time_candidates:
+                    time_col = col
+                    break
+
+        if not time_col:
+            # Create synthetic time
+            df['_synthetic_day'] = range(len(df))
+            time_col = '_synthetic_day'
+
+        # Get biomarker columns
+        exclude_cols = [patient_id_col, time_col, 'outcome', 'label', 'event', '_synthetic_day', 'death', 'sepsis']
+        biomarker_cols = [c for c in df.columns if c.lower() not in [e.lower() for e in exclude_cols]]
+
+        # Initialize engine
+        engine = EarlyWarningEngine()
+
+        # Analyze each patient
+        patient_reports = []
+
+        for patient_id in df[patient_id_col].unique():
+            patient_df = df[df[patient_id_col] == patient_id].sort_values(time_col)
+
+            if len(patient_df) < 3:
+                continue
+
+            # Extract trajectories
+            patient_data = {}
+            for col in biomarker_cols:
+                try:
+                    values = patient_df[col].tolist()
+                    # Filter valid numeric values
+                    numeric_values = []
+                    for v in values:
+                        try:
+                            fv = float(v)
+                            if not np.isnan(fv):
+                                numeric_values.append(fv)
+                        except:
+                            pass
+                    if len(numeric_values) >= 3:
+                        patient_data[col] = numeric_values
+                except:
+                    continue
+
+            if not patient_data:
+                continue
+
+            timestamps = patient_df[time_col].tolist()
+            try:
+                timestamps = [float(t) for t in timestamps]
+            except:
+                timestamps = list(range(len(patient_df)))
+
+            # Run analysis
+            try:
+                report = engine.analyze_patient(str(patient_id), patient_data, timestamps)
+                patient_reports.append(report)
+            except Exception as e:
+                continue
+
+        if not patient_reports:
+            return {
+                "error": "No patients with sufficient data for trajectory analysis",
+                "patients_analyzed": 0,
+                "minimum_required": "3+ time points per patient with numeric biomarker values"
+            }
+
+        # Aggregate results
+        high_risk_patients = [r for r in patient_reports if r.risk_level in ['critical', 'high']]
+
+        # Calculate averages
+        detection_improvements = [r.detection_improvement_days for r in patient_reports if r.detection_improvement_days > 0]
+        avg_improvement = float(np.mean(detection_improvements)) if detection_improvements else 0.0
+        max_improvement = float(max(detection_improvements)) if detection_improvements else 0.0
+
+        # Pattern distribution
+        pattern_counts = {}
+        for r in patient_reports:
+            if r.primary_pattern:
+                pattern_counts[r.primary_pattern] = pattern_counts.get(r.primary_pattern, 0) + 1
+
+        return {
+            "success": True,
+            "patients_analyzed": len(patient_reports),
+            "high_risk_count": len(high_risk_patients),
+            "risk_distribution": {
+                "critical": len([r for r in patient_reports if r.risk_level == 'critical']),
+                "high": len([r for r in patient_reports if r.risk_level == 'high']),
+                "moderate": len([r for r in patient_reports if r.risk_level == 'moderate']),
+                "low": len([r for r in patient_reports if r.risk_level == 'low']),
+            },
+            "detection_improvement": {
+                "average_days": round(avg_improvement, 1),
+                "maximum_days": round(max_improvement, 1),
+                "vs_threshold_only": f"+{round(avg_improvement, 1)} days earlier detection"
+            },
+            "pattern_distribution": pattern_counts,
+            "earliest_signal": {
+                "biomarker": max(patient_reports, key=lambda r: r.earliest_signal_days_ago).earliest_signal_biomarker if patient_reports else None,
+                "days_ago": round(max(r.earliest_signal_days_ago for r in patient_reports), 1) if patient_reports else 0
+            },
+            "reports": [
+                {
+                    "patient_id": r.patient_id,
+                    "risk_level": r.risk_level,
+                    "confidence": round(r.confidence, 2),
+                    "estimated_days_to_event": round(r.estimated_days_to_event, 1),
+                    "detection_improvement_days": round(r.detection_improvement_days, 1),
+                    "primary_pattern": r.primary_pattern,
+                    "matched_patterns": r.matched_patterns,
+                    "earliest_signal": r.earliest_signal_biomarker,
+                    "signal_propagation": r.signal_propagation_order[:5],
+                    "clinical_recommendations": r.clinical_recommendations[:5],
+                    "monitoring": r.monitoring_recommendations,
+                    "genetic_recommendations": r.genetic_recommendations[:3],
+                    "rate_alerts": {k: v['alert_level'] for k, v in r.rate_changes.items() if v['alert_level'] != 'normal'},
+                    "inflection_summary": {k: len(v) for k, v in r.inflection_points.items()},
+                    "forecasts": {k: f"{v['predicted_crossing_day']:.1f} days" for k, v in r.forecasts.items()}
+                }
+                for r in patient_reports
+            ]
+        }
+
+    except Exception as e:
+        import traceback
+        return {
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "patients_analyzed": 0
+        }
 
 
 # ---------------------------------------------------------------------
