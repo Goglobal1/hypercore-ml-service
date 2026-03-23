@@ -4223,10 +4223,6 @@ class TrajectoryRequest(BaseModel):
     patient_id_column: Optional[str] = None
     time_column: Optional[str] = None
 
-    @validator('csv_content', pre=True, always=True)
-    def get_csv(cls, v, values):
-        return v or values.get('csv_data') or values.get('data')
-
 
 @app.post("/trajectory/analyze")
 async def trajectory_analysis(request: TrajectoryRequest):
