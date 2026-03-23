@@ -354,7 +354,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.21.0"
+APP_VERSION = "5.22.0"
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -915,6 +915,8 @@ class EarlyRiskResponse(BaseModel):
     analysis_mode: Optional[str] = None
     data_requirements: Optional[Dict[str, Any]] = None
     signals: Optional[List[Dict[str, Any]]] = None
+    # Unified Intelligence Layer integration
+    intelligence: Optional[Dict[str, Any]] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -4174,6 +4176,105 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 biomarkers=top_biomarker_names
             )
 
+        # =====================================================================
+        # UNIFIED INTELLIGENCE LAYER INTEGRATION
+        # Report patterns and get cross-domain correlations
+        # =====================================================================
+        intelligence_data = None
+        if INTELLIGENCE_AVAILABLE:
+            try:
+                intelligence = get_intelligence()
+
+                # Report trajectory patterns for each patient with events
+                all_pattern_ids = []
+                for patient_id in patients_with_events:
+                    patient_df = df[df[patient_col] == patient_id].sort_values(time_col)
+                    if len(patient_df) < 3:
+                        continue
+
+                    # Build patient trajectory data
+                    patient_trajectories = {}
+                    for bio in biomarker_cols:
+                        values = patient_df[bio].dropna().tolist()
+                        if len(values) >= 3:
+                            patient_trajectories[bio] = values
+
+                    if patient_trajectories:
+                        timestamps = patient_df[time_col].tolist()
+                        try:
+                            timestamps = [float(t) for t in timestamps]
+                        except:
+                            timestamps = list(range(len(patient_df)))
+
+                        # Report to intelligence layer
+                        pattern_ids = intelligence.report_trajectory(
+                            str(patient_id),
+                            patient_trajectories,
+                            timestamps
+                        )
+                        all_pattern_ids.extend(pattern_ids)
+
+                        # Also report clinical domain
+                        intelligence.report_clinical_domain(
+                            str(patient_id),
+                            domain=req.outcome_type,
+                            confidence=min(1.0, detection_rate + 0.3),
+                            primary_markers=top_biomarker_names[:5],
+                            secondary_markers=top_biomarker_names[5:10] if len(top_biomarker_names) > 5 else []
+                        )
+
+                # Get unified insight for first high-risk patient (representative)
+                if patients_with_events.any():
+                    first_patient = str(patients_with_events[0])
+                    insight = intelligence.get_unified_insight(first_patient, focus=ViewFocus.TIMING)
+                    correlations = intelligence.get_correlations(first_patient)
+
+                    intelligence_data = {
+                        "enabled": True,
+                        "patterns_reported": len(all_pattern_ids),
+                        "patients_tracked": len(patients_with_events),
+                        "sample_insight": {
+                            "patient_id": insight.patient_id,
+                            "risk_level": insight.risk_level,
+                            "risk_score": round(insight.unified_risk_score, 2),
+                            "confidence": round(insight.confidence, 2),
+                            "primary_concern": insight.primary_concern,
+                            "primary_domain": insight.primary_domain,
+                            "earliest_signal_days_ago": round(insight.earliest_signal_days_ago, 1),
+                            "estimated_days_to_event": round(insight.estimated_days_to_event, 1),
+                            "detection_improvement_days": round(insight.detection_improvement_days, 1),
+                            "cascade_detected": insight.cascade_detected,
+                        },
+                        "correlations": {
+                            "count": len(correlations),
+                            "urgent_count": len([c for c in correlations if c.urgency in ["immediate", "urgent"]]),
+                            "types": list(set(c.correlation_type.value for c in correlations)),
+                            "top_correlations": [
+                                {
+                                    "type": c.correlation_type.value,
+                                    "significance": c.clinical_significance,
+                                    "action": c.action_required,
+                                    "urgency": c.urgency,
+                                    "strength": round(c.strength, 2)
+                                }
+                                for c in correlations[:3]
+                            ]
+                        },
+                        "recommendations": {
+                            "clinical": insight.clinical_recommendations[:5],
+                            "monitoring": insight.monitoring_recommendations,
+                            "genetic": insight.genetic_recommendations[:3]
+                        },
+                        "contributing_factors": insight.contributing_factors[:5]
+                    }
+            except Exception as intel_error:
+                intelligence_data = {
+                    "enabled": False,
+                    "error": str(intel_error)
+                }
+        else:
+            intelligence_data = {"enabled": False, "reason": "Intelligence module not available"}
+
         # CROSS-VALIDATION: Validate results before returning
         # Build minimal domain classification and completeness for validation
         domain_classification = {
@@ -4203,6 +4304,15 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         risk_timing_delta["cross_validation"] = cross_val["cross_validation"]
         risk_timing_delta["analysis_mode"] = "full"
 
+        # Enhance executive summary with intelligence insights
+        if intelligence_data and intelligence_data.get("enabled"):
+            insight = intelligence_data.get("sample_insight", {})
+            corr_count = intelligence_data.get("correlations", {}).get("count", 0)
+            if corr_count > 0:
+                executive_summary += f" Intelligence layer detected {corr_count} cross-domain correlations."
+            if insight.get("cascade_detected"):
+                executive_summary += " TEMPORAL CASCADE detected across biological levels."
+
         return EarlyRiskResponse(
             executive_summary=executive_summary,
             risk_timing_delta=_sanitize_for_json(risk_timing_delta),
@@ -4211,7 +4321,8 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             clinical_impact=_sanitize_for_json(clinical_impact),
             comparator_performance=_sanitize_for_json(comparator_performance),
             narrative=narrative,
-            confidence=confidence_level
+            confidence=confidence_level,
+            intelligence=_sanitize_for_json(intelligence_data)
         )
 
     except Exception as e:
