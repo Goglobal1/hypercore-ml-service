@@ -39,6 +39,13 @@ except ImportError:
     DATA_INGESTION_AVAILABLE = False
     BIOMARKER_MAPPINGS = {}
 
+# Import Unified Intelligence Layer
+try:
+    from ..intelligence import get_intelligence, ViewFocus
+    INTELLIGENCE_AVAILABLE = True
+except ImportError:
+    INTELLIGENCE_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/alerts", tags=["Alert System"])
@@ -196,7 +203,105 @@ async def patient_intake(request: PatientIntakeRequest):
             metadata=request.metadata,
         )
 
+        # =====================================================================
+        # UNIFIED INTELLIGENCE LAYER INTEGRATION
+        # Feed patterns from pipeline result into intelligence layer
+        # =====================================================================
+        unified_intelligence = None
+        if INTELLIGENCE_AVAILABLE and result.evaluation_result:
+            try:
+                intel = get_intelligence()
+                eval_result = result.evaluation_result
+
+                # Report alert state
+                intel.report_alert(
+                    patient_id=patient_id,
+                    state=eval_result.state_now.value if eval_result.state_now else "unknown",
+                    previous_state=eval_result.state_previous.value if eval_result.state_previous else None,
+                    duration_hours=0,
+                    alert_type=eval_result.alert_type.value if eval_result.alert_type else "informational"
+                )
+
+                # Report clinical domain
+                if domain_classification:
+                    intel.report_clinical_domain(
+                        patient_id=patient_id,
+                        domain=domain_classification.get('inferred_domain', risk_domain),
+                        confidence=domain_classification.get('confidence', 0.5),
+                        primary_markers=domain_classification.get('primary_markers', []),
+                        secondary_markers=domain_classification.get('secondary_markers', [])
+                    )
+
+                # Report genomic patterns if genomics was invoked
+                agent_findings = eval_result.agent_findings or {}
+                specialized = agent_findings.get('specialized_modules', {})
+
+                if specialized.get('genomics', {}).get('invoked'):
+                    genes = specialized['genomics'].get('genes_analyzed', [])
+                    for gene in genes[:5]:
+                        intel.report_genomic(
+                            patient_id=patient_id,
+                            gene=gene,
+                            variant="analyzed",
+                            classification="evaluated",
+                            clinical_significance="under_review"
+                        )
+
+                # Report pharma patterns if pharma was invoked
+                if specialized.get('pharma', {}).get('invoked'):
+                    interactions = specialized['pharma'].get('interactions_found', [])
+                    for interaction in interactions[:3]:
+                        if isinstance(interaction, dict):
+                            intel.report_drug_interaction(
+                                patient_id=patient_id,
+                                drug_a=interaction.get('drug_a', 'unknown'),
+                                drug_b=interaction.get('drug_b', 'unknown'),
+                                interaction_type=interaction.get('severity', 'moderate'),
+                                effect=interaction.get('effect', ''),
+                                management=interaction.get('management', '')
+                            )
+
+                # Report pathogen patterns if pathogen was invoked
+                if specialized.get('pathogen', {}).get('invoked'):
+                    pathogen_info = specialized['pathogen']
+                    intel.report_pathogen(
+                        patient_id=patient_id,
+                        infection_type=pathogen_info.get('outbreak_risk', ''),
+                        resistance_genes=[]
+                    )
+
+                # Get unified insight and add to response
+                insight = intel.get_unified_insight(patient_id, ViewFocus.ALERT)
+                correlations = intel.get_correlations(patient_id)
+
+                unified_intelligence = {
+                    "enabled": True,
+                    "risk_score": round(insight.unified_risk_score, 2),
+                    "risk_level": insight.risk_level,
+                    "correlations_count": len(correlations),
+                    "cross_domain_alerts": [
+                        {
+                            "type": c.correlation_type.value,
+                            "significance": c.clinical_significance,
+                            "urgency": c.urgency,
+                            "action": c.action_required
+                        }
+                        for c in correlations if c.urgency in ["immediate", "urgent"]
+                    ][:3],
+                    "cascade_detected": insight.cascade_detected,
+                    "earliest_signal_days_ago": round(insight.earliest_signal_days_ago, 1),
+                    "recommendations": insight.clinical_recommendations[:5]
+                }
+
+            except Exception as intel_error:
+                logger.warning(f"Intelligence integration failed: {intel_error}")
+                unified_intelligence = {"enabled": False, "error": str(intel_error)}
+
         response = result.to_dict()
+
+        # Add unified intelligence to response
+        if unified_intelligence:
+            response["unified_intelligence"] = unified_intelligence
 
         # Add patient_id tracking info if auto-generated
         if patient_id_generated:

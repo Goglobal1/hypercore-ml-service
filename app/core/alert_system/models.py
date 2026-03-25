@@ -412,6 +412,8 @@ class EvaluationResult:
     agent_findings: Optional[Dict[str, Any]] = None
     # Cascade detection (multi-omic early warning)
     cascade_detection: Optional[Dict[str, Any]] = None
+    # Unified intelligence layer integration
+    unified_intelligence: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -439,6 +441,7 @@ class EvaluationResult:
             "evaluation_duration_ms": round(self.evaluation_duration_ms, 2),
             "agent_findings": self.agent_findings,
             "cascade_detection": self.cascade_detection,
+            "unified_intelligence": self.unified_intelligence,
         }
 
 

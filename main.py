@@ -194,20 +194,29 @@ except ImportError:
 
 # Trajectory Analysis System (Early Warning Engine)
 try:
-    from app.core.trajectory import EarlyWarningEngine, EarlyWarningReport
+    from app.core.trajectory import (
+        EarlyWarningEngine, EarlyWarningReport,
+        RateOfChangeAnalyzer, InflectionDetector,
+        PatternLibrary, TrajectoryForecaster
+    )
     TRAJECTORY_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     TRAJECTORY_AVAILABLE = False
+    print(f"Trajectory engine not available: {e}")
 
 # Unified Intelligence Layer
 try:
     from app.core.intelligence import (
-        get_intelligence, UnifiedIntelligenceLayer, ViewFocus,
-        PatternType, PatternSource
+        get_intelligence, UnifiedIntelligenceLayer,
+        Pattern, PatternType, PatternSource,
+        TrajectoryPattern, GenomicPattern, PharmaPattern,
+        PathogenPattern, ClinicalPattern, AlertPattern,
+        ViewFocus, UnifiedInsight
     )
     INTELLIGENCE_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     INTELLIGENCE_AVAILABLE = False
+    print(f"Intelligence layer not available: {e}")
 
 # Optional imports for Clinical Intelligence Layer
 try:
@@ -354,7 +363,7 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 # APP
 # ---------------------------------------------------------------------
 
-APP_VERSION = "5.22.0"
+APP_VERSION = "6.0.0"  # Major version: Unified Intelligence Layer integration
 
 app = FastAPI(
     title="HyperCore GH-OS ML Service",
@@ -862,6 +871,11 @@ class AnalyzeResponse(BaseModel):
     cloud_storage_config: Optional[Dict[str, Any]] = None
     data_lake_schema: Optional[Dict[str, Any]] = None
     multisite_aggregation: Optional[Dict[str, Any]] = None
+
+    # ============================================
+    # UNIFIED INTELLIGENCE LAYER
+    # ============================================
+    unified_intelligence: Optional[Dict[str, Any]] = None
 
 
 class EarlyRiskRequest(BaseModel):
@@ -3483,6 +3497,56 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         except Exception:
             pass  # Don't break analysis if alerting fails
 
+        # =====================================================================
+        # UNIFIED INTELLIGENCE LAYER INTEGRATION
+        # Report patterns and get cross-domain correlations
+        # =====================================================================
+        unified_intelligence = None
+        if INTELLIGENCE_AVAILABLE:
+            try:
+                intel = get_intelligence()
+
+                # Create a representative patient ID for this analysis
+                patient_id = f"analyze_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+                # Report clinical domain based on context/biomarkers
+                domain = context if context else "cohort_analysis"
+                intel.report_clinical_domain(
+                    patient_id=patient_id,
+                    domain=domain,
+                    confidence=metrics.get("linear", {}).get("auc", 0.5) if metrics else 0.5,
+                    primary_markers=[fi["feature"] for fi in feature_importance_list[:5]] if feature_importance_list else [],
+                    secondary_markers=[fi["feature"] for fi in feature_importance_list[5:10]] if len(feature_importance_list) > 5 else []
+                )
+
+                # Get unified insight with BIOMARKERS focus (for analysis)
+                insight = intel.get_unified_insight(patient_id, ViewFocus.BIOMARKERS)
+                correlations = intel.get_correlations(patient_id)
+
+                unified_intelligence = {
+                    "enabled": True,
+                    "patient_id": patient_id,
+                    "risk_score": round(insight.unified_risk_score, 2),
+                    "risk_level": insight.risk_level,
+                    "primary_concern": insight.primary_concern,
+                    "primary_domain": insight.primary_domain,
+                    "correlations_count": len(correlations),
+                    "correlations": [
+                        {
+                            "type": c.correlation_type.value,
+                            "significance": c.clinical_significance,
+                            "strength": round(c.strength, 2)
+                        }
+                        for c in correlations[:3]
+                    ],
+                    "recommendations": insight.clinical_recommendations[:5],
+                    "biomarker_summary": insight.view_specific_data.get("biomarker_summary", {})
+                }
+            except Exception as intel_error:
+                unified_intelligence = {"enabled": False, "error": str(intel_error)}
+        else:
+            unified_intelligence = {"enabled": False, "reason": "Intelligence module not available"}
+
         # Return response (Base44 can be updated to read pipeline + manifest)
         # Sanitize all data to ensure no inf/nan values in JSON response
         return AnalyzeResponse(
@@ -3542,6 +3606,8 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
             cross_site_clusters=_sanitize_for_json(cross_site_clusters),
             global_database_matches=_sanitize_for_json(global_database_matches),
             promed_outbreaks=_sanitize_for_json(promed_outbreaks),
+            # UNIFIED INTELLIGENCE LAYER
+            unified_intelligence=_sanitize_for_json(unified_intelligence),
         )
     except Exception as e:
         raise HTTPException(
@@ -17313,6 +17379,24 @@ def security_status():
 @app.get("/health")
 @bulletproof_endpoint("health", min_rows=0)
 def health() -> Dict[str, Any]:
-    return {"status": "ok", "version": APP_VERSION}
+    health_info = {
+        "status": "ok",
+        "version": APP_VERSION,
+        "trajectory_engine": "available" if TRAJECTORY_AVAILABLE else "unavailable",
+        "intelligence_layer": "available" if INTELLIGENCE_AVAILABLE else "unavailable"
+    }
+
+    if INTELLIGENCE_AVAILABLE:
+        try:
+            intel = get_intelligence()
+            intel_health = intel.get_health()
+            health_info["intelligence_stats"] = {
+                "patterns_stored": intel_health.get("patterns_stored", 0),
+                "patients_tracked": intel_health.get("patients_tracked", 0)
+            }
+        except:
+            pass
+
+    return health_info
 
 
