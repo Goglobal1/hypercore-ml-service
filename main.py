@@ -3510,7 +3510,13 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 patient_id = f"analyze_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
                 # Report clinical domain based on context/biomarkers
-                domain = context if context else "cohort_analysis"
+                # Handle context being dict or string
+                if isinstance(context, dict):
+                    domain = context.get("domain", context.get("type", "cohort_analysis"))
+                elif isinstance(context, str):
+                    domain = context
+                else:
+                    domain = "cohort_analysis"
                 intel.report_clinical_domain(
                     patient_id=patient_id,
                     domain=domain,
