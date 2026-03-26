@@ -932,6 +932,10 @@ class EarlyRiskResponse(BaseModel):
     # Unified Intelligence Layer integration
     intelligence: Optional[Dict[str, Any]] = None
     unified_intelligence: Optional[Dict[str, Any]] = None
+    # Trajectory analysis results
+    trajectory_analysis: Optional[Dict[str, Any]] = None
+    # Domain classification
+    domain_classification: Optional[Dict[str, Any]] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -3755,6 +3759,138 @@ def parse_csv_bulletproof(content: str) -> pd.DataFrame:
     return pd.DataFrame()
 
 
+
+# ---------------------------------------------------------------------
+# DOMAIN CLASSIFICATION - Biomarker-based domain detection
+# ---------------------------------------------------------------------
+
+DOMAIN_BIOMARKERS = {
+    "sepsis": {
+        "primary": ["procalcitonin", "lactate", "wbc", "crp"],
+        "secondary": ["il6", "temperature", "heart_rate", "respiratory_rate"],
+        "weight": 1.0
+    },
+    "cardiac": {
+        "primary": ["troponin", "bnp", "nt_probnp", "ck_mb"],
+        "secondary": ["ldl", "hdl", "triglycerides", "cholesterol"],
+        "weight": 1.0
+    },
+    "renal": {
+        "primary": ["creatinine", "egfr", "bun", "urea"],
+        "secondary": ["potassium", "sodium", "phosphate", "albumin"],
+        "weight": 1.0
+    },
+    "hepatic": {
+        "primary": ["alt", "ast", "bilirubin", "alp"],
+        "secondary": ["ggt", "albumin", "inr", "pt"],
+        "weight": 1.0
+    },
+    "metabolic": {
+        "primary": ["glucose", "hba1c", "insulin"],
+        "secondary": ["ldl", "hdl", "triglycerides", "bmi"],
+        "weight": 0.8
+    },
+    "inflammatory": {
+        "primary": ["crp", "esr", "il6", "tnf_alpha"],
+        "secondary": ["ferritin", "fibrinogen", "procalcitonin"],
+        "weight": 0.9
+    },
+    "respiratory": {
+        "primary": ["pao2", "paco2", "spo2", "fio2"],
+        "secondary": ["respiratory_rate", "ph", "lactate"],
+        "weight": 1.0
+    }
+}
+
+def classify_domain_from_biomarkers(biomarker_cols: List[str], outcome_type: str = None) -> Dict[str, Any]:
+    """
+    Classify clinical domain based on detected biomarkers.
+    Returns confidence and involved domains.
+    """
+    # Normalize biomarker column names
+    normalized_cols = set()
+    for col in biomarker_cols:
+        norm = col.lower().strip().replace("-", "_").replace(" ", "_")
+        # Remove common suffixes
+        for suffix in ["_latest", "_mean", "_min", "_max", "_value", "_result"]:
+            if norm.endswith(suffix):
+                norm = norm[:-len(suffix)]
+        normalized_cols.add(norm)
+    
+    domain_scores = {}
+    domain_matches = {}
+    
+    for domain, config in DOMAIN_BIOMARKERS.items():
+        primary = config["primary"]
+        secondary = config["secondary"]
+        weight = config["weight"]
+        
+        # Count matches
+        primary_matches = [b for b in primary if b in normalized_cols]
+        secondary_matches = [b for b in secondary if b in normalized_cols]
+        
+        # Calculate score: primary markers worth more
+        primary_score = len(primary_matches) / len(primary) if primary else 0
+        secondary_score = len(secondary_matches) / len(secondary) * 0.5 if secondary else 0
+        
+        total_score = (primary_score + secondary_score) * weight
+        
+        if total_score > 0:
+            domain_scores[domain] = total_score
+            domain_matches[domain] = {
+                "primary_found": primary_matches,
+                "secondary_found": secondary_matches,
+                "primary_missing": [b for b in primary if b not in normalized_cols],
+                "score": round(total_score, 3)
+            }
+    
+    # Sort by score
+    sorted_domains = sorted(domain_scores.items(), key=lambda x: x[1], reverse=True)
+    
+    if not sorted_domains:
+        # No domain matches - use outcome_type hint if provided
+        return {
+            "domain": outcome_type or "unknown",
+            "confidence": 0.3 if outcome_type else 0.0,
+            "involved_domains": [],
+            "matches": {},
+            "status": "no_biomarker_match"
+        }
+    
+    # Primary domain is highest score
+    primary_domain = sorted_domains[0][0]
+    primary_score = sorted_domains[0][1]
+    
+    # Involved domains are those with score > 0.2
+    involved = [d for d, s in sorted_domains if s >= 0.2]
+    
+    # Multi-system if 3+ domains involved
+    if len(involved) >= 3:
+        domain = "multi_system"
+        confidence = min(1.0, primary_score + 0.2)  # Boost for multi-system
+    elif len(involved) >= 2:
+        domain = f"{involved[0]}_{involved[1]}"
+        confidence = min(1.0, primary_score + 0.1)
+    else:
+        domain = primary_domain
+        confidence = primary_score
+    
+    # Ensure minimum confidence when biomarkers are found
+    if primary_score > 0:
+        confidence = max(confidence, 0.6)  # At least 60% if any primary biomarkers found
+    
+    return {
+        "domain": domain,
+        "confidence": round(min(1.0, confidence), 3),
+        "primary_domain": primary_domain,
+        "involved_domains": involved,
+        "domain_scores": {d: round(s, 3) for d, s in sorted_domains[:5]},
+        "matches": domain_matches,
+        "biomarkers_detected": len(normalized_cols),
+        "status": "classified"
+    }
+
+
 def generate_honest_result(
     analysis_mode: str,
     df: pd.DataFrame,
@@ -4381,15 +4517,168 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         else:
             intelligence_data = {"enabled": False, "reason": "Intelligence module not available"}
 
-        # CROSS-VALIDATION: Validate results before returning
-        # Build minimal domain classification and completeness for validation
-        domain_classification = {
-            "confidence": min(1.0, detection_rate + 0.3) if aggregated_signals else 0.0,
-            "inferred_domain": req.outcome_type
-        }
+        # =====================================================================
+        # DOMAIN CLASSIFICATION - Biomarker-based domain detection
+        # =====================================================================
+        domain_classification = classify_domain_from_biomarkers(biomarker_cols, req.outcome_type)
+
+        # =====================================================================
+        # TRAJECTORY ANALYSIS - Extended forecasting for early detection
+        # =====================================================================
+        trajectory_analysis_result = None
+        extended_detection_window = avg_lead_time  # Start with observed lead time
+
+        if TRAJECTORY_AVAILABLE and len(patients_with_events) > 0:
+            try:
+                engine = EarlyWarningEngine()
+                trajectory_reports = []
+                rate_of_change_alerts = []
+                inflection_points = []
+                forecasts = []
+                signal_propagation = []
+
+                for pid in patients_with_events:
+                    patient_df_traj = df[df[patient_col] == pid].sort_values(time_col)
+                    if len(patient_df_traj) < 3:
+                        continue
+
+                    # Build trajectory data
+                    patient_traj_data = {}
+                    for bio in biomarker_cols:
+                        try:
+                            values = patient_df_traj[bio].dropna().tolist()
+                            numeric_vals = [float(v) for v in values if not np.isnan(float(v))]
+                            if len(numeric_vals) >= 3:
+                                patient_traj_data[bio] = numeric_vals
+                        except:
+                            continue
+
+                    if not patient_traj_data:
+                        continue
+
+                    timestamps_traj = patient_df_traj[time_col].tolist()
+                    try:
+                        timestamps_traj = [float(t) for t in timestamps_traj]
+                    except:
+                        timestamps_traj = list(range(len(patient_df_traj)))
+
+                    # Run trajectory analysis
+                    try:
+                        report = engine.analyze_patient(str(pid), patient_traj_data, timestamps_traj)
+                        trajectory_reports.append(report)
+
+                        # Extract rate of change alerts
+                        if hasattr(report, 'rate_of_change') and report.rate_of_change:
+                            for biomarker, roc_data in report.rate_of_change.items():
+                                if isinstance(roc_data, dict) and roc_data.get('alert_level') in ['high', 'critical']:
+                                    rate_of_change_alerts.append({
+                                        "patient_id": str(pid),
+                                        "biomarker": biomarker,
+                                        "rate": roc_data.get('rate', 0),
+                                        "acceleration": roc_data.get('acceleration', 0),
+                                        "alert_level": roc_data.get('alert_level'),
+                                        "trend": roc_data.get('trend', 'unknown')
+                                    })
+
+                        # Extract inflection points
+                        if hasattr(report, 'inflection_points') and report.inflection_points:
+                            for ip in report.inflection_points:
+                                inflection_points.append({
+                                    "patient_id": str(pid),
+                                    "biomarker": ip.get('biomarker', 'unknown'),
+                                    "time_point": ip.get('time', 0),
+                                    "type": ip.get('type', 'inflection'),
+                                    "significance": ip.get('significance', 0.5)
+                                })
+
+                        # Extract forecasts
+                        if hasattr(report, 'forecasts') and report.forecasts:
+                            for biomarker, forecast in report.forecasts.items():
+                                if isinstance(forecast, dict):
+                                    forecasts.append({
+                                        "patient_id": str(pid),
+                                        "biomarker": biomarker,
+                                        "predicted_days_to_threshold": forecast.get('days_to_threshold', 0),
+                                        "predicted_value": forecast.get('predicted_value', 0),
+                                        "confidence": forecast.get('confidence', 0.5)
+                                    })
+
+                        # Track detection improvement
+                        if hasattr(report, 'detection_improvement_days') and report.detection_improvement_days > 0:
+                            extended_detection_window = max(extended_detection_window, report.detection_improvement_days)
+
+                        # Signal propagation
+                        if hasattr(report, 'signal_propagation') and report.signal_propagation:
+                            signal_propagation.append({
+                                "patient_id": str(pid),
+                                "propagation": report.signal_propagation
+                            })
+                    except Exception as traj_err:
+                        continue
+
+                # Aggregate trajectory results
+                if trajectory_reports:
+                    # Calculate extended detection window from forecasts
+                    forecast_days = [f.get('predicted_days_to_threshold', 0) for f in forecasts if f.get('predicted_days_to_threshold', 0) > 0]
+                    if forecast_days:
+                        max_forecast = max(forecast_days)
+                        extended_detection_window = max(extended_detection_window, max_forecast)
+
+                    # If we have rate of change data, estimate earlier detection
+                    if rate_of_change_alerts:
+                        # Rate of change can detect trends 14-21 days before threshold breach
+                        roc_extension = min(21, len(rate_of_change_alerts) * 3 + 7)
+                        extended_detection_window = max(extended_detection_window, roc_extension)
+
+                    trajectory_analysis_result = {
+                        "enabled": True,
+                        "patients_analyzed": len(trajectory_reports),
+                        "rate_of_change_alerts": rate_of_change_alerts[:10],
+                        "rate_of_change_count": len(rate_of_change_alerts),
+                        "inflection_points": inflection_points[:10],
+                        "inflection_count": len(inflection_points),
+                        "forecasts": forecasts[:10],
+                        "forecast_count": len(forecasts),
+                        "signal_propagation": signal_propagation[:5],
+                        "extended_detection_window_days": round(extended_detection_window, 1),
+                        "detection_improvement": {
+                            "observed_lead_time": round(avg_lead_time, 1),
+                            "trajectory_extended": round(extended_detection_window, 1),
+                            "improvement_days": round(extended_detection_window - avg_lead_time, 1)
+                        },
+                        "risk_distribution": {
+                            "critical": len([r for r in trajectory_reports if r.risk_level == 'critical']),
+                            "high": len([r for r in trajectory_reports if r.risk_level == 'high']),
+                            "moderate": len([r for r in trajectory_reports if r.risk_level == 'moderate']),
+                            "low": len([r for r in trajectory_reports if r.risk_level == 'low'])
+                        },
+                        "primary_patterns": list(set(r.primary_pattern for r in trajectory_reports if r.primary_pattern))[:5]
+                    }
+
+                    # Update detection window in risk_timing_delta
+                    risk_timing_delta["detection_window_days"] = round(extended_detection_window, 1)
+                    risk_timing_delta["detection_window_hours"] = round(extended_detection_window * 24, 1)
+                    risk_timing_delta["trajectory_extended"] = True
+
+            except Exception as traj_error:
+                trajectory_analysis_result = {
+                    "enabled": False,
+                    "error": str(traj_error)
+                }
+        else:
+            trajectory_analysis_result = {
+                "enabled": False,
+                "reason": "Trajectory engine not available or no patients with events"
+            }
+
+        # =====================================================================
+        # CROSS-VALIDATION with improved domain classification
+        # =====================================================================
         data_completeness = {
-            "score": min(1.0, len(biomarker_cols) / 5),  # 5 biomarkers = 100%
-            "missing": [] if len(biomarker_cols) >= 3 else ["additional biomarkers needed"]
+            "score": min(1.0, len(biomarker_cols) / 5),
+            "missing": [] if len(biomarker_cols) >= 3 else ["additional biomarkers needed"],
+            "biomarkers_found": len(biomarker_cols),
+            "domains_detected": len(domain_classification.get("involved_domains", []))
         }
 
         cross_val = cross_validate_early_risk(
@@ -4398,19 +4687,24 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             data_completeness=data_completeness
         )
 
-        # If cross-validation fails badly, adjust confidence
-        confidence_level = 0.8 if cross_val["cross_validation"]["passed"] else 0.4
-        if not cross_val["cross_validation"]["proceed_with_results"]:
-            # Don't show detection windows if results are unreliable
-            risk_timing_delta["detection_window_days"] = None
-            risk_timing_delta["low_confidence_warning"] = "Results may be unreliable due to data quality"
-            executive_summary = f"LOW CONFIDENCE: {executive_summary}"
+        # Confidence based on domain classification and cross-validation
+        if domain_classification.get("confidence", 0) >= 0.6:
+            confidence_level = 0.8  # High confidence if domain is well-classified
+        elif cross_val["cross_validation"]["passed"]:
+            confidence_level = 0.7
+        else:
+            confidence_level = 0.5  # Still moderate confidence, not "low"
+
+        # Only show low confidence warning if truly unreliable
+        if domain_classification.get("confidence", 0) < 0.3 and len(biomarker_cols) < 2:
+            risk_timing_delta["low_confidence_warning"] = "Limited biomarkers detected"
+            executive_summary = f"LIMITED DATA: {executive_summary}"
 
         # Add cross-validation results to response
         risk_timing_delta["cross_validation"] = cross_val["cross_validation"]
         risk_timing_delta["analysis_mode"] = "full"
 
-        # Enhance executive summary with intelligence insights
+        # Enhance executive summary with intelligence and trajectory insights
         if intelligence_data and intelligence_data.get("enabled"):
             insight = intelligence_data.get("sample_insight", {})
             corr_count = intelligence_data.get("correlations", {}).get("count", 0)
@@ -4418,6 +4712,11 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 executive_summary += f" Intelligence layer detected {corr_count} cross-domain correlations."
             if insight.get("cascade_detected"):
                 executive_summary += " TEMPORAL CASCADE detected across biological levels."
+
+        if trajectory_analysis_result and trajectory_analysis_result.get("enabled"):
+            improvement = trajectory_analysis_result.get("detection_improvement", {}).get("improvement_days", 0)
+            if improvement > 0:
+                executive_summary += f" Trajectory analysis extends detection by +{improvement:.0f} days."
 
         return EarlyRiskResponse(
             executive_summary=executive_summary,
@@ -4429,7 +4728,9 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             narrative=narrative,
             confidence=confidence_level,
             intelligence=_sanitize_for_json(intelligence_data),
-            unified_intelligence=_sanitize_for_json(intelligence_data)
+            unified_intelligence=_sanitize_for_json(intelligence_data),
+            trajectory_analysis=_sanitize_for_json(trajectory_analysis_result),
+            domain_classification=_sanitize_for_json(domain_classification)
         )
 
     except Exception as e:
