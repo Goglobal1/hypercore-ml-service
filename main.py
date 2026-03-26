@@ -931,6 +931,7 @@ class EarlyRiskResponse(BaseModel):
     signals: Optional[List[Dict[str, Any]]] = None
     # Unified Intelligence Layer integration
     intelligence: Optional[Dict[str, Any]] = None
+    unified_intelligence: Optional[Dict[str, Any]] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -4427,7 +4428,8 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             comparator_performance=_sanitize_for_json(comparator_performance),
             narrative=narrative,
             confidence=confidence_level,
-            intelligence=_sanitize_for_json(intelligence_data)
+            intelligence=_sanitize_for_json(intelligence_data),
+            unified_intelligence=_sanitize_for_json(intelligence_data)
         )
 
     except Exception as e:
