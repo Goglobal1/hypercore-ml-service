@@ -4255,13 +4255,21 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         intelligence_data = None
         if INTELLIGENCE_AVAILABLE:
             try:
+                import logging
+                intel_logger = logging.getLogger("hypercore.intelligence")
+                intel_logger.info(f"Intelligence integration starting: {len(patients_with_events)} patients with events, cohort={req.outcome_type}")
+
                 intelligence = get_intelligence()
 
                 # Report trajectory patterns for each patient with events
                 all_pattern_ids = []
+                patients_processed = 0
+                patients_skipped_timepoints = 0
+                patients_skipped_trajectories = 0
                 for patient_id in patients_with_events:
                     patient_df = df[df[patient_col] == patient_id].sort_values(time_col)
                     if len(patient_df) < 3:
+                        patients_skipped_timepoints += 1
                         continue
 
                     # Build patient trajectory data
@@ -4285,6 +4293,7 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                             timestamps
                         )
                         all_pattern_ids.extend(pattern_ids)
+                        patients_processed += 1
 
                         # Also report clinical domain
                         intelligence.report_clinical_domain(
@@ -4294,9 +4303,13 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                             primary_markers=top_biomarker_names[:5],
                             secondary_markers=top_biomarker_names[5:10] if len(top_biomarker_names) > 5 else []
                         )
+                    else:
+                        patients_skipped_trajectories += 1
+
+                intel_logger.info(f"Intelligence processed: {patients_processed} patients, {len(all_pattern_ids)} patterns, skipped {patients_skipped_timepoints} (timepoints), {patients_skipped_trajectories} (trajectories)")
 
                 # Get unified insight for first high-risk patient (representative)
-                if patients_with_events.any():
+                if len(patients_with_events) > 0 and patients_processed > 0:
                     first_patient = str(patients_with_events[0])
                     insight = intelligence.get_unified_insight(first_patient, focus=ViewFocus.TIMING)
                     correlations = intelligence.get_correlations(first_patient)
@@ -4305,6 +4318,7 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                         "enabled": True,
                         "patterns_reported": len(all_pattern_ids),
                         "patients_tracked": len(patients_with_events),
+                        "patients_processed": patients_processed,
                         "sample_insight": {
                             "patient_id": insight.patient_id,
                             "risk_level": insight.risk_level,
@@ -4339,7 +4353,26 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                         },
                         "contributing_factors": insight.contributing_factors[:5]
                     }
+                else:
+                    # No patients met trajectory requirements - explain why
+                    intel_logger.warning(f"Intelligence: No patients processed for cohort {req.outcome_type}. Skipped: {patients_skipped_timepoints} (insufficient timepoints), {patients_skipped_trajectories} (insufficient trajectory data)")
+                    intelligence_data = {
+                        "enabled": True,
+                        "patterns_reported": 0,
+                        "patients_tracked": len(patients_with_events),
+                        "patients_processed": 0,
+                        "reason": "Insufficient longitudinal data for trajectory analysis",
+                        "details": {
+                            "patients_with_events": len(patients_with_events),
+                            "skipped_insufficient_timepoints": patients_skipped_timepoints,
+                            "skipped_insufficient_trajectories": patients_skipped_trajectories,
+                            "min_timepoints_required": 3,
+                            "min_biomarker_values_required": 3
+                        }
+                    }
             except Exception as intel_error:
+                import logging
+                logging.getLogger("hypercore.intelligence").error(f"Intelligence integration failed: {intel_error}")
                 intelligence_data = {
                     "enabled": False,
                     "error": str(intel_error)
