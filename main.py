@@ -4568,28 +4568,30 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                         trajectory_reports.append(report)
 
                         # Extract rate of change alerts
-                        if hasattr(report, 'rate_of_change') and report.rate_of_change:
-                            for biomarker, roc_data in report.rate_of_change.items():
-                                if isinstance(roc_data, dict) and roc_data.get('alert_level') in ['high', 'critical']:
+                        if hasattr(report, 'rate_changes') and report.rate_changes:
+                            for biomarker, roc_data in report.rate_changes.items():
+                                if isinstance(roc_data, dict) and roc_data.get('alert_level') in ['warning', 'critical', 'elevated']:
                                     rate_of_change_alerts.append({
                                         "patient_id": str(pid),
                                         "biomarker": biomarker,
-                                        "rate": roc_data.get('rate', 0),
-                                        "acceleration": roc_data.get('acceleration', 0),
+                                        "rate": roc_data.get('current_rate', 0),
+                                        "acceleration": roc_data.get('z_score', 0),
                                         "alert_level": roc_data.get('alert_level'),
-                                        "trend": roc_data.get('trend', 'unknown')
+                                        "trend": "increasing" if roc_data.get('current_rate', 0) > 0 else "decreasing"
                                     })
 
                         # Extract inflection points
                         if hasattr(report, 'inflection_points') and report.inflection_points:
-                            for ip in report.inflection_points:
-                                inflection_points.append({
-                                    "patient_id": str(pid),
-                                    "biomarker": ip.get('biomarker', 'unknown'),
-                                    "time_point": ip.get('time', 0),
-                                    "type": ip.get('type', 'inflection'),
-                                    "significance": ip.get('significance', 0.5)
-                                })
+                            for biomarker, ip_list in report.inflection_points.items():
+                                if isinstance(ip_list, list):
+                                    for ip in ip_list:
+                                        inflection_points.append({
+                                            "patient_id": str(pid),
+                                            "biomarker": biomarker,
+                                            "time_point": ip.get('day_index', 0),
+                                            "type": ip.get('type', 'inflection'),
+                                            "significance": ip.get('significance', 0.5)
+                                        })
 
                         # Extract forecasts
                         if hasattr(report, 'forecasts') and report.forecasts:
@@ -4598,8 +4600,8 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                                     forecasts.append({
                                         "patient_id": str(pid),
                                         "biomarker": biomarker,
-                                        "predicted_days_to_threshold": forecast.get('days_to_threshold', 0),
-                                        "predicted_value": forecast.get('predicted_value', 0),
+                                        "predicted_days_to_threshold": forecast.get('predicted_crossing_day', 0),
+                                        "predicted_value": forecast.get('current_value', 0),
                                         "confidence": forecast.get('confidence', 0.5)
                                     })
 
@@ -4608,10 +4610,10 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                             extended_detection_window = max(extended_detection_window, report.detection_improvement_days)
 
                         # Signal propagation
-                        if hasattr(report, 'signal_propagation') and report.signal_propagation:
+                        if hasattr(report, 'signal_propagation_order') and report.signal_propagation_order:
                             signal_propagation.append({
                                 "patient_id": str(pid),
-                                "propagation": report.signal_propagation
+                                "propagation": report.signal_propagation_order
                             })
                     except Exception as traj_err:
                         continue
