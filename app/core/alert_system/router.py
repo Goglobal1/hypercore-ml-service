@@ -504,12 +504,13 @@ async def evaluate_alert(request: EvaluateRequest):
     try:
         result = evaluate_patient(
             patient_id=request.patient_id,
+            timestamp=datetime.now(timezone.utc).isoformat(),
             risk_domain=request.risk_domain,
-            risk_score=request.risk_score,
+            current_scores={"risk": request.risk_score},
             contributing_biomarkers=request.contributing_biomarkers,
-            tth_hours=request.tth_hours,
+            current_tth_hours=request.tth_hours,
         )
-        return result.to_dict()
+        return result
 
     except Exception as e:
         logger.exception(f"Evaluation failed: {e}")
