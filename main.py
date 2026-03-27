@@ -4720,6 +4720,27 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             if improvement > 0:
                 executive_summary += f" Trajectory analysis extends detection by +{improvement:.0f} days."
 
+            # Update summaries with trajectory-based detection window (not threshold-based)
+            trajectory_days = trajectory_analysis_result.get("extended_detection_window_days", avg_lead_time)
+            if trajectory_days > avg_lead_time:
+                # Update missed_risk_summary with trajectory-based detection
+                missed_risk_summary["standard_system_status"] = f"Standard scoring (NEWS/qSOFA) may not detect these patterns {trajectory_days:.0f} days early."
+                missed_risk_summary["hypercore_detection"] = f"Detected {trajectory_days:.0f} days early via trajectory analysis"
+                missed_risk_summary["potential_impact"] = f"Early detection could enable intervention {trajectory_days:.0f} days before event."
+                missed_risk_summary["trajectory_extended"] = True
+                missed_risk_summary["threshold_based_days"] = round(avg_lead_time, 1)
+                missed_risk_summary["trajectory_based_days"] = round(trajectory_days, 1)
+
+                # Update clinical_impact with trajectory-based timing
+                clinical_impact["average_lead_time_days"] = round(trajectory_days, 1)
+                clinical_impact["trajectory_extended_detection"] = True
+                clinical_impact["original_threshold_detection_days"] = round(avg_lead_time, 1)
+
+                # Update comparator_performance with trajectory-based timing
+                comparator_performance["hypercore"]["lead_time_days"] = round(trajectory_days, 1)
+                comparator_performance["hypercore"]["trajectory_enhanced"] = True
+                comparator_performance["hypercore"]["interpretation"] = f"Trajectory analysis detected rising patterns {trajectory_days:.0f} days before {req.outcome_type}."
+
         return EarlyRiskResponse(
             executive_summary=executive_summary,
             risk_timing_delta=_sanitize_for_json(risk_timing_delta),
