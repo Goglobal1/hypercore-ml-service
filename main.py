@@ -3510,11 +3510,9 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         if INTELLIGENCE_AVAILABLE:
             try:
                 intel = get_intelligence()
+                all_pattern_ids = []
+                patients_processed = 0
 
-                # Create a representative patient ID for this analysis
-                patient_id = f"analyze_{datetime.now().strftime('%Y%m%d%H%M%S')}"
-
-                # Report clinical domain based on context/biomarkers
                 # Handle context being dict or string
                 if isinstance(context, dict):
                     domain = context.get("domain", context.get("type", "cohort_analysis"))
@@ -3522,21 +3520,96 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                     domain = context
                 else:
                     domain = "cohort_analysis"
-                intel.report_clinical_domain(
-                    patient_id=patient_id,
-                    domain=domain,
-                    confidence=metrics.get("linear", {}).get("auc", 0.5) if metrics else 0.5,
-                    primary_markers=[fi["feature"] for fi in feature_importance_list[:5]] if feature_importance_list else [],
-                    secondary_markers=[fi["feature"] for fi in feature_importance_list[5:10]] if len(feature_importance_list) > 5 else []
-                )
 
-                # Get unified insight with BIOMARKERS focus (for analysis)
-                insight = intel.get_unified_insight(patient_id, ViewFocus.BIOMARKERS)
-                correlations = intel.get_correlations(patient_id)
+                # Find patient ID column
+                patient_col = None
+                if req.patient_id_column and req.patient_id_column in df.columns:
+                    patient_col = req.patient_id_column
+                else:
+                    for col in df.columns:
+                        if col.lower() in ['patient_id', 'patient', 'subject_id', 'subject', 'id', 'patientid']:
+                            patient_col = col
+                            break
+
+                # Find time column for trajectory analysis
+                time_col = None
+                if req.time_column and req.time_column in df.columns:
+                    time_col = req.time_column
+                else:
+                    for col in df.columns:
+                        if col.lower() in ['time', 'day', 'timestamp', 'date', 'visit', 'timepoint', 'hour']:
+                            time_col = col
+                            break
+
+                # Get numeric biomarker columns
+                exclude_cols = {patient_col, time_col, label_col, 'patient_id', 'id', 'time', 'day', 'date'}
+                exclude_cols = {c for c in exclude_cols if c is not None}
+                biomarker_cols = [c for c in df.columns if c.lower() not in {e.lower() for e in exclude_cols if e}
+                                 and pd.api.types.is_numeric_dtype(df[c])]
+
+                # TRAJECTORY PATTERN REPORTING (like /early_risk_discovery)
+                if patient_col and time_col and biomarker_cols:
+                    unique_patients = df[patient_col].unique()
+                    for pid in unique_patients[:50]:
+                        patient_df = df[df[patient_col] == pid].sort_values(time_col)
+                        if len(patient_df) < 3:
+                            continue
+                        patient_trajectories = {}
+                        for bio in biomarker_cols:
+                            values = patient_df[bio].dropna().tolist()
+                            if len(values) >= 3:
+                                try:
+                                    numeric_vals = [float(v) for v in values if not np.isnan(float(v))]
+                                    if len(numeric_vals) >= 3:
+                                        patient_trajectories[bio] = numeric_vals
+                                except (ValueError, TypeError):
+                                    continue
+                        if patient_trajectories:
+                            try:
+                                timestamps = [float(t) for t in patient_df[time_col].tolist()]
+                            except (ValueError, TypeError):
+                                timestamps = list(range(len(patient_df)))
+                            try:
+                                pattern_ids = intel.report_trajectory(str(pid), patient_trajectories, timestamps)
+                                all_pattern_ids.extend(pattern_ids)
+                                patients_processed += 1
+                            except Exception:
+                                pass
+                            try:
+                                intel.report_clinical_domain(
+                                    str(pid), domain=domain,
+                                    confidence=metrics.get("linear", {}).get("auc", 0.5) if metrics else 0.5,
+                                    primary_markers=[fi["feature"] for fi in feature_importance_list[:5]] if feature_importance_list else [],
+                                    secondary_markers=[fi["feature"] for fi in feature_importance_list[5:10]] if len(feature_importance_list) > 5 else []
+                                )
+                            except Exception:
+                                pass
+
+                # Fallback: cohort-level pattern if no per-patient processing
+                if patients_processed == 0:
+                    patient_id = f"analyze_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+                    intel.report_clinical_domain(
+                        patient_id=patient_id, domain=domain,
+                        confidence=metrics.get("linear", {}).get("auc", 0.5) if metrics else 0.5,
+                        primary_markers=[fi["feature"] for fi in feature_importance_list[:5]] if feature_importance_list else [],
+                        secondary_markers=[fi["feature"] for fi in feature_importance_list[5:10]] if len(feature_importance_list) > 5 else []
+                    )
+                    all_pattern_ids.append(f"cohort_{patient_id}")
+                    patients_processed = 1
+
+                # Get unified insight for sample patient
+                if patient_col and len(df[patient_col].unique()) > 0:
+                    sample_patient = str(df[patient_col].unique()[0])
+                else:
+                    sample_patient = f"analyze_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+                insight = intel.get_unified_insight(sample_patient, ViewFocus.BIOMARKERS)
+                correlations = intel.get_correlations(sample_patient)
 
                 unified_intelligence = {
                     "enabled": True,
-                    "patient_id": patient_id,
+                    "patterns_reported": len(all_pattern_ids),
+                    "patients_processed": patients_processed,
+                    "sample_patient_id": sample_patient,
                     "risk_score": round(insight.unified_risk_score, 2),
                     "risk_level": insight.risk_level,
                     "primary_concern": insight.primary_concern,
