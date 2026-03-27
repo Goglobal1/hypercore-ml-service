@@ -8854,7 +8854,7 @@ def stratify_population(
                 "chi2": float(chi2),
                 "p_value": float(p_val),
                 "dof": int(dof),
-                "significant": p_val < 0.05
+                "significant": bool(p_val < 0.05)  # Convert numpy bool to Python bool
             }
         except Exception:
             chi2_result = None
