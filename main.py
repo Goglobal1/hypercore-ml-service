@@ -8838,8 +8838,8 @@ def stratify_population(
             outcome_rate = None
 
         strata_results.append({
-            "strata": strata_key,
-            "n": n,
+            "strata": str(strata_key),  # Convert to string for JSON serialization
+            "n": int(n),  # Ensure int, not numpy.int64
             "outcome_rate": outcome_rate,
             "factors": dict(zip(stratify_by, str(strata_key).split("_")))
         })
@@ -8861,7 +8861,7 @@ def stratify_population(
 
     return {
         "strata": strata_results,
-        "total_patients": len(df),
+        "total_patients": int(len(df)),  # Ensure int for JSON
         "stratification_factors": stratify_by,
         "chi2_test": chi2_result
     }
@@ -9872,9 +9872,13 @@ def confounder_analysis(req: ConfounderRequest) -> ConfounderResponse:
 
         return result
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        # Return error in response instead of raising HTTPException(500)
+        # This allows bulletproof_endpoint to handle it properly
+        return ConfounderResponse(
+            stratification={"error": str(e), "strata": []},
+            masked_efficacy=None,
+            responder_subgroups=None,
+            drug_biomarker_interactions=None
         )
 
 
