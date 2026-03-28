@@ -372,12 +372,16 @@ app = FastAPI(
 )
 
 # CORS middleware - allow Base44 frontend to call backend
+# Note: allow_credentials=True requires specific origins, not "*"
+# Using allow_credentials=False with "*" for broader compatibility
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for now (restrict to Base44 domain in production)
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=False,  # Must be False when using "*" origins
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=600,  # Cache preflight requests for 10 minutes
 )
 
 # Include genomics router if available
@@ -7491,9 +7495,10 @@ class TrialRedesignEngine:
 
     def monte_carlo_simulate(self, data: pd.DataFrame, label_col: str,
                              enrichment_mask: Optional[pd.Series] = None,
-                             n_simulations: int = 500) -> Dict[str, Any]:
+                             n_simulations: int = 100) -> Dict[str, Any]:
         """
         MODULE 3: Monte Carlo Simulation for AUC projection
+        Reduced to 100 iterations for faster browser response times.
         """
         aucs = []
         sensitivities = []
@@ -18944,6 +18949,27 @@ def security_status():
             "GET /security/status - This endpoint"
         ]
     }
+
+
+@app.get("/ping")
+def ping():
+    """Simple ping endpoint for quick health checks - no middleware overhead."""
+    return {"status": "ok", "message": "pong"}
+
+
+@app.options("/{path:path}")
+async def options_handler(path: str):
+    """Explicit OPTIONS handler for CORS preflight requests."""
+    from fastapi.responses import Response
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Max-Age": "600",
+        }
+    )
 
 
 @app.get("/health")
