@@ -1216,7 +1216,7 @@ class TrialRescueRequest(BaseModel):
     treatment_column: Optional[str] = None
     patient_id_column: Optional[str] = None
 
-    # Alternative field names
+    # Alternative field names (snake_case)
     data: Optional[str] = None
     csv_data: Optional[str] = None
     target: Optional[str] = None
@@ -1225,26 +1225,45 @@ class TrialRescueRequest(BaseModel):
     arm: Optional[str] = None
     subject_id: Optional[str] = None
 
+    # CamelCase alternatives (for Base44/JavaScript frontends)
+    labelColumn: Optional[str] = None
+    treatmentColumn: Optional[str] = None
+    patientIdColumn: Optional[str] = None
+    csvData: Optional[str] = None
+    outcomeColumn: Optional[str] = None
+    subjectId: Optional[str] = None
+
     @model_validator(mode='before')
     @classmethod
     def map_alternative_fields(cls, values):
+        # Log incoming request for debugging
+        print(f"=== TRIAL_RESCUE REQUEST ===")
+        print(f"Keys received: {list(values.keys())}")
+        print(f"label_column: {values.get('label_column')}")
+        print(f"labelColumn: {values.get('labelColumn')}")
+        print(f"treatment_column: {values.get('treatment_column')}")
+        print(f"treatmentColumn: {values.get('treatmentColumn')}")
+        print(f"csv length: {len(values.get('csv', '') or values.get('csvData', '') or '')}")
+        print(f"=== END REQUEST ===")
+
+        # Handle camelCase to snake_case conversion
         if not values.get('csv'):
-            for alt in ['data', 'csv_data']:
+            for alt in ['data', 'csv_data', 'csvData']:
                 if values.get(alt):
                     values['csv'] = values[alt]
                     break
         if not values.get('label_column'):
-            for alt in ['target', 'outcome_column']:
+            for alt in ['target', 'outcome_column', 'labelColumn', 'outcomeColumn']:
                 if values.get(alt):
                     values['label_column'] = values[alt]
                     break
         if not values.get('treatment_column'):
-            for alt in ['treatment', 'arm']:
+            for alt in ['treatment', 'arm', 'treatmentColumn']:
                 if values.get(alt):
                     values['treatment_column'] = values[alt]
                     break
         if not values.get('patient_id_column'):
-            for alt in ['subject_id']:
+            for alt in ['subject_id', 'patientIdColumn', 'subjectId']:
                 if values.get(alt):
                     values['patient_id_column'] = values[alt]
                     break
