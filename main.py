@@ -989,8 +989,30 @@ class ConfounderDetectionRequest(BaseModel):
                     break
         if not values.get('csv'):
             raise ValueError('csv field is required')
+        # Auto-detect label_column from CSV if not provided
+        # SmartFormatter normalizes 'label' -> 'outcome', so use normalized name
+        if not values.get('label_column') and values.get('csv'):
+            import io
+            import pandas as pd
+            try:
+                df = pd.read_csv(io.StringIO(values['csv']))
+                # Check for columns and map to normalized names
+                for candidate in ['outcome', 'label', 'target', 'response', 'event', 'y']:
+                    if candidate in df.columns:
+                        # SmartFormatter normalizes 'label' to 'outcome'
+                        values['label_column'] = 'outcome' if candidate == 'label' else candidate
+                        break
+                    # Also check case-insensitive
+                    for col in df.columns:
+                        if col.lower() == candidate:
+                            values['label_column'] = 'outcome' if candidate == 'label' else col
+                            break
+                    if values.get('label_column'):
+                        break
+            except:
+                pass
         if not values.get('label_column'):
-            raise ValueError('label_column field is required')
+            raise ValueError('label_column field is required and could not be auto-detected')
         return values
 
 
@@ -1012,9 +1034,26 @@ class EmergingPhenotypeRequest(BaseModel):
     target: Optional[str] = None
     outcome_column: Optional[str] = None
 
+    # Base44 alternative format
+    biomarker_profile: Optional[Dict[str, Any]] = None
+    historical_library: Optional[List[Dict[str, Any]]] = None
+
     @model_validator(mode='before')
     @classmethod
     def map_alternative_fields(cls, values):
+        # Convert biomarker_profile + historical_library to CSV format
+        if values.get('biomarker_profile') and not values.get('csv'):
+            import io
+            import pandas as pd
+            profile = values['biomarker_profile']
+            historical = values.get('historical_library', [])
+            all_records = [profile] + (historical if historical else [])
+            for i, rec in enumerate(all_records):
+                if 'label' not in rec and 'outcome' not in rec:
+                    rec['outcome'] = 0 if i == 0 else rec.get('outcome', 1)
+            df = pd.DataFrame(all_records)
+            values['csv'] = df.to_csv(index=False)
+
         if not values.get('csv'):
             for alt in ['data', 'csv_data']:
                 if values.get(alt):
@@ -1025,10 +1064,31 @@ class EmergingPhenotypeRequest(BaseModel):
                 if values.get(alt):
                     values['label_column'] = values[alt]
                     break
+
+        # Auto-detect label_column from CSV if not provided
+        if not values.get('label_column') and values.get('csv'):
+            import io
+            import pandas as pd
+            try:
+                df = pd.read_csv(io.StringIO(values['csv']))
+                for candidate in ['outcome', 'label', 'target', 'response', 'event', 'y']:
+                    if candidate in df.columns:
+                        # SmartFormatter normalizes 'label' to 'outcome'
+                        values['label_column'] = 'outcome' if candidate == 'label' else candidate
+                        break
+                    for col in df.columns:
+                        if col.lower() == candidate:
+                            values['label_column'] = 'outcome' if candidate == 'label' else col
+                            break
+                    if values.get('label_column'):
+                        break
+            except:
+                pass
+
         if not values.get('csv'):
-            raise ValueError('csv field is required')
+            raise ValueError('csv field is required (or provide biomarker_profile)')
         if not values.get('label_column'):
-            raise ValueError('label_column field is required')
+            raise ValueError('label_column field is required (or include label/outcome column in data)')
         return values
 
 
@@ -1054,9 +1114,33 @@ class ResponderPredictionRequest(BaseModel):
     arm: Optional[str] = None
     arm_column: Optional[str] = None
 
+    # Base44 alternative format (baseline + week2 comparison)
+    baseline: Optional[Dict[str, Any]] = None
+    week2: Optional[Dict[str, Any]] = None
+
     @model_validator(mode='before')
     @classmethod
     def map_alternative_fields(cls, values):
+        # Convert baseline + week2 format to CSV
+        if values.get('baseline') and values.get('week2') and not values.get('csv'):
+            import io
+            import pandas as pd
+            baseline = values['baseline'].copy()
+            week2 = values['week2'].copy()
+            baseline['timepoint'] = 'baseline'
+            baseline['treatment'] = baseline.get('treatment', 'active')
+            week2['timepoint'] = 'week2'
+            week2['treatment'] = week2.get('treatment', 'active')
+            # Use 'outcome' (SmartFormatter normalized name) instead of 'label'
+            baseline['outcome'] = 0  # Not used for response calc but needed
+            week2['outcome'] = 1  # Responder by default if week2 provided
+            df = pd.DataFrame([baseline, week2])
+            values['csv'] = df.to_csv(index=False)
+            if not values.get('treatment_column'):
+                values['treatment_column'] = 'treatment'
+            if not values.get('label_column'):
+                values['label_column'] = 'outcome'
+
         if not values.get('csv'):
             for alt in ['data', 'csv_data']:
                 if values.get(alt):
@@ -1072,12 +1156,45 @@ class ResponderPredictionRequest(BaseModel):
                 if values.get(alt):
                     values['treatment_column'] = values[alt]
                     break
+
+        # Auto-detect columns from CSV
+        if values.get('csv') and (not values.get('label_column') or not values.get('treatment_column')):
+            import io
+            import pandas as pd
+            try:
+                df = pd.read_csv(io.StringIO(values['csv']))
+                if not values.get('label_column'):
+                    for candidate in ['outcome', 'label', 'target', 'response', 'responder', 'y']:
+                        if candidate in df.columns:
+                            # SmartFormatter normalizes 'label' to 'outcome'
+                            values['label_column'] = 'outcome' if candidate == 'label' else candidate
+                            break
+                        for col in df.columns:
+                            if col.lower() == candidate:
+                                values['label_column'] = 'outcome' if candidate == 'label' else col
+                                break
+                        if values.get('label_column'):
+                            break
+                if not values.get('treatment_column'):
+                    for candidate in ['treatment', 'arm', 'group', 'cohort']:
+                        if candidate in df.columns:
+                            values['treatment_column'] = candidate
+                            break
+                        for col in df.columns:
+                            if col.lower() == candidate:
+                                values['treatment_column'] = col
+                                break
+                        if values.get('treatment_column'):
+                            break
+            except:
+                pass
+
         if not values.get('csv'):
-            raise ValueError('csv field is required')
+            raise ValueError('csv field is required (or provide baseline + week2)')
         if not values.get('label_column'):
-            raise ValueError('label_column field is required')
+            raise ValueError('label_column field is required (or include label/outcome column in data)')
         if not values.get('treatment_column'):
-            raise ValueError('treatment_column field is required')
+            raise ValueError('treatment_column field is required (or include treatment column in data)')
         return values
 
 
@@ -1127,6 +1244,39 @@ class TrialRescueRequest(BaseModel):
                 if values.get(alt):
                     values['patient_id_column'] = values[alt]
                     break
+
+        # Auto-detect columns from CSV
+        if values.get('csv') and (not values.get('label_column') or not values.get('treatment_column')):
+            import io
+            import pandas as pd
+            try:
+                df = pd.read_csv(io.StringIO(values['csv']))
+                if not values.get('label_column'):
+                    for candidate in ['outcome', 'label', 'target', 'response', 'event', 'y']:
+                        if candidate in df.columns:
+                            # SmartFormatter normalizes 'label' to 'outcome'
+                            values['label_column'] = 'outcome' if candidate == 'label' else candidate
+                            break
+                        for col in df.columns:
+                            if col.lower() == candidate:
+                                values['label_column'] = 'outcome' if candidate == 'label' else col
+                                break
+                        if values.get('label_column'):
+                            break
+                if not values.get('treatment_column'):
+                    for candidate in ['treatment', 'arm', 'group', 'cohort']:
+                        if candidate in df.columns:
+                            values['treatment_column'] = candidate
+                            break
+                        for col in df.columns:
+                            if col.lower() == candidate:
+                                values['treatment_column'] = col
+                                break
+                        if values.get('treatment_column'):
+                            break
+            except:
+                pass
+
         if not values.get('csv'):
             raise ValueError(
                 "csv field is required. Provide CSV data as a string using 'csv', 'data', or 'csv_data' field. "
@@ -1134,8 +1284,8 @@ class TrialRescueRequest(BaseModel):
             )
         if not values.get('label_column'):
             raise ValueError(
-                "label_column field is required. Specify the outcome column name using 'label_column', "
-                "'target', or 'outcome_column' field."
+                "label_column field is required and could not be auto-detected. "
+                "Include a column named 'label', 'outcome', 'target', etc., or specify using 'label_column' field."
             )
         return values
 
@@ -1200,14 +1350,51 @@ class OutbreakDetectionRequest(BaseModel):
                 if values.get(alt):
                     values['case_count_column'] = values[alt]
                     break
+
+        # Auto-detect columns from CSV - use normalized names that SmartFormatter produces
+        if values.get('csv'):
+            import io
+            import pandas as pd
+            try:
+                df = pd.read_csv(io.StringIO(values['csv']))
+                cols_lower = {c.lower(): c for c in df.columns}
+
+                # Region detection
+                if not values.get('region_column'):
+                    for candidate in ['region', 'location', 'site', 'area', 'country', 'state']:
+                        if candidate in cols_lower:
+                            values['region_column'] = cols_lower[candidate]
+                            break
+
+                # Time detection - SmartFormatter normalizes date/day/etc to 'time'
+                if not values.get('time_column'):
+                    # First check for normalized 'time' column
+                    if 'time' in cols_lower:
+                        values['time_column'] = cols_lower['time']
+                    else:
+                        for candidate in ['date', 'week', 'day', 'timestamp', 'period']:
+                            if candidate in cols_lower:
+                                # SmartFormatter will normalize this to 'time', so use 'time'
+                                values['time_column'] = 'time'
+                                break
+
+                # Case count detection
+                if not values.get('case_count_column'):
+                    for candidate in ['cases', 'count', 'case_count', 'n_cases', 'incidents']:
+                        if candidate in cols_lower:
+                            values['case_count_column'] = cols_lower[candidate]
+                            break
+            except:
+                pass
+
         if not values.get('csv'):
             raise ValueError('csv field is required')
         if not values.get('region_column'):
-            raise ValueError('region_column field is required')
+            raise ValueError('region_column field is required and could not be auto-detected')
         if not values.get('time_column'):
-            raise ValueError('time_column field is required')
+            raise ValueError('time_column field is required and could not be auto-detected')
         if not values.get('case_count_column'):
-            raise ValueError('case_count_column field is required')
+            raise ValueError('case_count_column field is required and could not be auto-detected')
         return values
 
 
@@ -1230,9 +1417,24 @@ class PredictiveModelingRequest(BaseModel):
     target: Optional[str] = None
     outcome_column: Optional[str] = None
 
+    # Base44 alternative format
+    patient_data: Optional[Dict[str, Any]] = None
+
     @model_validator(mode='before')
     @classmethod
     def map_alternative_fields(cls, values):
+        # Convert patient_data dict to CSV format
+        if values.get('patient_data') and not values.get('csv'):
+            import io
+            import pandas as pd
+            patient = values['patient_data']
+            # Create single-row DataFrame from patient dict
+            # Add default outcome (SmartFormatter normalized name) if not present
+            if 'label' not in patient and 'outcome' not in patient:
+                patient['outcome'] = 0  # Default: prediction target
+            df = pd.DataFrame([patient])
+            values['csv'] = df.to_csv(index=False)
+
         if not values.get('csv'):
             for alt in ['data', 'csv_data']:
                 if values.get(alt):
@@ -1243,10 +1445,32 @@ class PredictiveModelingRequest(BaseModel):
                 if values.get(alt):
                     values['label_column'] = values[alt]
                     break
+
+        # Auto-detect label_column from CSV
+        # SmartFormatter normalizes 'label' -> 'outcome', so check 'outcome' first
+        if not values.get('label_column') and values.get('csv'):
+            import io
+            import pandas as pd
+            try:
+                df = pd.read_csv(io.StringIO(values['csv']))
+                for candidate in ['outcome', 'label', 'target', 'event', 'y', 'risk']:
+                    if candidate in df.columns:
+                        # SmartFormatter normalizes 'label' to 'outcome'
+                        values['label_column'] = 'outcome' if candidate == 'label' else candidate
+                        break
+                    for col in df.columns:
+                        if col.lower() == candidate:
+                            values['label_column'] = 'outcome' if candidate == 'label' else col
+                            break
+                    if values.get('label_column'):
+                        break
+            except:
+                pass
+
         if not values.get('csv'):
-            raise ValueError('csv field is required')
+            raise ValueError('csv field is required (or provide patient_data)')
         if not values.get('label_column'):
-            raise ValueError('label_column field is required')
+            raise ValueError('label_column field is required (or include label/outcome column in data)')
         return values
 
 
@@ -1271,8 +1495,22 @@ class SyntheticCohortResult(BaseModel):
 
 
 class DigitalTwinSimulationRequest(BaseModel):
-    baseline_profile: Dict[str, float]
+    baseline_profile: Optional[Dict[str, float]] = None
     simulation_horizon_days: int = 90
+
+    # Base44 alternative field names
+    patient_baseline: Optional[Dict[str, float]] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def map_alternative_fields(cls, values):
+        # Map patient_baseline to baseline_profile
+        if not values.get('baseline_profile'):
+            if values.get('patient_baseline'):
+                values['baseline_profile'] = values['patient_baseline']
+        if not values.get('baseline_profile'):
+            raise ValueError('baseline_profile field is required (or provide patient_baseline)')
+        return values
 
 
 class DigitalTwinSimulationResult(BaseModel):
