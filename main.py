@@ -360,6 +360,38 @@ def smart_extract_list(body: dict, field_names: list, default=None):
 
 
 # ---------------------------------------------------------------------
+# UTILITY FUNCTIONS
+# ---------------------------------------------------------------------
+
+def sanitize_for_json(obj):
+    """
+    Recursively convert numpy types to Python native types for JSON serialization.
+    Fixes PydanticSerializationError with numpy.bool_, numpy.int64, numpy.float64, etc.
+    """
+    if obj is None:
+        return None
+    if isinstance(obj, dict):
+        return {k: sanitize_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize_for_json(item) for item in obj]
+    elif isinstance(obj, tuple):
+        return tuple(sanitize_for_json(item) for item in obj)
+    elif isinstance(obj, (np.bool_, )):
+        return bool(obj)
+    elif isinstance(obj, (np.integer, np.int64, np.int32, np.int16, np.int8)):
+        return int(obj)
+    elif isinstance(obj, (np.floating, np.float64, np.float32, np.float16)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return sanitize_for_json(obj.tolist())
+    elif isinstance(obj, (pd.Series, pd.DataFrame)):
+        return sanitize_for_json(obj.to_dict())
+    elif hasattr(obj, 'item'):  # Handles numpy scalars
+        return obj.item()
+    return obj
+
+
+# ---------------------------------------------------------------------
 # APP
 # ---------------------------------------------------------------------
 
@@ -8473,25 +8505,27 @@ Achieves 90%+ Target: {'YES' if auto_redesign_result.get('achieves_90_percent_ta
                 biomarkers=subgroup.get("defining_features", top_biomarkers)[:5]
             )
 
+        # Sanitize all fields to convert numpy types to native Python types
+        # This fixes PydanticSerializationError with numpy.bool_, numpy.int64, etc.
         return TrialRescueResult(
             analysis_id=safe_audit_trail.get("analysis_id", str(uuid.uuid4())),
             timestamp=safe_audit_trail.get("timestamp", datetime.now(timezone.utc).isoformat()),
-            futility_flag=futility_flag,
+            futility_flag=bool(futility_flag),  # Ensure native bool
             rescue_score=float(best_score),
-            recommendation=recommendation,
-            overall_performance=overall_performance or {},
-            biomarker_rankings=(biomarker_analysis or [])[:10],
-            responder_subgroups=(responder_subgroups or [])[:5],
-            confounders=confounders or [],
-            truth_gradient=truth_gradient,
-            executive_summary=executive_memo or "",
-            forward_trial_design=forward_design or {},
-            audit_trail=safe_audit_trail,
-            enrichment_strategy=enrichment_strategy or {},
-            power_recalculation=power_recalculation or {},
-            strategies=strategies or [],
-            narrative=narrative.strip() if narrative else "",
-            auto_redesign=auto_redesign_result  # Auto-generated redesign when rescue_score < 50
+            recommendation=str(recommendation) if recommendation else "",
+            overall_performance=sanitize_for_json(overall_performance or {}),
+            biomarker_rankings=sanitize_for_json((biomarker_analysis or [])[:10]),
+            responder_subgroups=sanitize_for_json((responder_subgroups or [])[:5]),
+            confounders=sanitize_for_json(confounders or []),
+            truth_gradient=sanitize_for_json(truth_gradient),
+            executive_summary=str(executive_memo) if executive_memo else "",
+            forward_trial_design=sanitize_for_json(forward_design or {}),
+            audit_trail=sanitize_for_json(safe_audit_trail),
+            enrichment_strategy=sanitize_for_json(enrichment_strategy or {}),
+            power_recalculation=sanitize_for_json(power_recalculation or {}),
+            strategies=sanitize_for_json(strategies or []),
+            narrative=str(narrative).strip() if narrative else "",
+            auto_redesign=sanitize_for_json(auto_redesign_result)  # Sanitize auto-redesign (contains numpy.bool_)
         )
 
     except HTTPException:
