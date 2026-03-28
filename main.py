@@ -1384,6 +1384,26 @@ class OutbreakDetectionRequest(BaseModel):
                         if candidate in cols_lower:
                             values['case_count_column'] = cols_lower[candidate]
                             break
+
+                # FALLBACK: If required columns not found, add synthetic columns
+                # This allows outbreak detection on any dataset by treating each row as a case
+                if not values.get('region_column'):
+                    df['_synthetic_region'] = 'global'
+                    values['region_column'] = '_synthetic_region'
+                    values['csv'] = df.to_csv(index=False)
+                    df = pd.read_csv(io.StringIO(values['csv']))  # Re-read for consistency
+
+                if not values.get('time_column'):
+                    df['_synthetic_time'] = range(len(df))
+                    values['time_column'] = '_synthetic_time'
+                    values['csv'] = df.to_csv(index=False)
+                    df = pd.read_csv(io.StringIO(values['csv']))
+
+                if not values.get('case_count_column'):
+                    df['_synthetic_cases'] = 1
+                    values['case_count_column'] = '_synthetic_cases'
+                    values['csv'] = df.to_csv(index=False)
+
             except:
                 pass
 
@@ -5618,6 +5638,17 @@ def confounder_detection(req: ConfounderDetectionRequest) -> List[ConfounderFlag
         csv_data = formatted.get("csv", req.csv)
         label_col = formatted.get("label_column", req.label_column)
         treatment_col = formatted.get("treatment_column", getattr(req, 'treatment_column', None))
+
+        # SmartFormatter normalizes column names (e.g., 'label' -> 'outcome')
+        # Map user's label_column to its normalized name
+        if label_col:
+            from app.core.field_mappings import FIELD_ALIASES
+            label_col_lower = label_col.lower().strip().replace(" ", "_").replace("-", "_")
+            for standard_name, aliases in FIELD_ALIASES.items():
+                aliases_lower = [a.lower().replace(" ", "_").replace("-", "_") for a in aliases]
+                if label_col_lower in aliases_lower:
+                    label_col = standard_name
+                    break
     else:
         csv_data = req.csv
         label_col = req.label_column
