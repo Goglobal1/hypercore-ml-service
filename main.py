@@ -1944,9 +1944,16 @@ def compute_sensitivity_specificity(y_true: np.ndarray, y_pred: np.ndarray) -> D
     }
 
 def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
+    from sklearn.preprocessing import StandardScaler
+
     Xc, dropped = _sanitize_matrix(X)
     if Xc.shape[1] == 0:
         raise ValueError("No usable numeric features after cleaning")
+
+    # CRITICAL: Scale features to prevent numerical issues
+    # Clinical biomarkers have vastly different scales (e.g., BNP 100-600 vs troponin 0.03-0.3)
+    scaler = StandardScaler()
+    Xc_scaled = pd.DataFrame(scaler.fit_transform(Xc), columns=Xc.columns, index=Xc.index)
 
     # Handle multiclass by binarizing (common in clinical analysis)
     n_classes = len(np.unique(y))
@@ -1976,7 +1983,7 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
 
     if policy["type"] == "skf":
         cv = StratifiedKFold(n_splits=policy["n_splits"], shuffle=True, random_state=42)
-        probs = cross_val_predict(lr, Xc, y, cv=cv, method="predict_proba")[:, 1]
+        probs = cross_val_predict(lr, Xc_scaled, y, cv=cv, method="predict_proba")[:, 1]
         preds = (probs >= 0.5).astype(int)
 
         auc = float(roc_auc_score(y, probs)) if len(np.unique(y)) > 1 else 0.0
@@ -1988,7 +1995,7 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
         prec, rec, pr_thr = precision_recall_curve(y, probs) if len(np.unique(y)) > 1 else (np.array([1.0, 0.0]), np.array([0.0, 1.0]), np.array([0.5]))
 
         # fit final model on full data for coefficients
-        lr.fit(Xc, y)
+        lr.fit(Xc_scaled, y)
         coef = lr.coef_[0]
         abs_coef = np.abs(coef)
         importance = abs_coef / abs_coef.sum() if float(abs_coef.sum()) > 0 else abs_coef
@@ -2014,10 +2021,10 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
 
     # Train/test split path
     try:
-        X_train, X_test, y_train, y_test = train_test_split(Xc, y, test_size=policy["test_size"], random_state=42, stratify=y)
+        X_train, X_test, y_train, y_test = train_test_split(Xc_scaled, y, test_size=policy["test_size"], random_state=42, stratify=y)
         split_used = "train_test_split_stratified"
     except Exception:
-        X_train, X_test, y_train, y_test = train_test_split(Xc, y, test_size=policy["test_size"], random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(Xc_scaled, y, test_size=policy["test_size"], random_state=42)
         split_used = "train_test_split"
 
     lr.fit(X_train, y_train)
@@ -2037,7 +2044,7 @@ def _fit_linear_model(X: pd.DataFrame, y: np.ndarray) -> Dict[str, Any]:
     importance = abs_coef / abs_coef.sum() if float(abs_coef.sum()) > 0 else abs_coef
 
     # For comparability, also compute probabilities on ALL rows using fitted model
-    full_probs = lr.predict_proba(Xc)[:, 1]
+    full_probs = lr.predict_proba(Xc_scaled)[:, 1]
 
     return {
         "cv_method": split_used,
@@ -2595,8 +2602,19 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         if BUG_FIXES_AVAILABLE:
             formatted = format_for_endpoint(req.dict(), "analyze")
             csv_data = formatted.get("csv", req.csv)
-            # Only use formatter's label if user explicitly provided one
-            label_col_hint = user_provided_label if user_provided_label else None
+            # SmartFormatter normalizes column names (e.g., 'label' -> 'outcome', 'day' -> 'time')
+            # Map user's label column to its normalized name using FIELD_ALIASES
+            if user_provided_label:
+                from app.core.field_mappings import FIELD_ALIASES
+                user_label_lower = user_provided_label.lower().strip().replace(" ", "_").replace("-", "_")
+                label_col_hint = user_provided_label  # Default to user's original
+                for standard_name, aliases in FIELD_ALIASES.items():
+                    aliases_lower = [a.lower().replace(" ", "_").replace("-", "_") for a in aliases]
+                    if user_label_lower in aliases_lower:
+                        label_col_hint = standard_name  # Use normalized name
+                        break
+            else:
+                label_col_hint = None
         else:
             csv_data = req.csv
             label_col_hint = user_provided_label if user_provided_label else None
@@ -2736,6 +2754,7 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
         full_features = feat_df.join(delta_df, how="left").fillna(0.0)
 
         # Build label series per patient from long data (max label for any record)
+        # Note: ingest_labs always renames to 'label' internally
         label_by_patient = labs_long.groupby("patient_id")["label"].max().astype(int)
         label_by_patient = label_by_patient.reindex(full_features.index).dropna()
         full_features = full_features.loc[label_by_patient.index]
