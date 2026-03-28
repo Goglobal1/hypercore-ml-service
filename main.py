@@ -7361,8 +7361,31 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
                 detail=f"Sample size too small (n={len(data)}, minimum=20). Provide larger dataset."
             )
 
+        # SmartFormatter normalizes column names (e.g., 'week_12_acr20' -> 'acr20')
+        # Map user's label_column and treatment_column to their normalized names
+        label_col = req.label_column
+        user_treatment_col = req.treatment_column
+
+        if label_col:
+            from app.core.field_mappings import FIELD_ALIASES
+            label_col_lower = label_col.lower().strip().replace(" ", "_").replace("-", "_")
+            for standard_name, aliases in FIELD_ALIASES.items():
+                aliases_lower = [a.lower().replace(" ", "_").replace("-", "_") for a in aliases]
+                if label_col_lower in aliases_lower:
+                    label_col = standard_name
+                    break
+
+        if user_treatment_col:
+            from app.core.field_mappings import FIELD_ALIASES
+            treatment_col_lower = user_treatment_col.lower().strip().replace(" ", "_").replace("-", "_")
+            for standard_name, aliases in FIELD_ALIASES.items():
+                aliases_lower = [a.lower().replace(" ", "_").replace("-", "_") for a in aliases]
+                if treatment_col_lower in aliases_lower:
+                    user_treatment_col = standard_name
+                    break
+
         # Auto-detect columns
-        treatment_col = req.treatment_column or trial_rescue_engine.auto_detect_treatment_column(data)
+        treatment_col = user_treatment_col or trial_rescue_engine.auto_detect_treatment_column(data)
         patient_id_col = req.patient_id_column or trial_rescue_engine.auto_detect_patient_id_column(data)
 
         if not treatment_col:
@@ -7372,14 +7395,14 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
             )
 
         # Validate outcome column
-        if req.label_column not in data.columns:
+        if label_col not in data.columns:
             raise HTTPException(
                 status_code=422,
                 detail=f"Label column '{req.label_column}' not found in dataset. Available columns: {list(data.columns)[:10]}"
             )
 
         # Check binary outcome
-        outcome_values = data[req.label_column].dropna().unique()
+        outcome_values = data[label_col].dropna().unique()
         if len(outcome_values) != 2:
             raise HTTPException(
                 status_code=422,
@@ -7396,12 +7419,12 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
 
         # Normalize data
         data_normalized, biomarker_cols = trial_rescue_engine.normalize_trial_data(
-            data, treatment_col, req.label_column, patient_id_col
+            data, treatment_col, label_col, patient_id_col
         )
 
         # Convert outcome to numeric
-        y = pd.to_numeric(data_normalized[req.label_column], errors='coerce').fillna(0).astype(int)
-        data_normalized[req.label_column] = y
+        y = pd.to_numeric(data_normalized[label_col], errors='coerce').fillna(0).astype(int)
+        data_normalized[label_col] = y
 
         # Generate dataset summary
         treatment_arms_list = data_normalized[treatment_col].unique().tolist()
@@ -7410,7 +7433,7 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
             "n_biomarkers": len(biomarker_cols),
             "treatment_arms": treatment_arms_list,
             "outcome_prevalence": {
-                str(arm): float(data_normalized[data_normalized[treatment_col] == arm][req.label_column].mean())
+                str(arm): float(data_normalized[data_normalized[treatment_col] == arm][label_col].mean())
                 for arm in treatment_arms_list
             }
         }
@@ -7421,7 +7444,7 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
 
         # Treatment arm differential analysis
         biomarker_analysis = trial_rescue_engine.analyze_treatment_arms(
-            data_normalized, biomarker_cols, treatment_col, req.label_column
+            data_normalized, biomarker_cols, treatment_col, label_col
         )
 
         # Overall performance metrics
@@ -7465,7 +7488,7 @@ def trial_rescue(req: TrialRescueRequest) -> TrialRescueResult:
 
         # Confounder detection
         confounders = trial_rescue_engine.detect_confounders(
-            data_normalized, treatment_col, req.label_column
+            data_normalized, treatment_col, label_col
         )
 
         # ============================================================
