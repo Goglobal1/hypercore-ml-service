@@ -6443,6 +6443,54 @@ class TrialRescueEngine:
                 cleaned.append(word.capitalize())
         return ' '.join(cleaned)
 
+    # Ordinal encoding mappings for common categorical biomarker values
+    ORDINAL_MAPPINGS = {
+        # Severity/Level indicators
+        'high': 3, 'medium': 2, 'low': 1,
+        'elevated': 2, 'normal': 1,
+        'severe': 3, 'moderate': 2, 'mild': 1,
+        'positive': 1, 'negative': 0,
+        'yes': 1, 'no': 0,
+        'present': 1, 'absent': 0,
+        'abnormal': 1, 'normal': 0,
+        # Extended mappings
+        'very high': 4, 'very low': 0,
+        'critically high': 5, 'critically low': 0,
+        'increased': 2, 'decreased': 0,
+        'reactive': 1, 'non-reactive': 0, 'nonreactive': 0,
+    }
+
+    def encode_categorical_column(self, series: pd.Series) -> Tuple[pd.Series, bool]:
+        """
+        Encode a categorical column to numeric values.
+        Returns (encoded_series, was_encoded).
+        """
+        if pd.api.types.is_numeric_dtype(series):
+            return series, False
+
+        # Try ordinal encoding first (for known categories)
+        str_values = series.astype(str).str.lower().str.strip()
+        unique_values = str_values.unique()
+
+        # Check if all values match ordinal mappings
+        all_ordinal = all(v in self.ORDINAL_MAPPINGS or pd.isna(v) or v == 'nan'
+                         for v in unique_values)
+
+        if all_ordinal and len(unique_values) > 1:
+            encoded = str_values.map(lambda x: self.ORDINAL_MAPPINGS.get(x, np.nan))
+            if encoded.notna().sum() > 0:
+                return encoded, True
+
+        # Fall back to label encoding for other categorical values
+        if series.dtype == 'object' or str(series.dtype) == 'category':
+            # Use pd.factorize for consistent encoding
+            encoded_values, _ = pd.factorize(series)
+            # Convert -1 (NaN indicator) to NaN
+            encoded = pd.Series(encoded_values, index=series.index).replace(-1, np.nan)
+            return encoded, True
+
+        return series, False
+
     def normalize_trial_data(self, data: pd.DataFrame, treatment_col: str,
                             label_col: str, patient_id_col: Optional[str]) -> Tuple[pd.DataFrame, List[str]]:
         """Normalize column names, handle missing data, identify biomarkers."""
@@ -6465,21 +6513,40 @@ class TrialRescueEngine:
         biomarker_cols = []
         for col in df.columns:
             if col not in special_cols:
-                # Check if numeric
-                if pd.api.types.is_numeric_dtype(df[col]) or df[col].dtype == 'object':
+                # First, try to convert to numeric directly
+                if pd.api.types.is_numeric_dtype(df[col]):
+                    biomarker_cols.append(col)
+                    continue
+
+                # Try pd.to_numeric for string numbers
+                try:
+                    numeric_col = pd.to_numeric(df[col], errors='coerce')
+                    # If more than 50% are valid numbers, use numeric conversion
+                    if numeric_col.notna().mean() > 0.5:
+                        df[col] = numeric_col
+                        biomarker_cols.append(col)
+                        continue
+                except:
+                    pass
+
+                # Handle categorical columns (text values like "high", "low", etc.)
+                if df[col].dtype == 'object' or str(df[col].dtype) == 'category':
                     try:
-                        numeric_col = pd.to_numeric(df[col], errors='coerce')
-                        # If more than 50% are valid numbers, consider it a biomarker
-                        if numeric_col.notna().mean() > 0.5:
-                            df[col] = numeric_col
+                        encoded_col, was_encoded = self.encode_categorical_column(df[col])
+                        if was_encoded and encoded_col.notna().sum() > 0:
+                            df[col] = encoded_col.astype(float)
                             biomarker_cols.append(col)
-                    except:
+                    except Exception as e:
+                        # Skip columns that can't be encoded
                         pass
 
         # Fill missing values with median for biomarkers
         for col in biomarker_cols:
             if df[col].isna().any():
-                df[col] = df[col].fillna(df[col].median())
+                median_val = df[col].median()
+                if pd.isna(median_val):
+                    median_val = 0  # Fallback if all values are NaN
+                df[col] = df[col].fillna(median_val)
 
         return df, biomarker_cols
 
@@ -6600,6 +6667,12 @@ class TrialRescueEngine:
         """Test stability of subgroup effect across bootstrap samples."""
         effects = []
 
+        # Reduce iterations for small datasets
+        if len(data) < 30:
+            n_iterations = min(n_iterations, 20)
+        elif len(data) < 50:
+            n_iterations = min(n_iterations, 30)
+
         for i in range(n_iterations):
             # Bootstrap sample
             sample = data.sample(n=len(data), replace=True, random_state=self.random_seed + i)
@@ -6632,16 +6705,25 @@ class TrialRescueEngine:
         if len(biomarker_names) == 0:
             return subgroups
 
+        # Early exit for very small datasets
+        if len(y) < 10 or y.nunique() < 2:
+            return subgroups
+
         # Prepare data for LASSO
         X_scaled = X[biomarker_names].copy()
         for col in X_scaled.columns:
-            X_scaled[col] = (X_scaled[col] - X_scaled[col].mean()) / (X_scaled[col].std() + 1e-10)
+            col_std = X_scaled[col].std()
+            if col_std > 0:
+                X_scaled[col] = (X_scaled[col] - X_scaled[col].mean()) / (col_std + 1e-10)
+            else:
+                X_scaled[col] = 0  # Constant column
 
         X_scaled = X_scaled.fillna(0)
 
         try:
-            # LASSO for feature selection
-            lasso = LassoCV(cv=min(5, len(y) // 4), random_state=self.random_seed, max_iter=2000)
+            # LASSO for feature selection - ensure cv is at least 2
+            cv_folds = max(2, min(5, len(y) // 4))
+            lasso = LassoCV(cv=cv_folds, random_state=self.random_seed, max_iter=1000)
             lasso.fit(X_scaled, y)
 
             # Get features with non-zero coefficients
@@ -7422,10 +7504,26 @@ class TrialRedesignEngine:
         else:
             sim_data = data.copy()
 
+        # Early exit for very small datasets
+        if len(sim_data) < 10:
+            return {
+                "projected_auc": 0.50,
+                "auc_95_ci": [0.45, 0.55],
+                "sensitivity": 0.50,
+                "specificity": 0.50,
+                "n_simulations": 0
+            }
+
         y = sim_data[label_col]
         X = sim_data.select_dtypes(include=[np.number]).drop(columns=[label_col], errors='ignore')
 
-        if len(X.columns) == 0 or len(y) < 20:
+        # Reduce simulations for small datasets to prevent timeout
+        if len(sim_data) < 50:
+            n_simulations = min(n_simulations, 100)
+        elif len(sim_data) < 100:
+            n_simulations = min(n_simulations, 200)
+
+        if len(X.columns) == 0 or len(y) < 10:
             return {
                 "projected_auc": 0.50,
                 "auc_95_ci": [0.45, 0.55],
