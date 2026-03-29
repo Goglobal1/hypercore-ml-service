@@ -4178,7 +4178,7 @@ DOMAIN_BIOMARKERS = {
     },
     "cardiac": {
         "primary": ["troponin", "bnp", "nt_probnp", "ck_mb"],
-        "secondary": ["ldl", "hdl", "triglycerides", "cholesterol"],
+        "secondary": ["ldl", "hdl", "triglycerides", "cholesterol", "ecg", "ejection_fraction", "ef"],
         "weight": 1.0
     },
     "renal": {
@@ -4208,20 +4208,62 @@ DOMAIN_BIOMARKERS = {
     }
 }
 
+# Biomarker aliases for flexible matching (maps variant names to canonical names)
+BIOMARKER_ALIASES_DOMAIN = {
+    # Cardiac aliases
+    "troponin_i": "troponin", "troponin_t": "troponin", "trop": "troponin", "tnni": "troponin", "tnnt": "troponin",
+    "hs_troponin": "troponin", "hstni": "troponin", "hstnt": "troponin", "cardiac_troponin": "troponin",
+    "nt_pro_bnp": "nt_probnp", "ntprobnp": "nt_probnp", "pro_bnp": "nt_probnp", "nprbnp": "nt_probnp",
+    "bnp_ng": "bnp", "bnp_pg": "bnp", "brain_natriuretic": "bnp",
+    "ckmb": "ck_mb", "ck_mb_mass": "ck_mb", "creatine_kinase_mb": "ck_mb",
+    "lvef": "ejection_fraction", "ef_percent": "ejection_fraction",
+    # Renal aliases
+    "serum_creatinine": "creatinine", "scr": "creatinine", "crea": "creatinine",
+    "blood_urea_nitrogen": "bun", "urea_nitrogen": "bun",
+    "gfr": "egfr", "estimated_gfr": "egfr",
+    # Hepatic aliases
+    "sgpt": "alt", "alanine_aminotransferase": "alt", "alanine_transaminase": "alt",
+    "sgot": "ast", "aspartate_aminotransferase": "ast", "aspartate_transaminase": "ast",
+    "total_bilirubin": "bilirubin", "tbili": "bilirubin", "tbil": "bilirubin",
+    "alkaline_phosphatase": "alp", "alk_phos": "alp",
+    # Inflammatory/Sepsis aliases
+    "c_reactive_protein": "crp", "creactive": "crp",
+    "white_blood_cell": "wbc", "white_blood_cells": "wbc", "leukocytes": "wbc",
+    "procalc": "procalcitonin", "pct": "procalcitonin",
+    "lactic_acid": "lactate", "serum_lactate": "lactate",
+    # Metabolic aliases
+    "blood_glucose": "glucose", "fasting_glucose": "glucose", "fbg": "glucose",
+    "hemoglobin_a1c": "hba1c", "a1c": "hba1c", "glycated_hemoglobin": "hba1c",
+}
+
 def classify_domain_from_biomarkers(biomarker_cols: List[str], outcome_type: str = None) -> Dict[str, Any]:
     """
     Classify clinical domain based on detected biomarkers.
     Returns confidence and involved domains.
+    Uses BIOMARKER_ALIASES_DOMAIN for flexible matching.
     """
-    # Normalize biomarker column names
+    # Normalize biomarker column names and apply aliases
     normalized_cols = set()
+    alias_mapping = {}  # Track what was mapped for debugging
+
     for col in biomarker_cols:
         norm = col.lower().strip().replace("-", "_").replace(" ", "_")
         # Remove common suffixes
-        for suffix in ["_latest", "_mean", "_min", "_max", "_value", "_result"]:
+        for suffix in ["_latest", "_mean", "_min", "_max", "_value", "_result", "_ng_ml", "_pg_ml", "_mg_dl", "_u_l", "_iu_l"]:
             if norm.endswith(suffix):
                 norm = norm[:-len(suffix)]
-        normalized_cols.add(norm)
+
+        # Check if this matches an alias
+        canonical = BIOMARKER_ALIASES_DOMAIN.get(norm, norm)
+        if canonical != norm:
+            alias_mapping[col] = canonical
+        normalized_cols.add(canonical)
+
+        # Also check partial matches for common patterns (e.g., "troponin_i_high_sensitivity" should match "troponin")
+        for alias, canonical_name in BIOMARKER_ALIASES_DOMAIN.items():
+            if alias in norm or norm.startswith(alias.split("_")[0]):
+                normalized_cols.add(canonical_name)
+                alias_mapping[col] = canonical_name
     
     domain_scores = {}
     domain_matches = {}
@@ -4716,13 +4758,12 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         risk_timing_delta = {
             "detection_window_days": round(avg_lead_time, 1),
             "detection_window_hours": round(avg_lead_time * 24, 1),
-            "lead_time_days": round(avg_lead_time, 1),
-            # Default: trajectory and threshold are the same until trajectory analysis extends detection
-            "trajectory_lead_time_days": round(avg_lead_time, 1),
-            "original_threshold_detection_days": round(avg_lead_time, 1),
+            # ACTUAL MEASURED detection (from threshold crossing analysis)
+            "actual_detection_lead_time_days": round(avg_lead_time, 1),
+            "lead_time_days": round(avg_lead_time, 1),  # Keep for backwards compat
+            # TRAJECTORY PROJECTION (theoretical extrapolation, updated if trajectory analysis runs)
+            "trajectory_projection_days": round(avg_lead_time, 1),  # Same as actual until trajectory extends
             "detection_method": "threshold_analysis",
-            "headline_metric": "lead_time_days",
-            "comparison_metric": "original_threshold_detection_days",
             "early_warning_signals": aggregated_signals[:5],
             "patients_analyzed": total_patients,
             "events_detected": len(patients_with_events),
@@ -4762,12 +4803,12 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             "patients_analyzed": total_patients,
             "patients_with_events": len(patients_with_events),
             "patients_flagged_early": detection_count,
-            "average_lead_time_days": round(avg_lead_time, 1),
-            # Explicit headline vs comparison metrics for UI display
-            "lead_time_headline": round(avg_lead_time, 1),  # Use this for "Detected X days early" display
-            "lead_time_comparison": round(avg_lead_time, 1),  # Use this for comparison vs standard threshold
-            "original_threshold_detection_days": round(avg_lead_time, 1),  # Standard threshold-based detection
-            "trajectory_extended_detection": False,
+            # ACTUAL MEASURED detection time (what was really observed in the data)
+            "actual_detection_lead_time_days": round(avg_lead_time, 1),
+            "average_lead_time_days": round(avg_lead_time, 1),  # Keep as ACTUAL for backwards compat
+            # TRAJECTORY PROJECTION (theoretical extrapolation, may be extended by trajectory analysis)
+            "trajectory_projection_days": round(avg_lead_time, 1),  # Same as actual until trajectory extends
+            "trajectory_extended": False,
             "lead_time_range_days": [round(min(lead_times), 1), round(max(lead_times), 1)] if lead_times else [0, 0],
             "detection_rate": round(detection_rate, 2),
             "early_warning_signals_count": len(early_warning_signals),
@@ -5140,63 +5181,59 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         if trajectory_analysis_result and trajectory_analysis_result.get("enabled"):
             improvement = trajectory_analysis_result.get("detection_improvement", {}).get("improvement_days", 0)
 
-            # Update summaries with trajectory-based detection window (not threshold-based)
+            # Update summaries with trajectory PROJECTION (theoretical extrapolation)
             trajectory_days = trajectory_analysis_result.get("extended_detection_window_days", avg_lead_time)
             if trajectory_days > avg_lead_time:
-                # Rebuild executive summary with trajectory-based lead time as HEADLINE
+                # =============================================================
+                # CLARITY FIX: Distinguish ACTUAL detection vs TRAJECTORY PROJECTION
+                # - actual_detection_lead_time_days: What was ACTUALLY measured (avg_lead_time)
+                # - trajectory_projection_days: Theoretical extrapolation (trajectory_days)
+                # =============================================================
+
+                # Update executive summary - ACTUAL detection as headline, projection as bonus
                 if aggregated_signals:
                     executive_summary = (
                         f"Analyzed {total_patients} patients, found {len(patients_with_events)} with {req.outcome_type} events. "
-                        f"HyperCore detected early warning signals averaging {trajectory_days:.0f} days before clinical manifestation "
-                        f"(+{improvement:.0f} days vs standard threshold detection). "
+                        f"HyperCore detected early warning signals {avg_lead_time:.0f} days before clinical manifestation. "
+                        f"Trajectory projection extends potential detection window to {trajectory_days:.0f} days. "
                         f"Top early indicators: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
                     )
                 else:
-                    executive_summary += f" Trajectory analysis extends detection by +{improvement:.0f} days."
-                # =============================================================
-                # CRITICAL: Update ALL lead time fields consistently
-                # HEADLINE METRICS = Trajectory detection (larger value)
-                # COMPARISON METRICS = Original threshold detection (smaller value)
-                # =============================================================
+                    executive_summary += f" Trajectory projection extends potential detection to {trajectory_days:.0f} days."
 
-                # Update risk_timing_delta with trajectory-based timing (HEADLINE)
-                risk_timing_delta["lead_time_days"] = round(trajectory_days, 1)
-                risk_timing_delta["original_threshold_detection_days"] = round(avg_lead_time, 1)
-                risk_timing_delta["trajectory_lead_time_days"] = round(trajectory_days, 1)
-                risk_timing_delta["detection_method"] = "trajectory_analysis"
-                risk_timing_delta["headline_metric"] = "trajectory_lead_time_days"
-                risk_timing_delta["comparison_metric"] = "original_threshold_detection_days"
+                # Update risk_timing_delta - keep ACTUAL as primary, add projection
+                risk_timing_delta["trajectory_projection_days"] = round(trajectory_days, 1)
+                risk_timing_delta["trajectory_improvement_days"] = round(trajectory_days - avg_lead_time, 1)
+                risk_timing_delta["detection_method"] = "threshold_analysis_with_trajectory_projection"
 
-                # Update missed_risk_summary with trajectory-based detection
-                missed_risk_summary["standard_system_status"] = f"Standard scoring (NEWS/qSOFA) may not detect these patterns {trajectory_days:.0f} days early."
-                missed_risk_summary["hypercore_detection"] = f"Detected {trajectory_days:.0f} days early via trajectory analysis"
-                missed_risk_summary["potential_impact"] = f"Early detection could enable intervention {trajectory_days:.0f} days before event."
-                missed_risk_summary["trajectory_extended"] = True
-                missed_risk_summary["threshold_based_days"] = round(avg_lead_time, 1)
-                missed_risk_summary["trajectory_based_days"] = round(trajectory_days, 1)
-                missed_risk_summary["lead_time_headline"] = round(trajectory_days, 1)
+                # Update missed_risk_summary
+                missed_risk_summary["actual_detection_days"] = round(avg_lead_time, 1)
+                missed_risk_summary["trajectory_projection_days"] = round(trajectory_days, 1)
+                missed_risk_summary["standard_system_status"] = f"Standard scoring (NEWS/qSOFA) typically detects at event onset."
+                missed_risk_summary["hypercore_actual_detection"] = f"Actually detected {avg_lead_time:.0f} days early"
+                missed_risk_summary["hypercore_trajectory_projection"] = f"Trajectory projection extends to {trajectory_days:.0f} days"
+                missed_risk_summary["potential_impact"] = f"Early detection enables intervention {avg_lead_time:.0f} days before event (projection: {trajectory_days:.0f} days)."
 
-                # Update clinical_impact with trajectory-based timing (HEADLINE)
-                clinical_impact["average_lead_time_days"] = round(trajectory_days, 1)
-                clinical_impact["trajectory_extended_detection"] = True
-                clinical_impact["original_threshold_detection_days"] = round(avg_lead_time, 1)
-                clinical_impact["lead_time_headline"] = round(trajectory_days, 1)
-                clinical_impact["lead_time_comparison"] = round(avg_lead_time, 1)
+                # Update clinical_impact - ACTUAL stays as average_lead_time_days, add projection
+                clinical_impact["trajectory_projection_days"] = round(trajectory_days, 1)
+                clinical_impact["trajectory_extended"] = True
+                clinical_impact["trajectory_improvement_days"] = round(trajectory_days - avg_lead_time, 1)
+                # NOTE: average_lead_time_days stays as ACTUAL (avg_lead_time), NOT overwritten
 
-                # Update comparator_performance with trajectory-based timing
-                comparator_performance["hypercore"]["lead_time_days"] = round(trajectory_days, 1)
+                # Update comparator_performance
+                comparator_performance["hypercore"]["actual_lead_time_days"] = round(avg_lead_time, 1)
+                comparator_performance["hypercore"]["trajectory_projection_days"] = round(trajectory_days, 1)
                 comparator_performance["hypercore"]["trajectory_enhanced"] = True
-                comparator_performance["hypercore"]["interpretation"] = f"Trajectory analysis detected rising patterns {trajectory_days:.0f} days before {req.outcome_type}."
-                comparator_performance["hypercore"]["vs_standard_improvement_days"] = round(trajectory_days - avg_lead_time, 1)
+                comparator_performance["hypercore"]["interpretation"] = f"Detected rising patterns {avg_lead_time:.0f} days early (trajectory projects to {trajectory_days:.0f} days)."
 
-                # Update narrative with trajectory-extended lead time
+                # Update narrative - clarify actual vs projection
                 if aggregated_signals:
                     narrative = (
                         f"Early risk discovery analyzed {total_patients} patients with {len(biomarker_cols)} biomarkers. "
                         f"Found {len(patients_with_events)} patients with {req.outcome_type} events. "
-                        f"Detected {len(early_warning_signals)} early warning signals across {len(biomarker_counts)} unique biomarkers, "
-                        f"with an average lead time of {trajectory_days:.1f} days before clinical event "
-                        f"(vs {avg_lead_time:.1f} days with standard threshold detection). "
+                        f"Detected {len(early_warning_signals)} early warning signals across {len(biomarker_counts)} unique biomarkers. "
+                        f"Actual detection lead time: {avg_lead_time:.1f} days before clinical event. "
+                        f"Trajectory projection extends potential detection window to {trajectory_days:.1f} days. "
                         f"Top early warning biomarkers: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
                     )
 
