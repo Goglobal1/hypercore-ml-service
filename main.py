@@ -4717,6 +4717,12 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             "detection_window_days": round(avg_lead_time, 1),
             "detection_window_hours": round(avg_lead_time * 24, 1),
             "lead_time_days": round(avg_lead_time, 1),
+            # Default: trajectory and threshold are the same until trajectory analysis extends detection
+            "trajectory_lead_time_days": round(avg_lead_time, 1),
+            "original_threshold_detection_days": round(avg_lead_time, 1),
+            "detection_method": "threshold_analysis",
+            "headline_metric": "lead_time_days",
+            "comparison_metric": "original_threshold_detection_days",
             "early_warning_signals": aggregated_signals[:5],
             "patients_analyzed": total_patients,
             "events_detected": len(patients_with_events),
@@ -4736,22 +4742,32 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         }
 
         # Build early_markers list with contribution scores and values
-        early_markers = [
-            {
-                "marker": s["marker"],
-                "contribution": s["contribution"],
-                "baseline_value": s["baseline_value"],
-                "current_value": s["current_value"],
-                "percent_change": s["percent_change"]
+        # IMPORTANT: Ensure all values are primitive types (str, int, float) for proper JSON serialization
+        # This prevents [object Object] display issues in the UI
+        early_markers = []
+        for s in aggregated_signals[:10]:
+            marker_entry = {
+                "marker": str(s.get("marker", s.get("biomarker", "unknown"))),
+                "name": str(s.get("marker", s.get("biomarker", "unknown"))),  # Alias for UI compatibility
+                "contribution": float(s.get("contribution", 0)) if s.get("contribution") is not None else 0.0,
+                "baseline_value": float(s.get("baseline_value", 0)) if s.get("baseline_value") is not None else 0.0,
+                "current_value": float(s.get("current_value", 0)) if s.get("current_value") is not None else 0.0,
+                "percent_change": float(s.get("percent_change", 0)) if s.get("percent_change") is not None else 0.0,
+                "days_before_event": float(s.get("days_before_event", 0)) if s.get("days_before_event") is not None else 0.0,
+                "patients_affected": int(s.get("patients_affected", 0)) if s.get("patients_affected") is not None else 0
             }
-            for s in aggregated_signals[:10]
-        ]
+            early_markers.append(marker_entry)
 
         clinical_impact = {
             "patients_analyzed": total_patients,
             "patients_with_events": len(patients_with_events),
             "patients_flagged_early": detection_count,
             "average_lead_time_days": round(avg_lead_time, 1),
+            # Explicit headline vs comparison metrics for UI display
+            "lead_time_headline": round(avg_lead_time, 1),  # Use this for "Detected X days early" display
+            "lead_time_comparison": round(avg_lead_time, 1),  # Use this for comparison vs standard threshold
+            "original_threshold_detection_days": round(avg_lead_time, 1),  # Standard threshold-based detection
+            "trajectory_extended_detection": False,
             "lead_time_range_days": [round(min(lead_times), 1), round(max(lead_times), 1)] if lead_times else [0, 0],
             "detection_rate": round(detection_rate, 2),
             "early_warning_signals_count": len(early_warning_signals),
@@ -5123,12 +5139,34 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
 
         if trajectory_analysis_result and trajectory_analysis_result.get("enabled"):
             improvement = trajectory_analysis_result.get("detection_improvement", {}).get("improvement_days", 0)
-            if improvement > 0:
-                executive_summary += f" Trajectory analysis extends detection by +{improvement:.0f} days."
 
             # Update summaries with trajectory-based detection window (not threshold-based)
             trajectory_days = trajectory_analysis_result.get("extended_detection_window_days", avg_lead_time)
             if trajectory_days > avg_lead_time:
+                # Rebuild executive summary with trajectory-based lead time as HEADLINE
+                if aggregated_signals:
+                    executive_summary = (
+                        f"Analyzed {total_patients} patients, found {len(patients_with_events)} with {req.outcome_type} events. "
+                        f"HyperCore detected early warning signals averaging {trajectory_days:.0f} days before clinical manifestation "
+                        f"(+{improvement:.0f} days vs standard threshold detection). "
+                        f"Top early indicators: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
+                    )
+                else:
+                    executive_summary += f" Trajectory analysis extends detection by +{improvement:.0f} days."
+                # =============================================================
+                # CRITICAL: Update ALL lead time fields consistently
+                # HEADLINE METRICS = Trajectory detection (larger value)
+                # COMPARISON METRICS = Original threshold detection (smaller value)
+                # =============================================================
+
+                # Update risk_timing_delta with trajectory-based timing (HEADLINE)
+                risk_timing_delta["lead_time_days"] = round(trajectory_days, 1)
+                risk_timing_delta["original_threshold_detection_days"] = round(avg_lead_time, 1)
+                risk_timing_delta["trajectory_lead_time_days"] = round(trajectory_days, 1)
+                risk_timing_delta["detection_method"] = "trajectory_analysis"
+                risk_timing_delta["headline_metric"] = "trajectory_lead_time_days"
+                risk_timing_delta["comparison_metric"] = "original_threshold_detection_days"
+
                 # Update missed_risk_summary with trajectory-based detection
                 missed_risk_summary["standard_system_status"] = f"Standard scoring (NEWS/qSOFA) may not detect these patterns {trajectory_days:.0f} days early."
                 missed_risk_summary["hypercore_detection"] = f"Detected {trajectory_days:.0f} days early via trajectory analysis"
@@ -5136,16 +5174,31 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 missed_risk_summary["trajectory_extended"] = True
                 missed_risk_summary["threshold_based_days"] = round(avg_lead_time, 1)
                 missed_risk_summary["trajectory_based_days"] = round(trajectory_days, 1)
+                missed_risk_summary["lead_time_headline"] = round(trajectory_days, 1)
 
-                # Update clinical_impact with trajectory-based timing
+                # Update clinical_impact with trajectory-based timing (HEADLINE)
                 clinical_impact["average_lead_time_days"] = round(trajectory_days, 1)
                 clinical_impact["trajectory_extended_detection"] = True
                 clinical_impact["original_threshold_detection_days"] = round(avg_lead_time, 1)
+                clinical_impact["lead_time_headline"] = round(trajectory_days, 1)
+                clinical_impact["lead_time_comparison"] = round(avg_lead_time, 1)
 
                 # Update comparator_performance with trajectory-based timing
                 comparator_performance["hypercore"]["lead_time_days"] = round(trajectory_days, 1)
                 comparator_performance["hypercore"]["trajectory_enhanced"] = True
                 comparator_performance["hypercore"]["interpretation"] = f"Trajectory analysis detected rising patterns {trajectory_days:.0f} days before {req.outcome_type}."
+                comparator_performance["hypercore"]["vs_standard_improvement_days"] = round(trajectory_days - avg_lead_time, 1)
+
+                # Update narrative with trajectory-extended lead time
+                if aggregated_signals:
+                    narrative = (
+                        f"Early risk discovery analyzed {total_patients} patients with {len(biomarker_cols)} biomarkers. "
+                        f"Found {len(patients_with_events)} patients with {req.outcome_type} events. "
+                        f"Detected {len(early_warning_signals)} early warning signals across {len(biomarker_counts)} unique biomarkers, "
+                        f"with an average lead time of {trajectory_days:.1f} days before clinical event "
+                        f"(vs {avg_lead_time:.1f} days with standard threshold detection). "
+                        f"Top early warning biomarkers: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
+                    )
 
         return EarlyRiskResponse(
             executive_summary=executive_summary,
