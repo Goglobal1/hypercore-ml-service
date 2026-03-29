@@ -4327,10 +4327,27 @@ def classify_domain_from_biomarkers(biomarker_cols: List[str], outcome_type: str
     if primary_score > 0:
         confidence = max(confidence, 0.6)  # At least 60% if any primary biomarkers found
     
+    # Human-readable display names for domains
+    DOMAIN_DISPLAY_NAMES = {
+        "cardiac": "Acute Coronary Syndrome",
+        "sepsis": "Sepsis / Systemic Infection",
+        "renal": "Acute Kidney Injury",
+        "hepatic": "Hepatotoxicity / Liver Injury",
+        "respiratory": "Respiratory Failure",
+        "metabolic": "Metabolic Crisis",
+        "inflammatory": "Systemic Inflammation",
+        "multi_system": "Multi-Organ Dysfunction"
+    }
+
+    display_name = DOMAIN_DISPLAY_NAMES.get(primary_domain, primary_domain.replace("_", " ").title())
+
     return {
         "domain": domain,
+        "display_name": display_name,  # Human-readable name for UI
         "confidence": round(min(1.0, confidence), 3),
+        "confidence_percent": f"{round(min(1.0, confidence) * 100)}%",  # For UI display
         "primary_domain": primary_domain,
+        "primary_domain_display": display_name,  # Alias for frontend
         "involved_domains": involved,
         "domain_scores": {d: round(s, 3) for d, s in sorted_domains[:5]},
         "matches": domain_matches,
@@ -4984,6 +5001,42 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         # DOMAIN CLASSIFICATION - Biomarker-based domain detection
         # =====================================================================
         domain_classification = classify_domain_from_biomarkers(biomarker_cols, req.outcome_type)
+
+        # =====================================================================
+        # CRITICAL FIX: Override outcome based on detected domain
+        # If biomarker analysis detects a different domain with high confidence,
+        # use the detected domain instead of the user-provided outcome_type
+        # =====================================================================
+        detected_domain = domain_classification.get("primary_domain") or domain_classification.get("domain")
+        domain_confidence = domain_classification.get("confidence", 0)
+
+        # Map domain names to clinical outcome names
+        DOMAIN_TO_OUTCOME = {
+            "cardiac": "acute_coronary_syndrome",
+            "sepsis": "sepsis",
+            "renal": "acute_kidney_injury",
+            "hepatic": "hepatotoxicity",
+            "respiratory": "respiratory_failure",
+            "metabolic": "metabolic_crisis",
+            "inflammatory": "systemic_inflammation",
+            "multi_system": "multi_organ_dysfunction"
+        }
+
+        # Use detected domain if confidence >= 0.6 and domain was actually detected
+        if detected_domain and domain_confidence >= 0.6 and detected_domain != "unknown":
+            inferred_outcome = DOMAIN_TO_OUTCOME.get(detected_domain, detected_domain)
+            # Update risk_timing_delta with inferred outcome
+            risk_timing_delta["outcome"] = inferred_outcome
+            risk_timing_delta["outcome_source"] = "biomarker_detection"
+            risk_timing_delta["user_provided_outcome"] = req.outcome_type
+            # Also update domain_classification for frontend
+            domain_classification["inferred_outcome"] = inferred_outcome
+            domain_classification["outcome_confidence"] = domain_confidence
+        else:
+            # Fall back to user-provided outcome_type
+            risk_timing_delta["outcome_source"] = "user_provided"
+            domain_classification["inferred_outcome"] = req.outcome_type
+            domain_classification["outcome_confidence"] = 0.3  # Low confidence since no biomarker match
 
         # =====================================================================
         # TRAJECTORY ANALYSIS - Extended forecasting for early detection
