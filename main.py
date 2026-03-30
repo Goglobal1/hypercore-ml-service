@@ -977,6 +977,9 @@ class EarlyRiskResponse(BaseModel):
     risk_score: Optional[float] = None
     risk_score_percent: Optional[str] = None  # Human-readable "74%"
     risk_level: Optional[str] = None  # "critical", "high", "moderate", "low"
+    # REPORT_DATA - Single source of truth for clinical report generation
+    # Frontend should ONLY use this object when calling GPT for reports
+    report_data: Optional[Dict[str, Any]] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -5384,6 +5387,42 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         risk_timing_delta["risk_score_percent"] = top_level_risk_percent
         risk_timing_delta["risk_level"] = top_level_risk_level
 
+        # =====================================================================
+        # REPORT_DATA - Single source of truth for clinical report generation
+        # Frontend should ONLY use this object when calling GPT for reports
+        # This prevents GPT from hallucinating values
+        # =====================================================================
+        trajectory_proj_days = None
+        if trajectory_analysis_result and trajectory_analysis_result.get("enabled"):
+            trajectory_proj_days = trajectory_analysis_result.get("extended_detection_window_days")
+
+        report_data = {
+            # Risk Assessment
+            "risk_score": top_level_risk_score,
+            "risk_score_percent": top_level_risk_percent,
+            "risk_level": top_level_risk_level,
+            # Timing - USE THESE VALUES, NOT DEFAULTS
+            "lead_time_days": round(avg_lead_time, 1),  # ACTUAL detection lead time
+            "actual_detection_lead_time_days": round(avg_lead_time, 1),  # Same, explicit name
+            "trajectory_projection_days": trajectory_proj_days,  # Extended projection (may be None)
+            # Domain/Outcome Detection
+            "detected_outcome": inferred_outcome,
+            "detected_domain": domain_classification.get("primary_domain"),
+            "domain_display_name": domain_classification.get("display_name"),
+            "domain_confidence": domain_classification.get("confidence"),
+            "domain_confidence_percent": domain_classification.get("confidence_percent"),
+            # Patient Summary
+            "patients_analyzed": total_patients,
+            "patients_with_events": len(patients_with_events),
+            "biomarkers_analyzed": len(biomarker_cols),
+            "early_warning_signals_count": len(early_warning_signals),
+            # Top Biomarkers (for report)
+            "top_biomarkers": [s["biomarker"] for s in aggregated_signals[:3]] if aggregated_signals else [],
+            # Pre-formatted strings for direct use in reports
+            "summary_for_report": f"Detected {inferred_outcome} risk {round(avg_lead_time, 1)} days before clinical event with {top_level_risk_percent} confidence.",
+            "detection_statement": f"HyperCore detected this risk {round(avg_lead_time, 1)} days before the clinical event."
+        }
+
         return EarlyRiskResponse(
             executive_summary=executive_summary,
             risk_timing_delta=_sanitize_for_json(risk_timing_delta),
@@ -5400,7 +5439,9 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             # TOP-LEVEL RISK SCORE - Consistent access for clinical reports
             risk_score=top_level_risk_score,
             risk_score_percent=top_level_risk_percent,
-            risk_level=top_level_risk_level
+            risk_level=top_level_risk_level,
+            # REPORT_DATA - Single source of truth for GPT report generation
+            report_data=report_data
         )
 
     except Exception as e:
