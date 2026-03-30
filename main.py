@@ -5047,9 +5047,49 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             domain_classification["outcome_confidence"] = domain_confidence
         else:
             # Fall back to user-provided outcome_type
+            inferred_outcome = req.outcome_type  # Use user-provided when no biomarker match
             risk_timing_delta["outcome_source"] = "user_provided"
             domain_classification["inferred_outcome"] = req.outcome_type
             domain_classification["outcome_confidence"] = 0.3  # Low confidence since no biomarker match
+
+        # =====================================================================
+        # CRITICAL: Update ALL display text to use inferred_outcome instead of req.outcome_type
+        # This ensures cardiac data shows "acute_coronary_syndrome" not "sepsis"
+        # =====================================================================
+
+        # Update executive_summary with inferred outcome
+        if aggregated_signals:
+            executive_summary = (
+                f"Analyzed {total_patients} patients, found {len(patients_with_events)} with {inferred_outcome} events. "
+                f"HyperCore detected early warning signals averaging {avg_lead_time:.1f} days before clinical manifestation. "
+                f"Top early indicators: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
+            )
+        else:
+            executive_summary = (
+                f"Analyzed {total_patients} patients with {len(patients_with_events)} events. "
+                f"Insufficient longitudinal data to detect early warning patterns. Need more time points per patient."
+            )
+
+        # Update narrative with inferred outcome
+        if aggregated_signals:
+            narrative = (
+                f"Early risk discovery analyzed {total_patients} patients with {len(biomarker_cols)} biomarkers. "
+                f"Found {len(patients_with_events)} patients with {inferred_outcome} events. "
+                f"Detected {len(early_warning_signals)} early warning signals across {len(biomarker_counts)} unique biomarkers, "
+                f"with an average lead time of {avg_lead_time:.1f} days before clinical event. "
+                f"Top early warning biomarkers: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
+            )
+        else:
+            narrative = (
+                f"Analyzed {total_patients} patients but insufficient longitudinal data for trajectory analysis. "
+                f"Need multiple time points per patient to detect rising biomarker patterns."
+            )
+
+        # Update comparator_performance with inferred outcome
+        comparator_performance["hypercore"]["interpretation"] = f"Detected rising patterns in {len(biomarker_counts)} biomarkers before {inferred_outcome}."
+
+        # Update missed_risk_summary with inferred outcome
+        missed_risk_summary["potential_impact"] = f"Early detection could enable intervention {avg_lead_time:.1f} days before {inferred_outcome} event."
 
         # =====================================================================
         # TRAJECTORY ANALYSIS - Extended forecasting for early detection
@@ -5259,7 +5299,7 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 # Update executive summary - ACTUAL detection as headline, projection as bonus
                 if aggregated_signals:
                     executive_summary = (
-                        f"Analyzed {total_patients} patients, found {len(patients_with_events)} with {req.outcome_type} events. "
+                        f"Analyzed {total_patients} patients, found {len(patients_with_events)} with {inferred_outcome} events. "
                         f"HyperCore detected early warning signals {avg_lead_time:.0f} days before clinical manifestation. "
                         f"Trajectory projection extends potential detection window to {trajectory_days:.0f} days. "
                         f"Top early indicators: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
@@ -5296,7 +5336,7 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 if aggregated_signals:
                     narrative = (
                         f"Early risk discovery analyzed {total_patients} patients with {len(biomarker_cols)} biomarkers. "
-                        f"Found {len(patients_with_events)} patients with {req.outcome_type} events. "
+                        f"Found {len(patients_with_events)} patients with {inferred_outcome} events. "
                         f"Detected {len(early_warning_signals)} early warning signals across {len(biomarker_counts)} unique biomarkers. "
                         f"Actual detection lead time: {avg_lead_time:.1f} days before clinical event. "
                         f"Trajectory projection extends potential detection window to {trajectory_days:.1f} days. "
