@@ -4259,11 +4259,24 @@ def classify_domain_from_biomarkers(biomarker_cols: List[str], outcome_type: str
             alias_mapping[col] = canonical
         normalized_cols.add(canonical)
 
-        # Also check partial matches for common patterns (e.g., "troponin_i_high_sensitivity" should match "troponin")
-        for alias, canonical_name in BIOMARKER_ALIASES_DOMAIN.items():
-            if alias in norm or norm.startswith(alias.split("_")[0]):
-                normalized_cols.add(canonical_name)
-                alias_mapping[col] = canonical_name
+        # Check for partial matches with SPECIFIC well-known prefixes only
+        # This handles variants like "troponin_i_high_sensitivity" -> "troponin"
+        # but avoids false matches like "ck_mb" -> "crp" (which starts with "c")
+        SAFE_PREFIX_PATTERNS = {
+            "troponin": ["troponin", "trop", "tnni", "tnnt", "hstni", "hstnt"],
+            "bnp": ["bnp", "brain_natriuretic", "ntprobnp", "nt_pro_bnp", "pro_bnp"],
+            "creatinine": ["creatinine", "crea", "scr"],
+            "bilirubin": ["bilirubin", "bili", "tbil"],
+            "procalcitonin": ["procalcitonin", "procalc", "pct"],
+            "lactate": ["lactate", "lactic"],
+        }
+
+        for canonical_name, prefixes in SAFE_PREFIX_PATTERNS.items():
+            for prefix in prefixes:
+                if norm.startswith(prefix) or prefix in norm:
+                    normalized_cols.add(canonical_name)
+                    alias_mapping[col] = canonical_name
+                    break
     
     domain_scores = {}
     domain_matches = {}
