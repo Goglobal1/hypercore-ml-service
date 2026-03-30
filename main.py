@@ -972,6 +972,11 @@ class EarlyRiskResponse(BaseModel):
     trajectory_analysis: Optional[Dict[str, Any]] = None
     # Domain classification
     domain_classification: Optional[Dict[str, Any]] = None
+    # TOP-LEVEL RISK SCORE - Consistent access for clinical reports
+    # This is the unified risk_score from intelligence layer (0.0-1.0)
+    risk_score: Optional[float] = None
+    risk_score_percent: Optional[str] = None  # Human-readable "74%"
+    risk_level: Optional[str] = None  # "critical", "high", "moderate", "low"
 
 
 class MultiOmicFeatures(BaseModel):
@@ -5343,6 +5348,42 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                         f"Top early warning biomarkers: {', '.join([s['biomarker'] for s in aggregated_signals[:3]])}."
                     )
 
+        # =====================================================================
+        # CRITICAL: Extract top-level risk_score for consistent access
+        # This ensures clinical reports receive the ACTUAL computed risk score
+        # =====================================================================
+        top_level_risk_score = None
+        top_level_risk_percent = None
+        top_level_risk_level = None
+
+        # Extract from intelligence layer (primary source)
+        if intelligence_data and intelligence_data.get("enabled"):
+            sample_insight = intelligence_data.get("sample_insight", {})
+            if sample_insight:
+                top_level_risk_score = sample_insight.get("risk_score")
+                top_level_risk_level = sample_insight.get("risk_level")
+                if top_level_risk_score is not None:
+                    top_level_risk_percent = f"{int(round(top_level_risk_score * 100))}%"
+
+        # Fallback: compute from detection rate and event ratio if no intelligence
+        if top_level_risk_score is None:
+            event_ratio = len(patients_with_events) / max(1, total_patients)
+            detection_rate_factor = min(1.0, len(early_warning_signals) / max(1, len(biomarker_cols) * 2))
+            top_level_risk_score = round(min(1.0, (event_ratio * 0.6) + (detection_rate_factor * 0.4)), 2)
+            top_level_risk_percent = f"{int(round(top_level_risk_score * 100))}%"
+            # Determine risk level
+            if top_level_risk_score >= 0.7:
+                top_level_risk_level = "high"
+            elif top_level_risk_score >= 0.4:
+                top_level_risk_level = "moderate"
+            else:
+                top_level_risk_level = "low"
+
+        # Add to risk_timing_delta for consistency
+        risk_timing_delta["risk_score"] = top_level_risk_score
+        risk_timing_delta["risk_score_percent"] = top_level_risk_percent
+        risk_timing_delta["risk_level"] = top_level_risk_level
+
         return EarlyRiskResponse(
             executive_summary=executive_summary,
             risk_timing_delta=_sanitize_for_json(risk_timing_delta),
@@ -5355,7 +5396,11 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
             intelligence=_sanitize_for_json(intelligence_data),
             unified_intelligence=_sanitize_for_json(intelligence_data),
             trajectory_analysis=_sanitize_for_json(trajectory_analysis_result),
-            domain_classification=_sanitize_for_json(domain_classification)
+            domain_classification=_sanitize_for_json(domain_classification),
+            # TOP-LEVEL RISK SCORE - Consistent access for clinical reports
+            risk_score=top_level_risk_score,
+            risk_score_percent=top_level_risk_percent,
+            risk_level=top_level_risk_level
         )
 
     except Exception as e:
