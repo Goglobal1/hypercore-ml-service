@@ -1,0 +1,112 @@
+{
+  "balanced": {
+    "config": {
+      "min_domains": 2,
+      "require_critical": false,
+      "alert_threshold": 0.15,
+      "critical_bonus": 0.15,
+      "domain_bonus_2": 0.12,
+      "domain_bonus_3": 0.2,
+      "absolute_weight": 0.6,
+      "trajectory_threshold": 0.4
+    },
+    "metrics": {
+      "sensitivity": 0.7804878048780488,
+      "specificity": 0.7804878048780488,
+      "ppv_5pct": 0.15763546798029562,
+      "ppv_actual": 0.4705882352941177,
+      "tp": 32,
+      "fn": 9,
+      "fp": 36,
+      "tn": 128
+    }
+  },
+  "beats_news": {
+    "config": {
+      "min_domains": 3,
+      "require_critical": false,
+      "alert_threshold": 0.15,
+      "critical_bonus": 0.15,
+      "domain_bonus_2": 0.12,
+      "domain_bonus_3": 0.2,
+      "absolute_weight": 0.6,
+      "trajectory_threshold": 0.3
+    },
+    "metrics": {
+      "sensitivity": 0.4146341463414634,
+      "specificity": 0.9573170731707317,
+      "ppv_5pct": 0.3383084577114426,
+      "ppv_actual": 0.7083333333333331,
+      "tp": 17,
+      "fn": 24,
+      "fp": 7,
+      "tn": 157
+    }
+  },
+  "high_ppv": {
+    "config": {
+      "min_domains": 3,
+      "require_critical": false,
+      "alert_threshold": 0.15,
+      "critical_bonus": 0.15,
+      "domain_bonus_2": 0.12,
+      "domain_bonus_3": 0.2,
+      "absolute_weight": 0.6,
+      "trajectory_threshold": 0.3
+    },
+    "metrics": {
+      "sensitivity": 0.4146341463414634,
+      "specificity": 0.9573170731707317,
+      "ppv_5pct": 0.3383084577114426,
+      "ppv_actual": 0.7083333333333331,
+      "tp": 17,
+      "fn": 24,
+      "fp": 7,
+      "tn": 157
+    }
+  },
+  "max_sensitivity": {
+    "config": {
+      "min_domains": 1,
+      "require_critical": true,
+      "alert_threshold": 0.15,
+      "critical_bonus": 0.15,
+      "domain_bonus_2": 0.12,
+      "domain_bonus_3": 0.2,
+      "absolute_weight": 0.6,
+      "trajectory_threshold": 0.2
+    },
+    "metrics": {
+      "sensitivity": 0.8780487804878049,
+      "specificity": 0.35365853658536583,
+      "ppv_5pct": 0.06672845227062095,
+      "ppv_actual": 0.2535211267605634,
+      "tp": 36,
+      "fn": 5,
+      "fp": 106,
+      "tn": 58
+    }
+  },
+  "max_ppv": {
+    "config": {
+      "min_domains": 3,
+      "require_critical": false,
+      "alert_threshold": 0.15,
+      "critical_bonus": 0.15,
+      "domain_bonus_2": 0.12,
+      "domain_bonus_3": 0.2,
+      "absolute_weight": 0.6,
+      "trajectory_threshold": 0.3
+    },
+    "metrics": {
+      "sensitivity": 0.4146341463414634,
+      "specificity": 0.9573170731707317,
+      "ppv_5pct": 0.3383084577114426,
+      "ppv_actual": 0.7083333333333331,
+      "tp": 17,
+      "fn": 24,
+      "fp": 7,
+      "tn": 157
+    }
+  }
+}
