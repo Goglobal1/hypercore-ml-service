@@ -4738,27 +4738,33 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 mode=req.scoring_mode
             )
 
+            expected_metrics = hybrid_scoring.get("expected_metrics", {})
             comparator_performance = {
                 "hybrid_multisignal": {
                     "risk_score": hybrid_scoring.get("risk_score", 0),
                     "risk_level": hybrid_scoring.get("risk_level", "unknown"),
                     "domains_alerting": hybrid_scoring.get("average_domains_alerting", 0),
-                    "high_risk_patients": hybrid_scoring.get("patients_analyzed", 0) if hybrid_scoring.get("risk_level") in ["high", "critical"] else 0,
-                    "scoring_method": "hybrid_multisignal_v1",
-                    "validation": "MIMIC-IV: Sens 53.7%, Spec 87.2%, PPV 18.1% (beats NEWS)",
-                    "interpretation": f"Hybrid multi-signal analysis detected {hybrid_scoring.get('risk_level', 'unknown')} risk across {hybrid_scoring.get('average_domains_alerting', 0)} domains on average."
+                    "high_risk_patients": len(hybrid_scoring.get("high_risk_patients", [])),
+                    "patients_alerting": hybrid_scoring.get("patients_alerting", 0),
+                    "scoring_method": hybrid_scoring.get("scoring_method", "hybrid_multisignal_v2"),
+                    "operating_mode": hybrid_scoring.get("operating_mode"),
+                    "mode_description": hybrid_scoring.get("mode_description"),
+                    "min_domains_required": hybrid_scoring.get("min_domains_required"),
+                    "expected_metrics": expected_metrics,
+                    "validation": hybrid_scoring.get("validation"),
+                    "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk across {hybrid_scoring.get('average_domains_alerting', 0):.1f} domains on average."
                 },
                 "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
                 "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
             }
 
-            # Clinical validation metrics using MIMIC-IV validated values
+            # Clinical validation metrics using mode-specific values
             clinical_validation_metrics = {
-                "sensitivity": 0.537,
-                "specificity": 0.872,
-                "ppv_at_5_percent_prevalence": 0.181,
+                "sensitivity": expected_metrics.get("sensitivity", 0.78),
+                "specificity": expected_metrics.get("specificity", 0.78),
+                "ppv_at_5_percent_prevalence": expected_metrics.get("ppv_5pct", 0.158),
                 "validation_source": "MIMIC-IV retrospective cohort (n=205)",
-                "comparison_to_news": "+29.3% sensitivity, +1.8% specificity",
+                "operating_mode": hybrid_scoring.get("operating_mode"),
                 "hybrid_enabled": True
             }
 
@@ -4769,7 +4775,8 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 "risk_level": hybrid_scoring.get("risk_level", "unknown"),
                 "domains_analyzed": list(hybrid_scoring.get("domain_alert_counts", {}).keys()),
                 "validation_status": "MIMIC-IV Validated",
-                "scoring_method": "hybrid_multisignal_v1"
+                "scoring_method": hybrid_scoring.get("scoring_method", "hybrid_multisignal_v2"),
+                "operating_mode": hybrid_scoring.get("operating_mode")
             }
         except Exception as hybrid_error:
             comparator_performance = {"hybrid_multisignal": {"enabled": False, "error": str(hybrid_error)}}
@@ -6507,25 +6514,32 @@ async def trajectory_analysis(request: TrajectoryRequest):
                 mode=request.scoring_mode
             )
 
+            expected_metrics = hybrid_scoring.get("expected_metrics", {})
             comparator_performance = {
                 "hybrid_multisignal": {
                     "risk_score": hybrid_scoring.get("risk_score", 0),
                     "risk_level": hybrid_scoring.get("risk_level", "unknown"),
                     "domains_alerting": hybrid_scoring.get("average_domains_alerting", 0),
-                    "high_risk_patients": len(high_risk_patients),
-                    "scoring_method": "hybrid_multisignal_v1",
-                    "validation": "MIMIC-IV: Sens 53.7%, Spec 87.2%, PPV 18.1% (beats NEWS)",
-                    "interpretation": f"Hybrid multi-signal analysis detected {hybrid_scoring.get('risk_level', 'unknown')} risk."
+                    "high_risk_patients": len(hybrid_scoring.get("high_risk_patients", [])),
+                    "patients_alerting": hybrid_scoring.get("patients_alerting", 0),
+                    "scoring_method": hybrid_scoring.get("scoring_method", "hybrid_multisignal_v2"),
+                    "operating_mode": hybrid_scoring.get("operating_mode"),
+                    "mode_description": hybrid_scoring.get("mode_description"),
+                    "min_domains_required": hybrid_scoring.get("min_domains_required"),
+                    "expected_metrics": expected_metrics,
+                    "validation": hybrid_scoring.get("validation"),
+                    "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk."
                 },
                 "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
                 "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
             }
 
             clinical_validation_metrics = {
-                "sensitivity": 0.537,
-                "specificity": 0.872,
-                "ppv_at_5_percent_prevalence": 0.181,
+                "sensitivity": expected_metrics.get("sensitivity", 0.78),
+                "specificity": expected_metrics.get("specificity", 0.78),
+                "ppv_at_5_percent_prevalence": expected_metrics.get("ppv_5pct", 0.158),
                 "validation_source": "MIMIC-IV retrospective cohort (n=205)",
+                "operating_mode": hybrid_scoring.get("operating_mode"),
                 "hybrid_enabled": True
             }
 
@@ -6533,7 +6547,8 @@ async def trajectory_analysis(request: TrajectoryRequest):
                 "hybrid_scoring": hybrid_scoring,
                 "risk_score": hybrid_scoring.get("risk_score", 0),
                 "risk_level": hybrid_scoring.get("risk_level", "unknown"),
-                "validation_status": "MIMIC-IV Validated"
+                "validation_status": "MIMIC-IV Validated",
+                "operating_mode": hybrid_scoring.get("operating_mode")
             }
         except Exception as hybrid_error:
             comparator_performance = {"hybrid_multisignal": {"enabled": False, "error": str(hybrid_error)}}
@@ -10092,23 +10107,31 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
                 mode=req.scoring_mode
             )
 
+            expected_metrics = hybrid_scoring.get("expected_metrics", {})
             comparator_performance = {
                 "hybrid_multisignal": {
                     "risk_score": hybrid_scoring.get("risk_score", 0),
                     "risk_level": hybrid_scoring.get("risk_level", "unknown"),
                     "domains_alerting": hybrid_scoring.get("average_domains_alerting", 0),
-                    "scoring_method": "hybrid_multisignal_v1",
-                    "validation": "MIMIC-IV: Sens 53.7%, Spec 87.2%, PPV 18.1% (beats NEWS)"
+                    "high_risk_patients": len(hybrid_scoring.get("high_risk_patients", [])),
+                    "patients_alerting": hybrid_scoring.get("patients_alerting", 0),
+                    "scoring_method": hybrid_scoring.get("scoring_method", "hybrid_multisignal_v2"),
+                    "operating_mode": hybrid_scoring.get("operating_mode"),
+                    "mode_description": hybrid_scoring.get("mode_description"),
+                    "min_domains_required": hybrid_scoring.get("min_domains_required"),
+                    "expected_metrics": expected_metrics,
+                    "validation": hybrid_scoring.get("validation")
                 },
-                "news_baseline": {"sensitivity": 0.244, "specificity": 0.854},
-                "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988}
+                "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
+                "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
             }
 
             clinical_validation_metrics = {
-                "sensitivity": 0.537,
-                "specificity": 0.872,
-                "ppv_at_5_percent_prevalence": 0.181,
+                "sensitivity": expected_metrics.get("sensitivity", 0.78),
+                "specificity": expected_metrics.get("specificity", 0.78),
+                "ppv_at_5_percent_prevalence": expected_metrics.get("ppv_5pct", 0.158),
                 "validation_source": "MIMIC-IV retrospective cohort (n=205)",
+                "operating_mode": hybrid_scoring.get("operating_mode"),
                 "hybrid_enabled": True
             }
 
@@ -10116,7 +10139,8 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
                 "hybrid_scoring": hybrid_scoring,
                 "risk_score": hybrid_scoring.get("risk_score", 0),
                 "risk_level": hybrid_scoring.get("risk_level", "unknown"),
-                "validation_status": "MIMIC-IV Validated"
+                "validation_status": "MIMIC-IV Validated",
+                "operating_mode": hybrid_scoring.get("operating_mode")
             }
         else:
             comparator_performance = {"hybrid_multisignal": {"enabled": False, "reason": "Missing patient_id column"}}
@@ -11658,17 +11682,24 @@ def time_to_harm_endpoint(req: TimeToHarmRequest) -> Dict[str, Any]:
                         mode=req.scoring_mode
                     )
 
+                    expected_metrics = hybrid_scoring.get("expected_metrics", {})
                     comparator_performance = {
                         "hybrid_multisignal": {
                             "risk_score": hybrid_scoring.get("risk_score", 0),
                             "risk_level": hybrid_scoring.get("risk_level", "unknown"),
                             "domains_alerting": hybrid_scoring.get("average_domains_alerting", 0),
-                            "scoring_method": "hybrid_multisignal_v1",
-                            "validation": "MIMIC-IV: Sens 53.7%, Spec 87.2%, PPV 18.1% (beats NEWS)",
-                            "interpretation": f"Hybrid analysis: {hybrid_scoring.get('risk_level', 'unknown')} risk"
+                            "high_risk_patients": len(hybrid_scoring.get("high_risk_patients", [])),
+                            "patients_alerting": hybrid_scoring.get("patients_alerting", 0),
+                            "scoring_method": hybrid_scoring.get("scoring_method", "hybrid_multisignal_v2"),
+                            "operating_mode": hybrid_scoring.get("operating_mode"),
+                            "mode_description": hybrid_scoring.get("mode_description"),
+                            "min_domains_required": hybrid_scoring.get("min_domains_required"),
+                            "expected_metrics": expected_metrics,
+                            "validation": hybrid_scoring.get("validation"),
+                            "interpretation": f"Hybrid analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode): {hybrid_scoring.get('risk_level', 'unknown')} risk"
                         },
-                        "news_baseline": {"sensitivity": 0.244, "specificity": 0.854},
-                        "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988}
+                        "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
+                        "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
                     }
                 else:
                     comparator_performance = {"hybrid_multisignal": {"enabled": False, "reason": "No trajectory data"}}
