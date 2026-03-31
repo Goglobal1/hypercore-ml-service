@@ -1,0 +1,720 @@
+{
+  "executive_summary": "Analyzed 500 patients, found 231 with sepsis events. HyperCore detected early warning signals 2 days before clinical manifestation. Trajectory projection extends potential detection window to 15136923638925232128 days. Top early indicators: crp, wbc, creatinine.",
+  "risk_timing_delta": {
+    "detection_window_days": 1.5136923638925232e+19,
+    "detection_window_hours": 3.632861673342056e+20,
+    "actual_detection_lead_time_days": 2.0,
+    "lead_time_days": 2.0,
+    "trajectory_projection_days": 1.5136923638925232e+19,
+    "detection_method": "threshold_analysis_with_trajectory_projection",
+    "early_warning_signals": [
+      {
+        "marker": "crp",
+        "biomarker": "crp",
+        "contribution": 0.046,
+        "baseline_value": 86.77,
+        "current_value": 106.46,
+        "percent_change": 22.8,
+        "pattern": "rising",
+        "days_before_event": 2.0,
+        "change": "+23%",
+        "patients_affected": 9,
+        "detection_rate": 0.04
+      },
+      {
+        "marker": "wbc",
+        "biomarker": "wbc",
+        "contribution": 0.046,
+        "baseline_value": 19.58,
+        "current_value": 24.0,
+        "percent_change": 22.8,
+        "pattern": "rising",
+        "days_before_event": 2.0,
+        "change": "+23%",
+        "patients_affected": 9,
+        "detection_rate": 0.04
+      },
+      {
+        "marker": "creatinine",
+        "biomarker": "creatinine",
+        "contribution": 0.046,
+        "baseline_value": 1.95,
+        "current_value": 2.4,
+        "percent_change": 22.8,
+        "pattern": "rising",
+        "days_before_event": 2.0,
+        "change": "+23%",
+        "patients_affected": 9,
+        "detection_rate": 0.04
+      },
+      {
+        "marker": "heart_rate",
+        "biomarker": "heart_rate",
+        "contribution": 0.046,
+        "baseline_value": 58.33,
+        "current_value": 71.62,
+        "percent_change": 22.8,
+        "pattern": "rising",
+        "days_before_event": 2.0,
+        "change": "+23%",
+        "patients_affected": 9,
+        "detection_rate": 0.04
+      },
+      {
+        "marker": "respiratory_rate",
+        "biomarker": "respiratory_rate",
+        "contribution": 0.046,
+        "baseline_value": 20.31,
+        "current_value": 24.93,
+        "percent_change": 22.8,
+        "pattern": "rising",
+        "days_before_event": 2.0,
+        "change": "+23%",
+        "patients_affected": 9,
+        "detection_rate": 0.04
+      }
+    ],
+    "patients_analyzed": 500,
+    "events_detected": 231,
+    "detection_rate": 0.19,
+    "outcome": "sepsis",
+    "outcome_source": "biomarker_detection",
+    "user_provided_outcome": "sepsis",
+    "trajectory_extended": 1,
+    "cross_validation": {
+      "passed": 1,
+      "checks": [],
+      "confidence_level": "high",
+      "proceed_with_results": 1
+    },
+    "analysis_mode": "full",
+    "trajectory_improvement_days": 1.5136923638925232e+19,
+    "risk_score": 0.3,
+    "risk_score_percent": "30%",
+    "risk_level": "low"
+  },
+  "explainable_signals": [
+    {
+      "marker": "crp",
+      "biomarker": "crp",
+      "contribution": 0.046,
+      "baseline_value": 86.77,
+      "current_value": 106.46,
+      "percent_change": 22.8,
+      "pattern": "rising",
+      "days_before_event": 2.0,
+      "change": "+23%",
+      "patients_affected": 9,
+      "detection_rate": 0.04
+    },
+    {
+      "marker": "wbc",
+      "biomarker": "wbc",
+      "contribution": 0.046,
+      "baseline_value": 19.58,
+      "current_value": 24.0,
+      "percent_change": 22.8,
+      "pattern": "rising",
+      "days_before_event": 2.0,
+      "change": "+23%",
+      "patients_affected": 9,
+      "detection_rate": 0.04
+    },
+    {
+      "marker": "creatinine",
+      "biomarker": "creatinine",
+      "contribution": 0.046,
+      "baseline_value": 1.95,
+      "current_value": 2.4,
+      "percent_change": 22.8,
+      "pattern": "rising",
+      "days_before_event": 2.0,
+      "change": "+23%",
+      "patients_affected": 9,
+      "detection_rate": 0.04
+    },
+    {
+      "marker": "heart_rate",
+      "biomarker": "heart_rate",
+      "contribution": 0.046,
+      "baseline_value": 58.33,
+      "current_value": 71.62,
+      "percent_change": 22.8,
+      "pattern": "rising",
+      "days_before_event": 2.0,
+      "change": "+23%",
+      "patients_affected": 9,
+      "detection_rate": 0.04
+    },
+    {
+      "marker": "respiratory_rate",
+      "biomarker": "respiratory_rate",
+      "contribution": 0.046,
+      "baseline_value": 20.31,
+      "current_value": 24.93,
+      "percent_change": 22.8,
+      "pattern": "rising",
+      "days_before_event": 2.0,
+      "change": "+23%",
+      "patients_affected": 9,
+      "detection_rate": 0.04
+    }
+  ],
+  "missed_risk_summary": {
+    "standard_system_status": "Standard scoring (NEWS/qSOFA) typically detects at event onset.",
+    "hypercore_detection_mechanism": "Multi-biomarker trajectory analysis across 16 variables.",
+    "biomarkers_analyzed": [
+      "age",
+      "sex",
+      "crp",
+      "wbc",
+      "creatinine",
+      "albumin",
+      "hemoglobin",
+      "platelets",
+      "bnp",
+      "heart_rate",
+      "respiratory_rate",
+      "blood_pressure_systolic",
+      "sao2",
+      "temperature",
+      "news_score",
+      "qsofa_score"
+    ],
+    "early_warning_biomarkers_found": 5,
+    "potential_impact": "Early detection enables intervention 2 days before event (projection: 15136923638925232128 days).",
+    "actual_detection_days": 2.0,
+    "trajectory_projection_days": 1.5136923638925232e+19,
+    "hypercore_actual_detection": "Actually detected 2 days early",
+    "hypercore_trajectory_projection": "Trajectory projection extends to 15136923638925232128 days"
+  },
+  "clinical_impact": {
+    "patients_analyzed": 500,
+    "patients_with_events": 231,
+    "patients_flagged_early": 45,
+    "actual_detection_lead_time_days": 2.0,
+    "average_lead_time_days": 2.0,
+    "trajectory_projection_days": 1.5136923638925232e+19,
+    "trajectory_extended": 1,
+    "lead_time_range_days": [
+      2,
+      2
+    ],
+    "detection_rate": 0.19,
+    "early_warning_signals_count": 45,
+    "unique_biomarkers_flagged": 5,
+    "early_markers": [
+      {
+        "marker": "crp",
+        "name": "crp",
+        "contribution": 0.046,
+        "baseline_value": 86.77,
+        "current_value": 106.46,
+        "percent_change": 22.8,
+        "days_before_event": 2.0,
+        "patients_affected": 9
+      },
+      {
+        "marker": "wbc",
+        "name": "wbc",
+        "contribution": 0.046,
+        "baseline_value": 19.58,
+        "current_value": 24.0,
+        "percent_change": 22.8,
+        "days_before_event": 2.0,
+        "patients_affected": 9
+      },
+      {
+        "marker": "creatinine",
+        "name": "creatinine",
+        "contribution": 0.046,
+        "baseline_value": 1.95,
+        "current_value": 2.4,
+        "percent_change": 22.8,
+        "days_before_event": 2.0,
+        "patients_affected": 9
+      },
+      {
+        "marker": "heart_rate",
+        "name": "heart_rate",
+        "contribution": 0.046,
+        "baseline_value": 58.33,
+        "current_value": 71.62,
+        "percent_change": 22.8,
+        "days_before_event": 2.0,
+        "patients_affected": 9
+      },
+      {
+        "marker": "respiratory_rate",
+        "name": "respiratory_rate",
+        "contribution": 0.046,
+        "baseline_value": 20.31,
+        "current_value": 24.93,
+        "percent_change": 22.8,
+        "days_before_event": 2.0,
+        "patients_affected": 9
+      }
+    ],
+    "trajectory_improvement_days": 1.5136923638925232e+19
+  },
+  "comparator_performance": {
+    "hypercore": {
+      "sensitivity": 0.19,
+      "lead_time_days": 2.0,
+      "biomarkers_tracked": 16,
+      "signals_detected": 5,
+      "interpretation": "Detected rising patterns 2 days early (trajectory projects to 15136923638925232128 days).",
+      "actual_lead_time_days": 2.0,
+      "trajectory_projection_days": 1.5136923638925232e+19,
+      "trajectory_enhanced": 1
+    }
+  },
+  "narrative": "Early risk discovery analyzed 500 patients with 16 biomarkers. Found 231 patients with sepsis events. Detected 45 early warning signals across 5 unique biomarkers. Actual detection lead time: 2.0 days before clinical event. Trajectory projection extends potential detection window to 15136923638925232128.0 days. Top early warning biomarkers: crp, wbc, creatinine.",
+  "confidence": 0.8,
+  "analysis_mode": null,
+  "data_requirements": null,
+  "signals": null,
+  "intelligence": {
+    "enabled": 1,
+    "patterns_reported": 575,
+    "patients_tracked": 231,
+    "patients_processed": 231,
+    "sample_insight": {
+      "patient_id": "P1",
+      "risk_level": "low",
+      "risk_score": 0.3,
+      "confidence": 0.64,
+      "primary_concern": "Heart Failure Decompensation trajectory detected",
+      "primary_domain": "Heart Failure Decompensation",
+      "earliest_signal_days_ago": 0.0,
+      "estimated_days_to_event": 5.8,
+      "detection_improvement_days": 0.0,
+      "cascade_detected": 0
+    },
+    "correlations": {
+      "count": 0,
+      "urgent_count": 0,
+      "types": [],
+      "top_correlations": []
+    },
+    "recommendations": {
+      "clinical": [
+        "WARNING: Possible Heart Failure Decompensation (confidence: 62%)",
+        "Monitor for Acute Kidney Injury"
+      ],
+      "monitoring": {
+        "creatinine": "every 8 hours",
+        "age": "every 8 hours",
+        "sex": "every 8 hours",
+        "crp": "every 8 hours",
+        "wbc": "every 8 hours"
+      },
+      "genetic": []
+    },
+    "contributing_factors": []
+  },
+  "unified_intelligence": {
+    "enabled": 1,
+    "patterns_reported": 575,
+    "patients_tracked": 231,
+    "patients_processed": 231,
+    "sample_insight": {
+      "patient_id": "P1",
+      "risk_level": "low",
+      "risk_score": 0.3,
+      "confidence": 0.64,
+      "primary_concern": "Heart Failure Decompensation trajectory detected",
+      "primary_domain": "Heart Failure Decompensation",
+      "earliest_signal_days_ago": 0.0,
+      "estimated_days_to_event": 5.8,
+      "detection_improvement_days": 0.0,
+      "cascade_detected": 0
+    },
+    "correlations": {
+      "count": 0,
+      "urgent_count": 0,
+      "types": [],
+      "top_correlations": []
+    },
+    "recommendations": {
+      "clinical": [
+        "WARNING: Possible Heart Failure Decompensation (confidence: 62%)",
+        "Monitor for Acute Kidney Injury"
+      ],
+      "monitoring": {
+        "creatinine": "every 8 hours",
+        "age": "every 8 hours",
+        "sex": "every 8 hours",
+        "crp": "every 8 hours",
+        "wbc": "every 8 hours"
+      },
+      "genetic": []
+    },
+    "contributing_factors": []
+  },
+  "trajectory_analysis": {
+    "enabled": 1,
+    "patients_analyzed": 231,
+    "rate_of_change_alerts": [
+      {
+        "patient_id": "P1",
+        "biomarker": "creatinine",
+        "rate": 0.1544945689417333,
+        "acceleration": 3.089891378834666,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P101",
+        "biomarker": "creatinine",
+        "rate": 0.15130471754286728,
+        "acceleration": 3.0260943508573455,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P109",
+        "biomarker": "creatinine",
+        "rate": 0.11852640363060007,
+        "acceleration": 2.3705280726120015,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P114",
+        "biomarker": "creatinine",
+        "rate": 0.13456372583700993,
+        "acceleration": 2.6912745167401986,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P13",
+        "biomarker": "creatinine",
+        "rate": 0.12537040706577168,
+        "acceleration": 2.5074081413154334,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P14",
+        "biomarker": "creatinine",
+        "rate": 0.16576584991649268,
+        "acceleration": 3.3153169983298536,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P144",
+        "biomarker": "creatinine",
+        "rate": 0.12213126388339939,
+        "acceleration": 2.4426252776679878,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P145",
+        "biomarker": "creatinine",
+        "rate": 0.11931147245748217,
+        "acceleration": 2.386229449149643,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P16",
+        "biomarker": "creatinine",
+        "rate": 0.10229634069204227,
+        "acceleration": 2.045926813840845,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      },
+      {
+        "patient_id": "P168",
+        "biomarker": "creatinine",
+        "rate": 0.13850056213532105,
+        "acceleration": 2.770011242706421,
+        "alert_level": "elevated",
+        "trend": "increasing"
+      }
+    ],
+    "rate_of_change_count": 89,
+    "inflection_points": [],
+    "inflection_count": 0,
+    "forecasts": [
+      {
+        "patient_id": "P1",
+        "biomarker": "crp",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 28.1196,
+        "confidence": 1.0
+      },
+      {
+        "patient_id": "P1",
+        "biomarker": "wbc",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 89.44800000000001,
+        "confidence": 1.0
+      },
+      {
+        "patient_id": "P1",
+        "biomarker": "creatinine",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 3.528,
+        "confidence": 1.0
+      },
+      {
+        "patient_id": "P1",
+        "biomarker": "bnp",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 2525.0,
+        "confidence": 1.0
+      },
+      {
+        "patient_id": "P100",
+        "biomarker": "crp",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 13.6044,
+        "confidence": 1.0
+      },
+      {
+        "patient_id": "P100",
+        "biomarker": "wbc",
+        "predicted_days_to_threshold": 20.527654819203864,
+        "predicted_value": 5.111999999999999,
+        "confidence": 0.7818199043812128
+      },
+      {
+        "patient_id": "P100",
+        "biomarker": "creatinine",
+        "predicted_days_to_threshold": 2.589100330214409,
+        "predicted_value": 1.116,
+        "confidence": 0.7818199043812122
+      },
+      {
+        "patient_id": "P100",
+        "biomarker": "bnp",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 6297.0,
+        "confidence": 1.0
+      },
+      {
+        "patient_id": "P101",
+        "biomarker": "crp",
+        "predicted_days_to_threshold": 11.771792808877018,
+        "predicted_value": 4.0884,
+        "confidence": 0.7743081189005725
+      },
+      {
+        "patient_id": "P101",
+        "biomarker": "wbc",
+        "predicted_days_to_threshold": 0,
+        "predicted_value": 21.336,
+        "confidence": 1.0
+      }
+    ],
+    "forecast_count": 905,
+    "signal_propagation": [],
+    "extended_detection_window_days": 1.5136923638925232e+19,
+    "detection_improvement": {
+      "observed_lead_time": 2.0,
+      "trajectory_extended": 1.5136923638925232e+19,
+      "improvement_days": 1.5136923638925232e+19
+    },
+    "risk_distribution": {
+      "critical": 0,
+      "high": 0,
+      "moderate": 221,
+      "low": 10
+    },
+    "primary_patterns": [
+      "Heart Failure Decompensation",
+      "Acute Coronary Syndrome",
+      "Early Sepsis"
+    ]
+  },
+  "domain_classification": {
+    "domain": "multi_system",
+    "display_name": "Sepsis / Systemic Infection",
+    "confidence": 1.0,
+    "confidence_percent": "100%",
+    "primary_domain": "sepsis",
+    "primary_domain_display": "Sepsis / Systemic Infection",
+    "involved_domains": [
+      "sepsis",
+      "renal",
+      "cardiac",
+      "inflammatory"
+    ],
+    "domain_scores": {
+      "sepsis": 0.875,
+      "renal": 0.375,
+      "cardiac": 0.25,
+      "inflammatory": 0.225,
+      "respiratory": 0.167
+    },
+    "matches": {
+      "sepsis": {
+        "primary_found": [
+          "wbc",
+          "crp"
+        ],
+        "secondary_found": [
+          "temperature",
+          "heart_rate",
+          "respiratory_rate"
+        ],
+        "primary_missing": [
+          "procalcitonin",
+          "lactate"
+        ],
+        "score": 0.875
+      },
+      "cardiac": {
+        "primary_found": [
+          "bnp"
+        ],
+        "secondary_found": [],
+        "primary_missing": [
+          "troponin",
+          "nt_probnp",
+          "ck_mb"
+        ],
+        "score": 0.25
+      },
+      "renal": {
+        "primary_found": [
+          "creatinine"
+        ],
+        "secondary_found": [
+          "albumin"
+        ],
+        "primary_missing": [
+          "egfr",
+          "bun",
+          "urea"
+        ],
+        "score": 0.375
+      },
+      "hepatic": {
+        "primary_found": [],
+        "secondary_found": [
+          "albumin"
+        ],
+        "primary_missing": [
+          "alt",
+          "ast",
+          "bilirubin",
+          "alp"
+        ],
+        "score": 0.125
+      },
+      "inflammatory": {
+        "primary_found": [
+          "crp"
+        ],
+        "secondary_found": [],
+        "primary_missing": [
+          "esr",
+          "il6",
+          "tnf_alpha"
+        ],
+        "score": 0.225
+      },
+      "respiratory": {
+        "primary_found": [],
+        "secondary_found": [
+          "respiratory_rate"
+        ],
+        "primary_missing": [
+          "pao2",
+          "paco2",
+          "spo2",
+          "fio2"
+        ],
+        "score": 0.167
+      }
+    },
+    "biomarkers_detected": 16,
+    "status": "classified",
+    "inferred_outcome": "sepsis",
+    "outcome_confidence": 1.0
+  },
+  "risk_score": 0.3,
+  "risk_score_percent": "30%",
+  "risk_level": "low",
+  "report_data": {
+    "risk_score": 0.3,
+    "risk_score_percent": "30%",
+    "risk_level": "low",
+    "lead_time_days": 2.0,
+    "actual_detection_lead_time_days": 2.0,
+    "trajectory_projection_days": 1.5136923638925232e+19,
+    "detected_outcome": "sepsis",
+    "detected_domain": "sepsis",
+    "domain_display_name": "Sepsis / Systemic Infection",
+    "domain_confidence": 1.0,
+    "domain_confidence_percent": "100%",
+    "patients_analyzed": 500,
+    "patients_with_events": 231,
+    "biomarkers_analyzed": 16,
+    "early_warning_signals_count": 45,
+    "top_biomarkers": [
+      "crp",
+      "wbc",
+      "creatinine"
+    ],
+    "summary_for_report": "Detected sepsis risk 2.0 days before clinical event with 30% confidence.",
+    "detection_statement": "HyperCore detected this risk 2.0 days before the clinical event."
+  },
+  "clinical_validation_metrics": {
+    "sensitivity": 0.1948,
+    "specificity": 0.88,
+    "detection_rate": 0.1948,
+    "ppv_at_2pct_prevalence": 0.0321,
+    "ppv_at_5pct_prevalence": 0.0787,
+    "ppv_at_10pct_prevalence": 0.1528,
+    "precision": 0.0787,
+    "recall": 0.19480519480519481,
+    "pr_auc": 0.4837,
+    "f1_score": 0.1121,
+    "threshold_analysis": [
+      {
+        "threshold": "high_sensitivity",
+        "description": "Maximize detection (minimize false negatives)",
+        "sensitivity": 0.214,
+        "specificity": 0.748,
+        "ppv_at_5pct": 0.0428
+      },
+      {
+        "threshold": "balanced",
+        "description": "Balance sensitivity and specificity",
+        "sensitivity": 0.195,
+        "specificity": 0.88,
+        "ppv_at_5pct": 0.0787
+      },
+      {
+        "threshold": "high_precision",
+        "description": "Maximize precision (minimize false positives)",
+        "sensitivity": 0.166,
+        "specificity": 0.968,
+        "ppv_at_5pct": 0.214
+      }
+    ],
+    "multi_signal_ppv_advantage": {
+      "single_signal_ppv": 0.0787,
+      "dual_signal_ppv": 0.1192,
+      "triple_signal_ppv": 0.1612,
+      "dual_improvement_percent": 51.5,
+      "triple_improvement_percent": 104.8,
+      "signals_detected": 45,
+      "biomarkers_used": 16,
+      "interpretation": "Multi-biomarker confirmation improves PPV by 104.8% vs single signal"
+    },
+    "sample_context": {
+      "patients_with_events": 231,
+      "total_patients": 500,
+      "event_rate": 0.462,
+      "note": "Metrics should be validated on larger cohorts for regulatory submission"
+    }
+  }
+}
