@@ -1,0 +1,101 @@
+[
+  {
+    "patient_id": "CRITICAL_001",
+    "expected_level": "critical",
+    "expected_domains": 4,
+    "description": "Severe multi-organ failure trajectory",
+    "actual_risk_score": 0.855,
+    "actual_risk_level": "critical",
+    "actual_domains": 4.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "inflammatory": 1,
+      "renal": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1,
+    "mode": "balanced"
+  },
+  {
+    "patient_id": "HIGH_001",
+    "expected_level": "high",
+    "expected_domains": 3,
+    "description": "Significant deterioration, 3+ domains",
+    "actual_risk_score": 0.727,
+    "actual_risk_level": "critical",
+    "actual_domains": 4.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "inflammatory": 1,
+      "renal": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1,
+    "mode": "balanced"
+  },
+  {
+    "patient_id": "MODERATE_001",
+    "expected_level": "moderate",
+    "expected_domains": 2,
+    "description": "Gradual deterioration, 2 domains",
+    "actual_risk_score": 0.467,
+    "actual_risk_level": "moderate",
+    "actual_domains": 4.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "inflammatory": 1,
+      "renal": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1,
+    "mode": "balanced"
+  },
+  {
+    "patient_id": "WATCH_001",
+    "expected_level": "watch",
+    "expected_domains": 1,
+    "description": "Mild deterioration, 1 domain",
+    "actual_risk_score": 0.14,
+    "actual_risk_level": "low",
+    "actual_domains": 3.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "inflammatory": 1
+    },
+    "patients_alerting": 0,
+    "patients_analyzed": 1,
+    "mode": "balanced"
+  },
+  {
+    "patient_id": "STABLE_001",
+    "expected_level": "low",
+    "expected_domains": 0,
+    "description": "Stable patient, no deterioration",
+    "actual_risk_score": 0.0,
+    "actual_risk_level": "low",
+    "actual_domains": 0.0,
+    "domain_counts": {},
+    "patients_alerting": 0,
+    "patients_analyzed": 1,
+    "mode": "balanced"
+  },
+  {
+    "patient_id": "IMPROVING_001",
+    "expected_level": "low",
+    "expected_domains": 0,
+    "description": "Improving patient - started bad, getting better",
+    "actual_risk_score": 0.038,
+    "actual_risk_level": "low",
+    "actual_domains": 1.0,
+    "domain_counts": {
+      "respiratory": 1
+    },
+    "patients_alerting": 0,
+    "patients_analyzed": 1,
+    "mode": "balanced"
+  }
+]

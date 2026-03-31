@@ -1,0 +1,7 @@
+patient_id,description,expected_level,actual_level,risk_score,domains_alerting,hemodynamic,respiratory,inflammatory,renal,match_status
+CRITICAL_001,Severe multi-organ failure trajectory,critical,critical,0.855,4,1,1,1,1,EXACT
+HIGH_001,Significant deterioration 3+ domains,high,critical,0.727,4,1,1,1,1,CLOSE
+MODERATE_001,Gradual deterioration 2 domains,moderate,moderate,0.467,4,1,1,1,1,EXACT
+WATCH_001,Mild deterioration 1 domain,watch,low,0.140,3,1,1,1,0,CLOSE
+STABLE_001,Stable patient no deterioration,low,low,0.000,0,0,0,0,0,EXACT
+IMPROVING_001,Improving patient - started bad getting better,low,low,0.038,1,0,1,0,0,EXACT

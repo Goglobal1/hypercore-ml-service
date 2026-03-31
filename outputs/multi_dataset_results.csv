@@ -1,0 +1,16 @@
+dataset,mode,risk_score,risk_level,patients_analyzed,patients_alerting,alert_rate,domains_hemodynamic,domains_respiratory,domains_inflammatory,domains_renal,domains_hematologic,sensitivity,specificity,ppv_5pct
+sepsis_progression,high_confidence,0.877,critical,10,5,0.50,5,6,7,6,0,0.415,0.957,0.338
+sepsis_progression,balanced,0.877,critical,10,5,0.50,5,6,7,6,0,0.78,0.78,0.158
+sepsis_progression,screening,0.877,critical,10,5,0.50,5,6,7,6,0,0.878,0.354,0.067
+cardiac_deterioration,high_confidence,0.811,critical,8,5,0.63,5,5,5,4,0,0.415,0.957,0.338
+cardiac_deterioration,balanced,0.811,critical,8,5,0.63,5,5,5,4,0,0.78,0.78,0.158
+cardiac_deterioration,screening,0.811,critical,8,5,0.63,5,5,5,4,0,0.878,0.354,0.067
+respiratory_failure,high_confidence,0.832,critical,8,4,0.50,6,8,4,4,0,0.415,0.957,0.338
+respiratory_failure,balanced,0.832,critical,8,6,0.75,6,8,4,4,0,0.78,0.78,0.158
+respiratory_failure,screening,0.832,critical,8,6,0.75,6,8,4,4,0,0.878,0.354,0.067
+mixed_acuity,high_confidence,0.673,high,12,5,0.42,5,6,6,5,3,0.415,0.957,0.338
+mixed_acuity,balanced,0.673,high,12,5,0.42,5,6,6,5,3,0.78,0.78,0.158
+mixed_acuity,screening,0.673,high,12,5,0.42,5,6,6,5,3,0.878,0.354,0.067
+edge_cases,high_confidence,0.186,watch,6,1,0.17,2,2,3,2,0,0.415,0.957,0.338
+edge_cases,balanced,0.186,watch,6,1,0.17,2,2,3,2,0,0.78,0.78,0.158
+edge_cases,screening,0.186,watch,6,1,0.17,2,2,3,2,0,0.878,0.354,0.067

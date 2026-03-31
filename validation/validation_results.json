@@ -1,0 +1,512 @@
+[
+  {
+    "dataset": "sepsis_progression",
+    "mode": "high_confidence",
+    "risk_score": 0.877,
+    "risk_level": "critical",
+    "domains_alerting": 2.4,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 6,
+      "inflammatory": 7,
+      "renal": 6
+    },
+    "patients_analyzed": 10,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "SEP003",
+      "SEP005",
+      "SEP007",
+      "SEP009"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "SEP005",
+      "SEP007",
+      "SEP003",
+      "SEP009"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.415,
+      "specificity": 0.957,
+      "ppv_at_5_percent_prevalence": 0.338,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "cardiac_deterioration",
+    "mode": "high_confidence",
+    "risk_score": 0.811,
+    "risk_level": "critical",
+    "domains_alerting": 2.38,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 5,
+      "renal": 4,
+      "inflammatory": 5
+    },
+    "patients_analyzed": 8,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "CARD003",
+      "CARD005",
+      "CARD007"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "CARD003",
+      "CARD005",
+      "CARD007"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.415,
+      "specificity": 0.957,
+      "ppv_at_5_percent_prevalence": 0.338,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "respiratory_failure",
+    "mode": "high_confidence",
+    "risk_score": 0.832,
+    "risk_level": "critical",
+    "domains_alerting": 2.75,
+    "domain_counts": {
+      "hemodynamic": 6,
+      "respiratory": 8,
+      "inflammatory": 4,
+      "renal": 4
+    },
+    "patients_analyzed": 8,
+    "patients_alerting": 4,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "RESP003",
+      "RESP005",
+      "RESP007"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "RESP005",
+      "RESP003",
+      "RESP007"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.415,
+      "specificity": 0.957,
+      "ppv_at_5_percent_prevalence": 0.338,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "mixed_acuity",
+    "mode": "high_confidence",
+    "risk_score": 0.673,
+    "risk_level": "high",
+    "domains_alerting": 2.08,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 6,
+      "inflammatory": 6,
+      "renal": 5,
+      "hematologic": 3
+    },
+    "patients_analyzed": 12,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "MIX002",
+      "MIX004",
+      "MIX010"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "MIX010",
+      "MIX002",
+      "MIX004"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.415,
+      "specificity": 0.957,
+      "ppv_at_5_percent_prevalence": 0.338,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "edge_cases",
+    "mode": "high_confidence",
+    "risk_score": 0.186,
+    "risk_level": "watch",
+    "domains_alerting": 1.5,
+    "domain_counts": {
+      "hemodynamic": 2,
+      "inflammatory": 3,
+      "respiratory": 2,
+      "renal": 2
+    },
+    "patients_analyzed": 6,
+    "patients_alerting": 1,
+    "high_risk_detected": [],
+    "expected_high_risk": [],
+    "true_positives": [],
+    "false_negatives": [],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.415,
+      "specificity": 0.957,
+      "ppv_at_5_percent_prevalence": 0.338,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "sepsis_progression",
+    "mode": "balanced",
+    "risk_score": 0.877,
+    "risk_level": "critical",
+    "domains_alerting": 2.4,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 6,
+      "inflammatory": 7,
+      "renal": 6
+    },
+    "patients_analyzed": 10,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "SEP003",
+      "SEP005",
+      "SEP007",
+      "SEP009"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "SEP005",
+      "SEP007",
+      "SEP003",
+      "SEP009"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.78,
+      "specificity": 0.78,
+      "ppv_at_5_percent_prevalence": 0.158,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "cardiac_deterioration",
+    "mode": "balanced",
+    "risk_score": 0.811,
+    "risk_level": "critical",
+    "domains_alerting": 2.38,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 5,
+      "renal": 4,
+      "inflammatory": 5
+    },
+    "patients_analyzed": 8,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "CARD003",
+      "CARD005",
+      "CARD007"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "CARD003",
+      "CARD005",
+      "CARD007"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.78,
+      "specificity": 0.78,
+      "ppv_at_5_percent_prevalence": 0.158,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "respiratory_failure",
+    "mode": "balanced",
+    "risk_score": 0.832,
+    "risk_level": "critical",
+    "domains_alerting": 2.75,
+    "domain_counts": {
+      "hemodynamic": 6,
+      "respiratory": 8,
+      "inflammatory": 4,
+      "renal": 4
+    },
+    "patients_analyzed": 8,
+    "patients_alerting": 6,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "RESP003",
+      "RESP005",
+      "RESP007"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "RESP005",
+      "RESP003",
+      "RESP007"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.78,
+      "specificity": 0.78,
+      "ppv_at_5_percent_prevalence": 0.158,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "mixed_acuity",
+    "mode": "balanced",
+    "risk_score": 0.673,
+    "risk_level": "high",
+    "domains_alerting": 2.08,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 6,
+      "inflammatory": 6,
+      "renal": 5,
+      "hematologic": 3
+    },
+    "patients_analyzed": 12,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "MIX002",
+      "MIX004",
+      "MIX010"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "MIX010",
+      "MIX002",
+      "MIX004"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.78,
+      "specificity": 0.78,
+      "ppv_at_5_percent_prevalence": 0.158,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "edge_cases",
+    "mode": "balanced",
+    "risk_score": 0.186,
+    "risk_level": "watch",
+    "domains_alerting": 1.5,
+    "domain_counts": {
+      "hemodynamic": 2,
+      "inflammatory": 3,
+      "respiratory": 2,
+      "renal": 2
+    },
+    "patients_analyzed": 6,
+    "patients_alerting": 1,
+    "high_risk_detected": [],
+    "expected_high_risk": [],
+    "true_positives": [],
+    "false_negatives": [],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.78,
+      "specificity": 0.78,
+      "ppv_at_5_percent_prevalence": 0.158,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "sepsis_progression",
+    "mode": "screening",
+    "risk_score": 0.877,
+    "risk_level": "critical",
+    "domains_alerting": 2.4,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 6,
+      "inflammatory": 7,
+      "renal": 6
+    },
+    "patients_analyzed": 10,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "SEP003",
+      "SEP005",
+      "SEP007",
+      "SEP009"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "SEP005",
+      "SEP007",
+      "SEP003",
+      "SEP009"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.878,
+      "specificity": 0.354,
+      "ppv_at_5_percent_prevalence": 0.067,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "cardiac_deterioration",
+    "mode": "screening",
+    "risk_score": 0.811,
+    "risk_level": "critical",
+    "domains_alerting": 2.38,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 5,
+      "renal": 4,
+      "inflammatory": 5
+    },
+    "patients_analyzed": 8,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "CARD003",
+      "CARD005",
+      "CARD007"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "CARD003",
+      "CARD005",
+      "CARD007"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.878,
+      "specificity": 0.354,
+      "ppv_at_5_percent_prevalence": 0.067,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "respiratory_failure",
+    "mode": "screening",
+    "risk_score": 0.832,
+    "risk_level": "critical",
+    "domains_alerting": 2.75,
+    "domain_counts": {
+      "hemodynamic": 6,
+      "respiratory": 8,
+      "inflammatory": 4,
+      "renal": 4
+    },
+    "patients_analyzed": 8,
+    "patients_alerting": 6,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "RESP003",
+      "RESP005",
+      "RESP007"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "RESP005",
+      "RESP003",
+      "RESP007"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.878,
+      "specificity": 0.354,
+      "ppv_at_5_percent_prevalence": 0.067,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "mixed_acuity",
+    "mode": "screening",
+    "risk_score": 0.673,
+    "risk_level": "high",
+    "domains_alerting": 2.08,
+    "domain_counts": {
+      "hemodynamic": 5,
+      "respiratory": 6,
+      "inflammatory": 6,
+      "renal": 5,
+      "hematologic": 3
+    },
+    "patients_analyzed": 12,
+    "patients_alerting": 5,
+    "high_risk_detected": [],
+    "expected_high_risk": [
+      "MIX002",
+      "MIX004",
+      "MIX010"
+    ],
+    "true_positives": [],
+    "false_negatives": [
+      "MIX010",
+      "MIX002",
+      "MIX004"
+    ],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.878,
+      "specificity": 0.354,
+      "ppv_at_5_percent_prevalence": 0.067,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  },
+  {
+    "dataset": "edge_cases",
+    "mode": "screening",
+    "risk_score": 0.186,
+    "risk_level": "watch",
+    "domains_alerting": 1.5,
+    "domain_counts": {
+      "hemodynamic": 2,
+      "inflammatory": 3,
+      "respiratory": 2,
+      "renal": 2
+    },
+    "patients_analyzed": 6,
+    "patients_alerting": 1,
+    "high_risk_detected": [],
+    "expected_high_risk": [],
+    "true_positives": [],
+    "false_negatives": [],
+    "false_positives": [],
+    "validation_reference": {
+      "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+      "sensitivity": 0.878,
+      "specificity": 0.354,
+      "ppv_at_5_percent_prevalence": 0.067,
+      "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+    }
+  }
+]
