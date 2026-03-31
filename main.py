@@ -4740,7 +4740,7 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 mode=req.scoring_mode
             )
 
-            expected_metrics = hybrid_scoring.get("expected_metrics", {})
+            validation_ref = hybrid_scoring.get("validation_reference", {})
             comparator_performance = {
                 "hybrid_multisignal": {
                     "risk_score": hybrid_scoring.get("risk_score", 0),
@@ -4752,9 +4752,8 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                     "operating_mode": hybrid_scoring.get("operating_mode"),
                     "mode_description": hybrid_scoring.get("mode_description"),
                     "min_domains_required": hybrid_scoring.get("min_domains_required"),
-                    "expected_metrics": expected_metrics,
-                    "validation": hybrid_scoring.get("validation"),
-                    "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk across {hybrid_scoring.get('average_domains_alerting', 0):.1f} domains on average."
+                    "validation_reference": validation_ref,
+                                        "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk across {hybrid_scoring.get('average_domains_alerting', 0):.1f} domains on average."
                 },
                 "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
                 "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
@@ -4762,9 +4761,9 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
 
             # Clinical validation metrics using mode-specific values
             clinical_validation_metrics = {
-                "sensitivity": expected_metrics.get("sensitivity", 0.78),
-                "specificity": expected_metrics.get("specificity", 0.78),
-                "ppv_at_5_percent_prevalence": expected_metrics.get("ppv_5pct", 0.158),
+                "sensitivity": validation_ref.get("sensitivity", 0.78),
+                "specificity": validation_ref.get("specificity", 0.78),
+                "ppv_at_5_percent_prevalence": validation_ref.get("ppv_5pct", 0.158),
                 "validation_source": "MIMIC-IV retrospective cohort (n=205)",
                 "operating_mode": hybrid_scoring.get("operating_mode"),
                 "hybrid_enabled": True
@@ -6179,17 +6178,21 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         # Add hybrid scoring to comparator_performance
         if hybrid_scoring.get("enabled"):
             comparator_performance["hybrid_multisignal"] = {
+                # CALCULATED FROM YOUR DATA
                 "risk_score": hybrid_scoring.get("risk_score", 0),
                 "risk_level": hybrid_scoring.get("risk_level", "unknown"),
                 "domains_alerting": hybrid_scoring.get("average_domains_alerting", 0),
                 "high_risk_patients": len(hybrid_scoring.get("high_risk_patients", [])),
                 "patients_alerting": hybrid_scoring.get("patients_alerting", 0),
+                "patients_analyzed": hybrid_scoring.get("patients_analyzed", 0),
+                "domain_alert_counts": hybrid_scoring.get("domain_alert_counts", {}),
+                # CONFIGURATION
                 "scoring_method": hybrid_scoring.get("scoring_method"),
                 "operating_mode": hybrid_scoring.get("operating_mode"),
                 "mode_description": hybrid_scoring.get("mode_description"),
                 "min_domains_required": hybrid_scoring.get("min_domains_required"),
-                "expected_metrics": hybrid_scoring.get("expected_metrics"),
-                "validation": hybrid_scoring.get("validation"),
+                # VALIDATION REFERENCE (not calculated from your data)
+                "validation_reference": hybrid_scoring.get("validation_reference"),
                 "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk across {hybrid_scoring.get('average_domains_alerting', 0):.1f} domains on average."
             }
 
@@ -6516,7 +6519,7 @@ async def trajectory_analysis(request: TrajectoryRequest):
                 mode=request.scoring_mode
             )
 
-            expected_metrics = hybrid_scoring.get("expected_metrics", {})
+            validation_ref = hybrid_scoring.get("validation_reference", {})
             comparator_performance = {
                 "hybrid_multisignal": {
                     "risk_score": hybrid_scoring.get("risk_score", 0),
@@ -6528,18 +6531,17 @@ async def trajectory_analysis(request: TrajectoryRequest):
                     "operating_mode": hybrid_scoring.get("operating_mode"),
                     "mode_description": hybrid_scoring.get("mode_description"),
                     "min_domains_required": hybrid_scoring.get("min_domains_required"),
-                    "expected_metrics": expected_metrics,
-                    "validation": hybrid_scoring.get("validation"),
-                    "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk."
+                    "validation_reference": validation_ref,
+                                        "interpretation": f"Hybrid multi-signal analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode) detected {hybrid_scoring.get('risk_level', 'unknown')} risk."
                 },
                 "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
                 "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
             }
 
             clinical_validation_metrics = {
-                "sensitivity": expected_metrics.get("sensitivity", 0.78),
-                "specificity": expected_metrics.get("specificity", 0.78),
-                "ppv_at_5_percent_prevalence": expected_metrics.get("ppv_5pct", 0.158),
+                "sensitivity": validation_ref.get("sensitivity", 0.78),
+                "specificity": validation_ref.get("specificity", 0.78),
+                "ppv_at_5_percent_prevalence": validation_ref.get("ppv_5pct", 0.158),
                 "validation_source": "MIMIC-IV retrospective cohort (n=205)",
                 "operating_mode": hybrid_scoring.get("operating_mode"),
                 "hybrid_enabled": True
@@ -10109,7 +10111,7 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
                 mode=req.scoring_mode
             )
 
-            expected_metrics = hybrid_scoring.get("expected_metrics", {})
+            validation_ref = hybrid_scoring.get("validation_reference", {})
             comparator_performance = {
                 "hybrid_multisignal": {
                     "risk_score": hybrid_scoring.get("risk_score", 0),
@@ -10121,17 +10123,16 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
                     "operating_mode": hybrid_scoring.get("operating_mode"),
                     "mode_description": hybrid_scoring.get("mode_description"),
                     "min_domains_required": hybrid_scoring.get("min_domains_required"),
-                    "expected_metrics": expected_metrics,
-                    "validation": hybrid_scoring.get("validation")
-                },
+                    "validation_reference": validation_ref,
+                                    },
                 "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
                 "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
             }
 
             clinical_validation_metrics = {
-                "sensitivity": expected_metrics.get("sensitivity", 0.78),
-                "specificity": expected_metrics.get("specificity", 0.78),
-                "ppv_at_5_percent_prevalence": expected_metrics.get("ppv_5pct", 0.158),
+                "sensitivity": validation_ref.get("sensitivity", 0.78),
+                "specificity": validation_ref.get("specificity", 0.78),
+                "ppv_at_5_percent_prevalence": validation_ref.get("ppv_5pct", 0.158),
                 "validation_source": "MIMIC-IV retrospective cohort (n=205)",
                 "operating_mode": hybrid_scoring.get("operating_mode"),
                 "hybrid_enabled": True
@@ -11684,7 +11685,7 @@ def time_to_harm_endpoint(req: TimeToHarmRequest) -> Dict[str, Any]:
                         mode=req.scoring_mode
                     )
 
-                    expected_metrics = hybrid_scoring.get("expected_metrics", {})
+                    validation_ref = hybrid_scoring.get("validation_reference", {})
                     comparator_performance = {
                         "hybrid_multisignal": {
                             "risk_score": hybrid_scoring.get("risk_score", 0),
@@ -11696,9 +11697,8 @@ def time_to_harm_endpoint(req: TimeToHarmRequest) -> Dict[str, Any]:
                             "operating_mode": hybrid_scoring.get("operating_mode"),
                             "mode_description": hybrid_scoring.get("mode_description"),
                             "min_domains_required": hybrid_scoring.get("min_domains_required"),
-                            "expected_metrics": expected_metrics,
-                            "validation": hybrid_scoring.get("validation"),
-                            "interpretation": f"Hybrid analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode): {hybrid_scoring.get('risk_level', 'unknown')} risk"
+                            "validation_reference": validation_ref,
+                                                        "interpretation": f"Hybrid analysis ({hybrid_scoring.get('operating_mode', 'balanced')} mode): {hybrid_scoring.get('risk_level', 'unknown')} risk"
                         },
                         "news_baseline": {"sensitivity": 0.244, "specificity": 0.854, "ppv_5pct": 0.081},
                         "qsofa_baseline": {"sensitivity": 0.073, "specificity": 0.988, "ppv_5pct": 0.240}
