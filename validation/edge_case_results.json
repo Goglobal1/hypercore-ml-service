@@ -1,0 +1,113 @@
+[
+  {
+    "name": "SCENARIO 1: Rapidly Improving Patient",
+    "description": "Patient starts in crisis, responds to treatment",
+    "expected": "LOW risk - improving trajectory should override initial severity",
+    "status": "OK",
+    "risk_score": 0.078,
+    "risk_level": "low",
+    "domains_alerting": 2.0,
+    "domain_counts": {
+      "respiratory": 1,
+      "inflammatory": 1
+    },
+    "patients_alerting": 0,
+    "patients_analyzed": 1
+  },
+  {
+    "name": "SCENARIO 2: Oscillating Values (Noise)",
+    "description": "Biomarkers go up and down randomly",
+    "expected": "LOW/WATCH - no sustained trend, should not trigger high alert",
+    "status": "OK",
+    "risk_score": 0.0,
+    "risk_level": "low",
+    "domains_alerting": 0.0,
+    "domain_counts": {},
+    "patients_alerting": 0,
+    "patients_analyzed": 1
+  },
+  {
+    "name": "SCENARIO 3: Single Extreme Value",
+    "description": "One biomarker extremely high (WBC=45), others normal",
+    "expected": "WATCH/MODERATE - flag single domain, don't over-score",
+    "status": "OK",
+    "risk_score": 0.032,
+    "risk_level": "low",
+    "domains_alerting": 1.0,
+    "domain_counts": {
+      "inflammatory": 1
+    },
+    "patients_alerting": 0,
+    "patients_analyzed": 1
+  },
+  {
+    "name": "SCENARIO 4: Slow Gradual Decline (24h)",
+    "description": "Very slow deterioration over 24 hours",
+    "expected": "MODERATE/HIGH - should detect cumulative decline",
+    "status": "OK",
+    "risk_score": 0.316,
+    "risk_level": "moderate",
+    "domains_alerting": 4.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "renal": 1,
+      "inflammatory": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1
+  },
+  {
+    "name": "SCENARIO 5A: Missing Renal Data",
+    "description": "No creatinine/lactate, has other biomarkers",
+    "expected": "Should score based on available data, no crash",
+    "status": "OK",
+    "risk_score": 0.656,
+    "risk_level": "high",
+    "domains_alerting": 3.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "inflammatory": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1
+  },
+  {
+    "name": "SCENARIO 5B: Minimal Data (HR, RR, SBP only)",
+    "description": "Only basic vitals available",
+    "expected": "Should score hemodynamic domain only, no crash",
+    "status": "OK",
+    "risk_score": 0.784,
+    "risk_level": "critical",
+    "domains_alerting": 2.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1
+  },
+  {
+    "name": "SCENARIO 5C: Only Vitals (no labs)",
+    "status": "EXCEPTION",
+    "error": "'NoneType' object has no attribute 'get'"
+  },
+  {
+    "name": "SCENARIO 6: All Values at Threshold",
+    "description": "Every biomarker at warning edge, none above",
+    "expected": "MODERATE - multiple systems at edge should flag",
+    "status": "OK",
+    "risk_score": 0.461,
+    "risk_level": "moderate",
+    "domains_alerting": 4.0,
+    "domain_counts": {
+      "hemodynamic": 1,
+      "respiratory": 1,
+      "renal": 1,
+      "inflammatory": 1
+    },
+    "patients_alerting": 1,
+    "patients_analyzed": 1
+  }
+]
