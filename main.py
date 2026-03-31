@@ -11218,6 +11218,8 @@ class TimeToHarmResponse(BaseModel):
     clinical_validation_metrics: Optional[Dict[str, Any]] = None
     # REPORT_DATA - Single source of truth for clinical report generation
     report_data: Optional[Dict[str, Any]] = None
+    # HYBRID MULTI-SIGNAL SCORING (MIMIC-IV Validated)
+    comparator_performance: Optional[Dict[str, Any]] = None
 
 
 @app.post("/alerts/evaluate", response_model=AlertEvaluateResponse)
