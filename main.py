@@ -90,6 +90,18 @@ except ImportError:
     BUG_FIXES_AVAILABLE = False
     CSE_AVAILABLE = False
 
+# Comparison utilities for /compare endpoint
+try:
+    from app.core.comparison_utils import (
+        calculate_news_score,
+        calculate_qsofa_score,
+        calculate_mews_score,
+        calculate_comparison_metrics
+    )
+    COMPARISON_UTILS_AVAILABLE = True
+except ImportError:
+    COMPARISON_UTILS_AVAILABLE = False
+
 # Time-to-Harm Prediction Engine
 try:
     from app.core.time_to_harm import (
@@ -20784,3 +20796,241 @@ def health() -> Dict[str, Any]:
     return health_info
 
 
+
+
+# ---------------------------------------------------------------------
+# COMPARISON ENDPOINT - Compare HyperCore vs NEWS/qSOFA/MEWS
+# Calculates actual metrics from uploaded data with known outcomes
+# ---------------------------------------------------------------------
+
+@app.post("/compare")
+async def compare_systems(data: AnalysisInput, scoring_mode: str = "balanced"):
+    """
+    Compare HyperCore against NEWS, qSOFA, MEWS on data with known outcomes.
+
+    CSV must include columns:
+    - patient_id: Unique patient identifier
+    - timestamp: Observation time
+    - heart_rate, respiratory_rate, sbp, temperature, spo2: Required vitals
+    - outcome: 0 = no deterioration, 1 = deterioration
+
+    Optional columns for better HyperCore scoring:
+    - creatinine, lactate, wbc, platelets
+    - gcs (Glasgow Coma Scale, defaults to 15)
+    - consciousness (AVPU scale, defaults to A)
+
+    Returns calculated sensitivity, specificity, PPV for each system.
+    """
+    if not COMPARISON_UTILS_AVAILABLE:
+        return {"error": "Comparison utilities not available", "status": "failed"}
+
+    try:
+        # Parse CSV
+        df = pd.read_csv(io.StringIO(data.csv))
+
+        # Normalize column names
+        df.columns = [c.lower().strip().replace(' ', '_') for c in df.columns]
+
+        # Check for required columns
+        required = ['patient_id', 'outcome']
+        missing = [c for c in required if c not in df.columns]
+        if missing:
+            return {
+                "error": f"Missing required columns: {missing}",
+                "required": required,
+                "available": list(df.columns),
+                "status": "failed"
+            }
+
+        # Check for outcome column validity
+        outcomes_unique = df['outcome'].unique()
+        if len(outcomes_unique) == 1:
+            return {
+                "error": f"All patients have outcome={outcomes_unique[0]}. Need both positive (1) and negative (0) outcomes.",
+                "suggestion": "Include patients with outcome=0 (no deterioration) AND outcome=1 (deterioration)",
+                "status": "failed"
+            }
+
+        # Get unique patients
+        patients = df['patient_id'].unique()
+        n_patients = len(patients)
+
+        if n_patients < 4:
+            return {
+                "error": f"Only {n_patients} patients found. Need at least 4 patients for meaningful comparison.",
+                "minimum_recommended": 20,
+                "status": "failed"
+            }
+
+        # Mode thresholds for HyperCore
+        mode_config = {
+            'screening': {'risk_threshold': 0.15, 'min_domains': 1},
+            'balanced': {'risk_threshold': 0.30, 'min_domains': 2},
+            'high_confidence': {'risk_threshold': 0.50, 'min_domains': 3}
+        }
+        config = mode_config.get(scoring_mode, mode_config['balanced'])
+
+        # Calculate predictions for each patient
+        hypercore_predictions = []
+        news_predictions = []
+        qsofa_predictions = []
+        mews_predictions = []
+        patient_outcomes = []
+        patient_details = []
+
+        # Detect time column
+        time_col = None
+        for tc in ['timestamp', 'time', 'datetime', 'date', 'hour', 'day']:
+            if tc in df.columns:
+                time_col = tc
+                break
+
+        # Detect vital columns
+        hr_col = next((c for c in df.columns if c in ['heart_rate', 'hr', 'pulse']), None)
+        rr_col = next((c for c in df.columns if c in ['respiratory_rate', 'rr', 'resp_rate']), None)
+        sbp_col = next((c for c in df.columns if c in ['sbp', 'systolic', 'blood_pressure_systolic', 'systolic_bp']), None)
+        temp_col = next((c for c in df.columns if c in ['temperature', 'temp']), None)
+        spo2_col = next((c for c in df.columns if c in ['spo2', 'sao2', 'oxygen_saturation', 'o2sat']), None)
+        gcs_col = next((c for c in df.columns if c in ['gcs', 'glasgow_coma_scale']), None)
+        consciousness_col = next((c for c in df.columns if c in ['consciousness', 'avpu']), None)
+
+        # Check minimum vitals available
+        if not all([hr_col, rr_col, sbp_col]):
+            return {
+                "error": "Missing required vital signs. Need at least: heart_rate, respiratory_rate, sbp",
+                "found": {
+                    "heart_rate": hr_col,
+                    "respiratory_rate": rr_col,
+                    "sbp": sbp_col,
+                    "temperature": temp_col,
+                    "spo2": spo2_col
+                },
+                "status": "failed"
+            }
+
+        for pid in patients:
+            patient_data = df[df['patient_id'] == pid].copy()
+            if time_col:
+                patient_data = patient_data.sort_values(time_col)
+
+            outcome = int(patient_data['outcome'].iloc[0])
+            patient_outcomes.append(outcome == 1)
+
+            # Get latest vitals for scoring
+            latest = patient_data.iloc[-1]
+            hr = float(latest.get(hr_col, 80)) if hr_col and pd.notna(latest.get(hr_col)) else 80
+            rr = float(latest.get(rr_col, 16)) if rr_col and pd.notna(latest.get(rr_col)) else 16
+            sbp = float(latest.get(sbp_col, 120)) if sbp_col and pd.notna(latest.get(sbp_col)) else 120
+            temp = float(latest.get(temp_col, 37.0)) if temp_col and pd.notna(latest.get(temp_col)) else 37.0
+            spo2 = float(latest.get(spo2_col, 98)) if spo2_col and pd.notna(latest.get(spo2_col)) else 98
+            gcs = int(latest.get(gcs_col, 15)) if gcs_col and pd.notna(latest.get(gcs_col)) else 15
+            consciousness = str(latest.get(consciousness_col, 'A')) if consciousness_col and pd.notna(latest.get(consciousness_col)) else 'A'
+
+            # Calculate HyperCore score using existing function
+            biomarker_cols = [c for c in df.columns if c not in ['patient_id', 'outcome', time_col] and df[c].dtype in ['float64', 'int64', 'float32', 'int32']]
+            hybrid_result = calculate_hybrid_risk_score(patient_data, 'patient_id', time_col, biomarker_cols, scoring_mode)
+
+            hc_risk = 0.0
+            hc_domains = 0
+            if hybrid_result.get('enabled', False) or 'patient_scores' in hybrid_result:
+                patient_scores = hybrid_result.get('patient_scores', [])
+                if patient_scores:
+                    ps = patient_scores[0]
+                    hc_risk = ps.get('risk_score', 0)
+                    hc_domains = ps.get('domains_alerting', 0)
+                else:
+                    hc_risk = hybrid_result.get('risk_score', 0)
+                    hc_domains = hybrid_result.get('domains_alerting', 0)
+
+            hc_alert = hc_risk >= config['risk_threshold'] and hc_domains >= config['min_domains']
+            hypercore_predictions.append(hc_alert)
+
+            # Calculate NEWS
+            news_score = calculate_news_score(hr, rr, sbp, temp, spo2, consciousness)
+            news_predictions.append(news_score >= 5)
+
+            # Calculate qSOFA
+            qsofa_score = calculate_qsofa_score(rr, sbp, gcs)
+            qsofa_predictions.append(qsofa_score >= 2)
+
+            # Calculate MEWS
+            mews_score = calculate_mews_score(hr, rr, sbp, temp, consciousness)
+            mews_predictions.append(mews_score >= 4)
+
+            patient_details.append({
+                'patient_id': str(pid),
+                'outcome': outcome,
+                'hypercore_risk': round(hc_risk, 3),
+                'hypercore_domains': hc_domains,
+                'hypercore_alert': hc_alert,
+                'news_score': news_score,
+                'news_alert': news_score >= 5,
+                'qsofa_score': qsofa_score,
+                'qsofa_alert': qsofa_score >= 2,
+                'mews_score': mews_score,
+                'mews_alert': mews_score >= 4
+            })
+
+        # Calculate metrics for each system
+        hypercore_metrics = calculate_comparison_metrics(hypercore_predictions, patient_outcomes)
+        news_metrics = calculate_comparison_metrics(news_predictions, patient_outcomes)
+        qsofa_metrics = calculate_comparison_metrics(qsofa_predictions, patient_outcomes)
+        mews_metrics = calculate_comparison_metrics(mews_predictions, patient_outcomes)
+
+        # Determine best system for each metric
+        systems_sens = {'hypercore': hypercore_metrics['sensitivity'], 'news': news_metrics['sensitivity'],
+                       'qsofa': qsofa_metrics['sensitivity'], 'mews': mews_metrics['sensitivity']}
+        systems_spec = {'hypercore': hypercore_metrics['specificity'], 'news': news_metrics['specificity'],
+                       'qsofa': qsofa_metrics['specificity'], 'mews': mews_metrics['specificity']}
+        systems_ppv = {'hypercore': hypercore_metrics['ppv'], 'news': news_metrics['ppv'],
+                      'qsofa': qsofa_metrics['ppv'], 'mews': mews_metrics['ppv']}
+
+        best_sensitivity = max(systems_sens, key=systems_sens.get)
+        best_specificity = max(systems_spec, key=systems_spec.get)
+        best_ppv = max(systems_ppv, key=systems_ppv.get)
+
+        return {
+            "status": "success",
+            "n_patients": n_patients,
+            "n_positive_outcomes": sum(patient_outcomes),
+            "n_negative_outcomes": len(patient_outcomes) - sum(patient_outcomes),
+            "prevalence": round(sum(patient_outcomes) / len(patient_outcomes), 3),
+            "scoring_mode": scoring_mode,
+            "results": {
+                "hypercore": {
+                    **hypercore_metrics,
+                    "alert_rate": round(sum(hypercore_predictions) / len(hypercore_predictions), 3),
+                    "threshold": f"risk >= {config['risk_threshold']}, domains >= {config['min_domains']}"
+                },
+                "news": {
+                    **news_metrics,
+                    "threshold": ">= 5",
+                    "alert_rate": round(sum(news_predictions) / len(news_predictions), 3)
+                },
+                "qsofa": {
+                    **qsofa_metrics,
+                    "threshold": ">= 2",
+                    "alert_rate": round(sum(qsofa_predictions) / len(qsofa_predictions), 3)
+                },
+                "mews": {
+                    **mews_metrics,
+                    "threshold": ">= 4",
+                    "alert_rate": round(sum(mews_predictions) / len(mews_predictions), 3)
+                }
+            },
+            "best_performers": {
+                "sensitivity": best_sensitivity,
+                "specificity": best_specificity,
+                "ppv": best_ppv
+            },
+            "patient_level_results": patient_details,
+            "note": "All metrics calculated from YOUR uploaded data - not reference values"
+        }
+
+    except Exception as e:
+        import traceback
+        return {
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "status": "failed"
+        }
