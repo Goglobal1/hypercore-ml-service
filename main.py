@@ -910,23 +910,6 @@ OPERATING_MODES: Dict[str, Dict[str, Any]] = {
             "specificity": 0.354,
             "ppv_5pct": 0.067
         }
-    },
-    "beats_news": {
-        # BEATS NEWS on ALL metrics (sens, spec, ppv)
-        # Use for: NEWS replacement
-        "description": "Beats NEWS on all metrics",
-        "min_domains": 3,
-        "require_critical": False,
-        "alert_threshold": 0.15,
-        "critical_bonus": 0.15,
-        "domain_bonus_2": 0.12,
-        "domain_bonus_3": 0.20,
-        "trajectory_threshold": 0.30,
-        "expected_metrics": {
-            "sensitivity": 0.415,  # vs NEWS 0.244
-            "specificity": 0.957,  # vs NEWS 0.854
-            "ppv_5pct": 0.338     # vs NEWS 0.081
-        }
     }
 }
 
@@ -1303,7 +1286,7 @@ class AnalyzeRequest(BaseModel):
     age: Optional[float] = None
     context: Optional[Dict[str, Any]] = None
 
-    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    # Hybrid scoring operating mode (high_confidence, balanced, screening)
     scoring_mode: Optional[str] = None
 
     @model_validator(mode='before')
@@ -1495,7 +1478,7 @@ class EarlyRiskRequest(BaseModel):
     outcome_type: str = "sepsis"  # sepsis, mortality, ICU_transfer, etc.
     cohort: str = "all"  # all, sepsis, heart_failure, COPD
     time_window_hours: int = 48
-    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    # Hybrid scoring operating mode (high_confidence, balanced, screening)
     scoring_mode: Optional[str] = None  # Uses DEFAULT_OPERATING_MODE if not specified
 
     @model_validator(mode='before')
@@ -2084,7 +2067,7 @@ class PredictiveModelingRequest(BaseModel):
     # Base44 alternative format
     patient_data: Optional[Dict[str, Any]] = None
 
-    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    # Hybrid scoring operating mode (high_confidence, balanced, screening)
     scoring_mode: Optional[str] = None
 
     @model_validator(mode='before')
@@ -6360,7 +6343,7 @@ class TrajectoryRequest(BaseModel):
     data: Optional[str] = None
     patient_id_column: Optional[str] = None
     time_column: Optional[str] = None
-    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    # Hybrid scoring operating mode (high_confidence, balanced, screening)
     scoring_mode: Optional[str] = None
 
 
@@ -11345,7 +11328,7 @@ class TimeToHarmRequest(BaseModel):
     domain: str  # sepsis, cardiac, kidney, respiratory, hepatic, neurological, hematologic
     biomarker_trajectories: Dict[str, List[Dict[str, Any]]]
     current_timestamp: Optional[str] = None
-    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    # Hybrid scoring operating mode (high_confidence, balanced, screening)
     scoring_mode: Optional[str] = None
 
 
@@ -20719,10 +20702,9 @@ def get_scoring_modes() -> Dict[str, Any]:
     Get available hybrid scoring operating modes.
     Each mode is optimized for different clinical use cases.
 
-    - high_confidence: Best PPV (33.8%), beats qSOFA - for ICU escalation
-    - balanced: 78% sens/spec - for standard early warning
+    - high_confidence: Best PPV (33.8%) - for ICU escalation, rapid response
+    - balanced: 78% sens/spec - for standard early warning (default)
     - screening: 87.8% sensitivity - don't miss any deterioration
-    - beats_news: Beats NEWS on all metrics
     """
     modes_info = {}
     for mode_name, config in OPERATING_MODES.items():
@@ -20754,8 +20736,7 @@ def _get_mode_use_case(mode_name: str) -> str:
     use_cases = {
         "high_confidence": "ICU escalation decisions, rapid response triggers, situations where false positives are costly",
         "balanced": "Standard early warning, general floor monitoring, routine deterioration detection",
-        "screening": "High-risk patient monitoring, post-operative care, situations where missing events is costly",
-        "beats_news": "Direct NEWS replacement, regulatory compliance, benchmark comparisons"
+        "screening": "High-risk patient monitoring, post-operative care, situations where missing events is costly"
     }
     return use_cases.get(mode_name, "General clinical use")
 
