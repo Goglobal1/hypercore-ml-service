@@ -1303,6 +1303,9 @@ class AnalyzeRequest(BaseModel):
     age: Optional[float] = None
     context: Optional[Dict[str, Any]] = None
 
+    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    scoring_mode: Optional[str] = None
+
     @model_validator(mode='before')
     @classmethod
     def map_alternative_fields(cls, values):
@@ -2080,6 +2083,9 @@ class PredictiveModelingRequest(BaseModel):
 
     # Base44 alternative format
     patient_data: Optional[Dict[str, Any]] = None
+
+    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    scoring_mode: Optional[str] = None
 
     @model_validator(mode='before')
     @classmethod
@@ -4728,7 +4734,8 @@ def analyze(req: AnalyzeRequest) -> AnalyzeResponse:
                 df=df,
                 patient_col=patient_col if patient_col else 'patient_id',
                 time_col=time_col if time_col else 'timestamp',
-                biomarker_cols=biomarker_cols_hybrid
+                biomarker_cols=biomarker_cols_hybrid,
+                mode=req.scoring_mode
             )
 
             comparator_performance = {
@@ -6346,6 +6353,8 @@ class TrajectoryRequest(BaseModel):
     data: Optional[str] = None
     patient_id_column: Optional[str] = None
     time_column: Optional[str] = None
+    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    scoring_mode: Optional[str] = None
 
 
 @app.post("/trajectory/analyze")
@@ -6494,7 +6503,8 @@ async def trajectory_analysis(request: TrajectoryRequest):
                 df=df,
                 patient_col=patient_id_col,
                 time_col=time_col,
-                biomarker_cols=biomarker_cols
+                biomarker_cols=biomarker_cols,
+                mode=request.scoring_mode
             )
 
             comparator_performance = {
@@ -10078,7 +10088,8 @@ def predictive_modeling(req: PredictiveModelingRequest) -> PredictiveModelingRes
                 df=df,
                 patient_col=patient_col,
                 time_col=time_col if time_col else 'time',
-                biomarker_cols=biomarker_cols
+                biomarker_cols=biomarker_cols,
+                mode=req.scoring_mode
             )
 
             comparator_performance = {
@@ -11310,6 +11321,8 @@ class TimeToHarmRequest(BaseModel):
     domain: str  # sepsis, cardiac, kidney, respiratory, hepatic, neurological, hematologic
     biomarker_trajectories: Dict[str, List[Dict[str, Any]]]
     current_timestamp: Optional[str] = None
+    # Hybrid scoring operating mode (high_confidence, balanced, screening, beats_news)
+    scoring_mode: Optional[str] = None
 
 
 class TimeToHarmResponse(BaseModel):
@@ -11641,7 +11654,8 @@ def time_to_harm_endpoint(req: TimeToHarmRequest) -> Dict[str, Any]:
                         df=tth_df,
                         patient_col="patient_id",
                         time_col="timestamp",
-                        biomarker_cols=biomarker_cols
+                        biomarker_cols=biomarker_cols,
+                        mode=req.scoring_mode
                     )
 
                     comparator_performance = {
