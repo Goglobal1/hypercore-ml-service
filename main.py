@@ -1129,11 +1129,15 @@ def calculate_hybrid_risk_score(df: pd.DataFrame, patient_col: str, time_col: st
     alert_patients = [p for p in patient_scores if p.get('meets_alert_criteria', False)]
     high_risk_patients = [p for p in patient_scores if p['num_domains'] >= min_domains and p['risk_score'] >= alert_threshold]
 
-    # Get expected metrics for this mode
-    expected_metrics = mode_config.get('expected_metrics', {})
+    # Get validation reference metrics for this mode
+    validation_metrics = mode_config.get('expected_metrics', {})
 
     return {
         "enabled": True,
+        # =====================================================
+        # CALCULATED FROM YOUR DATA - These values are computed
+        # from the actual biomarker data you uploaded
+        # =====================================================
         "risk_score": round(max_score, 3),
         "risk_score_percent": f"{int(round(max_score * 100))}%",
         "risk_level": risk_level,
@@ -1144,14 +1148,29 @@ def calculate_hybrid_risk_score(df: pd.DataFrame, patient_col: str, time_col: st
         "patients_alerting": len(alert_patients),
         "biomarkers_mapped": len(col_to_biomarker),
         "domain_alert_counts": domain_alert_counts,
+        "high_risk_patients": high_risk_patients,
+
+        # =====================================================
+        # OPERATING MODE CONFIGURATION
+        # =====================================================
         "operating_mode": mode,
         "mode_description": mode_config.get('description', ''),
         "min_domains_required": min_domains,
         "alert_threshold": alert_threshold,
-        "high_risk_patients": high_risk_patients,
         "scoring_method": "hybrid_multisignal_v2",
-        "expected_metrics": expected_metrics,
-        "validation": f"MIMIC-IV validated: Sens {expected_metrics.get('sensitivity', 0)*100:.1f}%, Spec {expected_metrics.get('specificity', 0)*100:.1f}%, PPV {expected_metrics.get('ppv_5pct', 0)*100:.1f}%"
+
+        # =====================================================
+        # VALIDATION REFERENCE - These are NOT calculated from
+        # your data. They are reference metrics from MIMIC-IV
+        # validation study (205 ICU patients, 41 events).
+        # =====================================================
+        "validation_reference": {
+            "note": "Reference metrics from MIMIC-IV validation - not calculated from your data",
+            "sensitivity": validation_metrics.get('sensitivity', 0),
+            "specificity": validation_metrics.get('specificity', 0),
+            "ppv_at_5_percent_prevalence": validation_metrics.get('ppv_5pct', 0),
+            "validation_cohort": "205 ICU patients, 41 deterioration events, 20% prevalence"
+        }
     }
 
 
