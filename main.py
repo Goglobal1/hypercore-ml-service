@@ -103,11 +103,13 @@ except ImportError:
     COMPARISON_UTILS_AVAILABLE = False
 
 # HyperCore v2.1 Algorithm - improved sensitivity across all modes
+HYPERCORE_V21_ERROR = None
 try:
     from hypercore_v21_optimal import HyperCoreV21, run_comparison_v21
     HYPERCORE_V21_AVAILABLE = True
-except ImportError:
+except Exception as e:
     HYPERCORE_V21_AVAILABLE = False
+    HYPERCORE_V21_ERROR = str(e)
 
 # Time-to-Harm Prediction Engine
 try:
@@ -20789,7 +20791,9 @@ def health() -> Dict[str, Any]:
         "status": "ok",
         "version": APP_VERSION,
         "trajectory_engine": "available" if TRAJECTORY_AVAILABLE else "unavailable",
-        "intelligence_layer": "available" if INTELLIGENCE_AVAILABLE else "unavailable"
+        "intelligence_layer": "available" if INTELLIGENCE_AVAILABLE else "unavailable",
+        "hypercore_v21": "available" if HYPERCORE_V21_AVAILABLE else "unavailable",
+        "hypercore_v21_error": HYPERCORE_V21_ERROR
     }
 
     if INTELLIGENCE_AVAILABLE:
