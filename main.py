@@ -20734,9 +20734,10 @@ def get_scoring_modes() -> Dict[str, Any]:
     Get available hybrid scoring operating modes.
     Each mode is optimized for different clinical use cases.
 
-    - high_confidence: Best PPV (33.8%) - for ICU escalation, rapid response
-    - balanced: 78% sens/spec - for standard early warning (default)
-    - screening: 87.8% sensitivity - don't miss any deterioration
+    Validated on MIMIC-IV (206 patients, 42 events):
+    - screening: 88.1% sensitivity - don't miss any deterioration
+    - balanced: 71.4% sensitivity, 68.3% specificity - standard early warning (default)
+    - high_confidence: 52.4% sensitivity, 91.5% specificity - minimize false positives
     """
     modes_info = {}
     for mode_name, config in OPERATING_MODES.items():
@@ -20744,9 +20745,9 @@ def get_scoring_modes() -> Dict[str, Any]:
             "description": config.get("description", ""),
             "min_domains": config.get("min_domains"),
             "alert_threshold": config.get("alert_threshold"),
-            "expected_sensitivity": f"{config.get('expected_metrics', {}).get('sensitivity', 0)*100:.1f}%",
-            "expected_specificity": f"{config.get('expected_metrics', {}).get('specificity', 0)*100:.1f}%",
-            "expected_ppv_5pct": f"{config.get('expected_metrics', {}).get('ppv_5pct', 0)*100:.1f}%",
+            "validated_sensitivity": f"{config.get('expected_metrics', {}).get('sensitivity', 0)*100:.1f}%",
+            "validated_specificity": f"{config.get('expected_metrics', {}).get('specificity', 0)*100:.1f}%",
+            "validated_ppv_5pct": f"{config.get('expected_metrics', {}).get('ppv_5pct', 0)*100:.1f}%",
             "use_case": _get_mode_use_case(mode_name)
         }
 
@@ -20754,12 +20755,13 @@ def get_scoring_modes() -> Dict[str, Any]:
         "available_modes": modes_info,
         "default_mode": DEFAULT_OPERATING_MODE,
         "comparison_baselines": {
-            "NEWS_gte_5": {"sensitivity": "24.4%", "specificity": "85.4%", "ppv_5pct": "8.1%"},
-            "qSOFA_gte_2": {"sensitivity": "7.3%", "specificity": "98.8%", "ppv_5pct": "24.0%"},
-            "MEWS_gte_4": {"sensitivity": "30.0%", "specificity": "80.0%", "ppv_5pct": "7.3%"},
-            "Epic_DI": {"sensitivity": "65.0%", "specificity": "80.0%", "ppv_5pct": "14.6%"}
+            "NEWS_gte_5": {"sensitivity": "45.2%", "specificity": "85.4%", "ppv_5pct": "12.8%"},
+            "qSOFA_gte_2": {"sensitivity": "11.9%", "specificity": "98.8%", "ppv_5pct": "34.3%"},
+            "MEWS_gte_4": {"sensitivity": "28.6%", "specificity": "92.7%", "ppv_5pct": "17.1%"},
+            "Epic_DI": {"sensitivity": "65.0%", "specificity": "80.0%", "ppv_5pct": "14.6%", "note": "Published literature"}
         },
-        "validation_source": "MIMIC-IV (205 patients, 41 events, 20% prevalence)"
+        "validation_source": "MIMIC-IV (206 patients, 42 events, 20.4% prevalence)",
+        "validation_methodology": "Leakage-free /compare endpoint"
     }
 
 
