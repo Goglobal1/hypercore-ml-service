@@ -1,26 +1,41 @@
 # HyperCore MIMIC-IV Longitudinal Validation Report
 
+> ## SUPERSEDED - RESULTS INVALID DUE TO DATA LEAKAGE
+>
+> **The 100% specificity and 83.3% sensitivity below are ARTIFACTS OF LEAKAGE.**
+>
+> The validation script sent the `outcome` column to the API, allowing HyperCore
+> to "see" which patients had events. This caused perfect separation (all non-event
+> patients scored exactly 0.000).
+>
+> **See: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md) for accurate numbers.**
+>
+> ### Actual Performance (Leakage-Free /compare Endpoint):
+> | Mode | HyperCore Sensitivity | Specificity | NEWS Sensitivity |
+> |------|----------------------|-------------|------------------|
+> | Screening | **59.5%** | 81.7% | 45.2% |
+> | Balanced | 31.0% | 96.3% | 45.2% |
+
 **Dataset:** MIMIC-IV ICU Data (Longitudinal)
 **Date:** March 30, 2026
 **Analysis Type:** Prospective-Style Validation with Lead Time Analysis
+**Status:** SUPERSEDED - Results Invalid
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-**HyperCore OUTPERFORMS standard early warning systems on longitudinal ICU data.**
+~~**HyperCore OUTPERFORMS standard early warning systems on longitudinal ICU data.**~~
+
+**INVALID - These metrics resulted from outcome leakage:**
 
 | System | Sensitivity | Specificity | PPV @ 5% | Lead Time |
 |--------|-------------|-------------|----------|-----------|
-| **HyperCore** | **83.3%** | **100.0%** | **100.0%** | **31.4 days** |
+| ~~**HyperCore**~~ | ~~**83.3%**~~ | ~~**100.0%**~~ | ~~**100.0%**~~ | ~~**31.4 days**~~ |
 | NEWS >= 5 | 81.0% | 43.6% | 7.0% | 0 days |
 | qSOFA >= 2 | 33.3% | 83.4% | 9.6% | 0 days |
 
-**Key Findings:**
-- HyperCore achieves comparable sensitivity to NEWS (83.3% vs 81.0%)
-- HyperCore has dramatically better specificity (100% vs 43.6%)
-- HyperCore provides **31.4 days** average early warning lead time
-- Zero false positives in this cohort (perfect precision)
+**~~Key Findings:~~** INVALID - See HONEST_MIMIC_VALIDATION.md
 
 ---
 

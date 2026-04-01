@@ -1,24 +1,42 @@
 # HyperCore MIMIC-IV Validation - FINAL REPORT
 
+> ## SUPERSEDED - SEE HONEST VALIDATION
+>
+> **This report used different thresholds and methodology than the production API.**
+>
+> **See: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md) for authoritative numbers.**
+>
+> ### Actual Performance (/compare endpoint, 206 patients, 42 events):
+> | Mode | HyperCore | NEWS | Advantage |
+> |------|-----------|------|-----------|
+> | Screening | **59.5%** sens | 45.2% sens | +14.3 pts |
+> | Balanced | 31.0% sens | 45.2% sens | -14.2 pts |
+>
+> NEWS sensitivity is **45.2%**, not 24.4% as claimed below.
+
 **Date:** March 30, 2026
-**Status:** VALIDATED - Leakage-Free, Multi-Domain Optimized
+**Status:** SUPERSEDED - See HONEST_MIMIC_VALIDATION.md
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-**HyperCore's hybrid multi-signal approach OUTPERFORMS NEWS on ALL key metrics.**
+~~**HyperCore's hybrid multi-signal approach OUTPERFORMS NEWS on ALL key metrics.**~~
+
+**SUPERSEDED - These numbers used different methodology:**
 
 | System | Sensitivity | Specificity | PPV @ 5% |
 |--------|-------------|-------------|----------|
-| **Hybrid (HyperCore)** | **53.7%** | **87.2%** | **18.1%** |
-| NEWS >= 5 | 24.4% | 85.4% | 8.1% |
+| ~~**Hybrid (HyperCore)**~~ | ~~**53.7%**~~ | ~~**87.2%**~~ | ~~**18.1%**~~ |
+| ~~NEWS >= 5~~ | ~~24.4%~~ | ~~85.4%~~ | ~~8.1%~~ |
 | qSOFA >= 2 | 7.3% | 98.8% | 24.0% |
 
-**Key Improvements over NEWS:**
-- **+29.3% sensitivity** (catches 2.2x more events)
-- **+1.8% specificity** (slightly fewer false positives)
-- **+10.0% PPV** (2.2x better precision)
+~~**Key Improvements over NEWS:**~~
+- ~~**+29.3% sensitivity** (catches 2.2x more events)~~
+- ~~**+1.8% specificity** (slightly fewer false positives)~~
+- ~~**+10.0% PPV** (2.2x better precision)~~
+
+**Actual:** In screening mode, HyperCore achieves 59.5% sensitivity vs NEWS 45.2% (+14.3 pts, 1.3x)
 
 ---
 

@@ -190,16 +190,30 @@ train_patients, test_patients = train_test_split(patients, test_size=0.3)
 
 ---
 
-## NEXT STEPS
+## NEXT STEPS - COMPLETED
 
-1. **Fix the validation script** to not include outcome in API input
-2. **Implement window-level predictions** for proper temporal evaluation
-3. **Measure TRUE lead time** from first alert to event
-4. **Re-run comparison** with leakage-free methodology
-5. **Report honest results** even if less favorable
+1. ~~**Fix the validation script** to not include outcome in API input~~ DONE
+2. ~~**Implement window-level predictions** for proper temporal evaluation~~ DONE
+3. ~~**Measure TRUE lead time** from first alert to event~~ N/A
+4. ~~**Re-run comparison** with leakage-free methodology~~ DONE
+5. ~~**Report honest results** even if less favorable~~ DONE
+
+---
+
+## RESOLUTION
+
+**The /compare endpoint was implemented and provides leakage-free validation.**
+
+See: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md)
+
+### Actual Results (206 patients, 42 events):
+| Mode | HyperCore Sensitivity | NEWS Sensitivity | Advantage |
+|------|----------------------|------------------|-----------|
+| Screening | **59.5%** | 45.2% | +14.3 pts (1.3x) |
+| Balanced | 31.0% | 45.2% | -14.2 pts |
 
 ---
 
 **Report Generated:** March 30, 2026
 **Audit Status:** FAILED - Leakage Detected
-**Action Required:** Re-validation with corrected methodology
+**Resolution:** Completed March 31, 2026 - See HONEST_MIMIC_VALIDATION.md

@@ -1,20 +1,38 @@
 # HyperCore Clinical Validation Report
 
+> ## SUPERSEDED - DO NOT USE THESE NUMBERS
+>
+> **This report contains INVALID metrics due to data leakage and methodological issues.**
+>
+> **See: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md) for accurate numbers.**
+>
+> ### Actual Performance (Leakage-Free /compare Endpoint):
+> | Mode | HyperCore Sensitivity | NEWS Sensitivity | HyperCore Advantage |
+> |------|----------------------|------------------|---------------------|
+> | Screening | **59.5%** | 45.2% | +14.3 pts (1.3x) |
+> | Balanced | 31.0% | 45.2% | -14.2 pts |
+>
+> The claims below (100% sensitivity, etc.) are INVALID.
+
+---
+
 **Prepared for:** Dr. Handler, Chief Medical Officer
 **Date:** March 30, 2026
-**Version:** 1.0
+**Version:** 1.0 (SUPERSEDED)
 **Classification:** Internal - Regulatory Review
 
 ---
 
 ## Executive Summary
 
-HyperCore's multi-biomarker early warning system demonstrates superior performance compared to standard clinical scoring systems (NEWS, MEWS, Epic Deterioration Index). Key findings:
+~~HyperCore's multi-biomarker early warning system demonstrates superior performance compared to standard clinical scoring systems (NEWS, MEWS, Epic Deterioration Index). Key findings:~~
 
-- **PPV at 5% prevalence: 24.75%** (vs. NEWS ~15%, Epic DI ~18%)
-- **Sensitivity: 100%** with maintained specificity of 84%
-- **Lead Time: 2.0 days** average detection before clinical event
-- **Multi-Signal Advantage: 71.8%** PPV improvement with triple biomarker confirmation
+**INVALID - These numbers resulted from data leakage:**
+
+- ~~**PPV at 5% prevalence: 24.75%** (vs. NEWS ~15%, Epic DI ~18%)~~
+- ~~**Sensitivity: 100%** with maintained specificity of 84%~~
+- ~~**Lead Time: 2.0 days** average detection before clinical event~~
+- ~~**Multi-Signal Advantage: 71.8%** PPV improvement with triple biomarker confirmation~~
 
 ---
 

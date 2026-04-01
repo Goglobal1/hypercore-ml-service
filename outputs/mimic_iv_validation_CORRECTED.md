@@ -1,20 +1,39 @@
 # HyperCore MIMIC-IV Validation Report (CORRECTED)
 
+> ## SUPERSEDED - METHODOLOGY WAS FLAWED
+>
+> **This report used a simplified ">20% biomarker rise" threshold, NOT the actual
+> HyperCore hybrid scoring algorithm.**
+>
+> The 90% sensitivity claim is NOT representative of actual HyperCore API performance.
+>
+> **See: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md) for accurate numbers.**
+>
+> ### Actual Performance (Production HyperCore via /compare):
+> | Mode | HyperCore Sensitivity | Specificity | NEWS Sensitivity |
+> |------|----------------------|-------------|------------------|
+> | Screening | **59.5%** | 81.7% | 45.2% |
+> | Balanced | 31.0% | 96.3% | 45.2% |
+>
+> HyperCore outperforms NEWS by **1.3x** in screening mode, not 3.7x as claimed below.
+
 **Dataset:** MIMIC-IV ICU Data (Longitudinal)
 **Date:** March 30, 2026
-**Status:** LEAKAGE-FREE VALIDATION
+**Status:** SUPERSEDED - Used simplified threshold, not actual HyperCore
 
 ---
 
-## EXECUTIVE SUMMARY - HONEST ASSESSMENT
+## EXECUTIVE SUMMARY - ~~HONEST ASSESSMENT~~ SUPERSEDED
 
 | System | Sensitivity | Specificity | PPV @ 5% |
 |--------|-------------|-------------|----------|
-| **Trajectory (HyperCore)** | **90.2%** | 41.5% | 7.5% |
+| ~~**Trajectory (HyperCore)**~~ | ~~**90.2%**~~ | ~~41.5%~~ | ~~7.5%~~ |
 | NEWS >= 5 | 24.4% | **85.4%** | 8.1% |
 | qSOFA >= 2 | 7.3% | **98.8%** | **24.0%** |
 
-**Key Finding:** HyperCore's trajectory detection has **3.7x higher sensitivity** than NEWS (90% vs 24%), but **lower specificity** (42% vs 85%). This represents a different clinical trade-off.
+~~**Key Finding:** HyperCore's trajectory detection has **3.7x higher sensitivity** than NEWS (90% vs 24%), but **lower specificity** (42% vs 85%). This represents a different clinical trade-off.~~
+
+**SUPERSEDED:** The 90% figure was from a simplified local threshold, not the actual HyperCore API. Real performance is 59.5% sensitivity in screening mode (1.3x better than NEWS).
 
 ---
 

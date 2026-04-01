@@ -1,5 +1,17 @@
 # HyperCore Multi-Dataset Validation Report
 
+> ## NOTE: This is QUALITATIVE testing (ordering, mode behavior)
+>
+> This report validates that sicker patients score higher than healthier patients,
+> and that operating modes work as designed. It does NOT provide sensitivity/specificity.
+>
+> **For quantitative metrics, see: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md)**
+>
+> | Mode | HyperCore Sensitivity | NEWS Sensitivity | Advantage |
+> |------|----------------------|------------------|-----------|
+> | Screening | **59.5%** | 45.2% | +14.3 pts |
+> | Balanced | 31.0% | 45.2% | -14.2 pts |
+
 **Date:** 2026-03-31
 **System:** HyperCore Hybrid Multi-Signal Scoring v2
 **API Endpoint:** https://hypercore-ml-service-production.up.railway.app

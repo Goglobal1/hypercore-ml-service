@@ -1,6 +1,18 @@
 # HyperCore Rigorous Validation Report
 
-**Dataset:** ICU Sepsis Dataset
+> ## NOTE: This was a CROSS-SECTIONAL analysis (1 row per patient)
+>
+> HyperCore's trajectory analysis is designed for LONGITUDINAL data (multiple
+> timepoints). On single-timepoint data, it underperforms as expected.
+>
+> **See: [HONEST_MIMIC_VALIDATION.md](./HONEST_MIMIC_VALIDATION.md) for longitudinal validation.**
+>
+> ### Longitudinal Performance (/compare endpoint):
+> | Mode | HyperCore | NEWS | Advantage |
+> |------|-----------|------|-----------|
+> | Screening | **59.5%** sens | 45.2% sens | +14.3 pts |
+
+**Dataset:** ICU Sepsis Dataset (Cross-Sectional)
 **Date:** March 30, 2026
 **Analysis Type:** Honest Head-to-Head Comparison
 
@@ -8,9 +20,9 @@
 
 ## EXECUTIVE SUMMARY - HONEST ASSESSMENT
 
-**WARNING: HyperCore UNDERPERFORMED compared to NEWS on this dataset.**
+**WARNING: HyperCore UNDERPERFORMED compared to NEWS on this cross-sectional dataset.**
 
-This is an honest assessment. The results show areas where improvement is needed.
+This is expected - HyperCore's trajectory analysis requires multiple timepoints. On single-row data, it cannot detect deterioration trends.
 
 ---
 
