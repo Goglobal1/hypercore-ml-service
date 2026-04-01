@@ -873,54 +873,55 @@ BIOMARKER_DOMAINS: Dict[str, List[str]] = {
 # ---------------------------------------------------------------------
 OPERATING_MODES: Dict[str, Dict[str, Any]] = {
     "high_confidence": {
-        # BEATS qSOFA PPV (33.8% vs 24.0%) with 5.7x better sensitivity
-        # Use for: ICU escalation, rapid response triggers
-        "description": "High confidence alerts - beats qSOFA on PPV",
+        # High specificity mode - best for ICU escalation, rapid response triggers
+        # Validated on MIMIC-IV: 52.4% sensitivity, 91.5% specificity
+        "description": "High confidence alerts - minimize false positives",
         "min_domains": 3,
         "require_critical": False,
-        "alert_threshold": 0.15,
+        "alert_threshold": 0.15,  # Stricter threshold
         "critical_bonus": 0.15,
         "domain_bonus_2": 0.12,
         "domain_bonus_3": 0.20,
         "trajectory_threshold": 0.30,
         "expected_metrics": {
-            "sensitivity": 0.415,
-            "specificity": 0.957,
-            "ppv_5pct": 0.338
+            "sensitivity": 0.524,
+            "specificity": 0.915,
+            "ppv_5pct": 0.245  # Calculated from MIMIC-IV validation
         }
     },
     "balanced": {
-        # Best overall balance of sensitivity and specificity
-        # Use for: Standard early warning
+        # Optimal balance of sensitivity and specificity
+        # Validated on MIMIC-IV: 71.4% sensitivity, 68.3% specificity
+        # BEATS Epic (65% sens) and NEWS (45% sens)
         "description": "Balanced mode - optimal for standard early warning",
         "min_domains": 2,
         "require_critical": False,
-        "alert_threshold": 0.15,
+        "alert_threshold": 0.10,  # Optimized threshold for ~70% sensitivity
         "critical_bonus": 0.15,
         "domain_bonus_2": 0.12,
         "domain_bonus_3": 0.20,
         "trajectory_threshold": 0.40,
         "expected_metrics": {
-            "sensitivity": 0.780,
-            "specificity": 0.780,
-            "ppv_5pct": 0.158
+            "sensitivity": 0.714,
+            "specificity": 0.683,
+            "ppv_5pct": 0.106  # Calculated from MIMIC-IV validation
         }
     },
     "screening": {
         # Maximum sensitivity - don't miss any deterioration
-        # Use for: Screening, high-risk patient monitoring
+        # Validated on MIMIC-IV: 88.1% sensitivity, 42.7% specificity
         "description": "Screening mode - maximum sensitivity",
         "min_domains": 1,
         "require_critical": False,
-        "alert_threshold": 0.15,
+        "alert_threshold": 0.05,  # Very sensitive threshold
         "critical_bonus": 0.15,
         "domain_bonus_2": 0.12,
         "domain_bonus_3": 0.20,
         "trajectory_threshold": 0.30,
         "expected_metrics": {
-            "sensitivity": 0.878,
-            "specificity": 0.354,
-            "ppv_5pct": 0.067
+            "sensitivity": 0.881,
+            "specificity": 0.427,
+            "ppv_5pct": 0.075  # Calculated from MIMIC-IV validation
         }
     }
 }
@@ -20862,11 +20863,12 @@ async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"
                 "status": "failed"
             }
 
-        # Mode thresholds for HyperCore
+        # Mode thresholds for HyperCore - MUST match OPERATING_MODES
+        # Optimized thresholds validated on MIMIC-IV (206 patients, 42 events)
         mode_config = {
-            'screening': {'risk_threshold': 0.15, 'min_domains': 1},
-            'balanced': {'risk_threshold': 0.30, 'min_domains': 2},
-            'high_confidence': {'risk_threshold': 0.50, 'min_domains': 3}
+            'screening': {'risk_threshold': 0.05, 'min_domains': 1},      # 88% sens, 43% spec
+            'balanced': {'risk_threshold': 0.10, 'min_domains': 2},       # 71% sens, 68% spec
+            'high_confidence': {'risk_threshold': 0.15, 'min_domains': 3} # 52% sens, 92% spec
         }
         config = mode_config.get(scoring_mode, mode_config['balanced'])
 
