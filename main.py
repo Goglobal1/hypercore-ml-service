@@ -20937,10 +20937,10 @@ async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"
                 if patient_scores:
                     ps = patient_scores[0]
                     hc_risk = ps.get('risk_score', 0)
-                    hc_domains = ps.get('domains_alerting', 0)
+                    hc_domains = ps.get('num_domains', 0)
                 else:
                     hc_risk = hybrid_result.get('risk_score', 0)
-                    hc_domains = hybrid_result.get('domains_alerting', 0)
+                    hc_domains = hybrid_result.get('average_domains_alerting', 0)
 
             hc_alert = hc_risk >= config['risk_threshold'] and hc_domains >= config['min_domains']
             hypercore_predictions.append(hc_alert)
