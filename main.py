@@ -20804,7 +20804,7 @@ def health() -> Dict[str, Any]:
 # ---------------------------------------------------------------------
 
 @app.post("/compare")
-async def compare_systems(data: AnalysisInput, scoring_mode: str = "balanced"):
+async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"):
     """
     Compare HyperCore against NEWS, qSOFA, MEWS on data with known outcomes.
 
