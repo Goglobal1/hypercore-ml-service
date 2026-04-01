@@ -102,6 +102,13 @@ try:
 except ImportError:
     COMPARISON_UTILS_AVAILABLE = False
 
+# HyperCore v2.1 Algorithm - improved sensitivity across all modes
+try:
+    from hypercore_v21_optimal import HyperCoreV21, run_comparison_v21
+    HYPERCORE_V21_AVAILABLE = True
+except ImportError:
+    HYPERCORE_V21_AVAILABLE = False
+
 # Time-to-Harm Prediction Engine
 try:
     from app.core.time_to_harm import (
@@ -20823,6 +20830,8 @@ async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"
     - consciousness (AVPU scale, defaults to A)
 
     Returns calculated sensitivity, specificity, PPV for each system.
+
+    Algorithm: HyperCore v2.1 Optimal (multi-path alerting, clinical indices, advanced trajectory)
     """
     if not COMPARISON_UTILS_AVAILABLE:
         return {"error": "Comparison utilities not available", "status": "failed"}
@@ -20830,6 +20839,14 @@ async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"
     try:
         # Parse CSV
         df = pd.read_csv(io.StringIO(data.csv))
+
+        # Use HyperCore v2.1 if available (improved sensitivity across all modes)
+        if HYPERCORE_V21_AVAILABLE:
+            df['timestamp'] = pd.to_datetime(df.get('timestamp', pd.Timestamp.now()))
+            result = run_comparison_v21(df, scoring_mode)
+            result['algorithm_version'] = 'v2.1'
+            result['note'] = 'HyperCore v2.1: Multi-path alerting with clinical indices and advanced trajectory'
+            return result
 
         # Normalize column names
         df.columns = [c.lower().strip().replace(' ', '_') for c in df.columns]
