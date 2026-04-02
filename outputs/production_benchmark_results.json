@@ -1,0 +1,66 @@
+{
+  "benchmark_date": "2026-04-01",
+  "production_url": "https://hypercore-ml-service-production.up.railway.app",
+  "dataset": {
+    "source": "MIMIC-IV",
+    "records": 5504,
+    "patients": 206,
+    "positive_outcomes": 45
+  },
+  "modes": {
+    "screening": {
+      "sensitivity": 0.762,
+      "specificity": 0.713,
+      "ppv_at_5_percent": 0.123,
+      "pr_auc": 0.618,
+      "roc_auc": 0.792,
+      "lead_time_hours": 50.8,
+      "alerts_per_1000": 383,
+      "confusion_matrix": {"tp": 32, "fp": 47, "tn": 117, "fn": 10}
+    },
+    "balanced": {
+      "sensitivity": 0.738,
+      "specificity": 0.756,
+      "ppv_at_5_percent": 0.137,
+      "pr_auc": 0.618,
+      "roc_auc": 0.792,
+      "lead_time_hours": 51.5,
+      "alerts_per_1000": 345,
+      "confusion_matrix": {"tp": 31, "fp": 40, "tn": 124, "fn": 11}
+    },
+    "high_confidence": {
+      "sensitivity": 0.690,
+      "specificity": 0.811,
+      "ppv_at_5_percent": 0.161,
+      "pr_auc": 0.618,
+      "roc_auc": 0.792,
+      "lead_time_hours": 52.0,
+      "alerts_per_1000": 291,
+      "confusion_matrix": {"tp": 29, "fp": 31, "tn": 133, "fn": 13}
+    }
+  },
+  "vs_epic": {
+    "mode_used": "high_confidence",
+    "results": {
+      "sensitivity": {"hypercore": 0.690, "epic": 0.650, "delta": "+4.0%", "winner": "hypercore"},
+      "specificity": {"hypercore": 0.811, "epic": 0.800, "delta": "+1.1%", "winner": "hypercore"},
+      "ppv_at_5_percent": {"hypercore": 0.161, "epic": 0.146, "delta": "+1.5%", "winner": "hypercore"},
+      "lead_time_hours": {"hypercore": 52.0, "epic": 6.0, "delta": "+46h (8x)", "winner": "hypercore"},
+      "alerts_per_1000": {"hypercore": 291, "epic": 500, "delta": "-42%", "winner": "hypercore"}
+    },
+    "summary": "HyperCore HIGH_CONFIDENCE mode beats Epic on ALL Handler metrics"
+  },
+  "engine_components": {
+    "clinical_state_engine": true,
+    "domain_classifier": true,
+    "trajectory_engine": true,
+    "intelligence_layer": true,
+    "risk_calculator": true,
+    "time_to_harm_engine": true
+  },
+  "leakage_protection": {
+    "method": "rolling_window",
+    "future_data_used": false,
+    "outcome_label_used_in_scoring": false
+  }
+}
