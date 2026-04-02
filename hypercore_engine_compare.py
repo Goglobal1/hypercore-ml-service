@@ -455,6 +455,82 @@ class HyperCoreEngineScorer:
             "convergence_score": round(conv, 3), "multi_system_failure": n >= 3
         }
 
+    def _determine_alert_with_convergence(
+        self,
+        final_score: float,
+        n_endpoints_alerting: int,
+        cross_domain_patterns: List[str],
+        mode: str
+    ) -> Tuple[bool, str]:
+        """
+        Convergence-aware alert determination.
+        
+        CRITICAL FIX: Multi-system convergence should INCREASE specificity by:
+        - Suppressing single-system alerts (could be noise/measurement error)
+        - Confirming multi-system alerts (high confidence, rarely false positive)
+        
+        This FILTERS false positives rather than just adding to sensitivity.
+        """
+        # Base thresholds by mode
+        base_thresholds = {
+            "screening": 0.25,
+            "balanced": 0.35,
+            "high_confidence": 0.50
+        }
+        base_threshold = base_thresholds.get(mode, 0.35)
+        
+        # Determine adjusted threshold based on convergence
+        if n_endpoints_alerting == 0:
+            # No endpoints alerting - no alert regardless of score
+            return False, "no_endpoints_active"
+            
+        elif n_endpoints_alerting == 1:
+            # SINGLE SYSTEM ONLY - RAISE threshold significantly
+            # Single-system elevation could be:
+            # - Measurement error
+            # - Transient abnormality
+            # - Baseline variation
+            # Require MUCH higher score to alert on single system
+            adjusted_threshold = base_threshold + 0.25
+            reason = "single_system_high_threshold"
+            
+        elif n_endpoints_alerting == 2:
+            # Two systems - moderate confidence
+            # Still could be coincidental, use base threshold
+            adjusted_threshold = base_threshold + 0.05
+            reason = "dual_system_moderate"
+            
+        elif n_endpoints_alerting == 3:
+            # THREE systems - HIGH confidence
+            # Multi-system failure is rarely coincidental
+            # LOWER threshold because this is likely real
+            adjusted_threshold = base_threshold - 0.08
+            reason = "triple_system_confirmed"
+            
+        else:  # n_endpoints_alerting >= 4
+            # MAJOR convergence (4+ systems) - VERY high confidence
+            # Alert even at lower scores - this is almost certainly real
+            adjusted_threshold = base_threshold - 0.12
+            reason = "multi_system_convergence"
+        
+        # Additional adjustment for known high-risk patterns
+        high_risk_patterns = [
+            "cardiorenal_syndrome",
+            "sepsis_cascade", 
+            "multi_organ_dysfunction",
+            "hepatorenal_syndrome"
+        ]
+        pattern_match = [p for p in cross_domain_patterns if p in high_risk_patterns]
+        if pattern_match:
+            # Known dangerous patterns - slightly lower threshold
+            adjusted_threshold = max(0.15, adjusted_threshold - 0.05)
+            reason = f"{reason}_with_pattern"
+        
+        # Final decision
+        should_alert = final_score >= adjusted_threshold
+        
+        return should_alert, reason
+
     def score_patient(
         self,
         patient_df: pd.DataFrame,
@@ -619,13 +695,25 @@ class HyperCoreEngineScorer:
             # Fallback: manual state mapping
             clinical_state, state_name = self._map_score_to_state(risk_score)
 
-        # Determine alert based on mode config
+        # Determine alert using CONVERGENCE-AWARE logic
+        # This INCREASES specificity by filtering single-system noise
         n_domains = len(domains_detected)
-        should_alert = risk_score >= risk_threshold and n_domains >= min_domains
-
-        # If trajectory shows high risk, boost alert decision
-        if trajectory_analysis.get("risk_level") in ["high", "critical"]:
-            should_alert = should_alert or risk_score >= (risk_threshold * 0.8)
+        n_endpoints = cross_loop_analysis.get("n_endpoints_alerting", 0)
+        patterns = cross_loop_analysis.get("cross_domain_patterns", [])
+        
+        should_alert, alert_reason = self._determine_alert_with_convergence(
+            final_score=risk_score,
+            n_endpoints_alerting=n_endpoints,
+            cross_domain_patterns=patterns,
+            mode=operating_mode
+        )
+        
+        # Trajectory can still boost (but not override convergence filtering)
+        if not should_alert and trajectory_analysis.get("risk_level") == "critical":
+            # Only boost if multiple systems involved
+            if n_endpoints >= 2 and risk_score >= 0.50:
+                should_alert = True
+                alert_reason = "trajectory_critical_multi_system"
 
         # Step 7: Calculate baseline comparators
         news_score = compute_news(latest)
