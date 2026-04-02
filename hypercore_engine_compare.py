@@ -122,6 +122,8 @@ except ImportError:
 # =============================================================================
 # 24-ENDPOINT SYSTEM (v3.0 Upgrade)
 # =============================================================================
+import logging
+_log = logging.getLogger("hypercore_24ep")
 
 # 24-Endpoint Definitions
 try:
@@ -132,8 +134,10 @@ try:
         EndpointScorer,
     )
     ENDPOINTS_24_AVAILABLE = True
-except ImportError:
+    _log.info("24-Endpoint definitions loaded successfully")
+except Exception as e:
     ENDPOINTS_24_AVAILABLE = False
+    _log.error(f"Failed to load 24-endpoint definitions: {type(e).__name__}: {e}")
 
 # Cross-Loop Engine V2 (24 endpoints)
 try:
@@ -143,8 +147,10 @@ try:
         get_cross_loop_engine,
     )
     CROSS_LOOP_V2_AVAILABLE = True
-except ImportError:
+    _log.info("Cross-Loop Engine V2 loaded successfully")
+except Exception as e:
     CROSS_LOOP_V2_AVAILABLE = False
+    _log.error(f"Failed to load Cross-Loop V2: {type(e).__name__}: {e}")
 
 # Pathway Library
 try:
@@ -153,8 +159,10 @@ try:
         PathwayMatcher,
     )
     PATHWAY_LIBRARY_AVAILABLE = True
-except ImportError:
+    _log.info(f"Pathway Library loaded successfully ({len(PATHWAY_LIBRARY)} pathways)")
+except Exception as e:
     PATHWAY_LIBRARY_AVAILABLE = False
+    _log.error(f"Failed to load Pathway Library: {type(e).__name__}: {e}")
 
 # Handler Metrics
 try:
@@ -164,8 +172,10 @@ try:
         calculate_ppv_at_prevalence,
     )
     HANDLER_METRICS_AVAILABLE = True
-except ImportError:
+    _log.info("Handler Metrics loaded successfully")
+except Exception as e:
     HANDLER_METRICS_AVAILABLE = False
+    _log.error(f"Failed to load Handler Metrics: {type(e).__name__}: {e}")
 
 # =============================================================================
 # CONFIGURATION
