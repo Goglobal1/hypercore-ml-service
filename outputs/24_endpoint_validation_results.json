@@ -1,0 +1,73 @@
+{
+  "test_date": "2026-04-02",
+  "engine_version": "hypercore_v3.0_24endpoint",
+  "dataset": "MIMIC-IV",
+  "n_records": 5504,
+  "n_positive": 45,
+  "prevalence": 0.8,
+  "results_by_mode": {
+    "screening": {
+      "sensitivity": 0.911,
+      "specificity": 0.353,
+      "ppv": 0.011,
+      "ppv_at_5_percent": 0.069,
+      "roc_auc": 0.734,
+      "pr_auc": 0.184,
+      "alert_burden": 0.649
+    },
+    "balanced": {
+      "sensitivity": 0.756,
+      "specificity": 0.433,
+      "ppv": 0.011,
+      "ppv_at_5_percent": 0.066,
+      "roc_auc": 0.72,
+      "pr_auc": 0.188,
+      "alert_burden": 0.568
+    },
+    "high_confidence": {
+      "sensitivity": 0.667,
+      "specificity": 0.719,
+      "ppv": 0.019,
+      "ppv_at_5_percent": 0.111,
+      "roc_auc": 0.705,
+      "pr_auc": 0.149,
+      "alert_burden": 0.284
+    }
+  },
+  "vs_epic": {
+    "hypercore_sensitivity": 0.667,
+    "epic_sensitivity": 0.65,
+    "sensitivity_advantage": "+1.7 pts",
+    "hypercore_specificity": 0.719,
+    "epic_specificity": 0.8,
+    "specificity_gap": "-8.1 pts",
+    "hypercore_lead_time": 50,
+    "epic_lead_time": 6,
+    "lead_time_advantage": "+44 hours"
+  },
+  "system_features": {
+    "endpoints_analyzed": 24,
+    "pathways_in_library": 34,
+    "cross_loop_analysis": true,
+    "multi_system_detection": true,
+    "universal_data_ingest": true,
+    "handler_metrics_embedded": true
+  },
+  "sample_positive_case": {
+    "endpoints_alerting": [
+      "cardiac",
+      "renal",
+      "hemodynamic",
+      "metabolic",
+      "infectious_pathogenic"
+    ],
+    "convergence_score": 0.9,
+    "convergence_type": "multi_system_pathway",
+    "detected_pathways": [
+      "acute_kidney_injury",
+      "arrhythmia_metabolic_trigger",
+      "cardiorenal_syndrome"
+    ],
+    "urgency": "critical"
+  }
+}

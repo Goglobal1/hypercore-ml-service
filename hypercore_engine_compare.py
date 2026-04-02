@@ -118,6 +118,55 @@ except ImportError:
     PIPELINE_AVAILABLE = False
 
 
+
+# =============================================================================
+# 24-ENDPOINT SYSTEM (v3.0 Upgrade)
+# =============================================================================
+
+# 24-Endpoint Definitions
+try:
+    from app.core.endpoints.endpoint_definitions import (
+        ENDPOINT_DEFINITIONS,
+        ENDPOINT_CATEGORIES,
+        ALL_ENDPOINTS,
+        EndpointScorer,
+    )
+    ENDPOINTS_24_AVAILABLE = True
+except ImportError:
+    ENDPOINTS_24_AVAILABLE = False
+
+# Cross-Loop Engine V2 (24 endpoints)
+try:
+    from app.core.cross_loop_engine_v2 import (
+        CrossLoopEngineV2,
+        CrossLoopResult,
+        get_cross_loop_engine,
+    )
+    CROSS_LOOP_V2_AVAILABLE = True
+except ImportError:
+    CROSS_LOOP_V2_AVAILABLE = False
+
+# Pathway Library
+try:
+    from app.core.pathways.pathway_library import (
+        PATHWAY_LIBRARY,
+        PathwayMatcher,
+    )
+    PATHWAY_LIBRARY_AVAILABLE = True
+except ImportError:
+    PATHWAY_LIBRARY_AVAILABLE = False
+
+# Handler Metrics
+try:
+    from app.core.handler_metrics import (
+        calculate_handler_metrics,
+        add_clinical_validation,
+        calculate_ppv_at_prevalence,
+    )
+    HANDLER_METRICS_AVAILABLE = True
+except ImportError:
+    HANDLER_METRICS_AVAILABLE = False
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -350,6 +399,11 @@ class HyperCoreEngineScorer:
             "intelligence_layer": self.intelligence is not None,
             "risk_calculator": RISK_CALCULATOR_AVAILABLE,
             "time_to_harm_engine": TTH_AVAILABLE and self.tth_engine is not None,
+            # 24-Endpoint System (v3.0)
+            "endpoints_24": ENDPOINTS_24_AVAILABLE if 'ENDPOINTS_24_AVAILABLE' in dir() else False,
+            "cross_loop_v2": CROSS_LOOP_V2_AVAILABLE if 'CROSS_LOOP_V2_AVAILABLE' in dir() else False,
+            "pathway_library": PATHWAY_LIBRARY_AVAILABLE if 'PATHWAY_LIBRARY_AVAILABLE' in dir() else False,
+            "handler_metrics": HANDLER_METRICS_AVAILABLE if 'HANDLER_METRICS_AVAILABLE' in dir() else False,
         }
 
     def _init_engines(self):
@@ -901,7 +955,7 @@ class HyperCoreEngineScorer:
             "engine_based": True,
             "components": self.components_available,
             "all_components_active": all(self.components_available.values()),
-            "version": "engine_v1.0",
+            "version": "engine_v3.0_24endpoint",
         }
 
 
