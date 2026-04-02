@@ -168,6 +168,10 @@ class EngineScoreResult:
     alert_fired: bool
     alert_type: str
     confidence: float
+    # 8-ENDPOINT INDIVIDUAL ANALYSES (the core architecture)
+    endpoint_analyses: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    # Cross-loop analysis (convergence detection)
+    cross_loop_analysis: Dict[str, Any] = field(default_factory=dict)
     # Time-to-Harm prediction (HyperCore key advantage)
     lead_time_hours: Optional[float] = None
     intervention_window: Optional[str] = None  # immediate, urgent, monitor, stable
@@ -371,6 +375,86 @@ class HyperCoreEngineScorer:
         if TTH_AVAILABLE:
             self.tth_engine = TimeToHarmEngine()
 
+    def analyze_all_endpoints(
+        self,
+        vitals: Dict[str, float],
+        labs: Dict[str, float]
+    ) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Any]]:
+        """
+        Perform INDIVIDUAL analysis for each of the 8 clinical endpoints.
+        Then cross-reference them for convergence detection.
+        """
+        ENDPOINTS = ["cardiac", "kidney", "respiratory", "metabolic",
+                     "inflammatory", "hemodynamic", "hematologic", "hepatic"]
+
+        DOMAIN_MAP = {
+            "cardiac": "cardiac", "kidney": "kidney", "respiratory": "respiratory",
+            "metabolic": "metabolic", "inflammatory": "sepsis", "hemodynamic": "sepsis",
+            "hematologic": "hematologic", "hepatic": "hepatic"
+        }
+
+        ENDPOINT_BIOMARKERS = {
+            "cardiac": ["heart_rate", "troponin", "bnp", "sbp"],
+            "kidney": ["creatinine", "bun", "potassium"],
+            "respiratory": ["respiratory_rate", "spo2", "pao2", "fio2"],
+            "metabolic": ["lactate", "glucose", "ph"],
+            "inflammatory": ["temperature", "wbc", "crp", "procalcitonin"],
+            "hemodynamic": ["sbp", "map", "heart_rate"],
+            "hematologic": ["platelets", "hemoglobin", "inr"],
+            "hepatic": ["bilirubin", "alt", "ast", "albumin"]
+        }
+
+        all_data = {**vitals, **labs}
+        endpoint_results = {}
+        alerting_endpoints = []
+
+        for endpoint in ENDPOINTS:
+            markers = ENDPOINT_BIOMARKERS.get(endpoint, [])
+            ep_data = {k: v for k, v in all_data.items() if k.lower() in [m.lower() for m in markers]}
+
+            if RISK_CALCULATOR_AVAILABLE and ep_data:
+                domain = DOMAIN_MAP.get(endpoint, "sepsis")
+                result = calculate_risk_score(domain, ep_data, {})
+                score = result.get("risk_score", 0.0)
+                critical = result.get("critical_biomarkers", [])
+                warning = result.get("warning_biomarkers", [])
+            else:
+                score, critical, warning = 0.0, [], []
+
+            status = "critical" if score >= 0.8 else ("elevated" if score >= 0.5 else ("borderline" if score >= 0.3 else "normal"))
+            trajectory = "worsening" if score >= 0.8 else ("concerning" if score >= 0.5 else "stable")
+
+            endpoint_results[endpoint] = {
+                "score": round(score, 3), "status": status,
+                "biomarkers_flagged": critical + warning,
+                "trajectory": trajectory
+            }
+            if score >= 0.5:
+                alerting_endpoints.append(endpoint)
+
+        cross_loop = self._cross_loop_analysis(endpoint_results, alerting_endpoints)
+        return endpoint_results, cross_loop
+
+    def _cross_loop_analysis(self, endpoint_results: Dict, alerting_endpoints: List[str]) -> Dict:
+        """Cross-reference all 8 endpoint results to detect multi-system patterns."""
+        n = len(alerting_endpoints)
+        patterns = []
+        if "cardiac" in alerting_endpoints and "kidney" in alerting_endpoints:
+            patterns.append("cardiorenal_syndrome")
+        if len({"inflammatory", "hemodynamic", "metabolic"} & set(alerting_endpoints)) >= 2:
+            patterns.append("sepsis_cascade")
+        if "hepatic" in alerting_endpoints and "kidney" in alerting_endpoints:
+            patterns.append("hepatorenal_syndrome")
+        if n >= 3:
+            patterns.append("multi_organ_dysfunction")
+
+        conv = 0.9 if n >= 4 else (0.7 if n >= 3 else (0.5 if n >= 2 else 0.0))
+        return {
+            "endpoints_alerting": alerting_endpoints, "n_endpoints_alerting": n,
+            "cross_domain_patterns": patterns, "convergence_detected": n >= 2,
+            "convergence_score": round(conv, 3), "multi_system_failure": n >= 3
+        }
+
     def score_patient(
         self,
         patient_df: pd.DataFrame,
@@ -401,6 +485,9 @@ class HyperCoreEngineScorer:
         vitals = self._extract_vitals(latest)
         lab_data = self._extract_labs(latest)
         biomarker_list = list(lab_data.keys()) + list(vitals.keys())
+
+        # Step 1.5: PERFORM 8-ENDPOINT INDIVIDUAL ANALYSES + CROSS-LOOP
+        endpoint_analyses, cross_loop_analysis = self.analyze_all_endpoints(vitals, lab_data)
 
         # Step 2: Calculate risk score using RiskCalculator
         risk_score = 0.0
@@ -615,6 +702,8 @@ class HyperCoreEngineScorer:
             alert_fired=should_alert or alert_fired,
             alert_type=alert_type,
             confidence=final_confidence,
+            endpoint_analyses=endpoint_analyses,
+            cross_loop_analysis=cross_loop_analysis,
             lead_time_hours=lead_time_hours,
             intervention_window=intervention_window,
             tth_confidence=tth_confidence,
@@ -818,6 +907,9 @@ def run_engine_comparison(
             "lead_time_hours": final_lead_time,
             "intervention_window": engine_result.intervention_window,
             "tth_confidence": engine_result.tth_confidence,
+            # 8-Endpoint Individual Analyses
+            "endpoint_analyses": engine_result.endpoint_analyses,
+            "cross_loop_analysis": engine_result.cross_loop_analysis,
             # Baseline comparators
             "news_score": engine_result.news_score,
             "news_alert": engine_result.news_score >= 5 if engine_result.news_score else None,
