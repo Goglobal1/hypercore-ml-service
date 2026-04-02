@@ -787,7 +787,7 @@ class HyperCoreEngineScorer:
             contributing_biomarkers=contributing_biomarkers,
             trajectory_analysis=trajectory_analysis,
             intelligence_insight=intelligence_insight,
-            alert_fired=should_alert or alert_fired,
+            alert_fired=should_alert,  # Uses convergence filtering ONLY
             alert_type=alert_type,
             confidence=final_confidence,
             endpoint_analyses=endpoint_analyses,
