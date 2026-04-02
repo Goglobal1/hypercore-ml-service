@@ -2,7 +2,13 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Cache bust: 2026-04-02-v4-force-deploy
+# Install build dependencies (gcc/g++ needed for shap, ruptures)
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Cache bust: 2026-04-02-v5
 RUN echo "Build timestamp: $(date)"
 
 # Install dependencies first (layer caching)
