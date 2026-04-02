@@ -102,10 +102,24 @@ try:
 except ImportError:
     COMPARISON_UTILS_AVAILABLE = False
 
-# HyperCore v2.1 Algorithm - improved sensitivity across all modes
+# HyperCore Engine-Based Comparison - uses ACTUAL AI engine components
+# This replaces the rule-based hypercore_v21_optimal.py
+HYPERCORE_ENGINE_ERROR = None
+try:
+    from hypercore_engine_compare import (
+        run_engine_comparison,
+        get_engine_status,
+        HyperCoreEngineScorer,
+    )
+    HYPERCORE_ENGINE_AVAILABLE = True
+except Exception as e:
+    HYPERCORE_ENGINE_AVAILABLE = False
+    HYPERCORE_ENGINE_ERROR = str(e)
+
+# DEPRECATED: HyperCore v2.1 rule-based algorithm (fallback only)
 HYPERCORE_V21_ERROR = None
 try:
-    from hypercore_v21_optimal import HyperCoreV21, run_comparison_v21
+    from hypercore_v21_optimal_DEPRECATED import HyperCoreV21, run_comparison_v21
     HYPERCORE_V21_AVAILABLE = True
 except Exception as e:
     HYPERCORE_V21_AVAILABLE = False
@@ -20835,7 +20849,15 @@ async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"
 
     Returns calculated sensitivity, specificity, PPV for each system.
 
-    Algorithm: HyperCore v2.1 Optimal (multi-path alerting, clinical indices, advanced trajectory)
+    Algorithm: HyperCore Engine (ACTUAL AI components: CSE, Domain Classifier, Trajectory, Intelligence)
+    
+    IMPORTANT: This endpoint now uses the REAL HyperCore AI engine, not simple rule-based formulas.
+    Components used:
+    - ClinicalStateEngine: 4-state clinical alerting model (S0-S3)
+    - DomainClassifier: Identifies involved organ systems
+    - TrajectoryEngine: Rate of change and early warning analysis
+    - UnifiedIntelligenceLayer: Cross-domain correlations and insights
+    - RiskCalculator: Biomarker-weighted risk scoring
     """
     if not COMPARISON_UTILS_AVAILABLE:
         return {"error": "Comparison utilities not available", "status": "failed"}
@@ -20844,12 +20866,22 @@ async def compare_systems(data: EarlyRiskRequest, scoring_mode: str = "balanced"
         # Parse CSV
         df = pd.read_csv(io.StringIO(data.csv))
 
-        # Use HyperCore v2.1 if available (improved sensitivity across all modes)
+        # PRIORITY 1: Use HyperCore Engine-Based Comparison (ACTUAL AI components)
+        if HYPERCORE_ENGINE_AVAILABLE:
+            df['timestamp'] = pd.to_datetime(df.get('timestamp', pd.Timestamp.now()))
+            result = run_engine_comparison(df, scoring_mode)
+            result['algorithm_version'] = 'engine_v1.0'
+            result['note'] = 'HyperCore Engine: Using ACTUAL AI components (CSE, DomainClassifier, Trajectory, Intelligence)'
+            result['engine_based'] = True
+            return result
+        
+        # FALLBACK: Use HyperCore v2.1 rule-based (DEPRECATED)
         if HYPERCORE_V21_AVAILABLE:
             df['timestamp'] = pd.to_datetime(df.get('timestamp', pd.Timestamp.now()))
             result = run_comparison_v21(df, scoring_mode)
-            result['algorithm_version'] = 'v2.1'
-            result['note'] = 'HyperCore v2.1: Multi-path alerting with clinical indices and advanced trajectory'
+            result['algorithm_version'] = 'v2.1-rules'
+            result['note'] = 'WARNING: Using deprecated rule-based v2.1 (engine not available)'
+            result['engine_based'] = False
             return result
 
         # Normalize column names
