@@ -409,10 +409,10 @@ class HyperCoreEngineScorer:
             "risk_calculator": RISK_CALCULATOR_AVAILABLE,
             "time_to_harm_engine": TTH_AVAILABLE and self.tth_engine is not None,
             # 24-Endpoint System (v3.0)
-            "endpoints_24": ENDPOINTS_24_AVAILABLE if 'ENDPOINTS_24_AVAILABLE' in dir() else False,
-            "cross_loop_v2": CROSS_LOOP_V2_AVAILABLE if 'CROSS_LOOP_V2_AVAILABLE' in dir() else False,
-            "pathway_library": PATHWAY_LIBRARY_AVAILABLE if 'PATHWAY_LIBRARY_AVAILABLE' in dir() else False,
-            "handler_metrics": HANDLER_METRICS_AVAILABLE if 'HANDLER_METRICS_AVAILABLE' in dir() else False,
+            "endpoints_24": ENDPOINTS_24_AVAILABLE,
+            "cross_loop_v2": CROSS_LOOP_V2_AVAILABLE,
+            "pathway_library": PATHWAY_LIBRARY_AVAILABLE,
+            "handler_metrics": HANDLER_METRICS_AVAILABLE,
         }
 
     def _init_engines(self):
