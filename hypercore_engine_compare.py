@@ -122,8 +122,7 @@ except ImportError:
 # =============================================================================
 # 24-ENDPOINT SYSTEM (v3.0 Upgrade)
 # =============================================================================
-import logging
-_log = logging.getLogger("hypercore_24ep")
+import sys
 
 # 24-Endpoint Definitions
 try:
@@ -134,10 +133,10 @@ try:
         EndpointScorer,
     )
     ENDPOINTS_24_AVAILABLE = True
-    _log.info("24-Endpoint definitions loaded successfully")
+    print("[HYPERCORE] 24-Endpoint definitions loaded OK", file=sys.stderr)
 except Exception as e:
     ENDPOINTS_24_AVAILABLE = False
-    _log.error(f"Failed to load 24-endpoint definitions: {type(e).__name__}: {e}")
+    print(f"[HYPERCORE] FAILED endpoints: {type(e).__name__}: {e}", file=sys.stderr)
 
 # Cross-Loop Engine V2 (24 endpoints)
 try:
@@ -147,10 +146,10 @@ try:
         get_cross_loop_engine,
     )
     CROSS_LOOP_V2_AVAILABLE = True
-    _log.info("Cross-Loop Engine V2 loaded successfully")
+    print("[HYPERCORE] Cross-Loop V2 loaded OK", file=sys.stderr)
 except Exception as e:
     CROSS_LOOP_V2_AVAILABLE = False
-    _log.error(f"Failed to load Cross-Loop V2: {type(e).__name__}: {e}")
+    print(f"[HYPERCORE] FAILED cross_loop_v2: {type(e).__name__}: {e}", file=sys.stderr)
 
 # Pathway Library
 try:
@@ -159,10 +158,10 @@ try:
         PathwayMatcher,
     )
     PATHWAY_LIBRARY_AVAILABLE = True
-    _log.info(f"Pathway Library loaded successfully ({len(PATHWAY_LIBRARY)} pathways)")
+    print(f"[HYPERCORE] Pathway Library loaded OK ({len(PATHWAY_LIBRARY)} pathways)", file=sys.stderr)
 except Exception as e:
     PATHWAY_LIBRARY_AVAILABLE = False
-    _log.error(f"Failed to load Pathway Library: {type(e).__name__}: {e}")
+    print(f"[HYPERCORE] FAILED pathway_library: {type(e).__name__}: {e}", file=sys.stderr)
 
 # Handler Metrics
 try:
@@ -172,10 +171,10 @@ try:
         calculate_ppv_at_prevalence,
     )
     HANDLER_METRICS_AVAILABLE = True
-    _log.info("Handler Metrics loaded successfully")
+    print("[HYPERCORE] Handler Metrics loaded OK", file=sys.stderr)
 except Exception as e:
     HANDLER_METRICS_AVAILABLE = False
-    _log.error(f"Failed to load Handler Metrics: {type(e).__name__}: {e}")
+    print(f"[HYPERCORE] FAILED handler_metrics: {type(e).__name__}: {e}", file=sys.stderr)
 
 # =============================================================================
 # CONFIGURATION
