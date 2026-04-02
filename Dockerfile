@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Cache bust: 2026-04-02-v3
+# Cache bust: 2026-04-02-v4-force-deploy
 RUN echo "Build timestamp: $(date)"
 
 # Install dependencies first (layer caching)
