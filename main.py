@@ -227,6 +227,16 @@ try:
 except ImportError:
     UNIVERSAL_INGESTION_AVAILABLE = False
 
+# Phase 6: Utility Engine (Alert Decision Layer)
+try:
+    from routes import utility_router, event_router, feedback_router
+    from utility import get_utility_engine, get_event_manager, get_feedback_tracker
+    UTILITY_ENGINE_AVAILABLE = True
+    print("[HYPERCORE] Phase 6 Utility Engine: OK")
+except ImportError as e:
+    UTILITY_ENGINE_AVAILABLE = False
+    print(f"[HYPERCORE] Utility engine not available: {e}")
+
 # Trajectory Analysis System (Early Warning Engine)
 try:
     from app.core.trajectory import (
@@ -478,6 +488,12 @@ if ALERT_SYSTEM_AVAILABLE:
 # Include universal data ingestion router (always available - never fails)
 if UNIVERSAL_INGESTION_AVAILABLE:
     app.include_router(universal_router)
+
+# Include Phase 6 Utility Engine routers
+if UTILITY_ENGINE_AVAILABLE:
+    app.include_router(utility_router)
+    app.include_router(event_router)
+    app.include_router(feedback_router)
 
 # Startup event handler - preload data for faster first requests
 @app.on_event("startup")
