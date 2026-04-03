@@ -8,6 +8,8 @@ from typing import Dict, List, Optional, Tuple
 from enum import Enum
 from datetime import datetime, timedelta
 
+from .events import get_event_manager
+
 
 class EmissionDecision(Enum):
     FIRE = "fire"
@@ -176,35 +178,22 @@ class UtilityEngine:
     ) -> Tuple[Optional[Dict], bool]:
         """
         Check if this alert belongs to an existing clinical event
-        or if it represents a new event.
+        or if it represents a new event. Uses EventManager for Redis persistence.
         """
         alert_type = proposed_alert.get('type', '')
         endpoint = proposed_alert.get('endpoint', '')
 
-        # Look for active event of same type
-        for event in event_history:
-            if event.get('status') != 'active':
-                continue
+        # Use EventManager for proper Redis persistence
+        event_manager = get_event_manager()
+        event, is_new = event_manager.detect_or_link_event(
+            patient_id=patient_id,
+            alert_type=alert_type,
+            endpoint=endpoint,
+            analysis=analysis,
+            alert_id=proposed_alert.get('id')
+        )
 
-            # Match by type or primary endpoint
-            if (event.get('event_type') == alert_type or
-                event.get('primary_endpoint') == endpoint):
-                # This is an update to existing event
-                return event, False
-
-        # No matching event - this is new
-        new_event = {
-            'id': f"EVT-{patient_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
-            'patient_id': patient_id,
-            'event_type': alert_type,
-            'primary_endpoint': endpoint,
-            'first_detected_at': datetime.now().isoformat(),
-            'alert_count': 1,
-            'current_severity': analysis.get('clinical_state', 'warning'),
-            'status': 'active'
-        }
-
-        return new_event, True
+        return event.to_dict(), is_new
 
     def _calculate_information_gain(
         self,
