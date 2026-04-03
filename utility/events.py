@@ -1,6 +1,7 @@
 """
 Clinical Event Detection and Management
 Links alerts to underlying clinical issues
+Uses Redis for persistence
 """
 
 from datetime import datetime, timedelta
@@ -8,6 +9,8 @@ from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 import uuid
+
+from .redis_store import get_redis_store
 
 
 class EventStatus(Enum):
@@ -42,17 +45,19 @@ class ClinicalEvent:
     def to_dict(self) -> Dict:
         return asdict(self)
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'ClinicalEvent':
+        return cls(**data)
+
 
 class EventManager:
     """
     Manages clinical events and their lifecycle.
-    In production, this would interact with a database.
-    For now, we use in-memory storage with optional persistence.
+    Uses Redis for persistence, falls back to in-memory.
     """
 
     def __init__(self):
-        # In-memory event storage (replace with DB in production)
-        self._events: Dict[str, ClinicalEvent] = {}
+        self._store = get_redis_store()
 
     def detect_or_link_event(
         self,
@@ -66,82 +71,79 @@ class EventManager:
         Find existing event or create new one.
         Returns: (event, is_new)
         """
-        # Look for active event matching this alert
-        for event in self._events.values():
-            if event.patient_id != patient_id:
-                continue
-            if event.status != EventStatus.ACTIVE.value:
-                continue
+        # Check Redis for existing event
+        existing = self._store.find_matching_event(patient_id, alert_type, endpoint)
 
-            # Match by type or endpoint
-            if event.event_type == alert_type or event.primary_endpoint == endpoint:
-                # Update existing event
-                event.alert_count += 1
-                event.last_alert_at = datetime.now().isoformat()
-                event.current_severity = analysis.get('clinical_state', event.current_severity)
+        if existing:
+            # Update existing event
+            existing['alert_count'] = existing.get('alert_count', 1) + 1
+            existing['last_alert_at'] = datetime.now().isoformat()
+            existing['current_severity'] = analysis.get('clinical_state', existing.get('current_severity'))
 
-                # Update trajectory based on score change
-                velocity = analysis.get('velocity', 'stable')
-                if velocity in ['rapid_worsening', 'worsening']:
-                    event.trajectory = EventTrajectory.WORSENING.value
-                elif velocity in ['rapid_improving', 'improving']:
-                    event.trajectory = EventTrajectory.IMPROVING.value
-                else:
-                    event.trajectory = EventTrajectory.STABLE.value
+            # Update trajectory based on velocity
+            velocity = analysis.get('velocity', 'stable')
+            if velocity in ['rapid_worsening', 'worsening']:
+                existing['trajectory'] = EventTrajectory.WORSENING.value
+            elif velocity in ['rapid_improving', 'improving']:
+                existing['trajectory'] = EventTrajectory.IMPROVING.value
+            else:
+                existing['trajectory'] = EventTrajectory.STABLE.value
 
-                return event, False
+            self._store.save_event(existing)
+            return ClinicalEvent.from_dict(existing), False
 
         # Create new event
-        new_event = ClinicalEvent(
-            id=f"EVT-{uuid.uuid4().hex[:12]}",
-            patient_id=patient_id,
-            event_type=alert_type,
-            primary_endpoint=endpoint,
-            first_detected_at=datetime.now().isoformat(),
-            first_alert_id=alert_id,
-            alert_count=1,
-            current_severity=analysis.get('clinical_state', 'warning'),
-            trajectory=EventTrajectory.WORSENING.value,
-            last_alert_at=datetime.now().isoformat(),
-            status=EventStatus.ACTIVE.value,
-            resolved_at=None,
-            resolution_type=None
-        )
+        new_event = {
+            'id': f"EVT-{uuid.uuid4().hex[:12]}",
+            'patient_id': patient_id,
+            'event_type': alert_type,
+            'primary_endpoint': endpoint,
+            'first_detected_at': datetime.now().isoformat(),
+            'first_alert_id': alert_id,
+            'alert_count': 1,
+            'current_severity': analysis.get('clinical_state', 'warning'),
+            'trajectory': EventTrajectory.WORSENING.value,
+            'last_alert_at': datetime.now().isoformat(),
+            'status': EventStatus.ACTIVE.value,
+            'resolved_at': None,
+            'resolution_type': None
+        }
 
-        self._events[new_event.id] = new_event
-        return new_event, True
+        self._store.save_event(new_event)
+        return ClinicalEvent.from_dict(new_event), True
 
     def get_event(self, event_id: str) -> Optional[ClinicalEvent]:
-        return self._events.get(event_id)
+        event_dict = self._store.get_event(event_id)
+        if event_dict:
+            return ClinicalEvent.from_dict(event_dict)
+        return None
 
     def get_patient_events(
         self,
         patient_id: str,
         status: Optional[str] = None
     ) -> List[ClinicalEvent]:
-        events = [e for e in self._events.values() if e.patient_id == patient_id]
-        if status:
-            events = [e for e in events if e.status == status]
-        return events
+        event_dicts = self._store.get_patient_events(patient_id, status)
+        return [ClinicalEvent.from_dict(e) for e in event_dicts]
 
     def resolve_event(
         self,
         event_id: str,
         resolution_type: str
     ) -> Optional[ClinicalEvent]:
-        event = self._events.get(event_id)
+        event = self._store.get_event(event_id)
         if event:
-            event.status = EventStatus.RESOLVED.value
-            event.resolved_at = datetime.now().isoformat()
-            event.resolution_type = resolution_type
-            event.trajectory = EventTrajectory.RESOLVED.value
-        return event
+            event['status'] = EventStatus.RESOLVED.value
+            event['resolved_at'] = datetime.now().isoformat()
+            event['resolution_type'] = resolution_type
+            event['trajectory'] = EventTrajectory.RESOLVED.value
+            self._store.save_event(event)
+            return ClinicalEvent.from_dict(event)
+        return None
 
     def get_active_events_count(self, patient_id: str) -> int:
-        return len([
-            e for e in self._events.values()
-            if e.patient_id == patient_id and e.status == EventStatus.ACTIVE.value
-        ])
+        events = self._store.get_patient_events(patient_id, status=EventStatus.ACTIVE.value)
+        return len(events)
 
 
 # Singleton instance
