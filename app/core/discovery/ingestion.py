@@ -610,13 +610,21 @@ class UniversalIngestion:
 
         endpoints_available = [ep for ep, data_dict in endpoint_data.items() if data_dict]
 
+        # Build reference_ranges for each endpoint that has data
+        reference_ranges = {}
+        for ep in endpoints_available:
+            if ep in BIOMARKER_MAPPINGS:
+                reference_ranges[ep] = BIOMARKER_MAPPINGS[ep]
+
         return {
             'success': True,
             'columns_mapped': mapped_columns,
             'endpoints_available': endpoints_available,
             'endpoint_count': len(endpoints_available),
             'endpoint_data': {ep: data_dict for ep, data_dict in endpoint_data.items() if data_dict},
+            'reference_ranges': reference_ranges,
             'unmapped_columns': unmapped,
             'patient_count': len(data),
+            'total_columns': len(data.columns),
             'message': f"Mapped {len(mapped_columns)} columns to {len(endpoints_available)} endpoints"
         }
