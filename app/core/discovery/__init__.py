@@ -21,6 +21,7 @@ from .convergence import ConvergenceDetector, ConvergenceResult
 from .disease_identification import DiseaseIdentifier, DiseaseMatch
 from .anomaly_detection import AnomalyDetector, Anomaly
 from .output import OutputBuilder, DiscoveryOutput
+from .hospital_aggregate import HospitalAggregator, HospitalAggregate, get_hospital_aggregator
 
 __all__ = [
     'DiscoveryEngine', 'get_discovery_engine',
@@ -29,5 +30,6 @@ __all__ = [
     'ConvergenceDetector', 'ConvergenceResult',
     'DiseaseIdentifier', 'DiseaseMatch',
     'AnomalyDetector', 'Anomaly',
-    'OutputBuilder', 'DiscoveryOutput'
+    'OutputBuilder', 'DiscoveryOutput',
+    'HospitalAggregator', 'HospitalAggregate', 'get_hospital_aggregator'
 ]

@@ -109,6 +109,41 @@ class DiscoveryEngine:
         else:
             return self.discover(json_data)
 
+    def discover_single(self, patient_data: Dict) -> Dict[str, Any]:
+        """
+        Analyze a SINGLE patient.
+
+        This is the real-time analysis that happens when a nurse/doctor
+        inputs one patient.
+
+        Args:
+            patient_data: Dict with patient biomarker values
+
+        Returns:
+            Analysis result for this one patient
+        """
+        # Convert single patient to DataFrame
+        if isinstance(patient_data, dict):
+            df = pd.DataFrame([patient_data])
+        else:
+            df = pd.DataFrame(patient_data)
+
+        # Run full discovery
+        result = self.discover(df)
+
+        # Add single-patient specific fields
+        result['patient_id'] = patient_data.get(
+            'patient_id',
+            patient_data.get('id', 'Unknown')
+        )
+        result['analysis_type'] = 'individual'
+
+        # Determine overall risk level from summary
+        summary = result.get('summary', {})
+        result['risk_level'] = summary.get('overall_risk', 'unknown')
+
+        return result
+
     def quick_scan(self, data: Union[pd.DataFrame, Dict, List]) -> Dict[str, Any]:
         """
         Quick scan - just convergence and critical issues.

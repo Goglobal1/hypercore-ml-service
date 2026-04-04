@@ -6581,6 +6581,104 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
 
 
 # ---------------------------------------------------------------------
+# DISCOVERY ENGINE - Hospital Aggregate & Single Patient
+# ---------------------------------------------------------------------
+
+# Hospital Aggregator singleton
+_hospital_aggregator = None
+
+def get_hospital_aggregator():
+    """Get singleton hospital aggregator."""
+    global _hospital_aggregator
+    if _hospital_aggregator is None:
+        if DISCOVERY_ENGINE_AVAILABLE:
+            from app.core.discovery.hospital_aggregate import HospitalAggregator
+            _hospital_aggregator = HospitalAggregator(get_discovery_engine())
+    return _hospital_aggregator
+
+
+@app.post("/discovery/patient")
+async def analyze_single_patient(request: Request):
+    """
+    Analyze a SINGLE patient.
+
+    Used by: Nurses, Doctors when inputting patient data
+    Returns: Individual patient analysis + alert decision
+    """
+    if not DISCOVERY_ENGINE_AVAILABLE:
+        return {"success": False, "error": "Discovery engine not available"}
+
+    try:
+        body = await request.json()
+        aggregator = get_hospital_aggregator()
+        result = aggregator.analyze_single_patient(body)
+        return result
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/discovery/hospital")
+async def analyze_hospital(request: Request):
+    """
+    Analyze ALL patients for executive dashboard.
+
+    Used by: CMO, Executives, Hospital administrators
+    Returns: Hospital-wide aggregate view
+    """
+    if not DISCOVERY_ENGINE_AVAILABLE:
+        return {"success": False, "error": "Discovery engine not available"}
+
+    try:
+        body = await request.json()
+        patients = body.get('patients', body.get('data', []))
+        include_trends = body.get('include_trends', True)
+        include_clustering = body.get('include_clustering', True)
+
+        aggregator = get_hospital_aggregator()
+        result = aggregator.analyze_hospital(
+            patients,
+            include_trends=include_trends,
+            include_clustering=include_clustering
+        )
+
+        return result.to_dict()
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/discovery/hospital/live")
+async def get_live_hospital_view():
+    """
+    Get current hospital view from cached patient analyses.
+
+    Used by: Dashboard polling, real-time updates
+    Returns: Current aggregate based on cached patient data
+    """
+    if not DISCOVERY_ENGINE_AVAILABLE:
+        return {"success": False, "error": "Discovery engine not available"}
+
+    try:
+        aggregator = get_hospital_aggregator()
+
+        # Use cached patient data
+        if aggregator and aggregator.patient_cache:
+            patients = list(aggregator.patient_cache.values())
+            result = aggregator._aggregate_results(patients, True, True)
+            return result.to_dict()
+        else:
+            return {
+                "timestamp": datetime.utcnow().isoformat(),
+                "total_patients": 0,
+                "critical_count": 0,
+                "high_risk_count": 0,
+                "executive_summary": "No patients currently in system.",
+                "recommendations": ["Add patients to begin monitoring"]
+            }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ---------------------------------------------------------------------
 # TRAJECTORY ANALYSIS - Early Warning Engine
 # ---------------------------------------------------------------------
 
