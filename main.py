@@ -237,6 +237,15 @@ except ImportError as e:
     UTILITY_ENGINE_AVAILABLE = False
     print(f"[HYPERCORE] Utility engine not available: {e}")
 
+# Discovery Engine (6-Layer Disease Discovery)
+try:
+    from app.core.discovery import DiscoveryEngine, get_discovery_engine
+    DISCOVERY_ENGINE_AVAILABLE = True
+    print("[HYPERCORE] Discovery Engine: OK")
+except ImportError as e:
+    DISCOVERY_ENGINE_AVAILABLE = False
+    print(f"[HYPERCORE] Discovery engine not available: {e}")
+
 # Trajectory Analysis System (Early Warning Engine)
 try:
     from app.core.trajectory import (
@@ -1602,6 +1611,56 @@ class EarlyRiskResponse(BaseModel):
     report_data: Optional[Dict[str, Any]] = None
     # CLINICAL VALIDATION METRICS - PPV at realistic prevalence, PR metrics
     clinical_validation_metrics: Optional[Dict[str, Any]] = None
+
+
+# =====================================================================
+# DISCOVERY ENGINE MODELS
+# =====================================================================
+
+class DiscoveryRequest(BaseModel):
+    """Request model for the Discovery Engine."""
+    # Accept CSV data
+    csv: Optional[str] = None
+    data: Optional[str] = None
+    csv_data: Optional[str] = None
+    # Or JSON data
+    patients: Optional[List[Dict[str, Any]]] = None
+    patient_data: Optional[Dict[str, Any]] = None
+    # Quick scan mode (faster, less comprehensive)
+    quick_scan: bool = False
+
+    @model_validator(mode='before')
+    @classmethod
+    def normalize_input(cls, values):
+        # Handle string JSON
+        if isinstance(values, str):
+            try:
+                values = json.loads(values)
+            except:
+                values = {"csv": values}
+        # Normalize field names
+        if values.get('data') and not values.get('csv'):
+            values['csv'] = values['data']
+        if values.get('csv_data') and not values.get('csv'):
+            values['csv'] = values['csv_data']
+        return values
+
+
+class DiscoveryResponse(BaseModel):
+    """Response model for the Discovery Engine."""
+    success: bool
+    timestamp: str
+    patient_count: int
+    endpoints_analyzed: List[str]
+    endpoint_results: Dict[str, Any]
+    convergence: Dict[str, Any]
+    identified_diseases: List[Dict[str, Any]]
+    unknown_patterns: List[Dict[str, Any]]
+    anomalies: List[Dict[str, Any]]
+    recommendations: List[Dict[str, Any]]
+    summary: Dict[str, Any]
+    raw_metrics: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -6403,6 +6462,95 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
         raise HTTPException(
             status_code=500,
             detail={"error": str(e), "trace": traceback.format_exc().splitlines()[-10:]}
+        )
+
+
+# ---------------------------------------------------------------------
+# DISCOVERY ENGINE - 6-Layer Disease Discovery
+# Analyzes ANY patient data for ANY disease
+# ---------------------------------------------------------------------
+
+@app.post("/discover", response_model=DiscoveryResponse)
+def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
+    """
+    DISCOVERY ENGINE - Comprehensive Disease Discovery
+
+    6-Layer Analysis:
+    1. Universal Data Ingestion - Accept any format, map to 24 body systems
+    2. 24-Endpoint Analysis - Threshold, pattern, trend detection per system
+    3. Cross-System Convergence - Multi-organ deterioration patterns
+    4. Disease Identification - Match known diseases, flag unknown patterns
+    5. Anomaly Detection - Statistical outliers, rapid changes
+    6. Comprehensive Output - Prioritized recommendations
+
+    Core Principle: Analyze what you have. Suggest what you don't. NEVER block.
+    """
+    if not DISCOVERY_ENGINE_AVAILABLE:
+        return DiscoveryResponse(
+            success=False,
+            timestamp=datetime.utcnow().isoformat(),
+            patient_count=0,
+            endpoints_analyzed=[],
+            endpoint_results={},
+            convergence={"convergence_type": "none", "convergence_score": 0},
+            identified_diseases=[],
+            unknown_patterns=[],
+            anomalies=[],
+            recommendations=[],
+            summary={"overall_risk": "unknown"},
+            error="Discovery engine not available"
+        )
+
+    try:
+        engine = get_discovery_engine()
+
+        # Parse input data
+        df = None
+        if req.csv:
+            df = parse_csv_bulletproof(req.csv)
+        elif req.patients:
+            df = pd.DataFrame(req.patients)
+        elif req.patient_data:
+            df = pd.DataFrame([req.patient_data])
+
+        if df is None or len(df) == 0:
+            return DiscoveryResponse(
+                success=False,
+                timestamp=datetime.utcnow().isoformat(),
+                patient_count=0,
+                endpoints_analyzed=[],
+                endpoint_results={},
+                convergence={"convergence_type": "none", "convergence_score": 0},
+                identified_diseases=[],
+                unknown_patterns=[],
+                anomalies=[],
+                recommendations=[],
+                summary={"overall_risk": "unknown"},
+                error="No data provided. Send csv, patients, or patient_data."
+            )
+
+        # Run discovery
+        if req.quick_scan:
+            result = engine.quick_scan(df)
+        else:
+            result = engine.discover(df)
+
+        return DiscoveryResponse(**result)
+
+    except Exception as e:
+        return DiscoveryResponse(
+            success=False,
+            timestamp=datetime.utcnow().isoformat(),
+            patient_count=0,
+            endpoints_analyzed=[],
+            endpoint_results={},
+            convergence={"convergence_type": "none", "convergence_score": 0},
+            identified_diseases=[],
+            unknown_patterns=[],
+            anomalies=[],
+            recommendations=[],
+            summary={"overall_risk": "unknown"},
+            error=str(e)
         )
 
 
