@@ -6531,11 +6531,37 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
 
         # Run discovery
         if req.quick_scan:
-            result = engine.quick_scan(df)
+            quick_result = engine.quick_scan(df)
+            # Wrap quick_scan result in DiscoveryResponse format
+            convergence = quick_result.get('convergence', {})
+            return DiscoveryResponse(
+                success=quick_result.get('success', True),
+                timestamp=quick_result.get('timestamp', datetime.utcnow().isoformat()),
+                patient_count=len(df),
+                endpoints_analyzed=list(quick_result.get('critical_endpoints', [])),
+                endpoint_results={},
+                convergence=convergence,
+                identified_diseases=[],
+                unknown_patterns=[],
+                anomalies=[],
+                recommendations=[{
+                    'priority': 1,
+                    'category': 'scan',
+                    'action': 'Run full discovery' if quick_result.get('needs_full_discovery') else 'No immediate action',
+                    'reason': f"Quick scan detected {len(quick_result.get('critical_endpoints', []))} critical endpoints",
+                    'urgency': 'high' if quick_result.get('needs_full_discovery') else 'low'
+                }],
+                summary={
+                    'overall_risk': convergence.get('convergence_type', 'unknown'),
+                    'critical_systems': quick_result.get('critical_endpoints', []),
+                    'convergence_score': convergence.get('convergence_score', 0),
+                    'needs_full_discovery': quick_result.get('needs_full_discovery', False),
+                    'scan_type': 'quick'
+                }
+            )
         else:
             result = engine.discover(df)
-
-        return DiscoveryResponse(**result)
+            return DiscoveryResponse(**result)
 
     except Exception as e:
         return DiscoveryResponse(
