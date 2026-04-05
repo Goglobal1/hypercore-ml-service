@@ -602,7 +602,17 @@ class UniversalIngestion:
 
             # Try to match to endpoints by name
             for marker, endpoints in self.marker_to_endpoints.items():
-                if marker in normalized or normalized in marker:
+                # Require exact match for short markers (prevents 'k' matching 'biomarker1')
+                # For longer markers, allow substring match if marker is significant portion
+                is_match = False
+                if len(marker) <= 2:
+                    # Short markers (k, na, etc.) require exact match
+                    is_match = (marker == normalized)
+                else:
+                    # Longer markers can be substring matches
+                    is_match = (marker in normalized or normalized in marker)
+
+                if is_match:
                     for endpoint in endpoints:
                         endpoint_data[endpoint][col] = data[col].tolist()
                         mapped_columns.append({
