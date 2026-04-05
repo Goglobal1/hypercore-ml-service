@@ -1560,6 +1560,8 @@ class EarlyRiskRequest(BaseModel):
     time_window_hours: int = 48
     # Hybrid scoring operating mode (high_confidence, balanced, screening)
     scoring_mode: Optional[str] = None  # Uses DEFAULT_OPERATING_MODE if not specified
+    # Use new Discovery Engine (6-layer analysis with biomarker inference)
+    use_discovery_engine: bool = True  # Set to False to use legacy analysis
 
     @model_validator(mode='before')
     @classmethod
@@ -5429,6 +5431,135 @@ def cross_validate_early_risk(
 # EARLY RISK DISCOVERY ENDPOINT
 # ---------------------------------------------------------------------
 
+def transform_to_legacy_format(discovery_result: Dict) -> Dict:
+    """
+    Transform new Discovery Engine output to format the frontend expects.
+    """
+    diseases = discovery_result.get('identified_diseases', [])
+    convergence = discovery_result.get('convergence', {})
+    recommendations = discovery_result.get('recommendations', [])
+    endpoints = discovery_result.get('endpoints_analyzed', [])
+    summary = discovery_result.get('summary', {})
+
+    # Build the response the frontend expects
+    return {
+        "success": True,
+
+        # Domain detection
+        "auto_inferred_domain": summary.get('primary_domain', 'multi_system'),
+        "domain_confidence": summary.get('domain_confidence', 1.0),
+
+        # Risk summary
+        "missed_early_risk_summary": f"Analyzed {discovery_result.get('patient_count', 0)} patients. "
+            f"Found {len(diseases)} condition(s) across {len(endpoints)} body systems. "
+            f"Convergence: {convergence.get('convergence_type', 'none')} "
+            f"({convergence.get('convergence_score', 0):.0f}% score).",
+
+        # What standard systems would miss
+        "standard_system_status": "Standard threshold monitoring",
+
+        # HyperCore detection
+        "hypercore_detection": f"{len(diseases)} condition(s) identified across {len(endpoints)} endpoints",
+        "hypercore_endpoints_analyzed": endpoints,
+
+        # Time advantage
+        "detection_days_earlier": convergence.get('estimated_time_to_harm', {}).get('min', 0) // 24 if convergence.get('estimated_time_to_harm') else 0,
+        "time_to_harm": convergence.get('estimated_time_to_harm'),
+
+        # Diseases found
+        "identified_diseases": diseases,
+        "disease_count": len(diseases),
+
+        # Convergence
+        "convergence": convergence,
+        "convergence_type": convergence.get('convergence_type', 'none'),
+        "convergence_score": convergence.get('convergence_score', 0),
+        "systems_involved": convergence.get('systems_involved', []),
+
+        # Recommendations
+        "recommendations": recommendations,
+        "clinical_action_plan": [r.get('action', '') for r in recommendations[:5]],
+
+        # Endpoint results
+        "endpoint_results": discovery_result.get('endpoint_results', {}),
+
+        # Anomalies
+        "anomalies": discovery_result.get('anomalies', []),
+
+        # Unknown patterns
+        "unknown_patterns": discovery_result.get('unknown_patterns', []),
+
+        # Learning opportunity
+        "learning_opportunity": f"HyperCore analyzed {len(endpoints)} body systems and identified "
+            f"{len(diseases)} potential conditions. "
+            f"{'Multi-system convergence detected - higher risk.' if convergence.get('convergence_type') not in ['none', None] else ''}",
+
+        # Risk level
+        "risk_level": summary.get('overall_risk', 'low'),
+        "overall_risk_score": summary.get('convergence_score', 0),
+
+        # Suggestions (not errors!)
+        "suggestions_for_deeper_analysis": discovery_result.get('suggestions', []),
+
+        # Raw data for debug
+        "raw_discovery_result": discovery_result
+    }
+
+
+@app.post("/early_risk_discovery/v2")
+async def early_risk_discovery_v2(request: Request):
+    """
+    Early Risk Discovery V2 - Uses the 6-Layer Discovery Engine.
+
+    This is the new version that uses the full Discovery Engine.
+    """
+    try:
+        body = await request.json()
+
+        # Get CSV data from various possible field names
+        csv_data = (
+            body.get('csv') or
+            body.get('data') or
+            body.get('csv_data') or
+            body.get('dataset') or
+            ''
+        )
+
+        # Or get patient array
+        patients = body.get('patients') or body.get('patient_data')
+
+        # Use the Discovery Engine
+        if DISCOVERY_ENGINE_AVAILABLE:
+            engine = get_discovery_engine()
+
+            if csv_data:
+                df = parse_csv_bulletproof(csv_data)
+                result = engine.discover(df)
+            elif patients:
+                df = pd.DataFrame(patients if isinstance(patients, list) else [patients])
+                result = engine.discover(df)
+            else:
+                return {
+                    "success": False,
+                    "error": "No data provided",
+                    "message": "Send csv, data, or patients field"
+                }
+
+            # Transform result to match old format expected by frontend
+            return transform_to_legacy_format(result)
+        else:
+            return {
+                "success": False,
+                "error": "Discovery engine not available"
+            }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.post("/early_risk_discovery", response_model=EarlyRiskResponse)
 @bulletproof_endpoint("early_risk_discovery", min_rows=10)
 def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
@@ -5465,6 +5596,49 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
                 signals=[],
                 confidence=0.0
             )
+
+        # =====================================================================
+        # DISCOVERY ENGINE INTEGRATION (when enabled)
+        # Uses the 6-layer Discovery Engine with biomarker inference
+        # Falls back to legacy analysis when disabled or unavailable
+        # =====================================================================
+        if req.use_discovery_engine and DISCOVERY_ENGINE_AVAILABLE:
+            try:
+                engine = get_discovery_engine()
+                result = engine.discover(df)
+
+                # Transform to EarlyRiskResponse format
+                legacy_format = transform_to_legacy_format(result)
+
+                # Build EarlyRiskResponse from transformed result
+                return EarlyRiskResponse(
+                    executive_summary=legacy_format.get("executive_summary", "Discovery analysis complete"),
+                    risk_timing_delta=legacy_format.get("risk_timing_delta", {}),
+                    explainable_signals=legacy_format.get("explainable_signals", []),
+                    missed_risk_summary=legacy_format.get("missed_risk_summary", {}),
+                    clinical_impact=legacy_format.get("clinical_impact", {}),
+                    comparator_performance=legacy_format.get("comparator_performance", {}),
+                    narrative=legacy_format.get("narrative", ""),
+                    confidence=legacy_format.get("confidence", 0.8),
+                    domain_classification=legacy_format.get("domain_classification", {}),
+                    risk_score=legacy_format.get("risk_score"),
+                    risk_score_percent=legacy_format.get("risk_score_percent"),
+                    risk_level=legacy_format.get("risk_level"),
+                    report_data=legacy_format.get("report_data", {}),
+                    signals=legacy_format.get("signals", []),
+                    analysis_mode="discovery_engine"
+                )
+            except Exception as discovery_err:
+                # Log error and fall through to legacy analysis
+                import logging
+                logging.getLogger("hypercore.discovery").warning(
+                    f"Discovery engine failed, falling back to legacy: {discovery_err}"
+                )
+                # Continue to legacy analysis below
+
+        # =====================================================================
+        # LEGACY ANALYSIS (when Discovery Engine is disabled or unavailable)
+        # =====================================================================
 
         # NORMALIZE BIOMARKER COLUMN NAMES using BIOMARKER_MAPPINGS
         try:
