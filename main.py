@@ -5433,76 +5433,175 @@ def cross_validate_early_risk(
 
 def transform_to_legacy_format(discovery_result: Dict) -> Dict:
     """
-    Transform new Discovery Engine output to format the frontend expects.
+    Transform new Discovery Engine output to EarlyRiskResponse format.
+    Maps Discovery Engine fields to legacy response structure.
     """
     diseases = discovery_result.get('identified_diseases', [])
     convergence = discovery_result.get('convergence', {})
     recommendations = discovery_result.get('recommendations', [])
     endpoints = discovery_result.get('endpoints_analyzed', [])
     summary = discovery_result.get('summary', {})
+    endpoint_results = discovery_result.get('endpoint_results', {})
+    anomalies = discovery_result.get('anomalies', [])
 
-    # Build the response the frontend expects
+    # Calculate overall risk score from endpoint risks and convergence
+    risk_scores = [ep.get('risk_score', 0) for ep in endpoint_results.values()]
+    avg_risk = sum(risk_scores) / len(risk_scores) if risk_scores else 0
+    convergence_score = convergence.get('convergence_score', 0)
+    overall_risk_score = min(1.0, (avg_risk + convergence_score / 100) / 2)
+
+    # Determine risk level
+    if overall_risk_score >= 0.7 or summary.get('overall_risk') == 'critical':
+        risk_level = 'critical'
+    elif overall_risk_score >= 0.5 or summary.get('overall_risk') == 'high':
+        risk_level = 'high'
+    elif overall_risk_score >= 0.3 or summary.get('overall_risk') == 'moderate':
+        risk_level = 'moderate'
+    elif overall_risk_score >= 0.15:
+        risk_level = 'watch'
+    else:
+        risk_level = 'low'
+
+    # Get critical/warning systems
+    critical_systems = summary.get('critical_systems', [])
+    warning_systems = summary.get('warning_systems', [])
+
+    # Build executive summary
+    patient_count = discovery_result.get('patient_count', 0)
+    disease_count = len(diseases)
+    convergence_type = convergence.get('convergence_type', 'none')
+
+    executive_summary = f"Discovery Engine analyzed {patient_count} patients across {len(endpoints)} body systems. "
+    if disease_count > 0:
+        disease_names = [d.get('disease', d.get('name', 'unknown')) for d in diseases[:3]]
+        executive_summary += f"Identified {disease_count} condition(s): {', '.join(disease_names)}. "
+    if critical_systems:
+        executive_summary += f"Critical systems: {', '.join(critical_systems)}. "
+    if convergence_type not in ['none', None]:
+        executive_summary += f"Multi-system convergence detected ({convergence_type}). "
+
+    # Build explainable signals from anomalies and endpoint abnormalities
+    explainable_signals = []
+    for ep_name, ep_data in endpoint_results.items():
+        for abnormal in ep_data.get('abnormal_values', []):
+            explainable_signals.append({
+                'marker': abnormal.get('column', ep_name),
+                'biomarker': abnormal.get('column', ep_name),
+                'contribution': 0.5,
+                'pattern': abnormal.get('status', 'abnormal'),
+                'endpoint': ep_name,
+                'value': abnormal.get('value'),
+                'reference': abnormal.get('reference_range')
+            })
+
+    # Build risk_timing_delta
+    time_to_harm = convergence.get('estimated_time_to_harm')
+    detection_days = 0
+    if time_to_harm:
+        if isinstance(time_to_harm, dict):
+            detection_days = time_to_harm.get('min', 0) // 24
+        elif isinstance(time_to_harm, (int, float)):
+            detection_days = time_to_harm // 24
+
+    risk_timing_delta = {
+        'detection_window_days': detection_days,
+        'detection_window_hours': detection_days * 24,
+        'endpoints_analyzed': endpoints,
+        'convergence_type': convergence_type,
+        'convergence_score': convergence_score,
+        'systems_involved': convergence.get('systems_involved', []),
+        'velocity': convergence.get('velocity', 'stable'),
+        'outcome': summary.get('primary_domain', 'multi_system'),
+        'risk_score': overall_risk_score,
+        'risk_level': risk_level
+    }
+
+    # Build narrative
+    narrative = f"HyperCore Discovery Engine performed comprehensive analysis. "
+    narrative += f"Analyzed {len(endpoints)} body systems: {', '.join(endpoints[:5])}. "
+    if disease_count > 0:
+        narrative += f"Found {disease_count} potential conditions. "
+    if len(anomalies) > 0:
+        severe_count = len([a for a in anomalies if a.get('severity') == 'severe'])
+        narrative += f"Detected {len(anomalies)} anomalies ({severe_count} severe). "
+
+    # Build clinical_impact
+    clinical_impact = {
+        'patients_analyzed': patient_count,
+        'endpoints_analyzed': len(endpoints),
+        'diseases_identified': disease_count,
+        'anomalies_detected': len(anomalies),
+        'severe_anomalies': summary.get('severe_anomalies', 0),
+        'convergence_detected': convergence_type not in ['none', None],
+        'critical_systems': critical_systems,
+        'warning_systems': warning_systems
+    }
+
+    # Build comparator_performance
+    comparator_performance = {
+        'discovery_engine': {
+            'endpoints_analyzed': len(endpoints),
+            'diseases_matched': disease_count,
+            'anomalies_detected': len(anomalies),
+            'convergence_score': convergence_score,
+            'risk_level': risk_level,
+            'interpretation': f"Discovery Engine analyzed {len(endpoints)} body systems with multi-layer analysis."
+        }
+    }
+
+    # Build missed_risk_summary
+    missed_risk_summary = {
+        'standard_system_status': 'Standard threshold monitoring would analyze single values in isolation.',
+        'hypercore_advantage': f'Discovery Engine analyzes {len(endpoints)} systems simultaneously with convergence detection.',
+        'potential_impact': f'Multi-system convergence detection enables earlier intervention.',
+        'diseases_that_could_be_missed': [d.get('disease', d.get('name', '')) for d in diseases]
+    }
+
+    # Build domain_classification
+    primary_domain = summary.get('primary_domain', 'multi_system')
+    domain_classification = {
+        'primary_domain': primary_domain,
+        'display_name': primary_domain.replace('_', ' ').title(),
+        'confidence': 0.8 if primary_domain != 'multi_system' else 0.6,
+        'involved_domains': convergence.get('systems_involved', endpoints[:3]),
+        'inferred_outcome': primary_domain
+    }
+
+    # Build report_data
+    report_data = {
+        'risk_score': overall_risk_score,
+        'risk_score_percent': f"{int(overall_risk_score * 100)}%",
+        'risk_level': risk_level,
+        'detected_outcome': primary_domain,
+        'detected_domain': primary_domain,
+        'patients_analyzed': patient_count,
+        'endpoints_analyzed': len(endpoints),
+        'diseases_identified': disease_count,
+        'top_diseases': [d.get('disease', d.get('name', '')) for d in diseases[:3]],
+        'summary_for_report': executive_summary
+    }
+
     return {
-        "success": True,
-
-        # Domain detection
-        "auto_inferred_domain": summary.get('primary_domain', 'multi_system'),
-        "domain_confidence": summary.get('domain_confidence', 1.0),
-
-        # Risk summary
-        "missed_early_risk_summary": f"Analyzed {discovery_result.get('patient_count', 0)} patients. "
-            f"Found {len(diseases)} condition(s) across {len(endpoints)} body systems. "
-            f"Convergence: {convergence.get('convergence_type', 'none')} "
-            f"({convergence.get('convergence_score', 0):.0f}% score).",
-
-        # What standard systems would miss
-        "standard_system_status": "Standard threshold monitoring",
-
-        # HyperCore detection
-        "hypercore_detection": f"{len(diseases)} condition(s) identified across {len(endpoints)} endpoints",
-        "hypercore_endpoints_analyzed": endpoints,
-
-        # Time advantage
-        "detection_days_earlier": convergence.get('estimated_time_to_harm', {}).get('min', 0) // 24 if convergence.get('estimated_time_to_harm') else 0,
-        "time_to_harm": convergence.get('estimated_time_to_harm'),
-
-        # Diseases found
-        "identified_diseases": diseases,
-        "disease_count": len(diseases),
-
-        # Convergence
-        "convergence": convergence,
-        "convergence_type": convergence.get('convergence_type', 'none'),
-        "convergence_score": convergence.get('convergence_score', 0),
-        "systems_involved": convergence.get('systems_involved', []),
-
-        # Recommendations
-        "recommendations": recommendations,
-        "clinical_action_plan": [r.get('action', '') for r in recommendations[:5]],
-
-        # Endpoint results
-        "endpoint_results": discovery_result.get('endpoint_results', {}),
-
-        # Anomalies
-        "anomalies": discovery_result.get('anomalies', []),
-
-        # Unknown patterns
-        "unknown_patterns": discovery_result.get('unknown_patterns', []),
-
-        # Learning opportunity
-        "learning_opportunity": f"HyperCore analyzed {len(endpoints)} body systems and identified "
-            f"{len(diseases)} potential conditions. "
-            f"{'Multi-system convergence detected - higher risk.' if convergence.get('convergence_type') not in ['none', None] else ''}",
-
-        # Risk level
-        "risk_level": summary.get('overall_risk', 'low'),
-        "overall_risk_score": summary.get('convergence_score', 0),
-
-        # Suggestions (not errors!)
-        "suggestions_for_deeper_analysis": discovery_result.get('suggestions', []),
-
-        # Raw data for debug
-        "raw_discovery_result": discovery_result
+        'executive_summary': executive_summary,
+        'risk_timing_delta': risk_timing_delta,
+        'explainable_signals': explainable_signals,
+        'missed_risk_summary': missed_risk_summary,
+        'clinical_impact': clinical_impact,
+        'comparator_performance': comparator_performance,
+        'narrative': narrative,
+        'confidence': 0.8 if disease_count > 0 else 0.6,
+        'domain_classification': domain_classification,
+        'risk_score': overall_risk_score,
+        'risk_score_percent': f"{int(overall_risk_score * 100)}%",
+        'risk_level': risk_level,
+        'report_data': report_data,
+        'signals': explainable_signals,
+        'identified_diseases': diseases,
+        'anomalies': anomalies,
+        'convergence': convergence,
+        'endpoint_results': endpoint_results,
+        'recommendations': recommendations,
+        'raw_discovery_result': discovery_result
     }
 
 
