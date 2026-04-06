@@ -1663,6 +1663,11 @@ class DiscoveryResponse(BaseModel):
     summary: Dict[str, Any]
     raw_metrics: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
+    # Per-patient batch analysis fields
+    analysis_type: Optional[str] = None
+    patient_id_column: Optional[str] = None
+    patient_results: Optional[List[Dict[str, Any]]] = None
+    aggregate: Optional[Dict[str, Any]] = None
 
 
 class MultiOmicFeatures(BaseModel):
