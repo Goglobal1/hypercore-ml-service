@@ -296,6 +296,34 @@ class DiscoveryEngine:
                 total_patients=total_patients
             )
 
+            # Collect unknown patterns from all patients
+            all_unknown_patterns = []
+            for pr in patient_results:
+                all_unknown_patterns.extend(pr.get('unknown_patterns', []))
+
+            # Build aggregate convergence info
+            avg_convergence = np.mean(convergence_scores) if convergence_scores else 0
+            aggregate_convergence = {
+                'convergence_type': 'severe' if avg_convergence >= 70 else 'moderate' if avg_convergence >= 40 else 'mild' if avg_convergence >= 20 else 'none',
+                'convergence_score': round(avg_convergence, 2),
+                'systems_involved': list(set(all_critical_systems))[:10],
+                'patients_with_convergence': len([s for s in convergence_scores if s > 20]),
+                'description': f'Aggregate convergence across {total_patients} patients'
+            }
+
+            # Build aggregate endpoint results (summary across all patients)
+            aggregate_endpoint_results = {}
+            for ep in endpoints_seen:
+                ep_critical = sum(1 for pr in patient_results if ep in pr.get('summary', {}).get('critical_systems', []))
+                ep_warning = sum(1 for pr in patient_results if ep in pr.get('summary', {}).get('warning_systems', []))
+                aggregate_endpoint_results[ep] = {
+                    'endpoint': ep,
+                    'patients_critical': ep_critical,
+                    'patients_warning': ep_warning,
+                    'patients_affected': ep_critical + ep_warning,
+                    'risk_level': 'critical' if ep_critical > 0 else 'warning' if ep_warning > 0 else 'normal'
+                }
+
             # Build final response with BOTH views
             return {
                 'success': True,
@@ -319,8 +347,15 @@ class DiscoveryEngine:
                     'risk_distribution': risk_distribution,
                     'endpoints_analyzed': list(endpoints_seen),
                     'unique_diseases_found': len(set(d.get('disease_name', d.get('disease', '')) for d in all_diseases)),
-                    'total_anomalies': len(all_anomalies)
+                    'total_anomalies': len(all_anomalies),
+                    'critical_systems': list(set(all_critical_systems))[:10],
+                    'warning_systems': list(set(all_warning_systems))[:10]
                 },
+
+                # Required fields for DiscoveryResponse compatibility
+                'endpoint_results': aggregate_endpoint_results,
+                'convergence': aggregate_convergence,
+                'unknown_patterns': all_unknown_patterns[:20],
 
                 # Top-level fields for compatibility
                 'endpoints_analyzed': list(endpoints_seen),
@@ -332,7 +367,9 @@ class DiscoveryEngine:
                 'raw_metrics': {
                     'patients_analyzed': total_patients,
                     'endpoints_with_data': len(endpoints_seen),
-                    'analysis_method': 'per_patient_individual'
+                    'analysis_method': 'per_patient_individual',
+                    'columns_mapped': patient_results[0].get('raw_metrics', {}).get('columns_mapped', []) if patient_results else [],
+                    'total_columns': patient_results[0].get('raw_metrics', {}).get('total_columns', 0) if patient_results else 0
                 }
             }
 
