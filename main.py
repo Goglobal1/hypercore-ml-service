@@ -6854,6 +6854,115 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
 
 
 # ---------------------------------------------------------------------
+# DISCOVERY ENGINE - Per-Patient Batch Analysis
+# ---------------------------------------------------------------------
+
+@app.post("/discover/batch")
+async def discover_batch(request: Request):
+    """
+    PER-PATIENT BATCH ANALYSIS - Analyze every patient individually.
+
+    This endpoint ensures:
+    1. EVERY patient is analyzed individually
+    2. Individual results stored in patient_results array
+    3. Aggregate calculated FROM individual results
+    4. Both views returned in same response
+
+    Use this for large datasets (e.g., ICU data with thousands of patients)
+    to get both individual patient insights and aggregate statistics.
+
+    Input formats:
+        - csv: CSV string with patient data
+        - patients: Array of patient objects
+        - patient_data: Single patient or array
+
+    Response includes:
+        - patient_results: Array of individual patient analyses
+        - aggregate: Statistics calculated from individual results
+        - summary: Quick overview of risk distribution
+    """
+    if not DISCOVERY_ENGINE_AVAILABLE:
+        return {
+            "success": False,
+            "error": "Discovery engine not available",
+            "patient_results": [],
+            "aggregate": {}
+        }
+
+    try:
+        body = await request.json()
+        engine = get_discovery_engine()
+
+        # Parse input data
+        df = None
+        if body.get('csv'):
+            df = parse_csv_bulletproof(body['csv'])
+        elif body.get('patients'):
+            df = pd.DataFrame(body['patients'])
+        elif body.get('patient_data'):
+            data = body['patient_data']
+            if isinstance(data, list):
+                df = pd.DataFrame(data)
+            else:
+                df = pd.DataFrame([data])
+        elif body.get('data'):
+            data = body['data']
+            if isinstance(data, str):
+                df = parse_csv_bulletproof(data)
+            elif isinstance(data, list):
+                df = pd.DataFrame(data)
+            else:
+                df = pd.DataFrame([data])
+
+        if df is None or len(df) == 0:
+            return {
+                "success": False,
+                "error": "No data provided. Send csv, patients, patient_data, or data.",
+                "patient_results": [],
+                "aggregate": {}
+            }
+
+        # Run per-patient batch analysis
+        result = engine.discover_batch(df)
+
+        return result
+
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc().splitlines()[-5:],
+            "patient_results": [],
+            "aggregate": {}
+        }
+
+
+@app.get("/discover/batch/status")
+async def discover_batch_status():
+    """
+    Get info about the per-patient batch analysis capability.
+    """
+    return {
+        "available": DISCOVERY_ENGINE_AVAILABLE,
+        "description": "Per-patient batch analysis endpoint",
+        "features": [
+            "Analyzes each patient individually",
+            "Stores individual results in patient_results array",
+            "Calculates aggregate from individual results",
+            "Returns both individual and aggregate views",
+            "Supports large datasets (thousands of patients)"
+        ],
+        "input_formats": ["csv", "patients", "patient_data", "data"],
+        "response_fields": [
+            "patient_results - Array of individual patient analyses",
+            "aggregate - Statistics calculated from individual results",
+            "summary - Quick overview of risk distribution"
+        ]
+    }
+
+
+# ---------------------------------------------------------------------
 # DISCOVERY ENGINE - Hospital Aggregate & Single Patient
 # ---------------------------------------------------------------------
 
