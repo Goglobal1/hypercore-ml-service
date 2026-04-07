@@ -23,6 +23,10 @@ from .anomaly_detection import AnomalyDetector, Anomaly
 from .output import OutputBuilder, DiscoveryOutput
 from .hospital_aggregate import HospitalAggregator, HospitalAggregate, get_hospital_aggregator
 from .biomarker_inference import BiomarkerInferenceEngine, get_inference_engine, BIOMARKER_PROFILES
+from .actionable_insight import (
+    ActionableInsightGenerator, get_insight_generator, enrich_with_actionable_insights,
+    ActionableInsight, ClinicalState, EmissionDecision
+)
 
 __all__ = [
     'DiscoveryEngine', 'get_discovery_engine',
@@ -33,5 +37,7 @@ __all__ = [
     'AnomalyDetector', 'Anomaly',
     'OutputBuilder', 'DiscoveryOutput',
     'HospitalAggregator', 'HospitalAggregate', 'get_hospital_aggregator',
-    'BiomarkerInferenceEngine', 'get_inference_engine', 'BIOMARKER_PROFILES'
+    'BiomarkerInferenceEngine', 'get_inference_engine', 'BIOMARKER_PROFILES',
+    'ActionableInsightGenerator', 'get_insight_generator', 'enrich_with_actionable_insights',
+    'ActionableInsight', 'ClinicalState', 'EmissionDecision'
 ]

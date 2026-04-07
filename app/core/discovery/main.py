@@ -15,6 +15,7 @@ from .convergence import ConvergenceDetector
 from .disease_identification import DiseaseIdentifier
 from .anomaly_detection import AnomalyDetector
 from .output import OutputBuilder, DiscoveryOutput
+from .actionable_insight import enrich_with_actionable_insights
 
 
 class DiscoveryEngine:
@@ -164,7 +165,14 @@ class DiscoveryEngine:
                 ingestion_result=ingestion_result
             )
 
-            return output.to_dict()
+            result = output.to_dict()
+
+            # Enrich with CSE, Utility Engine, and Actionable Insight fields
+            patient_id = result.get('patient_id', 'unknown')
+            risk_score = result.get('summary', {}).get('risk_score')
+            enriched_result = enrich_with_actionable_insights(patient_id, result, risk_score)
+
+            return enriched_result
 
         except Exception as e:
             return self._error_response(str(e), traceback.format_exc())

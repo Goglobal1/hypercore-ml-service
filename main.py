@@ -1669,6 +1669,23 @@ class DiscoveryResponse(BaseModel):
     patient_results: Optional[List[Dict[str, Any]]] = None
     aggregate: Optional[Dict[str, Any]] = None
 
+    # CSE (Clinical State Engine) fields
+    clinical_state: Optional[str] = None
+    state_label: Optional[str] = None
+    previous_state: Optional[str] = None
+    state_changed: Optional[bool] = None
+
+    # Utility Engine fields
+    utility_score: Optional[float] = None
+    decision: Optional[str] = None
+    utility_components: Optional[Dict[str, float]] = None
+
+    # Actionable Insight fields
+    immediate_actions: Optional[List[Dict[str, Any]]] = None
+    actionable_values: Optional[List[Dict[str, Any]]] = None
+    time_to_harm_detail: Optional[Dict[str, Any]] = None
+    conditions: Optional[List[Dict[str, Any]]] = None
+
 
 class MultiOmicFeatures(BaseModel):
     # Accept either list of floats OR dict of marker:value pairs
