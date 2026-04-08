@@ -91,14 +91,17 @@ DISEASE_SIGNATURES = {
         'icd10': ['N17'],
         'required_indicators': {'renal': ['creatinine']},
         'supporting_indicators': {'renal': ['bun', 'potassium', 'urine_output'], 'fluid_balance': ['sodium']},
-        'thresholds': {'creatinine': {'high': 1.5}},
+        # CRITICAL: Creatinine must be > 1.3 (above normal) to indicate AKI
+        'thresholds': {'creatinine': {'high': 1.3}, 'bun': {'high': 20}},
         'description': 'Acute Kidney Injury'
     },
     'chronic_kidney_disease': {
         'icd10': ['N18'],
-        'required_indicators': {'renal': ['egfr', 'creatinine']},
-        'supporting_indicators': {'renal': ['bun', 'potassium'], 'hematologic': ['hemoglobin']},
-        'thresholds': {'egfr': {'low': 60}},
+        # CRITICAL: CKD requires eGFR < 60 - creatinine alone is NOT sufficient
+        'required_indicators': {'renal': ['egfr']},
+        'supporting_indicators': {'renal': ['creatinine', 'bun', 'potassium'], 'hematologic': ['hemoglobin']},
+        # eGFR must be < 60 for CKD diagnosis
+        'thresholds': {'egfr': {'low': 60}, 'creatinine': {'high': 1.3}},
         'description': 'Chronic Kidney Disease'
     },
     'acute_liver_failure': {
@@ -310,7 +313,19 @@ class DiseaseIdentifier:
                         except:
                             pass
                 else:
-                    return True
+                    # CRITICAL FIX: If no threshold defined, use standard reference ranges
+                    # Do NOT assume abnormal just because marker is present
+                    from .disease_detection import REFERENCE_RANGES, is_abnormal
+                    if marker in REFERENCE_RANGES:
+                        for value in values:
+                            try:
+                                v = float(value)
+                                if is_abnormal(v, marker):
+                                    return True
+                            except:
+                                pass
+                    # If no reference range, marker presence alone is NOT abnormal
+                    return False
 
         return False
 
