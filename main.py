@@ -246,6 +246,22 @@ except ImportError as e:
     DISCOVERY_ENGINE_AVAILABLE = False
     print(f"[HYPERCORE] Discovery engine not available: {e}")
 
+# Long-to-Wide Data Transformation
+try:
+    from app.core.data_transformation import (
+        detect_data_format, auto_transform_data, transform_long_to_wide,
+        identify_long_format_columns, normalize_analyte_name
+    )
+    from app.core.longitudinal_analysis import (
+        analyze_with_longitudinal_context, calculate_longitudinal_trends,
+        generate_longitudinal_summary
+    )
+    DATA_TRANSFORMATION_AVAILABLE = True
+    print("[HYPERCORE] Data Transformation: OK")
+except ImportError as e:
+    DATA_TRANSFORMATION_AVAILABLE = False
+    print(f"[HYPERCORE] Data transformation not available: {e}")
+
 # Trajectory Analysis System (Early Warning Engine)
 try:
     from app.core.trajectory import (
@@ -1685,6 +1701,10 @@ class DiscoveryResponse(BaseModel):
     actionable_values: Optional[List[Dict[str, Any]]] = None
     time_to_harm_detail: Optional[Dict[str, Any]] = None
     conditions: Optional[List[Dict[str, Any]]] = None
+
+    # Data transformation metadata (long-to-wide)
+    data_transformation: Optional[Dict[str, Any]] = None
+    longitudinal_insights: Optional[List[Dict[str, Any]]] = None
 
 
 class MultiOmicFeatures(BaseModel):
@@ -6824,6 +6844,19 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
                 error="No data provided. Send csv, patients, or patient_data."
             )
 
+        # Auto-detect and transform long-format data to wide format
+        transformation_metadata = None
+        if DATA_TRANSFORMATION_AVAILABLE:
+            try:
+                df, transformation_metadata = auto_transform_data(df)
+                if transformation_metadata.get('transformed'):
+                    print(f"[HYPERCORE] Transformed {transformation_metadata['original_rows']} long rows "
+                          f"to {transformation_metadata['result_rows']} wide rows "
+                          f"({transformation_metadata.get('unique_patients', 0)} patients)")
+            except Exception as e:
+                print(f"[HYPERCORE] Data transformation warning: {e}")
+                transformation_metadata = {'error': str(e), 'transformed': False}
+
         # Run discovery
         if req.quick_scan:
             quick_result = engine.quick_scan(df)
@@ -6856,6 +6889,11 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
             )
         else:
             result = engine.discover(df)
+
+            # Add data transformation metadata to result
+            if transformation_metadata:
+                result['data_transformation'] = transformation_metadata
+
             return DiscoveryResponse(**result)
 
     except Exception as e:

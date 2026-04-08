@@ -27,6 +27,11 @@ from .actionable_insight import (
     ActionableInsightGenerator, get_insight_generator, enrich_with_actionable_insights,
     ActionableInsight, ClinicalState, EmissionDecision
 )
+from .disease_detection import (
+    detect_all_diseases, detect_abnormal_values, detect_convergence,
+    analyze_patient_validated, REFERENCE_RANGES, get_value, is_abnormal,
+    get_abnormality_level
+)
 
 __all__ = [
     'DiscoveryEngine', 'get_discovery_engine',
@@ -39,5 +44,8 @@ __all__ = [
     'HospitalAggregator', 'HospitalAggregate', 'get_hospital_aggregator',
     'BiomarkerInferenceEngine', 'get_inference_engine', 'BIOMARKER_PROFILES',
     'ActionableInsightGenerator', 'get_insight_generator', 'enrich_with_actionable_insights',
-    'ActionableInsight', 'ClinicalState', 'EmissionDecision'
+    'ActionableInsight', 'ClinicalState', 'EmissionDecision',
+    'detect_all_diseases', 'detect_abnormal_values', 'detect_convergence',
+    'analyze_patient_validated', 'REFERENCE_RANGES', 'get_value', 'is_abnormal',
+    'get_abnormality_level'
 ]
