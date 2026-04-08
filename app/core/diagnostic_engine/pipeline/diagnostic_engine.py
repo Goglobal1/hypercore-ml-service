@@ -1,12 +1,15 @@
 """
 Master Diagnostic Engine Pipeline
 Orchestrates all 9 layers for signals-first disease detection.
+
+Now with ClinVar integration for genetic disease detection.
 """
 
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 import json
 import os
+import logging
 
 from ..layers.input_normalization import InputNormalizer
 from ..layers.feature_engineering import FeatureEngineer
@@ -17,6 +20,15 @@ from ..layers.convergence_engine import ConvergenceEngine
 from ..layers.explainability import ExplainabilityEngine
 from ..layers.recommendations import RecommendationEngine
 from ..layers.audit import AuditLogger
+
+# ClinVar integration (optional - loads if available)
+try:
+    from ..data_sources.clinvar_loader import ClinVarLoader, get_clinvar_loader
+    CLINVAR_AVAILABLE = True
+except ImportError:
+    CLINVAR_AVAILABLE = False
+
+logger = logging.getLogger(__name__)
 
 
 class DiagnosticEngine:
@@ -62,6 +74,19 @@ class DiagnosticEngine:
         self.recommender = RecommendationEngine()
         self.auditor = AuditLogger()
 
+        # Initialize ClinVar integration (optional)
+        self.clinvar = None
+        self.clinvar_loaded = False
+        if CLINVAR_AVAILABLE:
+            try:
+                self.clinvar = get_clinvar_loader()
+                self.clinvar_loaded = self.clinvar.load()
+                if self.clinvar_loaded:
+                    stats = self.clinvar.get_stats()
+                    logger.info(f"[DiagnosticEngine] ClinVar: {stats['disease_count']:,} diseases, {stats['gene_count']:,} genes")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] ClinVar not loaded: {e}")
+
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
         with open(path, 'r') as f:
@@ -90,6 +115,10 @@ class DiagnosticEngine:
 
         # Layer 4: Classify known diseases
         diseases = self.disease_classifier.classify(features, axis_scores)
+
+        # Layer 4b: Enhance with ClinVar genetic conditions
+        if self.clinvar_loaded:
+            diseases = self._enhance_with_clinvar(diseases, features, raw_patient_data)
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -287,6 +316,116 @@ class DiagnosticEngine:
             'convergence_type': convergence.get('type'),
             'convergence_score': convergence.get('convergence_score', 0)
         }
+
+    def _enhance_with_clinvar(self, diseases: List, features: Dict, raw_data: Dict) -> List:
+        """
+        Enhance disease detection with ClinVar genetic data.
+
+        If patient has genetic data (genes, variants), check ClinVar
+        for associated pathogenic conditions.
+
+        Args:
+            diseases: Current detected diseases from rule-based classifier
+            features: Engineered features
+            raw_data: Raw patient data (may contain genetic info)
+
+        Returns:
+            Enhanced disease list with ClinVar conditions
+        """
+        if not self.clinvar or not self.clinvar_loaded:
+            return diseases
+
+        enhanced = diseases.copy()
+
+        # Check for genetic data in patient record
+        genes_affected = []
+
+        # Look for gene data in various formats
+        raw_features = features.get('raw_features', raw_data)
+
+        # Check for explicit gene fields
+        if 'genes' in raw_features:
+            genes_affected = raw_features['genes']
+        elif 'genetic_variants' in raw_features:
+            # Extract genes from variants
+            for variant in raw_features['genetic_variants']:
+                if isinstance(variant, dict) and 'gene' in variant:
+                    genes_affected.append(variant['gene'])
+                elif isinstance(variant, str) and ':' in variant:
+                    # Format: GENE:variant
+                    genes_affected.append(variant.split(':')[0])
+
+        # Check for gene columns in raw data
+        for key, value in raw_data.items():
+            key_lower = key.lower()
+            if 'gene' in key_lower and value:
+                if isinstance(value, list):
+                    genes_affected.extend(value)
+                elif isinstance(value, str):
+                    genes_affected.append(value)
+
+        if not genes_affected:
+            return diseases
+
+        # Look up ClinVar conditions for each gene
+        seen_diseases = {d.get('disease_name', '').lower() for d in diseases}
+
+        for gene in genes_affected:
+            clinvar_diseases = self.clinvar.get_diseases_for_gene(gene)
+
+            for cv_disease in clinvar_diseases:
+                disease_name = cv_disease.get('disease', '')
+
+                # Skip if already detected
+                if disease_name.lower() in seen_diseases:
+                    continue
+
+                significance = cv_disease.get('significance', '')
+
+                # Only add pathogenic/likely pathogenic
+                if 'Pathogenic' in significance:
+                    confidence = 0.85 if significance == 'Pathogenic' else 0.70
+
+                    enhanced.append({
+                        'disease_id': f"clinvar_{gene}_{disease_name[:20]}",
+                        'disease_name': disease_name,
+                        'icd10': None,  # Could map via OMIM
+                        'category': 'genetic',
+                        'detected': True,
+                        'confidence': confidence,
+                        'confidence_label': 'high' if confidence >= 0.8 else 'moderate',
+                        'severity': None,
+                        'stage': None,
+                        'evidence': [
+                            f"Pathogenic variant in {gene}",
+                            f"ClinVar significance: {significance}",
+                            f"Review status: {cv_disease.get('review_status', 'unknown')}"
+                        ],
+                        'missing_data': [],
+                        'exclusions_triggered': [],
+                        'organ_systems': [],
+                        'recommended_followup': [
+                            'genetic_counseling',
+                            'specialist_referral',
+                            'family_screening'
+                        ],
+                        'source': 'ClinVar',
+                        'gene': gene,
+                        'omim_ids': cv_disease.get('omim_ids', '')
+                    })
+
+                    seen_diseases.add(disease_name.lower())
+
+        # Re-sort by confidence
+        enhanced.sort(key=lambda x: x.get('confidence', 0), reverse=True)
+
+        return enhanced
+
+    def get_clinvar_stats(self) -> Optional[Dict]:
+        """Get ClinVar loader statistics."""
+        if self.clinvar:
+            return self.clinvar.get_stats()
+        return None
 
 
 # Convenience function for direct use
