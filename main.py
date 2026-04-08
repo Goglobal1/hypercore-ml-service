@@ -6792,25 +6792,197 @@ def early_risk_discovery(req: EarlyRiskRequest) -> EarlyRiskResponse:
 
 
 # ---------------------------------------------------------------------
-# DISCOVERY ENGINE - 6-Layer Disease Discovery
-# Analyzes ANY patient data for ANY disease
+# DISCOVERY ENGINE - 9-Layer Diagnostic Architecture (v2 Default)
+# Signals-first, layered inference system
 # ---------------------------------------------------------------------
 
 @app.post("/discover", response_model=DiscoveryResponse)
 def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
     """
-    DISCOVERY ENGINE - Comprehensive Disease Discovery
+    DISCOVERY ENGINE - Comprehensive Disease Discovery (v2 Default)
 
-    6-Layer Analysis:
-    1. Universal Data Ingestion - Accept any format, map to 24 body systems
-    2. 24-Endpoint Analysis - Threshold, pattern, trend detection per system
-    3. Cross-System Convergence - Multi-organ deterioration patterns
-    4. Disease Identification - Match known diseases, flag unknown patterns
-    5. Anomaly Detection - Statistical outliers, rapid changes
-    6. Comprehensive Output - Prioritized recommendations
+    Now powered by 9-Layer Diagnostic Architecture:
+    1. Input Normalization - Standardize raw data with biomarker ontology
+    2. Feature Engineering - Create derived/temporal features
+    3. Axis Scoring - Score 11 biologic organ systems
+    4. Disease Classification - Pattern match 20+ known diseases
+    5. Anomaly Detection - Find unknown patterns
+    6. Convergence Analysis - Multi-system reasoning
+    7. Explainability - Generate explanations
+    8. Recommendations - Actionable next steps
+    9. Audit - Regulatory trace
 
-    Core Principle: Analyze what you have. Suggest what you don't. NEVER block.
+    Core Principle: Signals first, diseases second. Analyze what you have.
     """
+    # Use v2 engine if available, fall back to v1
+    if DIAGNOSTIC_ENGINE_V2_AVAILABLE:
+        try:
+            # Parse input data
+            patients = []
+            if req.csv:
+                df = parse_csv_bulletproof(req.csv)
+                df = df.where(pd.notnull(df), None)
+                patients = df.to_dict(orient='records')
+            elif req.patients:
+                patients = req.patients
+            elif req.patient_data:
+                patients = [req.patient_data] if isinstance(req.patient_data, dict) else req.patient_data
+
+            if not patients:
+                return DiscoveryResponse(
+                    success=False,
+                    timestamp=datetime.utcnow().isoformat(),
+                    patient_count=0,
+                    endpoints_analyzed=[],
+                    endpoint_results={},
+                    convergence={"convergence_type": "none", "convergence_score": 0},
+                    identified_diseases=[],
+                    unknown_patterns=[],
+                    anomalies=[],
+                    recommendations=[],
+                    summary={"overall_risk": "unknown"},
+                    error="No data provided. Send csv, patients, or patient_data."
+                )
+
+            # Initialize v2 engine
+            engine = DiagnosticEngine()
+
+            # Analyze patients
+            if len(patients) == 1:
+                v2_result = engine.analyze(patients[0])
+                patient_count = 1
+            else:
+                v2_results = engine.analyze_batch(patients)
+                # Aggregate results for batch
+                v2_result = _aggregate_v2_results(v2_results)
+                patient_count = len(patients)
+
+            # Transform v2 output to DiscoveryResponse format
+            convergence = v2_result.get('convergence', {})
+            summary = v2_result.get('summary', {})
+
+            # Build endpoint_results from axis_scores
+            endpoint_results = {}
+            for axis_name, axis_data in v2_result.get('axis_scores', {}).items():
+                endpoint_results[axis_name] = {
+                    'endpoint': axis_name,
+                    'risk_level': axis_data.get('status', 'normal'),
+                    'risk_score': axis_data.get('score', 0) * 100,
+                    'abnormal_values': [
+                        {
+                            'column': m.get('marker'),
+                            'value': m.get('value'),
+                            'reference': m.get('reference', ''),
+                            'status': m.get('status'),
+                            'severity': m.get('score', 0),
+                            'patient_index': 0
+                        }
+                        for m in axis_data.get('abnormal_markers', [])
+                    ],
+                    'patterns_detected': [],
+                    'trend': None,
+                    'confidence': axis_data.get('confidence', 0),
+                    'details': {
+                        'columns_analyzed': axis_data.get('normal_markers', []) + [m.get('marker') for m in axis_data.get('abnormal_markers', [])],
+                        'values_checked': axis_data.get('available_markers', 0),
+                        'abnormalities_found': len(axis_data.get('abnormal_markers', []))
+                    }
+                }
+
+            # Build identified_diseases from conditions
+            identified_diseases = [
+                {
+                    'disease_name': d.get('disease', d.get('disease_name', '')),
+                    'icd10_codes': d.get('icd10_codes', [d.get('icd10')] if d.get('icd10') else []),
+                    'confidence': d.get('confidence_label', 'moderate'),
+                    'confidence_score': d.get('confidence', 0),
+                    'matching_indicators': d.get('evidence', []),
+                    'missing_indicators': d.get('missing_data', []),
+                    'description': f"Matches {len(d.get('evidence', []))} indicators for {d.get('disease', '')}"
+                }
+                for d in v2_result.get('conditions', [])
+            ]
+
+            # Build recommendations
+            recommendations = [
+                {
+                    'priority': i + 1,
+                    'category': r.get('category', 'disease'),
+                    'action': r.get('action', ''),
+                    'reason': r.get('reason', ''),
+                    'urgency': r.get('urgency', 'moderate'),
+                    'missing_indicators': r.get('tests', [])
+                }
+                for i, r in enumerate(v2_result.get('recommendations', []))
+            ]
+
+            return DiscoveryResponse(
+                success=True,
+                timestamp=v2_result.get('timestamp', datetime.utcnow().isoformat()),
+                patient_count=patient_count,
+                endpoints_analyzed=list(v2_result.get('axis_scores', {}).keys()),
+                endpoint_results=endpoint_results,
+                convergence={
+                    'convergence_type': convergence.get('type', 'none'),
+                    'convergence_score': convergence.get('convergence_score', 0),
+                    'systems_involved': convergence.get('systems_involved', []),
+                    'explanation': convergence.get('explanation', ''),
+                    'clinical_significance': convergence.get('clinical_significance', ''),
+                    'system_count': convergence.get('system_count', 0),
+                    'velocity': convergence.get('velocity', 'slow')
+                },
+                identified_diseases=identified_diseases,
+                unknown_patterns=[
+                    {
+                        'pattern_id': f"UNK-{a.get('organ_system', 'unknown')}-{i}",
+                        'involved_systems': [a.get('organ_system', 'unknown')],
+                        'abnormal_values': a.get('affected_markers', []),
+                        'description': a.get('description', ''),
+                        'recommendation': '; '.join(a.get('recommended_investigation', []))
+                    }
+                    for i, a in enumerate(v2_result.get('anomalies', []))
+                ],
+                anomalies=[],
+                recommendations=recommendations,
+                summary={
+                    'overall_risk': summary.get('overall_risk', 'unknown'),
+                    'critical_systems': summary.get('critical_systems', []),
+                    'warning_systems': summary.get('warning_systems', []),
+                    'watch_systems': summary.get('watch_systems', []),
+                    'high_confidence_diseases': summary.get('high_confidence_diseases', []),
+                    'possible_diseases': summary.get('possible_diseases', []),
+                    'convergence_type': convergence.get('type', 'none'),
+                    'convergence_score': convergence.get('convergence_score', 0),
+                    'time_to_harm': {'min': 24, 'max': 48, 'unit': 'hours'},
+                    'unexplained_abnormalities': summary.get('unexplained_abnormalities', 0),
+                    'severe_anomalies': 0,
+                    'total_anomalies': len(v2_result.get('anomalies', [])),
+                    'total_diseases_matched': summary.get('total_diseases_matched', 0)
+                },
+                clinical_state=v2_result.get('clinical_state'),
+                state_label=v2_result.get('state_label'),
+                conditions=v2_result.get('conditions', []),
+                immediate_actions=[
+                    {
+                        'verb': 'ACTION',
+                        'target': r.get('condition', ''),
+                        'reason': r.get('reason', ''),
+                        'priority': i + 1,
+                        'urgency': r.get('urgency', 'moderate'),
+                        'endpoint': r.get('category', '')
+                    }
+                    for i, r in enumerate(v2_result.get('recommendations', [])[:5])
+                ],
+                error=None
+            )
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            # Fall back to v1 on error
+            print(f"[HYPERCORE] v2 engine error, falling back to v1: {e}")
+
+    # Fallback to v1 engine
     if not DISCOVERY_ENGINE_AVAILABLE:
         return DiscoveryResponse(
             success=False,
@@ -6868,10 +7040,9 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
                 print(f"[HYPERCORE] Data transformation warning: {e}")
                 transformation_metadata = {'error': str(e), 'transformed': False}
 
-        # Run discovery
+        # Run v1 discovery
         if req.quick_scan:
             quick_result = engine.quick_scan(df)
-            # Wrap quick_scan result in DiscoveryResponse format
             convergence = quick_result.get('convergence', {})
             return DiscoveryResponse(
                 success=quick_result.get('success', True),
@@ -6901,7 +7072,6 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
         else:
             result = engine.discover(df)
 
-            # Add data transformation metadata to result
             if transformation_metadata:
                 result['data_transformation'] = transformation_metadata
 
@@ -6922,6 +7092,86 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
             summary={"overall_risk": "unknown"},
             error=str(e)
         )
+
+
+def _aggregate_v2_results(results: list) -> dict:
+    """Aggregate multiple v2 patient results into a single response."""
+    if not results:
+        return {}
+
+    # Use first result as template
+    aggregated = results[0].copy()
+
+    # Aggregate conditions across all patients
+    all_conditions = []
+    all_anomalies = []
+    disease_counts = {}
+
+    for r in results:
+        for c in r.get('conditions', []):
+            disease = c.get('disease', '')
+            if disease not in disease_counts:
+                disease_counts[disease] = {'count': 0, 'total_conf': 0, 'example': c}
+            disease_counts[disease]['count'] += 1
+            disease_counts[disease]['total_conf'] += c.get('confidence', 0)
+
+        all_anomalies.extend(r.get('anomalies', []))
+
+    # Build aggregated conditions
+    for disease, data in disease_counts.items():
+        avg_conf = data['total_conf'] / data['count']
+        condition = data['example'].copy()
+        condition['confidence'] = avg_conf
+        condition['patient_count'] = data['count']
+        all_conditions.append(condition)
+
+    # Sort by count
+    all_conditions.sort(key=lambda x: x.get('patient_count', 0), reverse=True)
+
+    aggregated['conditions'] = all_conditions
+    aggregated['anomalies'] = all_anomalies[:10]  # Limit anomalies
+    aggregated['patient_count'] = len(results)
+
+    # Aggregate summary
+    states = {}
+    risk_scores = []
+    for r in results:
+        state = r.get('clinical_state', 'unknown')
+        states[state] = states.get(state, 0) + 1
+        if r.get('risk_score'):
+            risk_scores.append(r['risk_score'])
+
+    # Use most severe state
+    if 'S3' in states:
+        aggregated['clinical_state'] = 'S3'
+        aggregated['state_label'] = 'CRITICAL'
+    elif 'S2' in states:
+        aggregated['clinical_state'] = 'S2'
+        aggregated['state_label'] = 'ESCALATING'
+    elif 'S1' in states:
+        aggregated['clinical_state'] = 'S1'
+        aggregated['state_label'] = 'WATCH'
+    else:
+        aggregated['clinical_state'] = 'S0'
+        aggregated['state_label'] = 'STABLE'
+
+    # Update summary
+    aggregated['summary'] = {
+        'overall_risk': 'critical' if 'S3' in states else 'high' if 'S2' in states else 'moderate',
+        'critical_systems': [],
+        'warning_systems': [],
+        'watch_systems': [],
+        'high_confidence_diseases': [c['disease'] for c in all_conditions if c.get('confidence', 0) >= 0.7][:5],
+        'possible_diseases': [c['disease'] for c in all_conditions if 0.4 <= c.get('confidence', 0) < 0.7][:5],
+        'total_diseases_matched': len(all_conditions),
+        'unexplained_abnormalities': len(all_anomalies),
+        'state_distribution': states
+    }
+
+    if risk_scores:
+        aggregated['risk_score'] = sum(risk_scores) / len(risk_scores)
+
+    return aggregated
 
 
 # ---------------------------------------------------------------------
