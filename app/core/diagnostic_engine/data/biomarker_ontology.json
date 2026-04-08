@@ -1,0 +1,580 @@
+{
+  "biomarkers": {
+    "glucose": {
+      "canonical_name": "glucose",
+      "aliases": ["glucose_value", "fasting_glucose", "blood_glucose", "serum_glucose", "GLU", "glu", "fbs", "fasting_blood_sugar"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 18.0},
+      "pathway": "glycemic_control",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "hba1c": {
+      "canonical_name": "hba1c",
+      "aliases": ["hemoglobin_a1c", "a1c", "glycated_hemoglobin", "glycosylated_hemoglobin", "HbA1c"],
+      "unit_canonical": "%",
+      "unit_conversions": {"mmol/mol": 0.0915},
+      "pathway": "glycemic_control",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "insulin": {
+      "canonical_name": "insulin",
+      "aliases": ["fasting_insulin", "serum_insulin", "INS"],
+      "unit_canonical": "uIU/mL",
+      "unit_conversions": {"pmol/L": 0.1442},
+      "pathway": "glycemic_control",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "creatinine": {
+      "canonical_name": "creatinine",
+      "aliases": ["creatinine_value", "cr", "serum_creatinine", "CREAT", "Creatinine"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"umol/L": 0.0113},
+      "pathway": "renal_filtration",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "bun": {
+      "canonical_name": "bun",
+      "aliases": ["blood_urea_nitrogen", "urea_nitrogen", "BUN"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 2.8},
+      "pathway": "renal_filtration",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "egfr": {
+      "canonical_name": "egfr",
+      "aliases": ["estimated_gfr", "gfr", "eGFR", "glomerular_filtration_rate"],
+      "unit_canonical": "mL/min/1.73m2",
+      "unit_conversions": {},
+      "pathway": "renal_filtration",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "sodium": {
+      "canonical_name": "sodium",
+      "aliases": ["na", "serum_sodium", "Na+"],
+      "unit_canonical": "mEq/L",
+      "unit_conversions": {"mmol/L": 1.0},
+      "pathway": "electrolyte_balance",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "potassium": {
+      "canonical_name": "potassium",
+      "aliases": ["k", "serum_potassium", "K+"],
+      "unit_canonical": "mEq/L",
+      "unit_conversions": {"mmol/L": 1.0},
+      "pathway": "electrolyte_balance",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "chloride": {
+      "canonical_name": "chloride",
+      "aliases": ["cl", "serum_chloride", "Cl-"],
+      "unit_canonical": "mEq/L",
+      "unit_conversions": {"mmol/L": 1.0},
+      "pathway": "electrolyte_balance",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "bicarbonate": {
+      "canonical_name": "bicarbonate",
+      "aliases": ["co2", "hco3", "serum_bicarbonate", "total_co2"],
+      "unit_canonical": "mEq/L",
+      "unit_conversions": {"mmol/L": 1.0},
+      "pathway": "acid_base",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "calcium": {
+      "canonical_name": "calcium",
+      "aliases": ["ca", "serum_calcium", "Ca++"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 4.0},
+      "pathway": "bone_metabolism",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "phosphorus": {
+      "canonical_name": "phosphorus",
+      "aliases": ["phos", "phosphate", "serum_phosphorus"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 3.1},
+      "pathway": "bone_metabolism",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "magnesium": {
+      "canonical_name": "magnesium",
+      "aliases": ["mg", "serum_magnesium", "Mg++"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 2.43},
+      "pathway": "electrolyte_balance",
+      "organ_system": "renal",
+      "data_type": "continuous"
+    },
+    "ast": {
+      "canonical_name": "ast",
+      "aliases": ["sgot", "aspartate_aminotransferase", "AST", "SGOT"],
+      "unit_canonical": "U/L",
+      "unit_conversions": {},
+      "pathway": "hepatocellular",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "alt": {
+      "canonical_name": "alt",
+      "aliases": ["sgpt", "alanine_aminotransferase", "ALT", "SGPT"],
+      "unit_canonical": "U/L",
+      "unit_conversions": {},
+      "pathway": "hepatocellular",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "alkaline_phosphatase": {
+      "canonical_name": "alkaline_phosphatase",
+      "aliases": ["alp", "alk_phos", "alkp", "ALP"],
+      "unit_canonical": "U/L",
+      "unit_conversions": {},
+      "pathway": "cholestatic",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "bilirubin": {
+      "canonical_name": "bilirubin",
+      "aliases": ["total_bilirubin", "tbili", "bili"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"umol/L": 0.0585},
+      "pathway": "hepatobiliary",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "albumin": {
+      "canonical_name": "albumin",
+      "aliases": ["serum_albumin", "alb"],
+      "unit_canonical": "g/dL",
+      "unit_conversions": {"g/L": 0.1},
+      "pathway": "synthetic_function",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "protein_total": {
+      "canonical_name": "protein_total",
+      "aliases": ["total_protein", "tp", "serum_protein"],
+      "unit_canonical": "g/dL",
+      "unit_conversions": {"g/L": 0.1},
+      "pathway": "synthetic_function",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "ggt": {
+      "canonical_name": "ggt",
+      "aliases": ["gamma_gt", "gamma_glutamyl_transferase", "GGT"],
+      "unit_canonical": "U/L",
+      "unit_conversions": {},
+      "pathway": "cholestatic",
+      "organ_system": "hepatic",
+      "data_type": "continuous"
+    },
+    "ldh": {
+      "canonical_name": "ldh",
+      "aliases": ["lactate_dehydrogenase", "LDH"],
+      "unit_canonical": "U/L",
+      "unit_conversions": {},
+      "pathway": "tissue_damage",
+      "organ_system": "general",
+      "data_type": "continuous"
+    },
+    "troponin": {
+      "canonical_name": "troponin",
+      "aliases": ["troponin_i", "troponin_t", "trop", "tnI", "tnT", "high_sensitivity_troponin"],
+      "unit_canonical": "ng/mL",
+      "unit_conversions": {"pg/mL": 0.001},
+      "pathway": "myocardial_injury",
+      "organ_system": "cardiac",
+      "data_type": "continuous"
+    },
+    "bnp": {
+      "canonical_name": "bnp",
+      "aliases": ["brain_natriuretic_peptide", "nt_probnp", "pro_bnp", "BNP"],
+      "unit_canonical": "pg/mL",
+      "unit_conversions": {},
+      "pathway": "myocardial_stress",
+      "organ_system": "cardiac",
+      "data_type": "continuous"
+    },
+    "ck_mb": {
+      "canonical_name": "ck_mb",
+      "aliases": ["creatine_kinase_mb", "ck-mb", "CKMB"],
+      "unit_canonical": "ng/mL",
+      "unit_conversions": {},
+      "pathway": "myocardial_injury",
+      "organ_system": "cardiac",
+      "data_type": "continuous"
+    },
+    "wbc": {
+      "canonical_name": "wbc",
+      "aliases": ["white_blood_cells", "leukocytes", "WBC"],
+      "unit_canonical": "x10^9/L",
+      "unit_conversions": {"cells/uL": 0.001},
+      "pathway": "immune_response",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "hemoglobin": {
+      "canonical_name": "hemoglobin",
+      "aliases": ["hgb", "hb", "Hemoglobin"],
+      "unit_canonical": "g/dL",
+      "unit_conversions": {"g/L": 0.1},
+      "pathway": "oxygen_transport",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "hematocrit": {
+      "canonical_name": "hematocrit",
+      "aliases": ["hct", "packed_cell_volume", "Hematocrit"],
+      "unit_canonical": "%",
+      "unit_conversions": {},
+      "pathway": "oxygen_transport",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "platelets": {
+      "canonical_name": "platelets",
+      "aliases": ["plt", "platelet_count", "thrombocytes", "PLT"],
+      "unit_canonical": "x10^9/L",
+      "unit_conversions": {"cells/uL": 0.001},
+      "pathway": "coagulation",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "mcv": {
+      "canonical_name": "mcv",
+      "aliases": ["mean_corpuscular_volume", "MCV"],
+      "unit_canonical": "fL",
+      "unit_conversions": {},
+      "pathway": "rbc_morphology",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "mch": {
+      "canonical_name": "mch",
+      "aliases": ["mean_corpuscular_hemoglobin", "MCH"],
+      "unit_canonical": "pg",
+      "unit_conversions": {},
+      "pathway": "rbc_morphology",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "rdw": {
+      "canonical_name": "rdw",
+      "aliases": ["red_cell_distribution_width", "RDW"],
+      "unit_canonical": "%",
+      "unit_conversions": {},
+      "pathway": "rbc_morphology",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "neutrophils": {
+      "canonical_name": "neutrophils",
+      "aliases": ["neut", "absolute_neutrophil_count", "ANC"],
+      "unit_canonical": "x10^9/L",
+      "unit_conversions": {},
+      "pathway": "immune_response",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "lymphocytes": {
+      "canonical_name": "lymphocytes",
+      "aliases": ["lymph", "absolute_lymphocyte_count", "ALC"],
+      "unit_canonical": "x10^9/L",
+      "unit_conversions": {},
+      "pathway": "immune_response",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "crp": {
+      "canonical_name": "crp",
+      "aliases": ["c_reactive_protein", "CRP", "hs_crp", "high_sensitivity_crp"],
+      "unit_canonical": "mg/L",
+      "unit_conversions": {"mg/dL": 10.0},
+      "pathway": "inflammation",
+      "organ_system": "inflammatory",
+      "data_type": "continuous"
+    },
+    "esr": {
+      "canonical_name": "esr",
+      "aliases": ["erythrocyte_sedimentation_rate", "sed_rate", "ESR"],
+      "unit_canonical": "mm/hr",
+      "unit_conversions": {},
+      "pathway": "inflammation",
+      "organ_system": "inflammatory",
+      "data_type": "continuous"
+    },
+    "procalcitonin": {
+      "canonical_name": "procalcitonin",
+      "aliases": ["pct", "PCT"],
+      "unit_canonical": "ng/mL",
+      "unit_conversions": {},
+      "pathway": "infection",
+      "organ_system": "inflammatory",
+      "data_type": "continuous"
+    },
+    "ferritin": {
+      "canonical_name": "ferritin",
+      "aliases": ["serum_ferritin"],
+      "unit_canonical": "ng/mL",
+      "unit_conversions": {"ug/L": 1.0},
+      "pathway": "iron_storage",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "iron": {
+      "canonical_name": "iron",
+      "aliases": ["serum_iron", "fe"],
+      "unit_canonical": "ug/dL",
+      "unit_conversions": {"umol/L": 5.587},
+      "pathway": "iron_metabolism",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "tsh": {
+      "canonical_name": "tsh",
+      "aliases": ["thyroid_stimulating_hormone", "TSH"],
+      "unit_canonical": "mIU/L",
+      "unit_conversions": {},
+      "pathway": "thyroid",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "t4": {
+      "canonical_name": "t4",
+      "aliases": ["thyroxine", "free_t4", "T4"],
+      "unit_canonical": "ng/dL",
+      "unit_conversions": {"pmol/L": 0.0775},
+      "pathway": "thyroid",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "t3": {
+      "canonical_name": "t3",
+      "aliases": ["triiodothyronine", "free_t3", "T3"],
+      "unit_canonical": "pg/mL",
+      "unit_conversions": {"pmol/L": 0.651},
+      "pathway": "thyroid",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "cortisol": {
+      "canonical_name": "cortisol",
+      "aliases": ["serum_cortisol", "am_cortisol"],
+      "unit_canonical": "ug/dL",
+      "unit_conversions": {"nmol/L": 0.0362},
+      "pathway": "adrenal",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "vitamin_d": {
+      "canonical_name": "vitamin_d",
+      "aliases": ["25_oh_vitamin_d", "vit_d", "25_hydroxyvitamin_d"],
+      "unit_canonical": "ng/mL",
+      "unit_conversions": {"nmol/L": 0.4},
+      "pathway": "bone_metabolism",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "pth": {
+      "canonical_name": "pth",
+      "aliases": ["parathyroid_hormone", "intact_pth", "PTH"],
+      "unit_canonical": "pg/mL",
+      "unit_conversions": {},
+      "pathway": "bone_metabolism",
+      "organ_system": "endocrine",
+      "data_type": "continuous"
+    },
+    "triglycerides": {
+      "canonical_name": "triglycerides",
+      "aliases": ["tg", "trigs"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 88.57},
+      "pathway": "lipid_metabolism",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "cholesterol": {
+      "canonical_name": "cholesterol",
+      "aliases": ["total_cholesterol", "tc"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 38.67},
+      "pathway": "lipid_metabolism",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "hdl": {
+      "canonical_name": "hdl",
+      "aliases": ["hdl_cholesterol", "hdl_c"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 38.67},
+      "pathway": "lipid_metabolism",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "ldl": {
+      "canonical_name": "ldl",
+      "aliases": ["ldl_cholesterol", "ldl_c"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"mmol/L": 38.67},
+      "pathway": "lipid_metabolism",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "uric_acid": {
+      "canonical_name": "uric_acid",
+      "aliases": ["urate", "serum_uric_acid"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"umol/L": 0.0168},
+      "pathway": "purine_metabolism",
+      "organ_system": "metabolic",
+      "data_type": "continuous"
+    },
+    "lactate": {
+      "canonical_name": "lactate",
+      "aliases": ["lactic_acid", "serum_lactate"],
+      "unit_canonical": "mmol/L",
+      "unit_conversions": {"mg/dL": 0.111},
+      "pathway": "tissue_perfusion",
+      "organ_system": "perfusion",
+      "data_type": "continuous"
+    },
+    "heart_rate": {
+      "canonical_name": "heart_rate",
+      "aliases": ["hr", "pulse", "bpm"],
+      "unit_canonical": "bpm",
+      "unit_conversions": {},
+      "pathway": "cardiovascular",
+      "organ_system": "vitals",
+      "data_type": "continuous"
+    },
+    "sbp": {
+      "canonical_name": "sbp",
+      "aliases": ["systolic_bp", "systolic_blood_pressure", "bp_systolic"],
+      "unit_canonical": "mmHg",
+      "unit_conversions": {},
+      "pathway": "cardiovascular",
+      "organ_system": "vitals",
+      "data_type": "continuous"
+    },
+    "dbp": {
+      "canonical_name": "dbp",
+      "aliases": ["diastolic_bp", "diastolic_blood_pressure", "bp_diastolic"],
+      "unit_canonical": "mmHg",
+      "unit_conversions": {},
+      "pathway": "cardiovascular",
+      "organ_system": "vitals",
+      "data_type": "continuous"
+    },
+    "respiratory_rate": {
+      "canonical_name": "respiratory_rate",
+      "aliases": ["rr", "resp_rate", "breaths_per_minute"],
+      "unit_canonical": "breaths/min",
+      "unit_conversions": {},
+      "pathway": "respiratory",
+      "organ_system": "vitals",
+      "data_type": "continuous"
+    },
+    "temperature": {
+      "canonical_name": "temperature",
+      "aliases": ["temp", "body_temperature", "fever"],
+      "unit_canonical": "F",
+      "unit_conversions": {"C": 1.8},
+      "pathway": "thermoregulation",
+      "organ_system": "vitals",
+      "data_type": "continuous"
+    },
+    "spo2": {
+      "canonical_name": "spo2",
+      "aliases": ["oxygen_saturation", "o2_sat", "pulse_ox"],
+      "unit_canonical": "%",
+      "unit_conversions": {},
+      "pathway": "oxygenation",
+      "organ_system": "respiratory",
+      "data_type": "continuous"
+    },
+    "ph": {
+      "canonical_name": "ph",
+      "aliases": ["blood_ph", "arterial_ph"],
+      "unit_canonical": "",
+      "unit_conversions": {},
+      "pathway": "acid_base",
+      "organ_system": "respiratory",
+      "data_type": "continuous"
+    },
+    "pao2": {
+      "canonical_name": "pao2",
+      "aliases": ["arterial_oxygen", "partial_pressure_oxygen"],
+      "unit_canonical": "mmHg",
+      "unit_conversions": {},
+      "pathway": "oxygenation",
+      "organ_system": "respiratory",
+      "data_type": "continuous"
+    },
+    "paco2": {
+      "canonical_name": "paco2",
+      "aliases": ["arterial_co2", "partial_pressure_co2"],
+      "unit_canonical": "mmHg",
+      "unit_conversions": {},
+      "pathway": "ventilation",
+      "organ_system": "respiratory",
+      "data_type": "continuous"
+    },
+    "pt": {
+      "canonical_name": "pt",
+      "aliases": ["prothrombin_time", "PT"],
+      "unit_canonical": "seconds",
+      "unit_conversions": {},
+      "pathway": "coagulation",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "inr": {
+      "canonical_name": "inr",
+      "aliases": ["international_normalized_ratio", "INR"],
+      "unit_canonical": "",
+      "unit_conversions": {},
+      "pathway": "coagulation",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "ptt": {
+      "canonical_name": "ptt",
+      "aliases": ["partial_thromboplastin_time", "aptt", "PTT"],
+      "unit_canonical": "seconds",
+      "unit_conversions": {},
+      "pathway": "coagulation",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "d_dimer": {
+      "canonical_name": "d_dimer",
+      "aliases": ["d-dimer", "ddimer"],
+      "unit_canonical": "ng/mL",
+      "unit_conversions": {"ug/mL": 1000},
+      "pathway": "fibrinolysis",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    },
+    "fibrinogen": {
+      "canonical_name": "fibrinogen",
+      "aliases": ["serum_fibrinogen"],
+      "unit_canonical": "mg/dL",
+      "unit_conversions": {"g/L": 100},
+      "pathway": "coagulation",
+      "organ_system": "hematologic",
+      "data_type": "continuous"
+    }
+  }
+}

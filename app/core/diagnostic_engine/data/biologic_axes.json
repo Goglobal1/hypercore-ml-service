@@ -1,0 +1,170 @@
+{
+  "axes": {
+    "metabolic": {
+      "name": "Metabolic Axis",
+      "description": "Glucose regulation, insulin sensitivity, lipid metabolism",
+      "biomarkers": {
+        "primary": ["glucose", "hba1c", "insulin"],
+        "secondary": ["triglycerides", "hdl", "ldl", "cholesterol"],
+        "supportive": ["uric_acid", "lactate"]
+      },
+      "scoring_weights": {
+        "glucose": 0.35,
+        "hba1c": 0.35,
+        "insulin": 0.15,
+        "triglycerides": 0.15
+      }
+    },
+    "renal": {
+      "name": "Renal Axis",
+      "description": "Kidney filtration, electrolyte balance, acid-base regulation",
+      "biomarkers": {
+        "primary": ["creatinine", "egfr", "bun"],
+        "secondary": ["potassium", "sodium", "phosphorus"],
+        "supportive": ["chloride", "bicarbonate", "magnesium", "uric_acid"]
+      },
+      "scoring_weights": {
+        "creatinine": 0.30,
+        "egfr": 0.40,
+        "bun": 0.20,
+        "potassium": 0.10
+      }
+    },
+    "hepatic": {
+      "name": "Hepatic Axis",
+      "description": "Liver function, synthetic capacity, detoxification",
+      "biomarkers": {
+        "primary": ["ast", "alt", "alkaline_phosphatase", "bilirubin"],
+        "secondary": ["albumin", "protein_total", "ggt"],
+        "supportive": ["inr", "ldh"]
+      },
+      "scoring_weights": {
+        "ast": 0.25,
+        "alt": 0.25,
+        "alkaline_phosphatase": 0.20,
+        "bilirubin": 0.20,
+        "albumin": 0.10
+      }
+    },
+    "inflammatory": {
+      "name": "Inflammatory Axis",
+      "description": "Systemic inflammation, immune activation, infection markers",
+      "biomarkers": {
+        "primary": ["crp", "esr", "procalcitonin"],
+        "secondary": ["ferritin", "wbc"],
+        "supportive": ["fibrinogen", "d_dimer"]
+      },
+      "scoring_weights": {
+        "crp": 0.35,
+        "procalcitonin": 0.30,
+        "esr": 0.20,
+        "ferritin": 0.15
+      }
+    },
+    "cardiac": {
+      "name": "Cardiac Axis",
+      "description": "Heart function, myocardial stress and injury",
+      "biomarkers": {
+        "primary": ["troponin", "bnp", "ck_mb"],
+        "secondary": ["ldh"],
+        "supportive": ["heart_rate", "sbp", "dbp"]
+      },
+      "scoring_weights": {
+        "troponin": 0.45,
+        "bnp": 0.35,
+        "ck_mb": 0.20
+      }
+    },
+    "hematologic": {
+      "name": "Hematologic Axis",
+      "description": "Blood cell production, oxygen transport, coagulation",
+      "biomarkers": {
+        "primary": ["wbc", "hemoglobin", "platelets"],
+        "secondary": ["hematocrit", "mcv", "rdw"],
+        "supportive": ["neutrophils", "lymphocytes", "ferritin", "iron"]
+      },
+      "scoring_weights": {
+        "wbc": 0.30,
+        "hemoglobin": 0.35,
+        "platelets": 0.25,
+        "hematocrit": 0.10
+      }
+    },
+    "endocrine": {
+      "name": "Endocrine Axis",
+      "description": "Hormonal regulation, thyroid, adrenal function",
+      "biomarkers": {
+        "primary": ["tsh", "t4", "cortisol"],
+        "secondary": ["t3", "calcium", "pth"],
+        "supportive": ["vitamin_d"]
+      },
+      "scoring_weights": {
+        "tsh": 0.40,
+        "t4": 0.30,
+        "cortisol": 0.20,
+        "calcium": 0.10
+      }
+    },
+    "coagulation": {
+      "name": "Coagulation Axis",
+      "description": "Blood clotting, fibrinolysis",
+      "biomarkers": {
+        "primary": ["pt", "inr", "ptt"],
+        "secondary": ["platelets", "fibrinogen"],
+        "supportive": ["d_dimer"]
+      },
+      "scoring_weights": {
+        "pt": 0.30,
+        "inr": 0.30,
+        "ptt": 0.25,
+        "d_dimer": 0.15
+      }
+    },
+    "respiratory": {
+      "name": "Respiratory Axis",
+      "description": "Oxygenation, ventilation, acid-base from respiratory perspective",
+      "biomarkers": {
+        "primary": ["spo2", "pao2", "paco2"],
+        "secondary": ["ph", "respiratory_rate"],
+        "supportive": ["bicarbonate"]
+      },
+      "scoring_weights": {
+        "spo2": 0.35,
+        "pao2": 0.30,
+        "paco2": 0.20,
+        "ph": 0.15
+      }
+    },
+    "perfusion": {
+      "name": "Perfusion Axis",
+      "description": "Tissue perfusion, hemodynamic status",
+      "biomarkers": {
+        "primary": ["lactate", "sbp"],
+        "secondary": ["heart_rate", "spo2"],
+        "supportive": ["creatinine", "bun"]
+      },
+      "scoring_weights": {
+        "lactate": 0.45,
+        "sbp": 0.35,
+        "heart_rate": 0.20
+      }
+    },
+    "vitals": {
+      "name": "Vital Signs Axis",
+      "description": "Core vital signs indicating overall physiologic status",
+      "biomarkers": {
+        "primary": ["heart_rate", "sbp", "dbp", "respiratory_rate", "temperature", "spo2"],
+        "secondary": [],
+        "supportive": []
+      },
+      "scoring_weights": {
+        "heart_rate": 0.20,
+        "sbp": 0.20,
+        "dbp": 0.15,
+        "respiratory_rate": 0.20,
+        "temperature": 0.10,
+        "spo2": 0.15
+      }
+    }
+  }
+}

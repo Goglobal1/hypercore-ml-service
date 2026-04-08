@@ -1,0 +1,574 @@
+{
+  "diseases": {
+    "prediabetes": {
+      "name": "Pre-diabetes",
+      "icd10": "R73.03",
+      "category": "metabolic",
+      "description": "Impaired glucose regulation preceding diabetes",
+      "patterns": {
+        "primary": [
+          {"marker": "glucose", "condition": "borderline"},
+          {"marker": "hba1c", "range": [5.7, 6.4]}
+        ],
+        "supportive": [
+          {"marker": "insulin", "condition": "elevated"},
+          {"marker": "triglycerides", "condition": "elevated"}
+        ]
+      },
+      "exclusions": [
+        {"marker": "glucose", "condition": ">=", "value": 126}
+      ],
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.45,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.08,
+        "temporal_bonus": 0.1,
+        "max": 0.90
+      },
+      "severity_logic": {
+        "mild": {"glucose_range": [100, 109]},
+        "moderate": {"glucose_range": [110, 119]},
+        "advanced": {"glucose_range": [120, 125]}
+      },
+      "organ_systems": ["metabolic", "endocrine"],
+      "related_conditions": ["diabetes_type2", "metabolic_syndrome", "insulin_resistance"],
+      "recommended_followup": ["hba1c", "fasting_glucose_repeat", "ogtt", "fasting_insulin"]
+    },
+    "diabetes_type2": {
+      "name": "Diabetes Mellitus Type 2",
+      "icd10": "E11.9",
+      "category": "metabolic",
+      "description": "Chronic hyperglycemia due to insulin resistance",
+      "patterns": {
+        "primary": [
+          {"marker": "glucose", "condition": ">=", "value": 126},
+          {"marker": "hba1c", "condition": ">=", "value": 6.5}
+        ],
+        "supportive": [
+          {"marker": "triglycerides", "condition": "elevated"},
+          {"marker": "hdl", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.05,
+        "both_primary_bonus": 0.15,
+        "max": 0.95
+      },
+      "organ_systems": ["metabolic", "endocrine"],
+      "recommended_followup": ["hba1c_quarterly", "renal_function", "lipid_panel", "eye_exam"]
+    },
+    "acute_kidney_injury": {
+      "name": "Acute Kidney Injury",
+      "icd10": "N17.9",
+      "category": "renal",
+      "description": "Sudden decrease in kidney function",
+      "patterns": {
+        "primary": [
+          {"marker": "creatinine", "condition": ">=", "value": 1.3},
+          {"marker": "egfr", "condition": "<", "value": 60}
+        ],
+        "supportive": [
+          {"marker": "bun", "condition": "elevated"},
+          {"marker": "potassium", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.50,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.08,
+        "temporal_bonus": 0.15,
+        "max": 0.95
+      },
+      "stages": {
+        "stage_1": {"creatinine_increase": [0.3, 0.5]},
+        "stage_2": {"creatinine_ratio": [2.0, 2.9]},
+        "stage_3": {"creatinine_ratio": [3.0, 999]}
+      },
+      "organ_systems": ["renal"],
+      "recommended_followup": ["serial_creatinine", "urine_output", "renal_ultrasound", "nephrology_consult"]
+    },
+    "chronic_kidney_disease": {
+      "name": "Chronic Kidney Disease",
+      "icd10": "N18.9",
+      "category": "renal",
+      "description": "Progressive loss of kidney function over months to years",
+      "patterns": {
+        "primary": [
+          {"marker": "egfr", "condition": "<", "value": 60}
+        ],
+        "supportive": [
+          {"marker": "creatinine", "condition": "elevated"},
+          {"marker": "bun", "condition": "elevated"},
+          {"marker": "potassium", "condition": "elevated"},
+          {"marker": "phosphorus", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.30,
+        "per_supportive_match": 0.05,
+        "max": 0.95
+      },
+      "stages": {
+        "stage_1": {"egfr_range": [90, 999], "note": "kidney_damage_with_normal_gfr"},
+        "stage_2": {"egfr_range": [60, 89]},
+        "stage_3a": {"egfr_range": [45, 59]},
+        "stage_3b": {"egfr_range": [30, 44]},
+        "stage_4": {"egfr_range": [15, 29]},
+        "stage_5": {"egfr_range": [0, 14]}
+      },
+      "organ_systems": ["renal"],
+      "recommended_followup": ["nephrology_referral", "urine_albumin", "renal_ultrasound"]
+    },
+    "heart_failure": {
+      "name": "Heart Failure",
+      "icd10": "I50.9",
+      "category": "cardiac",
+      "description": "Heart unable to pump blood effectively",
+      "patterns": {
+        "primary": [
+          {"marker": "bnp", "condition": ">=", "value": 100}
+        ],
+        "supportive": [
+          {"marker": "troponin", "condition": "elevated"},
+          {"marker": "creatinine", "condition": "elevated"},
+          {"marker": "spo2", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.50,
+        "per_primary_match": 0.30,
+        "per_supportive_match": 0.08,
+        "max": 0.95
+      },
+      "organ_systems": ["cardiac", "respiratory"],
+      "recommended_followup": ["echocardiogram", "chest_xray", "cardiology_consult"]
+    },
+    "acute_myocardial_infarction": {
+      "name": "Acute Myocardial Infarction",
+      "icd10": "I21.9",
+      "category": "cardiac",
+      "description": "Heart attack - acute coronary syndrome with myocardial necrosis",
+      "patterns": {
+        "primary": [
+          {"marker": "troponin", "condition": ">=", "value": 0.04}
+        ],
+        "supportive": [
+          {"marker": "ck_mb", "condition": "elevated"},
+          {"marker": "bnp", "condition": "elevated"},
+          {"marker": "ldh", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.35,
+        "per_supportive_match": 0.05,
+        "max": 0.95
+      },
+      "organ_systems": ["cardiac"],
+      "recommended_followup": ["serial_troponin", "ecg", "cardiology_consult_urgent", "cardiac_catheterization"]
+    },
+    "sepsis": {
+      "name": "Sepsis",
+      "icd10": "A41.9",
+      "category": "infectious",
+      "description": "Life-threatening organ dysfunction from infection",
+      "patterns": {
+        "primary": [
+          {"marker": "wbc", "condition": "abnormal"},
+          {"marker": "temperature", "condition": "abnormal"},
+          {"marker": "lactate", "condition": ">=", "value": 2.0}
+        ],
+        "supportive": [
+          {"marker": "procalcitonin", "condition": "elevated"},
+          {"marker": "crp", "condition": "elevated"},
+          {"marker": "heart_rate", "condition": "elevated"},
+          {"marker": "respiratory_rate", "condition": "elevated"},
+          {"marker": "sbp", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.40,
+        "per_primary_match": 0.20,
+        "per_supportive_match": 0.08,
+        "max": 0.95
+      },
+      "organ_systems": ["inflammatory", "perfusion", "vitals"],
+      "recommended_followup": ["blood_cultures", "lactate_clearance", "source_identification"]
+    },
+    "septic_shock": {
+      "name": "Septic Shock",
+      "icd10": "R65.21",
+      "category": "infectious",
+      "description": "Sepsis with persistent hypotension requiring vasopressors",
+      "patterns": {
+        "primary": [
+          {"marker": "lactate", "condition": ">=", "value": 2.0},
+          {"marker": "sbp", "condition": "<", "value": 90}
+        ],
+        "supportive": [
+          {"marker": "procalcitonin", "condition": "elevated"},
+          {"marker": "wbc", "condition": "abnormal"},
+          {"marker": "creatinine", "condition": "elevated"}
+        ]
+      },
+      "require_all_primary": true,
+      "confidence_factors": {
+        "base": 0.60,
+        "per_primary_match": 0.20,
+        "per_supportive_match": 0.05,
+        "max": 0.95
+      },
+      "organ_systems": ["inflammatory", "perfusion", "cardiac"],
+      "recommended_followup": ["icu_admission", "vasopressor_therapy", "aggressive_fluid_resuscitation"]
+    },
+    "anemia": {
+      "name": "Anemia",
+      "icd10": "D64.9",
+      "category": "hematologic",
+      "description": "Decreased red blood cells or hemoglobin",
+      "patterns": {
+        "primary": [
+          {"marker": "hemoglobin", "condition": "<", "value": 12.0},
+          {"marker": "hematocrit", "condition": "<", "value": 36}
+        ],
+        "supportive": [
+          {"marker": "mcv", "condition": "abnormal"},
+          {"marker": "rdw", "condition": "elevated"},
+          {"marker": "ferritin", "condition": "low"},
+          {"marker": "iron", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.05,
+        "max": 0.95
+      },
+      "organ_systems": ["hematologic"],
+      "recommended_followup": ["reticulocyte_count", "iron_studies", "b12_folate", "peripheral_smear"]
+    },
+    "thrombocytopenia": {
+      "name": "Thrombocytopenia",
+      "icd10": "D69.6",
+      "category": "hematologic",
+      "description": "Low platelet count",
+      "patterns": {
+        "primary": [
+          {"marker": "platelets", "condition": "<", "value": 150}
+        ],
+        "supportive": [
+          {"marker": "pt", "condition": "elevated"},
+          {"marker": "ptt", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.60,
+        "per_primary_match": 0.30,
+        "per_supportive_match": 0.05,
+        "max": 0.95
+      },
+      "severity_logic": {
+        "mild": {"platelets_range": [100, 149]},
+        "moderate": {"platelets_range": [50, 99]},
+        "severe": {"platelets_range": [20, 49]},
+        "critical": {"platelets_range": [0, 19]}
+      },
+      "organ_systems": ["hematologic", "coagulation"],
+      "recommended_followup": ["peripheral_smear", "bone_marrow_if_severe", "hematology_consult"]
+    },
+    "acute_liver_injury": {
+      "name": "Acute Liver Injury",
+      "icd10": "K72.0",
+      "category": "hepatic",
+      "description": "Acute elevation of liver enzymes indicating hepatocellular damage",
+      "patterns": {
+        "primary": [
+          {"marker": "alt", "condition": ">=", "value": 200},
+          {"marker": "ast", "condition": ">=", "value": 200}
+        ],
+        "supportive": [
+          {"marker": "bilirubin", "condition": "elevated"},
+          {"marker": "inr", "condition": "elevated"},
+          {"marker": "albumin", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.08,
+        "max": 0.95
+      },
+      "organ_systems": ["hepatic"],
+      "recommended_followup": ["hepatitis_panel", "liver_ultrasound", "toxicology", "gastroenterology_consult"]
+    },
+    "elevated_liver_enzymes": {
+      "name": "Elevated Liver Enzymes",
+      "icd10": "R74.0",
+      "category": "hepatic",
+      "description": "Mild to moderate elevation of liver enzymes",
+      "patterns": {
+        "primary": [
+          {"marker": "alt", "condition": "borderline"},
+          {"marker": "ast", "condition": "borderline"},
+          {"marker": "alkaline_phosphatase", "condition": "borderline"}
+        ],
+        "supportive": [
+          {"marker": "ggt", "condition": "elevated"},
+          {"marker": "bilirubin", "condition": "borderline"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_scales_with_count": true,
+      "confidence_factors": {
+        "base": 0.35,
+        "per_primary_match": 0.15,
+        "per_supportive_match": 0.08,
+        "max": 0.85
+      },
+      "organ_systems": ["hepatic"],
+      "recommended_followup": ["repeat_lfts_3_months", "hepatitis_screening", "alcohol_history"]
+    },
+    "hypothyroidism": {
+      "name": "Hypothyroidism",
+      "icd10": "E03.9",
+      "category": "endocrine",
+      "description": "Underactive thyroid gland",
+      "patterns": {
+        "primary": [
+          {"marker": "tsh", "condition": ">=", "value": 4.5}
+        ],
+        "supportive": [
+          {"marker": "t4", "condition": "low"},
+          {"marker": "t3", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.30,
+        "per_supportive_match": 0.10,
+        "max": 0.95
+      },
+      "organ_systems": ["endocrine"],
+      "recommended_followup": ["free_t4", "thyroid_antibodies", "endocrinology_referral"]
+    },
+    "hyperthyroidism": {
+      "name": "Hyperthyroidism",
+      "icd10": "E05.9",
+      "category": "endocrine",
+      "description": "Overactive thyroid gland",
+      "patterns": {
+        "primary": [
+          {"marker": "tsh", "condition": "<", "value": 0.4}
+        ],
+        "supportive": [
+          {"marker": "t4", "condition": "elevated"},
+          {"marker": "t3", "condition": "elevated"},
+          {"marker": "heart_rate", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.30,
+        "per_supportive_match": 0.08,
+        "max": 0.95
+      },
+      "organ_systems": ["endocrine"],
+      "recommended_followup": ["free_t4_t3", "thyroid_antibodies", "thyroid_uptake_scan"]
+    },
+    "hyponatremia": {
+      "name": "Hyponatremia",
+      "icd10": "E87.1",
+      "category": "electrolyte",
+      "description": "Low blood sodium level",
+      "patterns": {
+        "primary": [
+          {"marker": "sodium", "condition": "<", "value": 135}
+        ],
+        "supportive": []
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.70,
+        "per_primary_match": 0.25,
+        "max": 0.95
+      },
+      "severity_logic": {
+        "mild": {"sodium_range": [130, 134]},
+        "moderate": {"sodium_range": [125, 129]},
+        "severe": {"sodium_range": [0, 124]}
+      },
+      "organ_systems": ["renal"],
+      "recommended_followup": ["serum_osmolality", "urine_sodium", "volume_status_assessment"]
+    },
+    "hyperkalemia": {
+      "name": "Hyperkalemia",
+      "icd10": "E87.5",
+      "category": "electrolyte",
+      "description": "High blood potassium level",
+      "patterns": {
+        "primary": [
+          {"marker": "potassium", "condition": ">=", "value": 5.1}
+        ],
+        "supportive": [
+          {"marker": "creatinine", "condition": "elevated"},
+          {"marker": "egfr", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.70,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.03,
+        "max": 0.95
+      },
+      "severity_logic": {
+        "mild": {"potassium_range": [5.1, 5.5]},
+        "moderate": {"potassium_range": [5.6, 6.5]},
+        "severe": {"potassium_range": [6.6, 10]}
+      },
+      "organ_systems": ["renal", "cardiac"],
+      "recommended_followup": ["ecg", "repeat_potassium", "renal_function"]
+    },
+    "hypocalcemia": {
+      "name": "Hypocalcemia",
+      "icd10": "E83.51",
+      "category": "electrolyte",
+      "description": "Low blood calcium level",
+      "patterns": {
+        "primary": [
+          {"marker": "calcium", "condition": "<", "value": 8.5}
+        ],
+        "supportive": [
+          {"marker": "albumin", "condition": "low"},
+          {"marker": "pth", "condition": "abnormal"},
+          {"marker": "vitamin_d", "condition": "low"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.65,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.05,
+        "max": 0.95
+      },
+      "organ_systems": ["endocrine"],
+      "recommended_followup": ["corrected_calcium", "pth", "vitamin_d", "magnesium"]
+    },
+    "respiratory_failure": {
+      "name": "Acute Respiratory Failure",
+      "icd10": "J96.00",
+      "category": "respiratory",
+      "description": "Inability to maintain adequate oxygenation or ventilation",
+      "patterns": {
+        "primary": [
+          {"marker": "spo2", "condition": "<", "value": 90},
+          {"marker": "pao2", "condition": "<", "value": 60}
+        ],
+        "supportive": [
+          {"marker": "paco2", "condition": "elevated"},
+          {"marker": "ph", "condition": "abnormal"},
+          {"marker": "respiratory_rate", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.55,
+        "per_primary_match": 0.25,
+        "per_supportive_match": 0.08,
+        "max": 0.95
+      },
+      "organ_systems": ["respiratory"],
+      "recommended_followup": ["abg", "chest_imaging", "pulmonology_consult", "consider_intubation"]
+    },
+    "coagulopathy": {
+      "name": "Coagulopathy",
+      "icd10": "D68.9",
+      "category": "hematologic",
+      "description": "Impaired blood clotting",
+      "patterns": {
+        "primary": [
+          {"marker": "inr", "condition": ">=", "value": 1.5},
+          {"marker": "pt", "condition": "elevated"},
+          {"marker": "ptt", "condition": "elevated"}
+        ],
+        "supportive": [
+          {"marker": "platelets", "condition": "low"},
+          {"marker": "fibrinogen", "condition": "low"},
+          {"marker": "d_dimer", "condition": "elevated"}
+        ]
+      },
+      "require_any_primary": true,
+      "confidence_factors": {
+        "base": 0.50,
+        "per_primary_match": 0.20,
+        "per_supportive_match": 0.08,
+        "max": 0.95
+      },
+      "organ_systems": ["coagulation", "hematologic"],
+      "recommended_followup": ["mixing_studies", "factor_levels", "hematology_consult"]
+    },
+    "metabolic_acidosis": {
+      "name": "Metabolic Acidosis",
+      "icd10": "E87.2",
+      "category": "acid_base",
+      "description": "Low blood pH with decreased bicarbonate",
+      "patterns": {
+        "primary": [
+          {"marker": "ph", "condition": "<", "value": 7.35},
+          {"marker": "bicarbonate", "condition": "<", "value": 22}
+        ],
+        "supportive": [
+          {"marker": "lactate", "condition": "elevated"}
+        ]
+      },
+      "require_all_primary": true,
+      "confidence_factors": {
+        "base": 0.60,
+        "per_primary_match": 0.20,
+        "per_supportive_match": 0.10,
+        "max": 0.95
+      },
+      "organ_systems": ["respiratory", "renal"],
+      "recommended_followup": ["anion_gap_calculation", "lactate", "ketones", "renal_function"]
+    },
+    "dyslipidemia": {
+      "name": "Dyslipidemia",
+      "icd10": "E78.5",
+      "category": "metabolic",
+      "description": "Abnormal lipid levels",
+      "patterns": {
+        "primary": [
+          {"marker": "cholesterol", "condition": ">=", "value": 200},
+          {"marker": "ldl", "condition": ">=", "value": 130},
+          {"marker": "triglycerides", "condition": ">=", "value": 150},
+          {"marker": "hdl", "condition": "<", "value": 40}
+        ],
+        "supportive": []
+      },
+      "require_any_primary": true,
+      "confidence_scales_with_count": true,
+      "confidence_factors": {
+        "base": 0.40,
+        "per_primary_match": 0.15,
+        "max": 0.90
+      },
+      "organ_systems": ["metabolic", "cardiac"],
+      "recommended_followup": ["fasting_lipid_panel", "cardiovascular_risk_assessment", "lifestyle_counseling"]
+    }
+  }
+}
