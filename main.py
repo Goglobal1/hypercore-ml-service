@@ -262,6 +262,17 @@ except ImportError as e:
     DATA_TRANSFORMATION_AVAILABLE = False
     print(f"[HYPERCORE] Data transformation not available: {e}")
 
+# 9-Layer Diagnostic Engine (v2 Architecture)
+try:
+    from app.core.diagnostic_engine import (
+        DiagnosticEngine, analyze_patient, analyze_patients
+    )
+    DIAGNOSTIC_ENGINE_V2_AVAILABLE = True
+    print("[HYPERCORE] Diagnostic Engine v2: OK")
+except ImportError as e:
+    DIAGNOSTIC_ENGINE_V2_AVAILABLE = False
+    print(f"[HYPERCORE] Diagnostic Engine v2 not available: {e}")
+
 # Trajectory Analysis System (Early Warning Engine)
 try:
     from app.core.trajectory import (
@@ -6911,6 +6922,93 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
             summary={"overall_risk": "unknown"},
             error=str(e)
         )
+
+
+# ---------------------------------------------------------------------
+# DISCOVERY ENGINE v2 - 9-Layer Diagnostic Architecture
+# Signals-first, layered inference system
+# ---------------------------------------------------------------------
+
+@app.post("/discover/v2")
+async def discover_v2(request: Request):
+    """
+    DIAGNOSTIC ENGINE v2 - 9-Layer Architecture
+
+    Signals-first, layered inference system for disease detection:
+        Layer 1: Input Normalization - Standardize raw data
+        Layer 2: Feature Engineering - Create derived/temporal features
+        Layer 3: Axis Scoring - Score biologic organ systems
+        Layer 4: Disease Classification - Pattern match known diseases
+        Layer 5: Anomaly Detection - Find unknown patterns
+        Layer 6: Convergence Analysis - Multi-system reasoning
+        Layer 7: Explainability - Generate explanations
+        Layer 8: Recommendations - Actionable next steps
+        Layer 9: Audit - Regulatory trace
+
+    Key improvements over v1:
+        - Signals first, diseases second
+        - Multi-label classification (concurrent conditions)
+        - Known diseases + unknown anomalies
+        - Biologic axes as core abstraction
+        - Data-driven patterns, not hardcoded functions
+        - Explainable, auditable, regulatory-ready
+    """
+    if not DIAGNOSTIC_ENGINE_V2_AVAILABLE:
+        return {
+            "success": False,
+            "error": "Diagnostic Engine v2 not available",
+            "engine_version": "2.0.0"
+        }
+
+    try:
+        body = await request.json()
+
+        # Parse patient data
+        patients = []
+        if body.get('csv'):
+            df = parse_csv_bulletproof(body['csv'])
+            patients = df.to_dict(orient='records')
+        elif body.get('patients'):
+            patients = body['patients']
+        elif body.get('patient_data'):
+            data = body['patient_data']
+            patients = data if isinstance(data, list) else [data]
+
+        if not patients:
+            return {
+                "success": False,
+                "error": "No patient data provided. Send csv, patients, or patient_data.",
+                "engine_version": "2.0.0"
+            }
+
+        # Initialize engine
+        engine = DiagnosticEngine()
+
+        # Analyze patients
+        if len(patients) == 1:
+            result = engine.analyze(patients[0])
+        else:
+            # Batch analysis
+            results = engine.analyze_batch(patients)
+            # Return aggregated view for batch
+            result = {
+                "success": True,
+                "timestamp": datetime.utcnow().isoformat(),
+                "patient_count": len(results),
+                "patient_results": results,
+                "engine_version": "2.0.0"
+            }
+
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "engine_version": "2.0.0"
+        }
 
 
 # ---------------------------------------------------------------------
