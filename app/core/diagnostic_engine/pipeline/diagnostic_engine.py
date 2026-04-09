@@ -30,6 +30,13 @@ try:
 except ImportError:
     CLINVAR_AVAILABLE = False
 
+# ICD-10 integration (optional - loads if available)
+try:
+    from ..data_sources.icd10_loader import ICD10Loader, get_icd10_loader
+    ICD10_AVAILABLE = True
+except ImportError:
+    ICD10_AVAILABLE = False
+
 # ML Models integration (optional - loads if models exist)
 try:
     from ..ml.disease_models import DiseaseModelManager, get_model_manager
@@ -109,6 +116,19 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] ML Models not loaded: {e}")
 
+        # Initialize ICD-10 integration (optional)
+        self.icd10 = None
+        self.icd10_loaded = False
+        if ICD10_AVAILABLE:
+            try:
+                self.icd10 = get_icd10_loader()
+                self.icd10_loaded = self.icd10.load()
+                if self.icd10_loaded:
+                    stats = self.icd10.get_stats()
+                    logger.info(f"[DiagnosticEngine] ICD-10: {stats['icd10_codes']:,} codes in {stats['categories']} categories")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] ICD-10 not loaded: {e}")
+
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
         with open(path, 'r') as f:
@@ -145,6 +165,10 @@ class DiagnosticEngine:
         # Layer 4c: Enhance with ML model predictions
         if self.ml_models_loaded:
             diseases = self._enhance_with_ml(diseases, features, raw_patient_data)
+
+        # Layer 4d: Enrich with ICD-10 codes
+        if self.icd10_loaded:
+            diseases = self._enrich_with_icd10(diseases)
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -545,6 +569,72 @@ class DiagnosticEngine:
         """Get ML model statistics."""
         if self.ml_models:
             return self.ml_models.list_models()
+        return None
+
+    def _enrich_with_icd10(self, diseases: List) -> List:
+        """
+        Enrich detected diseases with ICD-10 codes.
+
+        For diseases that don't have ICD-10 codes, attempt to map
+        the disease name to the appropriate code.
+
+        Args:
+            diseases: List of detected diseases
+
+        Returns:
+            Diseases with ICD-10 codes added/validated
+        """
+        if not self.icd10 or not self.icd10_loaded:
+            return diseases
+
+        enriched = []
+
+        for disease in diseases:
+            disease_copy = disease.copy()
+
+            # Check if already has valid ICD-10 code
+            existing_icd = disease_copy.get('icd10') or disease_copy.get('icd10_codes', [None])[0]
+
+            if existing_icd:
+                # Validate and enrich existing code
+                code_info = self.icd10.get_code(existing_icd)
+                if code_info:
+                    disease_copy['icd10_validated'] = True
+                    disease_copy['icd10_title'] = code_info['title']
+                    disease_copy['icd10_category'] = code_info['category_name']
+            else:
+                # Try to map disease name to ICD-10
+                disease_name = disease_copy.get('disease_name', '')
+                if disease_name:
+                    mapped_code = self.icd10.map_disease_to_icd(disease_name)
+                    if mapped_code:
+                        code_info = self.icd10.get_code(mapped_code)
+                        if code_info:
+                            disease_copy['icd10'] = mapped_code
+                            disease_copy['icd10_mapped'] = True
+                            disease_copy['icd10_title'] = code_info['title']
+                            disease_copy['icd10_category'] = code_info['category_name']
+
+            enriched.append(disease_copy)
+
+        return enriched
+
+    def get_icd10_stats(self) -> Optional[Dict]:
+        """Get ICD-10 loader statistics."""
+        if self.icd10:
+            return self.icd10.get_stats()
+        return None
+
+    def search_icd10(self, query: str, max_results: int = 20) -> List[Dict]:
+        """Search ICD-10 codes by description."""
+        if self.icd10 and self.icd10_loaded:
+            return self.icd10.search(query, max_results)
+        return []
+
+    def get_icd10_code(self, code: str) -> Optional[Dict]:
+        """Get details for a specific ICD-10 code."""
+        if self.icd10 and self.icd10_loaded:
+            return self.icd10.get_code(code)
         return None
 
 
