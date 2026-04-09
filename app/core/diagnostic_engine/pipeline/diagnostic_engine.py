@@ -2,9 +2,11 @@
 Master Diagnostic Engine Pipeline
 Orchestrates all 9 layers for signals-first disease detection.
 
-Data integrations:
-- ClinVar: Genetic disease detection (209K+ diseases)
-- ML Models: MIMIC-trained disease classifiers
+Data integrations (Phase 5 Unified):
+- Rule-based patterns: 21 core disease definitions
+- ClinVar: 209K+ genetic disease conditions
+- ML Models: 5 MIMIC-trained disease classifiers
+- ICD-10: 97K+ diagnosis codes
 """
 
 from typing import Dict, List, Any, Optional
@@ -16,7 +18,7 @@ import logging
 from ..layers.input_normalization import InputNormalizer
 from ..layers.feature_engineering import FeatureEngineer
 from ..layers.axis_scoring import AxisScorer
-from ..layers.disease_classifier import DiseaseClassifier
+from ..layers.unified_disease_classifier import UnifiedDiseaseClassifier
 from ..layers.anomaly_detection import AnomalyDetector
 from ..layers.convergence_engine import ConvergenceEngine
 from ..layers.explainability import ExplainabilityEngine
@@ -79,18 +81,17 @@ class DiagnosticEngine:
         self.reference_ranges = self._load_json(os.path.join(config_path, 'reference_ranges.json'))
         self.disease_ontology = self._load_json(os.path.join(config_path, 'disease_ontology.json'))
 
-        # Initialize layers
+        # Initialize core layers
         self.normalizer = InputNormalizer(self.ontology)
         self.feature_engineer = FeatureEngineer()
         self.axis_scorer = AxisScorer(self.axes_config, self.reference_ranges)
-        self.disease_classifier = DiseaseClassifier(self.disease_ontology, self.reference_ranges)
         self.anomaly_detector = AnomalyDetector()
         self.convergence_engine = ConvergenceEngine()
         self.explainability = ExplainabilityEngine()
         self.recommender = RecommendationEngine()
         self.auditor = AuditLogger()
 
-        # Initialize ClinVar integration (optional)
+        # Initialize data sources for unified classifier
         self.clinvar = None
         self.clinvar_loaded = False
         if CLINVAR_AVAILABLE:
@@ -103,7 +104,6 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] ClinVar not loaded: {e}")
 
-        # Initialize ML Models integration (optional)
         self.ml_models = None
         self.ml_models_loaded = False
         if ML_MODELS_AVAILABLE:
@@ -116,7 +116,6 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] ML Models not loaded: {e}")
 
-        # Initialize ICD-10 integration (optional)
         self.icd10 = None
         self.icd10_loaded = False
         if ICD10_AVAILABLE:
@@ -128,6 +127,21 @@ class DiagnosticEngine:
                     logger.info(f"[DiagnosticEngine] ICD-10: {stats['icd10_codes']:,} codes in {stats['categories']} categories")
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] ICD-10 not loaded: {e}")
+
+        # Initialize Layer 4: Unified Disease Classifier (Phase 5)
+        # Combines: Rules + ClinVar + ML Models + ICD-10
+        self.unified_classifier = UnifiedDiseaseClassifier(
+            disease_ontology=self.disease_ontology,
+            reference_ranges=self.reference_ranges,
+            clinvar_loader=self.clinvar if self.clinvar_loaded else None,
+            ml_model_manager=self.ml_models if self.ml_models_loaded else None,
+            icd10_loader=self.icd10 if self.icd10_loaded else None
+        )
+
+        # Log unified classifier status
+        classifier_stats = self.unified_classifier.get_stats()
+        sources = [k for k, v in classifier_stats['sources_available'].items() if v]
+        logger.info(f"[DiagnosticEngine] Unified Classifier: {len(sources)} sources active ({', '.join(sources)})")
 
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
@@ -155,20 +169,13 @@ class DiagnosticEngine:
         # Layer 3: Score biologic axes
         axis_scores = self.axis_scorer.score_all_axes(features)
 
-        # Layer 4: Classify known diseases
-        diseases = self.disease_classifier.classify(features, axis_scores)
-
-        # Layer 4b: Enhance with ClinVar genetic conditions
-        if self.clinvar_loaded:
-            diseases = self._enhance_with_clinvar(diseases, features, raw_patient_data)
-
-        # Layer 4c: Enhance with ML model predictions
-        if self.ml_models_loaded:
-            diseases = self._enhance_with_ml(diseases, features, raw_patient_data)
-
-        # Layer 4d: Enrich with ICD-10 codes
-        if self.icd10_loaded:
-            diseases = self._enrich_with_icd10(diseases)
+        # Layer 4: Unified Disease Classification (Phase 5)
+        # Combines: Rules + ClinVar + ML Models + ICD-10
+        diseases = self.unified_classifier.classify(
+            features=features,
+            axis_scores=axis_scores,
+            raw_data=raw_patient_data
+        )
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -247,7 +254,7 @@ class DiagnosticEngine:
 
             # Metadata
             'data_completeness': normalized.get('metadata', {}).get('completeness', 0),
-            'engine_version': '2.0.0'
+            'engine_version': '2.1.0-unified'
         }
 
     def analyze_batch(self, patients: List[Dict], history_map: Dict[str, List] = None) -> List[Dict]:
@@ -367,257 +374,17 @@ class DiagnosticEngine:
             'convergence_score': convergence.get('convergence_score', 0)
         }
 
-    def _enhance_with_clinvar(self, diseases: List, features: Dict, raw_data: Dict) -> List:
-        """
-        Enhance disease detection with ClinVar genetic data.
-
-        If patient has genetic data (genes, variants), check ClinVar
-        for associated pathogenic conditions.
-
-        Args:
-            diseases: Current detected diseases from rule-based classifier
-            features: Engineered features
-            raw_data: Raw patient data (may contain genetic info)
-
-        Returns:
-            Enhanced disease list with ClinVar conditions
-        """
-        if not self.clinvar or not self.clinvar_loaded:
-            return diseases
-
-        enhanced = diseases.copy()
-
-        # Check for genetic data in patient record
-        genes_affected = []
-
-        # Look for gene data in various formats
-        raw_features = features.get('raw_features', raw_data)
-
-        # Check for explicit gene fields
-        if 'genes' in raw_features:
-            genes_affected = raw_features['genes']
-        elif 'genetic_variants' in raw_features:
-            # Extract genes from variants
-            for variant in raw_features['genetic_variants']:
-                if isinstance(variant, dict) and 'gene' in variant:
-                    genes_affected.append(variant['gene'])
-                elif isinstance(variant, str) and ':' in variant:
-                    # Format: GENE:variant
-                    genes_affected.append(variant.split(':')[0])
-
-        # Check for gene columns in raw data
-        for key, value in raw_data.items():
-            key_lower = key.lower()
-            if 'gene' in key_lower and value:
-                if isinstance(value, list):
-                    genes_affected.extend(value)
-                elif isinstance(value, str):
-                    genes_affected.append(value)
-
-        if not genes_affected:
-            return diseases
-
-        # Look up ClinVar conditions for each gene
-        seen_diseases = {d.get('disease_name', '').lower() for d in diseases}
-
-        for gene in genes_affected:
-            clinvar_diseases = self.clinvar.get_diseases_for_gene(gene)
-
-            for cv_disease in clinvar_diseases:
-                disease_name = cv_disease.get('disease', '')
-
-                # Skip if already detected
-                if disease_name.lower() in seen_diseases:
-                    continue
-
-                significance = cv_disease.get('significance', '')
-
-                # Only add pathogenic/likely pathogenic
-                if 'Pathogenic' in significance:
-                    confidence = 0.85 if significance == 'Pathogenic' else 0.70
-
-                    enhanced.append({
-                        'disease_id': f"clinvar_{gene}_{disease_name[:20]}",
-                        'disease_name': disease_name,
-                        'icd10': None,  # Could map via OMIM
-                        'category': 'genetic',
-                        'detected': True,
-                        'confidence': confidence,
-                        'confidence_label': 'high' if confidence >= 0.8 else 'moderate',
-                        'severity': None,
-                        'stage': None,
-                        'evidence': [
-                            f"Pathogenic variant in {gene}",
-                            f"ClinVar significance: {significance}",
-                            f"Review status: {cv_disease.get('review_status', 'unknown')}"
-                        ],
-                        'missing_data': [],
-                        'exclusions_triggered': [],
-                        'organ_systems': [],
-                        'recommended_followup': [
-                            'genetic_counseling',
-                            'specialist_referral',
-                            'family_screening'
-                        ],
-                        'source': 'ClinVar',
-                        'gene': gene,
-                        'omim_ids': cv_disease.get('omim_ids', '')
-                    })
-
-                    seen_diseases.add(disease_name.lower())
-
-        # Re-sort by confidence
-        enhanced.sort(key=lambda x: x.get('confidence', 0), reverse=True)
-
-        return enhanced
-
     def get_clinvar_stats(self) -> Optional[Dict]:
         """Get ClinVar loader statistics."""
         if self.clinvar:
             return self.clinvar.get_stats()
         return None
 
-    def _enhance_with_ml(self, diseases: List, features: Dict, raw_data: Dict) -> List:
-        """
-        Enhance disease detection with ML model predictions.
-
-        Runs trained MIMIC models against patient lab values to predict
-        disease probabilities.
-
-        Args:
-            diseases: Current detected diseases
-            features: Engineered features
-            raw_data: Raw patient data
-
-        Returns:
-            Enhanced disease list with ML predictions
-        """
-        if not self.ml_models or not self.ml_models_loaded:
-            return diseases
-
-        enhanced = diseases.copy()
-
-        # Get raw features as dict for ML prediction
-        raw_features = features.get('raw_features', raw_data)
-
-        # Convert to simple dict of lab values
-        lab_values = {}
-        for key, value in raw_features.items():
-            if isinstance(value, (int, float)):
-                lab_values[key.lower()] = float(value)
-            elif isinstance(value, dict) and 'value' in value:
-                lab_values[key.lower()] = float(value['value'])
-
-        if not lab_values:
-            return diseases
-
-        # Get ML predictions
-        try:
-            predictions = self.ml_models.predict(lab_values)
-        except Exception as e:
-            logger.warning(f"ML prediction failed: {e}")
-            return diseases
-
-        # Already detected diseases
-        seen_diseases = {d.get('disease_name', '').lower() for d in diseases}
-
-        # Add ML predictions
-        for pred in predictions:
-            disease_name = pred.get('disease_name', '')
-
-            # Skip if already detected with higher confidence
-            if disease_name.lower() in seen_diseases:
-                continue
-
-            # Only add if probability is significant
-            if pred.get('probability', 0) >= 0.4:
-                confidence = pred['probability']
-
-                enhanced.append({
-                    'disease_id': f"ml_{pred.get('disease_icd', '')}",
-                    'disease_name': disease_name,
-                    'icd10': pred.get('disease_icd'),
-                    'category': 'ml_predicted',
-                    'detected': True,
-                    'confidence': confidence,
-                    'confidence_label': 'high' if confidence >= 0.7 else 'moderate' if confidence >= 0.5 else 'low',
-                    'severity': None,
-                    'stage': None,
-                    'evidence': [
-                        f"ML model prediction: {confidence*100:.0f}%",
-                        f"Model trained on MIMIC-IV ICU data",
-                        f"Threshold: {pred.get('threshold', 0.5):.2f}"
-                    ],
-                    'missing_data': [],
-                    'exclusions_triggered': [],
-                    'organ_systems': [],
-                    'recommended_followup': [
-                        'clinical_correlation',
-                        'confirmatory_testing'
-                    ],
-                    'source': 'ML_MIMIC'
-                })
-
-                seen_diseases.add(disease_name.lower())
-
-        # Re-sort by confidence
-        enhanced.sort(key=lambda x: x.get('confidence', 0), reverse=True)
-
-        return enhanced
-
     def get_ml_model_stats(self) -> Optional[List[Dict]]:
         """Get ML model statistics."""
         if self.ml_models:
             return self.ml_models.list_models()
         return None
-
-    def _enrich_with_icd10(self, diseases: List) -> List:
-        """
-        Enrich detected diseases with ICD-10 codes.
-
-        For diseases that don't have ICD-10 codes, attempt to map
-        the disease name to the appropriate code.
-
-        Args:
-            diseases: List of detected diseases
-
-        Returns:
-            Diseases with ICD-10 codes added/validated
-        """
-        if not self.icd10 or not self.icd10_loaded:
-            return diseases
-
-        enriched = []
-
-        for disease in diseases:
-            disease_copy = disease.copy()
-
-            # Check if already has valid ICD-10 code
-            existing_icd = disease_copy.get('icd10') or disease_copy.get('icd10_codes', [None])[0]
-
-            if existing_icd:
-                # Validate and enrich existing code
-                code_info = self.icd10.get_code(existing_icd)
-                if code_info:
-                    disease_copy['icd10_validated'] = True
-                    disease_copy['icd10_title'] = code_info['title']
-                    disease_copy['icd10_category'] = code_info['category_name']
-            else:
-                # Try to map disease name to ICD-10
-                disease_name = disease_copy.get('disease_name', '')
-                if disease_name:
-                    mapped_code = self.icd10.map_disease_to_icd(disease_name)
-                    if mapped_code:
-                        code_info = self.icd10.get_code(mapped_code)
-                        if code_info:
-                            disease_copy['icd10'] = mapped_code
-                            disease_copy['icd10_mapped'] = True
-                            disease_copy['icd10_title'] = code_info['title']
-                            disease_copy['icd10_category'] = code_info['category_name']
-
-            enriched.append(disease_copy)
-
-        return enriched
 
     def get_icd10_stats(self) -> Optional[Dict]:
         """Get ICD-10 loader statistics."""
@@ -636,6 +403,34 @@ class DiagnosticEngine:
         if self.icd10 and self.icd10_loaded:
             return self.icd10.get_code(code)
         return None
+
+    def get_unified_classifier_stats(self) -> Dict:
+        """Get unified classifier statistics including all sources."""
+        return self.unified_classifier.get_stats()
+
+    def _enhance_with_clinvar(self, diseases: List, features: Dict, raw_data: Dict) -> List:
+        """
+        DEPRECATED: Use unified_classifier.classify() instead.
+        Kept for backward compatibility.
+        """
+        logger.warning("_enhance_with_clinvar is deprecated, use unified_classifier")
+        return diseases
+
+    def _enhance_with_ml(self, diseases: List, features: Dict, raw_data: Dict) -> List:
+        """
+        DEPRECATED: Use unified_classifier.classify() instead.
+        Kept for backward compatibility.
+        """
+        logger.warning("_enhance_with_ml is deprecated, use unified_classifier")
+        return diseases
+
+    def _enrich_with_icd10(self, diseases: List) -> List:
+        """
+        DEPRECATED: Use unified_classifier.classify() instead.
+        Kept for backward compatibility.
+        """
+        logger.warning("_enrich_with_icd10 is deprecated, use unified_classifier")
+        return diseases
 
 
 # Convenience function for direct use
