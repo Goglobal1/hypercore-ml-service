@@ -1,0 +1,86 @@
+{
+  "disease_icd": "D64",
+  "disease_name": "Anemia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.730185497470489,
+    "roc_auc": 0.8145449374288964,
+    "avg_precision": 0.795479766837745,
+    "confusion_matrix": [
+      [
+        421,
+        165
+      ],
+      [
+        155,
+        445
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7309027777777778,
+        "recall": 0.7184300341296929,
+        "f1-score": 0.7246127366609294,
+        "support": 586.0
+      },
+      "1": {
+        "precision": 0.7295081967213115,
+        "recall": 0.7416666666666667,
+        "f1-score": 0.7355371900826446,
+        "support": 600.0
+      },
+      "accuracy": 0.730185497470489,
+      "macro avg": {
+        "precision": 0.7302054872495447,
+        "recall": 0.7300483503981798,
+        "f1-score": 0.730074963371787,
+        "support": 1186.0
+      },
+      "weighted avg": {
+        "precision": 0.7301972561640512,
+        "recall": 0.730185497470489,
+        "f1-score": 0.7301394415960298,
+        "support": 1186.0
+      }
+    },
+    "train_samples": 4743,
+    "test_samples": 1186,
+    "positive_rate": 0.5056501939618823
+  },
+  "threshold": 0.3187333898646884,
+  "created_at": "2026-04-09T00:40:14.852728"
+}

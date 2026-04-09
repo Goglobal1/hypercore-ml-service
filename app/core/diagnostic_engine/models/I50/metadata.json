@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I50",
+  "disease_name": "Heart Failure",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8129738837405224,
+    "roc_auc": 0.890320840431573,
+    "avg_precision": 0.8628655760141901,
+    "confusion_matrix": [
+      [
+        469,
+        118
+      ],
+      [
+        104,
+        496
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8184991273996509,
+        "recall": 0.7989778534923339,
+        "f1-score": 0.8086206896551724,
+        "support": 587.0
+      },
+      "1": {
+        "precision": 0.8078175895765473,
+        "recall": 0.8266666666666667,
+        "f1-score": 0.8171334431630972,
+        "support": 600.0
+      },
+      "accuracy": 0.8129738837405224,
+      "macro avg": {
+        "precision": 0.813158358488099,
+        "recall": 0.8128222600795003,
+        "f1-score": 0.8128770664091348,
+        "support": 1187.0
+      },
+      "weighted avg": {
+        "precision": 0.813099866494965,
+        "recall": 0.8129738837405224,
+        "f1-score": 0.8129236821612843,
+        "support": 1187.0
+      }
+    },
+    "train_samples": 4746,
+    "test_samples": 1187,
+    "positive_rate": 0.5053092870385977
+  },
+  "threshold": 0.26424124738731997,
+  "created_at": "2026-04-09T00:30:26.015674"
+}

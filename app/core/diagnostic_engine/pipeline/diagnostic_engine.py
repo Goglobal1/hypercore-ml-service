@@ -2,7 +2,9 @@
 Master Diagnostic Engine Pipeline
 Orchestrates all 9 layers for signals-first disease detection.
 
-Now with ClinVar integration for genetic disease detection.
+Data integrations:
+- ClinVar: Genetic disease detection (209K+ diseases)
+- ML Models: MIMIC-trained disease classifiers
 """
 
 from typing import Dict, List, Any, Optional
@@ -27,6 +29,13 @@ try:
     CLINVAR_AVAILABLE = True
 except ImportError:
     CLINVAR_AVAILABLE = False
+
+# ML Models integration (optional - loads if models exist)
+try:
+    from ..ml.disease_models import DiseaseModelManager, get_model_manager
+    ML_MODELS_AVAILABLE = True
+except ImportError:
+    ML_MODELS_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +96,19 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] ClinVar not loaded: {e}")
 
+        # Initialize ML Models integration (optional)
+        self.ml_models = None
+        self.ml_models_loaded = False
+        if ML_MODELS_AVAILABLE:
+            try:
+                self.ml_models = get_model_manager()
+                model_count = self.ml_models.load_models()
+                if model_count > 0:
+                    self.ml_models_loaded = True
+                    logger.info(f"[DiagnosticEngine] ML Models: {model_count} disease models loaded")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] ML Models not loaded: {e}")
+
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
         with open(path, 'r') as f:
@@ -119,6 +141,10 @@ class DiagnosticEngine:
         # Layer 4b: Enhance with ClinVar genetic conditions
         if self.clinvar_loaded:
             diseases = self._enhance_with_clinvar(diseases, features, raw_patient_data)
+
+        # Layer 4c: Enhance with ML model predictions
+        if self.ml_models_loaded:
+            diseases = self._enhance_with_ml(diseases, features, raw_patient_data)
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -425,6 +451,100 @@ class DiagnosticEngine:
         """Get ClinVar loader statistics."""
         if self.clinvar:
             return self.clinvar.get_stats()
+        return None
+
+    def _enhance_with_ml(self, diseases: List, features: Dict, raw_data: Dict) -> List:
+        """
+        Enhance disease detection with ML model predictions.
+
+        Runs trained MIMIC models against patient lab values to predict
+        disease probabilities.
+
+        Args:
+            diseases: Current detected diseases
+            features: Engineered features
+            raw_data: Raw patient data
+
+        Returns:
+            Enhanced disease list with ML predictions
+        """
+        if not self.ml_models or not self.ml_models_loaded:
+            return diseases
+
+        enhanced = diseases.copy()
+
+        # Get raw features as dict for ML prediction
+        raw_features = features.get('raw_features', raw_data)
+
+        # Convert to simple dict of lab values
+        lab_values = {}
+        for key, value in raw_features.items():
+            if isinstance(value, (int, float)):
+                lab_values[key.lower()] = float(value)
+            elif isinstance(value, dict) and 'value' in value:
+                lab_values[key.lower()] = float(value['value'])
+
+        if not lab_values:
+            return diseases
+
+        # Get ML predictions
+        try:
+            predictions = self.ml_models.predict(lab_values)
+        except Exception as e:
+            logger.warning(f"ML prediction failed: {e}")
+            return diseases
+
+        # Already detected diseases
+        seen_diseases = {d.get('disease_name', '').lower() for d in diseases}
+
+        # Add ML predictions
+        for pred in predictions:
+            disease_name = pred.get('disease_name', '')
+
+            # Skip if already detected with higher confidence
+            if disease_name.lower() in seen_diseases:
+                continue
+
+            # Only add if probability is significant
+            if pred.get('probability', 0) >= 0.4:
+                confidence = pred['probability']
+
+                enhanced.append({
+                    'disease_id': f"ml_{pred.get('disease_icd', '')}",
+                    'disease_name': disease_name,
+                    'icd10': pred.get('disease_icd'),
+                    'category': 'ml_predicted',
+                    'detected': True,
+                    'confidence': confidence,
+                    'confidence_label': 'high' if confidence >= 0.7 else 'moderate' if confidence >= 0.5 else 'low',
+                    'severity': None,
+                    'stage': None,
+                    'evidence': [
+                        f"ML model prediction: {confidence*100:.0f}%",
+                        f"Model trained on MIMIC-IV ICU data",
+                        f"Threshold: {pred.get('threshold', 0.5):.2f}"
+                    ],
+                    'missing_data': [],
+                    'exclusions_triggered': [],
+                    'organ_systems': [],
+                    'recommended_followup': [
+                        'clinical_correlation',
+                        'confirmatory_testing'
+                    ],
+                    'source': 'ML_MIMIC'
+                })
+
+                seen_diseases.add(disease_name.lower())
+
+        # Re-sort by confidence
+        enhanced.sort(key=lambda x: x.get('confidence', 0), reverse=True)
+
+        return enhanced
+
+    def get_ml_model_stats(self) -> Optional[List[Dict]]:
+        """Get ML model statistics."""
+        if self.ml_models:
+            return self.ml_models.list_models()
         return None
 
 

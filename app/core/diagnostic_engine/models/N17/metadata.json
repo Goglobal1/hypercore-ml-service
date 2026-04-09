@@ -1,0 +1,86 @@
+{
+  "disease_icd": "N17",
+  "disease_name": "Acute Kidney Injury",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.806234203875316,
+    "roc_auc": 0.886939239068711,
+    "avg_precision": 0.8804591951769313,
+    "confusion_matrix": [
+      [
+        463,
+        124
+      ],
+      [
+        106,
+        494
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8137082601054482,
+        "recall": 0.7887563884156729,
+        "f1-score": 0.801038062283737,
+        "support": 587.0
+      },
+      "1": {
+        "precision": 0.7993527508090615,
+        "recall": 0.8233333333333334,
+        "f1-score": 0.8111658456486043,
+        "support": 600.0
+      },
+      "accuracy": 0.806234203875316,
+      "macro avg": {
+        "precision": 0.8065305054572549,
+        "recall": 0.8060448608745031,
+        "f1-score": 0.8061019539661707,
+        "support": 1187.0
+      },
+      "weighted avg": {
+        "precision": 0.8064518948334751,
+        "recall": 0.806234203875316,
+        "f1-score": 0.8061574136054895,
+        "support": 1187.0
+      }
+    },
+    "train_samples": 4745,
+    "test_samples": 1187,
+    "positive_rate": 0.5057316250842886
+  },
+  "threshold": 0.37585943770737706,
+  "created_at": "2026-04-09T00:24:51.407066"
+}

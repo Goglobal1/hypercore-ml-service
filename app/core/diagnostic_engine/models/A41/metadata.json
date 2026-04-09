@@ -1,0 +1,86 @@
+{
+  "disease_icd": "A41",
+  "disease_name": "Sepsis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7914213624894869,
+    "roc_auc": 0.8690331343199118,
+    "avg_precision": 0.8578697566550864,
+    "confusion_matrix": [
+      [
+        458,
+        132
+      ],
+      [
+        116,
+        483
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7979094076655052,
+        "recall": 0.7762711864406779,
+        "f1-score": 0.7869415807560137,
+        "support": 590.0
+      },
+      "1": {
+        "precision": 0.7853658536585366,
+        "recall": 0.8063439065108514,
+        "f1-score": 0.7957166392092258,
+        "support": 599.0
+      },
+      "accuracy": 0.7914213624894869,
+      "macro avg": {
+        "precision": 0.791637630662021,
+        "recall": 0.7913075464757646,
+        "f1-score": 0.7913291099826197,
+        "support": 1189.0
+      },
+      "weighted avg": {
+        "precision": 0.791590157160733,
+        "recall": 0.7914213624894869,
+        "f1-score": 0.791362320885092,
+        "support": 1189.0
+      }
+    },
+    "train_samples": 4756,
+    "test_samples": 1189,
+    "positive_rate": 0.5039529015979815
+  },
+  "threshold": 0.36941089114693515,
+  "created_at": "2026-04-09T00:35:16.479516"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E11",
+  "disease_name": "Type 2 Diabetes Mellitus",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8021978021978022,
+    "roc_auc": 0.882402881399537,
+    "avg_precision": 0.8878009198239698,
+    "confusion_matrix": [
+      [
+        476,
+        109
+      ],
+      [
+        125,
+        473
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7920133111480865,
+        "recall": 0.8136752136752137,
+        "f1-score": 0.8026981450252951,
+        "support": 585.0
+      },
+      "1": {
+        "precision": 0.8127147766323024,
+        "recall": 0.7909698996655519,
+        "f1-score": 0.8016949152542373,
+        "support": 598.0
+      },
+      "accuracy": 0.8021978021978022,
+      "macro avg": {
+        "precision": 0.8023640438901944,
+        "recall": 0.8023225566703828,
+        "f1-score": 0.8021965301397662,
+        "support": 1183.0
+      },
+      "weighted avg": {
+        "precision": 0.8024777882060417,
+        "recall": 0.8021978021978022,
+        "f1-score": 0.8021910178882768,
+        "support": 1183.0
+      }
+    },
+    "train_samples": 4732,
+    "test_samples": 1183,
+    "positive_rate": 0.5056635672020288
+  },
+  "threshold": 0.46011294014978565,
+  "created_at": "2026-04-09T00:19:16.492642"
+}
