@@ -211,6 +211,71 @@ class DiagnosticEngine:
         # Layer 6: Analyze convergence
         convergence = self.convergence_engine.analyze_convergence(axis_scores, diseases, anomalies)
 
+        # UTILITY GATE (Phase 6) - Shadow Mode Evaluation
+        utility_gate_results = None
+        if self.utility_gate_available and UTILITY_GATE_AVAILABLE and diseases:
+            try:
+                patient_id = normalized.get('patient_id', 'unknown')
+                gated_results = []
+                for disease in diseases:
+                    # Build evidence items
+                    evidence_items = [
+                        EvidenceItem(kind="lab", label=str(ev), value=ev, weight=0.8)
+                        for ev in disease.get('evidence', [])
+                    ]
+                    for source in disease.get('sources', []):
+                        evidence_items.append(EvidenceItem(
+                            kind="source", label=source, value=source, weight=0.6
+                        ))
+                    
+                    # Create UtilityInput
+                    candidate = UtilityInput(
+                        entity_id=f"{patient_id}_{disease.get('disease_name', 'unknown')}",
+                        entity_type="patient_alert",
+                        mode=self.utility_gate.mode,
+                        title=disease.get('disease_name', 'Unknown'),
+                        summary=disease.get('description', ''),
+                        risk_probability=disease.get('confidence', 0.5),
+                        ppv_estimate=min(0.95, disease.get('confidence', 0.5) + len(disease.get('sources', [])) * 0.05),
+                        confidence_score=disease.get('confidence', 0.5),
+                        novelty_score=max(0.2, 1.0 - disease.get('confidence', 0.5) * 0.5),
+                        explainability_score=min(1.0, 0.4 + len(disease.get('evidence', [])) * 0.1),
+                        actionability_score=min(1.0, disease.get('confidence', 0.5) * 0.7 + (0.3 if disease.get('icd10') else 0)),
+                        evidence=evidence_items,
+                        metadata={"icd10": disease.get('icd10'), "sources": disease.get('sources', [])}
+                    )
+                    
+                    # Evaluate
+                    decision = self.utility_gate.evaluate(candidate)
+                    gated_results.append({
+                        "disease": disease.get('disease_name'),
+                        "decision": {
+                            "action": decision.action.value,
+                            "should_surface": decision.should_surface,
+                            "should_escalate": decision.should_escalate,
+                            "priority": decision.priority,
+                            "breakdown": {
+                                "rightness": round(decision.breakdown.rightness, 3),
+                                "novelty": round(decision.breakdown.novelty, 3),
+                                "convincing": round(decision.breakdown.convincing, 3),
+                                "handler_score": round(decision.breakdown.handler_score, 3),
+                                "net_utility": round(decision.breakdown.net_utility, 1),
+                            }
+                        }
+                    })
+                
+                utility_gate_results = {
+                    'mode': 'shadow',
+                    'deployment_mode': self.utility_gate.mode.value,
+                    'total_candidates': len(gated_results),
+                    'surfaced_count': sum(1 for r in gated_results if r['decision']['should_surface']),
+                    'suppressed_count': sum(1 for r in gated_results if not r['decision']['should_surface']),
+                    'escalated_count': sum(1 for r in gated_results if r['decision']['should_escalate']),
+                    'decisions': gated_results
+                }
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] Utility Gate evaluation error: {e}")
+
         # Compile intermediate result
         intermediate_result = {
             'axis_scores': axis_scores,
@@ -282,7 +347,10 @@ class DiagnosticEngine:
 
             # Metadata
             'data_completeness': normalized.get('metadata', {}).get('completeness', 0),
-            'engine_version': '2.2.0-utility-gate'
+            'engine_version': '2.2.0-utility-gate',
+            
+            # Utility Gate (Phase 6)
+            'utility_gate': utility_gate_results
         }
 
     def analyze_batch(self, patients: List[Dict], history_map: Dict[str, List] = None) -> List[Dict]:
