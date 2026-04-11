@@ -1707,6 +1707,9 @@ class DiscoveryResponse(BaseModel):
     decision: Optional[str] = None
     utility_components: Optional[Dict[str, float]] = None
 
+    # Utility Gate (Handler/Feied framework) - Phase 6
+    utility_gate: Optional[Dict[str, Any]] = None
+
     # Actionable Insight fields
     immediate_actions: Optional[List[Dict[str, Any]]] = None
     actionable_values: Optional[List[Dict[str, Any]]] = None
@@ -6962,6 +6965,7 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
                 clinical_state=v2_result.get('clinical_state'),
                 state_label=v2_result.get('state_label'),
                 conditions=v2_result.get('conditions', []),
+                utility_gate=v2_result.get('utility_gate'),
                 immediate_actions=[
                     {
                         'verb': 'ACTION',
