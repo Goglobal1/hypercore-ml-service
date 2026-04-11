@@ -7,6 +7,11 @@ Data integrations (Phase 5 Unified):
 - ClinVar: 209K+ genetic disease conditions
 - ML Models: 5 MIMIC-trained disease classifiers
 - ICD-10: 97K+ diagnosis codes
+
+Utility Gate (Phase 6):
+- Handler/Feied framework for clinical decision support
+- Surface/suppress/escalate decisions
+- Shadow mode for validation
 """
 
 from typing import Dict, List, Any, Optional
@@ -45,6 +50,16 @@ try:
     ML_MODELS_AVAILABLE = True
 except ImportError:
     ML_MODELS_AVAILABLE = False
+
+# Utility Gate integration (Phase 6)
+try:
+    from ...utility_engine import (
+        UtilityGate, DeploymentMode, UtilityInput, EvidenceItem
+    )
+    UTILITY_GATE_AVAILABLE = True
+except ImportError:
+    UTILITY_GATE_AVAILABLE = False
+
 
 logger = logging.getLogger(__name__)
 
@@ -142,6 +157,19 @@ class DiagnosticEngine:
         classifier_stats = self.unified_classifier.get_stats()
         sources = [k for k, v in classifier_stats['sources_available'].items() if v]
         logger.info(f"[DiagnosticEngine] Unified Classifier: {len(sources)} sources active ({', '.join(sources)})")
+
+        # Initialize Utility Gate (Phase 6 - Shadow Mode)
+        self.shadow_mode = True  # Shadow mode: compute but don't suppress
+        self.utility_gate = None
+        self.utility_gate_available = False
+
+        if UTILITY_GATE_AVAILABLE:
+            try:
+                self.utility_gate = UtilityGate(mode=DeploymentMode.HOSPITAL)
+                self.utility_gate_available = True
+                logger.info(f"[DiagnosticEngine] Utility Gate: hospital mode (SHADOW)")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] Utility Gate not initialized: {e}")
 
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
@@ -254,7 +282,7 @@ class DiagnosticEngine:
 
             # Metadata
             'data_completeness': normalized.get('metadata', {}).get('completeness', 0),
-            'engine_version': '2.1.0-unified'
+            'engine_version': '2.2.0-utility-gate'
         }
 
     def analyze_batch(self, patients: List[Dict], history_map: Dict[str, List] = None) -> List[Dict]:
@@ -407,6 +435,23 @@ class DiagnosticEngine:
     def get_unified_classifier_stats(self) -> Dict:
         """Get unified classifier statistics including all sources."""
         return self.unified_classifier.get_stats()
+
+    def get_utility_gate_stats(self) -> Optional[Dict]:
+        """Get Utility Gate statistics."""
+        if self.utility_gate_available:
+            return {
+                'available': True,
+                'mode': self.utility_gate.mode.value,
+                'shadow_mode': self.shadow_mode,
+                'policy': {
+                    'rightness_weight': self.utility_gate.policy.rightness_weight,
+                    'novelty_weight': self.utility_gate.policy.novelty_weight,
+                    'convincing_weight': self.utility_gate.policy.convincing_weight,
+                    'min_handler_score_surface': self.utility_gate.policy.min_handler_score_surface,
+                    'min_handler_score_escalate': self.utility_gate.policy.min_handler_score_escalate,
+                }
+            }
+        return {'available': False}
 
     def _enhance_with_clinvar(self, diseases: List, features: Dict, raw_data: Dict) -> List:
         """
