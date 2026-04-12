@@ -7,6 +7,7 @@ Contains 97,000+ ICD-10 diagnosis codes with hierarchical structure.
 
 import gzip
 import logging
+import os
 import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Optional, Set
@@ -14,8 +15,11 @@ from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
-# Default path to MIMIC ICD data
-MIMIC_ICD_PATH = Path("F:/mimic-iv-3.1/mimic-iv-3.1/hosp/d_icd_diagnoses.csv.gz")
+# Default path to MIMIC ICD data - uses environment variable or relative path
+MIMIC_ICD_PATH = Path(os.environ.get(
+    'MIMIC_ICD_PATH',
+    os.environ.get('MIMIC_PATH', './data/mimic-iv') + '/hosp/d_icd_diagnoses.csv.gz'
+))
 
 
 class ICD10Loader:

@@ -5,6 +5,7 @@ Loads and prepares MIMIC-IV data for disease classification model training.
 
 import gzip
 import logging
+import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -13,8 +14,8 @@ from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
-# Default MIMIC-IV path
-MIMIC_PATH = Path("F:/mimic-iv-3.1/mimic-iv-3.1")
+# Default MIMIC-IV path - uses environment variable or relative path
+MIMIC_PATH = Path(os.environ.get('MIMIC_PATH', './data/mimic-iv'))
 
 
 class MIMICLoader:
