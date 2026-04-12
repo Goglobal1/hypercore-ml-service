@@ -6,9 +6,10 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Cache bust: 2026-04-02-v5
+# Cache bust: 2026-04-12-hpo
 RUN echo "Build timestamp: $(date)"
 
 # Install dependencies first (layer caching)
@@ -17,6 +18,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy ALL application code
 COPY . .
+
+# Download HPO data files
+RUN mkdir -p data/hpo && \
+    curl -L -o data/hpo/genes_to_disease.txt https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2026-02-16/genes_to_disease.txt && \
+    curl -L -o data/hpo/genes_to_phenotype.txt https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2026-02-16/genes_to_phenotype.txt && \
+    curl -L -o data/hpo/phenotype_to_genes.txt https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2026-02-16/phenotype_to_genes.txt && \
+    echo "HPO files downloaded:" && ls -la data/hpo/
 
 # Verify files exist
 RUN ls -la app/core/endpoints/ && ls -la app/core/pathways/
