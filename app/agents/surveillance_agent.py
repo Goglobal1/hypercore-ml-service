@@ -97,12 +97,57 @@ class SurveillanceAgent(BaseAgent):
 
     Monitors epidemiological data for outbreak patterns,
     AMR trends, and population health anomalies.
+
+    Evolution Parameters:
+    - outbreak_deviation_threshold: Standard deviations for outbreak detection
+    - amr_alert_threshold: Resistance % to trigger alert
+    - vaccination_gap_threshold: Coverage gap to flag
     """
+
+    VERSION = "1.1.0"
 
     def __init__(self):
         super().__init__(AgentType.SURVEILLANCE)
         self._outbreak_cache: Dict[str, Any] = {}
         self._amr_cache: Dict[str, Any] = {}
+
+        # Evolution-tunable parameters
+        self._outbreak_deviation_threshold = 2.0
+        self._amr_alert_threshold = 0.3
+        self._vaccination_gap_threshold = 0.2
+
+        # Register for parameter updates
+        self.on_parameter_change("outbreak_deviation_threshold", self._on_outbreak_threshold_change)
+
+    def _get_configurable_parameters(self) -> Dict[str, Dict[str, Any]]:
+        """Define evolution-tunable parameters."""
+        return {
+            "outbreak_deviation_threshold": {
+                "type": "float",
+                "min": 1.0,
+                "max": 4.0,
+                "default": 2.0,
+                "description": "Standard deviations from baseline to flag outbreak",
+            },
+            "amr_alert_threshold": {
+                "type": "float",
+                "min": 0.1,
+                "max": 0.6,
+                "default": 0.3,
+                "description": "Antimicrobial resistance % to trigger alert",
+            },
+            "vaccination_gap_threshold": {
+                "type": "float",
+                "min": 0.1,
+                "max": 0.4,
+                "default": 0.2,
+                "description": "Vaccination coverage gap to flag",
+            },
+        }
+
+    def _on_outbreak_threshold_change(self, old_value: float, new_value: float) -> None:
+        self._outbreak_deviation_threshold = new_value
+        logger.info(f"SurveillanceAgent: outbreak_deviation_threshold updated {old_value} -> {new_value}")
 
     @property
     def name(self) -> str:

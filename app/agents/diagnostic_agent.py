@@ -209,11 +209,78 @@ class DiagnosticAgent(BaseAgent):
     - Clinical findings
     - Biomarker evidence
     - Peer agent findings
+
+    Evolution Parameters:
+    - probability_threshold: Min probability to include hypothesis
+    - required_weight: Weight for required criteria
+    - supportive_weight: Weight for supportive criteria
+    - biomarker_weight: Weight for biomarker evidence
+    - peer_confidence_threshold: Min confidence for peer findings
     """
+
+    VERSION = "1.1.0"
 
     def __init__(self):
         super().__init__(AgentType.DIAGNOSTIC)
         self._hypotheses: List[DiagnosticHypothesis] = []
+
+        # Configurable thresholds (can be tuned by Evolution Controller)
+        self._probability_threshold = 0.1
+        self._peer_confidence_threshold = 0.5
+
+        # Register for parameter updates
+        self.on_parameter_change("probability_threshold", self._on_threshold_change)
+        self.on_parameter_change("peer_confidence_threshold", self._on_peer_threshold_change)
+
+    def _get_configurable_parameters(self) -> Dict[str, Dict[str, Any]]:
+        """Define evolution-tunable parameters."""
+        return {
+            "probability_threshold": {
+                "type": "float",
+                "min": 0.05,
+                "max": 0.5,
+                "default": 0.1,
+                "description": "Minimum probability to include a diagnostic hypothesis",
+            },
+            "peer_confidence_threshold": {
+                "type": "float",
+                "min": 0.3,
+                "max": 0.9,
+                "default": 0.5,
+                "description": "Minimum confidence for peer agent findings",
+            },
+            "required_weight": {
+                "type": "float",
+                "min": 0.3,
+                "max": 0.7,
+                "default": 0.5,
+                "description": "Weight for required criteria in probability calculation",
+            },
+            "supportive_weight": {
+                "type": "float",
+                "min": 0.1,
+                "max": 0.4,
+                "default": 0.25,
+                "description": "Weight for supportive criteria",
+            },
+            "biomarker_weight": {
+                "type": "float",
+                "min": 0.05,
+                "max": 0.3,
+                "default": 0.15,
+                "description": "Weight for biomarker evidence",
+            },
+        }
+
+    def _on_threshold_change(self, old_value: float, new_value: float) -> None:
+        """Handle probability threshold changes from Evolution Controller."""
+        self._probability_threshold = new_value
+        logger.info(f"DiagnosticAgent: probability_threshold updated {old_value} -> {new_value}")
+
+    def _on_peer_threshold_change(self, old_value: float, new_value: float) -> None:
+        """Handle peer confidence threshold changes."""
+        self._peer_confidence_threshold = new_value
+        logger.info(f"DiagnosticAgent: peer_confidence_threshold updated {old_value} -> {new_value}")
 
     @property
     def name(self) -> str:
@@ -263,8 +330,8 @@ class DiagnosticAgent(BaseAgent):
         vital_findings = self._derive_findings_from_vitals(vital_signs)
         clinical_findings.update(vital_findings)
 
-        # 4. Get peer agent findings
-        peer_findings = self.get_peer_findings(min_confidence=0.5)
+        # 4. Get peer agent findings (using evolution-tunable threshold)
+        peer_findings = self.get_peer_findings(min_confidence=self._peer_confidence_threshold)
         biomarker_findings = [f for f in peer_findings
                              if f.agent_type == AgentType.BIOMARKER]
         surveillance_findings = [f for f in peer_findings
@@ -279,7 +346,8 @@ class DiagnosticAgent(BaseAgent):
                 biomarkers,
                 biomarker_findings + surveillance_findings
             )
-            if hypothesis.probability > 0.1:  # Threshold
+            # Use evolution-tunable probability threshold
+            if hypothesis.probability > self._probability_threshold:
                 self._hypotheses.append(hypothesis)
 
         # 6. Rank hypotheses

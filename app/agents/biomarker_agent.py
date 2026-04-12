@@ -124,12 +124,28 @@ class BiomarkerAgent(BaseAgent):
 
     Analyzes biomarker patterns across multiple data sources
     and generates clinical significance assessments.
+
+    Evolution Parameters:
+    - critical_confidence: Confidence for critical findings
+    - elevated_confidence: Confidence for elevated findings
+    - correlation_threshold: Min correlation to report
     """
+
+    VERSION = "1.1.0"
 
     def __init__(self):
         super().__init__(AgentType.BIOMARKER)
         self._multiomic_engine = None
         self._genomics_engine = None
+
+        # Evolution-tunable confidence levels
+        self._critical_confidence = 0.95
+        self._elevated_confidence = 0.80
+        self._correlation_threshold = 0.6
+
+        # Register for parameter updates
+        self.on_parameter_change("critical_confidence", self._on_critical_conf_change)
+        self.on_parameter_change("elevated_confidence", self._on_elevated_conf_change)
 
         # Initialize engines if available
         if MULTIOMIC_AVAILABLE:
@@ -143,6 +159,40 @@ class BiomarkerAgent(BaseAgent):
                 self._genomics_engine = GenomicsIntegration()
             except Exception as e:
                 logger.error(f"Failed to initialize genomics engine: {e}")
+
+    def _get_configurable_parameters(self) -> Dict[str, Dict[str, Any]]:
+        """Define evolution-tunable parameters."""
+        return {
+            "critical_confidence": {
+                "type": "float",
+                "min": 0.85,
+                "max": 0.99,
+                "default": 0.95,
+                "description": "Confidence level for critical biomarker findings",
+            },
+            "elevated_confidence": {
+                "type": "float",
+                "min": 0.65,
+                "max": 0.90,
+                "default": 0.80,
+                "description": "Confidence level for elevated biomarker findings",
+            },
+            "correlation_threshold": {
+                "type": "float",
+                "min": 0.4,
+                "max": 0.8,
+                "default": 0.6,
+                "description": "Minimum correlation for cross-finding correlation",
+            },
+        }
+
+    def _on_critical_conf_change(self, old_value: float, new_value: float) -> None:
+        self._critical_confidence = new_value
+        logger.info(f"BiomarkerAgent: critical_confidence updated {old_value} -> {new_value}")
+
+    def _on_elevated_conf_change(self, old_value: float, new_value: float) -> None:
+        self._elevated_confidence = new_value
+        logger.info(f"BiomarkerAgent: elevated_confidence updated {old_value} -> {new_value}")
 
     @property
     def name(self) -> str:

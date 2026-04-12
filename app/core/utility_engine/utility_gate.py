@@ -9,16 +9,33 @@ CRITICAL RULES:
 2. Trial Rescue must NOT rank by p-value alone - rank by utility
 
 Based on Handler/Feied IEEE framework.
+
+Evolution Integration:
+- Emits DECISION signals for every evaluate() call
+- Tracks outcomes via record_decision_outcome()
+- Parameters tunable through Evolution Controller
 """
 
 from __future__ import annotations
-from typing import List
+import logging
+import time
+from typing import Any, Callable, Dict, List, Optional
+
 from .handler_utility import HandlerUtilityScorer
 from .policy_registry import get_policy
 from .schemas import (
     DecisionAction, DeploymentMode, UtilityDecision,
     UtilityInput, UtilityScoreBreakdown,
 )
+
+from app.core.evolution import (
+    EvolutionEmitter,
+    SignalType,
+    ParameterUpdate,
+    DeploymentDomain,
+)
+
+logger = logging.getLogger(__name__)
 
 
 class UtilityGate:
@@ -27,7 +44,14 @@ class UtilityGate:
 
     This is where clinical utility beats raw accuracy.
     A high-AUC model is useless if it causes alert fatigue.
+
+    Evolution Integration:
+    - Emits DECISION signals for tracking
+    - Parameters tunable via Evolution Controller
+    - Tracks decision outcomes for feedback loop
     """
+
+    VERSION = "1.1.0"
 
     def __init__(self, mode: DeploymentMode):
         """
@@ -40,16 +64,68 @@ class UtilityGate:
         self.policy = get_policy(mode)
         self.scorer = HandlerUtilityScorer(self.policy)
 
-    def evaluate(self, signal: UtilityInput) -> UtilityDecision:
+        # Evolution emitter for tracking decisions
+        self._emitter = EvolutionEmitter(
+            agent_id=f"utility_gate_{mode.value}",
+            agent_type="utility_gate",
+            version=self.VERSION,
+            domain=DeploymentDomain.CLINICAL,
+            configurable_parameters=self._get_configurable_parameters(),
+        )
+
+        # Pending decisions for outcome tracking
+        self._pending_decisions: Dict[str, Dict[str, Any]] = {}
+
+        # Stats
+        self._decisions_made = 0
+        self._decisions_surfaced = 0
+        self._decisions_suppressed = 0
+        self._decisions_escalated = 0
+
+    def _get_configurable_parameters(self) -> Dict[str, Dict[str, Any]]:
+        """Define evolution-tunable parameters."""
+        return {
+            "surface_threshold_adjustment": {
+                "type": "float",
+                "min": -0.2,
+                "max": 0.2,
+                "default": 0.0,
+                "description": "Adjustment to surface threshold (higher = more strict)",
+            },
+            "escalation_sensitivity": {
+                "type": "float",
+                "min": 0.8,
+                "max": 1.2,
+                "default": 1.0,
+                "description": "Multiplier for escalation sensitivity",
+            },
+        }
+
+    @property
+    def emitter(self) -> EvolutionEmitter:
+        """Get the evolution emitter."""
+        return self._emitter
+
+    def on_parameter_change(
+        self,
+        parameter_name: str,
+        callback: Callable[[Any, Any], None],
+    ) -> None:
+        """Register callback for parameter changes."""
+        self._emitter.on_parameter_change(parameter_name, callback)
+
+    def evaluate(self, signal: UtilityInput, session_id: Optional[str] = None) -> UtilityDecision:
         """
         Evaluate a signal and decide what action to take.
 
         Args:
             signal: UtilityInput with all relevant scores
+            session_id: Optional session identifier for tracking
 
         Returns:
             UtilityDecision with action and full breakdown
         """
+        start_time = time.perf_counter()
         suppression_reasons: List[str] = []
         escalation_reasons: List[str] = []
 
@@ -151,7 +227,47 @@ class UtilityGate:
             escalation_reasons=escalation_reasons,
         )
 
-        return UtilityDecision(
+        # Calculate latency
+        latency_ms = (time.perf_counter() - start_time) * 1000
+
+        # Emit decision signal for evolution tracking
+        evolution_signal = self._emitter.emit(
+            signal_type=SignalType.DECISION,
+            payload={
+                "action": action.value,
+                "handler_score": handler_score,
+                "net_utility": net_utility,
+                "should_surface": should_surface,
+                "should_escalate": should_escalate,
+                "suppression_reasons": suppression_reasons,
+                "escalation_reasons": escalation_reasons,
+            },
+            session_id=session_id,
+        )
+
+        # Update stats
+        self._decisions_made += 1
+        if action == DecisionAction.SURFACE:
+            self._decisions_surfaced += 1
+        elif action == DecisionAction.SUPPRESS:
+            self._decisions_suppressed += 1
+        elif action == DecisionAction.ESCALATE:
+            self._decisions_escalated += 1
+
+        # Store for outcome tracking
+        self._pending_decisions[evolution_signal.request_id] = {
+            "signal": signal,
+            "action": action,
+            "handler_score": handler_score,
+        }
+
+        # Cleanup old pending decisions (keep last 1000)
+        if len(self._pending_decisions) > 1000:
+            oldest_keys = list(self._pending_decisions.keys())[:-1000]
+            for key in oldest_keys:
+                del self._pending_decisions[key]
+
+        decision = UtilityDecision(
             action=action,
             should_surface=should_surface,
             should_notify=should_notify,
@@ -162,8 +278,12 @@ class UtilityGate:
             metadata={
                 "mode": self.mode.value,
                 "expected_confusion": expected,
+                "evolution_request_id": evolution_signal.request_id,
+                "latency_ms": latency_ms,
             },
         )
+
+        return decision
 
     def evaluate_batch(self, signals: List[UtilityInput]) -> List[UtilityDecision]:
         """
@@ -216,3 +336,49 @@ class UtilityGate:
                     "decision": decision,
                 })
         return results
+
+    # =========================================================================
+    # EVOLUTION INTEGRATION
+    # =========================================================================
+
+    def record_decision_outcome(
+        self,
+        request_id: str,
+        outcome: Dict[str, Any],
+    ) -> None:
+        """
+        Record the outcome of a previous decision for feedback loop.
+
+        Args:
+            request_id: The evolution request_id from the decision metadata
+            outcome: Outcome data, e.g.:
+                {
+                    "clinician_agreed": True,
+                    "patient_outcome": "improved",
+                    "was_correct_decision": True,
+                }
+        """
+        self._emitter.record_outcome(request_id, outcome)
+
+        # Remove from pending
+        self._pending_decisions.pop(request_id, None)
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Get utility gate statistics including evolution data."""
+        return {
+            "mode": self.mode.value,
+            "decisions_made": self._decisions_made,
+            "decisions_surfaced": self._decisions_surfaced,
+            "decisions_suppressed": self._decisions_suppressed,
+            "decisions_escalated": self._decisions_escalated,
+            "surface_rate": (
+                self._decisions_surfaced / self._decisions_made
+                if self._decisions_made > 0 else 0
+            ),
+            "escalation_rate": (
+                self._decisions_escalated / self._decisions_made
+                if self._decisions_made > 0 else 0
+            ),
+            "pending_outcomes": len(self._pending_decisions),
+            "evolution": self._emitter.get_stats(),
+        }

@@ -85,11 +85,56 @@ class TrialRescueAgent(BaseAgent):
 
     Matches patients to clinical trials and identifies
     rescue therapies based on treatment response.
+
+    Evolution Parameters:
+    - trial_match_threshold: Min score to recommend trial
+    - rescue_urgency_threshold: Urgency level for rescue therapy
+    - interaction_severity_threshold: Min severity to flag interactions
     """
+
+    VERSION = "1.1.0"
 
     def __init__(self):
         super().__init__(AgentType.TRIAL_RESCUE)
         self._trial_cache: Dict[str, Any] = {}
+
+        # Evolution-tunable parameters
+        self._trial_match_threshold = 0.6
+        self._rescue_urgency_threshold = 0.7
+        self._interaction_severity_threshold = 0.5
+
+        # Register for parameter updates
+        self.on_parameter_change("trial_match_threshold", self._on_trial_threshold_change)
+
+    def _get_configurable_parameters(self) -> Dict[str, Dict[str, Any]]:
+        """Define evolution-tunable parameters."""
+        return {
+            "trial_match_threshold": {
+                "type": "float",
+                "min": 0.4,
+                "max": 0.9,
+                "default": 0.6,
+                "description": "Minimum match score to recommend a clinical trial",
+            },
+            "rescue_urgency_threshold": {
+                "type": "float",
+                "min": 0.5,
+                "max": 0.95,
+                "default": 0.7,
+                "description": "Urgency threshold for rescue therapy recommendations",
+            },
+            "interaction_severity_threshold": {
+                "type": "float",
+                "min": 0.3,
+                "max": 0.8,
+                "default": 0.5,
+                "description": "Minimum severity to flag drug interactions",
+            },
+        }
+
+    def _on_trial_threshold_change(self, old_value: float, new_value: float) -> None:
+        self._trial_match_threshold = new_value
+        logger.info(f"TrialRescueAgent: trial_match_threshold updated {old_value} -> {new_value}")
 
     @property
     def name(self) -> str:

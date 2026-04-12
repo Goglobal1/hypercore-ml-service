@@ -6,16 +6,26 @@ Provides:
 - Confidence scoring system
 - Inter-agent message protocol
 - Agent registry for communication
+- Evolution system integration (signal emission, parameter updates)
 """
 
 import uuid
+import time
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any, Type
+from typing import Dict, List, Optional, Any, Type, Callable
 from enum import Enum
 from dataclasses import dataclass, field, asdict
 from collections import defaultdict
+from functools import wraps
+
+from app.core.evolution import (
+    EvolutionEmitter,
+    SignalType,
+    ParameterUpdate,
+    DeploymentDomain,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -213,7 +223,11 @@ class BaseAgent(ABC):
     - Confidence scoring
     - Inter-agent communication
     - Finding generation
+    - Evolution system integration (signal emission, parameter updates)
     """
+
+    # Version for all agents (can be overridden)
+    VERSION = "1.0.0"
 
     def __init__(self, agent_type: AgentType):
         self.agent_type = agent_type
@@ -221,8 +235,42 @@ class BaseAgent(ABC):
         self._findings: List[AgentFinding] = []
         self._received_messages: List[AgentMessage] = []
 
+        # Evolution system integration
+        self._emitter = EvolutionEmitter(
+            agent_id=self.agent_id,
+            agent_type=agent_type.value,
+            version=self.VERSION,
+            domain=DeploymentDomain.CLINICAL,
+            configurable_parameters=self._get_configurable_parameters(),
+        )
+
+        # Track pending outcomes for feedback loop
+        self._pending_outcomes: Dict[str, Dict[str, Any]] = {}
+
         # Register with central registry
         AgentRegistry.register(self)
+
+    def _get_configurable_parameters(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Override to define configurable parameters for evolution.
+
+        Returns:
+            Dictionary of parameter definitions:
+            {
+                "param_name": {
+                    "type": "float",
+                    "min": 0.0,
+                    "max": 1.0,
+                    "default": 0.5
+                }
+            }
+        """
+        return {}
+
+    @property
+    def emitter(self) -> EvolutionEmitter:
+        """Get the evolution emitter for this agent."""
+        return self._emitter
 
     @property
     @abstractmethod
@@ -405,10 +453,170 @@ class BaseAgent(ABC):
             "capabilities": self.capabilities,
             "findings_count": len(self._findings),
             "messages_received": len(self._received_messages),
-            "status": "active"
+            "status": "active",
+            "evolution": {
+                "signals_emitted": self._emitter.get_stats().get("signals_emitted", 0),
+                "outcomes_recorded": self._emitter.get_stats().get("outcomes_recorded", 0),
+                "pending_outcomes": len(self._pending_outcomes),
+            },
         }
 
     def clear_session(self):
         """Clear findings for a new session."""
         self._findings = []
         self._received_messages = []
+
+    # =========================================================================
+    # EVOLUTION SYSTEM INTEGRATION
+    # =========================================================================
+
+    def emit_signal(
+        self,
+        signal_type: SignalType,
+        payload: Dict[str, Any],
+        session_id: Optional[str] = None,
+    ) -> str:
+        """
+        Emit an evolution signal.
+
+        Args:
+            signal_type: Type of signal (PREDICTION, DECISION, etc.)
+            payload: Signal payload data
+            session_id: Optional session identifier
+
+        Returns:
+            Request ID for tracking outcomes
+        """
+        signal = self._emitter.emit(
+            signal_type=signal_type,
+            payload=payload,
+            session_id=session_id,
+        )
+        return signal.request_id
+
+    def record_outcome(
+        self,
+        request_id: str,
+        outcome: Dict[str, Any],
+    ) -> None:
+        """
+        Record the outcome of a previous signal for feedback loop.
+
+        Args:
+            request_id: The request_id from emit_signal
+            outcome: Outcome data (e.g., {"correct": True, "actual": "diagnosis"})
+        """
+        self._emitter.record_outcome(request_id, outcome)
+
+    def apply_parameter_update(self, update: ParameterUpdate) -> bool:
+        """
+        Apply a parameter update from the Evolution Controller.
+
+        Args:
+            update: The parameter update to apply
+
+        Returns:
+            True if applied successfully
+        """
+        return self._emitter.apply_update(update)
+
+    def get_parameter(self, name: str) -> Any:
+        """Get current value of a configurable parameter."""
+        return self._emitter.get_parameter(name)
+
+    def on_parameter_change(
+        self,
+        parameter_name: str,
+        callback: Callable[[Any, Any], None],
+    ) -> None:
+        """
+        Register callback for parameter changes.
+
+        Args:
+            parameter_name: Name of parameter to watch
+            callback: Function(old_value, new_value) called on change
+        """
+        self._emitter.on_parameter_change(parameter_name, callback)
+
+    async def analyze_with_evolution(
+        self,
+        input_data: Dict[str, Any],
+        session_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Run analysis with automatic evolution signal emission.
+
+        Wraps analyze() with:
+        - Pre-analysis signal emission
+        - Timing measurement
+        - Post-analysis outcome recording
+
+        Args:
+            input_data: Agent-specific input data
+            session_id: Optional session identifier
+
+        Returns:
+            Analysis results with evolution metadata
+        """
+        start_time = time.perf_counter()
+
+        # Emit start signal
+        request_id = self.emit_signal(
+            signal_type=SignalType.PREDICTION,
+            payload={
+                "agent_type": self.agent_type.value,
+                "input_keys": list(input_data.keys()),
+            },
+            session_id=session_id,
+        )
+
+        try:
+            # Run actual analysis
+            result = await self.analyze(input_data)
+
+            # Calculate latency
+            latency_ms = (time.perf_counter() - start_time) * 1000
+
+            # Emit latency signal
+            self._emitter.emit(
+                signal_type=SignalType.LATENCY,
+                payload={"latency_ms": latency_ms},
+                session_id=session_id,
+            )
+
+            # Add evolution metadata to result
+            result["_evolution"] = {
+                "request_id": request_id,
+                "latency_ms": latency_ms,
+                "agent_id": self.agent_id,
+            }
+
+            # Store for later outcome recording
+            self._pending_outcomes[request_id] = {
+                "started_at": start_time,
+                "input_data": input_data,
+                "result": result,
+            }
+
+            return result
+
+        except Exception as e:
+            # Emit error signal
+            self._emitter.emit(
+                signal_type=SignalType.ERROR,
+                payload={
+                    "error": str(e),
+                    "error_type": type(e).__name__,
+                },
+                session_id=session_id,
+            )
+            raise
+
+    def get_evolution_stats(self) -> Dict[str, Any]:
+        """Get evolution-related statistics for this agent."""
+        return {
+            "agent_id": self.agent_id,
+            "agent_type": self.agent_type.value,
+            "emitter_stats": self._emitter.get_stats(),
+            "pending_outcomes": len(self._pending_outcomes),
+        }
