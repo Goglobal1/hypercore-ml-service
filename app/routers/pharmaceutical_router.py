@@ -404,10 +404,8 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
     """
     import traceback
 
-    # Wrap EVERYTHING in try/except to capture any error
-    try:
-        if not TRIAL_RESCUE_AVAILABLE:
-            return {"success": False, "error": "Trial Rescue Engine not available"}
+    if not TRIAL_RESCUE_AVAILABLE:
+        return {"success": False, "error": "Trial Rescue Engine not available"}
 
     try:
         # Parse CSV data
@@ -537,11 +535,4 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
             "engine_version": "1.0.4",
         }
 
-    except Exception as outer_e:
-        # Catch-all for any errors including import errors, etc.
-        return {
-            "success": False,
-            "error": f"Outer exception: {str(outer_e)}",
-            "error_type": type(outer_e).__name__,
-        }
 
