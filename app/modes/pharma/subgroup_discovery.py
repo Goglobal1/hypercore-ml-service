@@ -112,6 +112,23 @@ class SubgroupDiscovery:
         min_size = min_subgroup_size or self.MIN_SUBGROUP_SIZE
         subgroups = []
 
+        try:
+            return self._find_subgroups_impl(df, treatment_col, outcome_col, covariate_cols, min_size)
+        except Exception as e:
+            logger.error(f"Subgroup discovery failed: {e}", exc_info=True)
+            return []
+
+    def _find_subgroups_impl(
+        self,
+        df: pd.DataFrame,
+        treatment_col: str,
+        outcome_col: str,
+        covariate_cols: List[str],
+        min_size: int,
+    ) -> List[ResponderSubgroup]:
+        """Internal implementation of subgroup discovery."""
+        subgroups = []
+
         # Separate treatment and control groups
         treated = df[df[treatment_col] == 1].copy()
         control = df[df[treatment_col] == 0].copy()
