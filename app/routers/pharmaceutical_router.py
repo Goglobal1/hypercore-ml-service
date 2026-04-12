@@ -486,7 +486,14 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 }
                 for e in result.alternative_endpoints[:10]
             ],
-            "debug": "confounders_and_endpoints",
+            "report": {
+                "executive_summary": result.report.executive_summary if result.report else None,
+                "primary_recommendation": result.report.primary_recommendation if result.report else None,
+                "secondary_recommendations": result.report.secondary_recommendations if result.report else [],
+                "regulatory_considerations": result.report.regulatory_considerations if result.report else [],
+            } if result.report else None,
+            "metadata": _sanitize_value(result.metadata),
+            "debug": "with_report",
         }
 
         # Convert to dict for response (sanitize NaN/Inf values)
