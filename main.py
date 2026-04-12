@@ -230,7 +230,7 @@ except ImportError:
 # Phase 6: Utility Engine (Alert Decision Layer)
 try:
     from routes import utility_router, event_router, feedback_router
-    from utility import get_utility_engine, get_event_manager, get_feedback_tracker
+    from utility import get_utility_engine, get_event_manager, get_feedback_tracker, get_redis_store
     UTILITY_ENGINE_AVAILABLE = True
     print("[HYPERCORE] Phase 6 Utility Engine: OK")
 except ImportError as e:
@@ -21903,7 +21903,109 @@ def health() -> Dict[str, Any]:
         except:
             pass
 
+    # Redis status for utility metrics persistence
+    if UTILITY_ENGINE_AVAILABLE:
+        try:
+            redis_store = get_redis_store()
+            redis_connected = redis_store._redis is not None
+            health_info["redis"] = {
+                "connected": redis_connected,
+                "mode": "redis" if redis_connected else "in_memory",
+                "metrics": redis_store.get_metrics() if redis_connected else None
+            }
+        except Exception as e:
+            health_info["redis"] = {
+                "connected": False,
+                "mode": "unavailable",
+                "error": str(e)
+            }
+
     return health_info
+
+
+@app.get("/redis/status")
+@bulletproof_endpoint("redis/status", min_rows=0)
+def redis_status() -> Dict[str, Any]:
+    """Get detailed Redis connection status and metrics."""
+    if not UTILITY_ENGINE_AVAILABLE:
+        return {"status": "unavailable", "reason": "Utility engine not loaded"}
+
+    try:
+        redis_store = get_redis_store()
+        redis_connected = redis_store._redis is not None
+
+        result = {
+            "status": "connected" if redis_connected else "fallback",
+            "mode": "redis" if redis_connected else "in_memory",
+            "redis_url_configured": bool(os.environ.get('REDIS_URL')),
+        }
+
+        if redis_connected:
+            result["metrics"] = redis_store.get_metrics()
+            # Test ping
+            try:
+                redis_store._redis.ping()
+                result["ping"] = "ok"
+            except Exception as e:
+                result["ping"] = f"failed: {e}"
+        else:
+            result["fallback_entries"] = len(redis_store._fallback)
+
+        return result
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.post("/redis/test-persistence")
+@bulletproof_endpoint("redis/test-persistence", min_rows=0)
+def redis_test_persistence() -> Dict[str, Any]:
+    """
+    Test Redis persistence by storing and retrieving a test value.
+    Use this to verify data persists across restarts.
+    """
+    import uuid
+
+    if not UTILITY_ENGINE_AVAILABLE:
+        return {"status": "unavailable", "reason": "Utility engine not loaded"}
+
+    try:
+        redis_store = get_redis_store()
+        redis_connected = redis_store._redis is not None
+
+        test_id = str(uuid.uuid4())[:8]
+        test_event = {
+            "id": f"test_{test_id}",
+            "patient_id": "PERSISTENCE_TEST",
+            "event_type": "persistence_test",
+            "status": "active",
+            "created_at": datetime.now().isoformat(),
+            "test_value": f"Railway Redis Test {test_id}"
+        }
+
+        # Save test event
+        saved = redis_store.save_event(test_event)
+
+        # Retrieve it back
+        retrieved = redis_store.get_event(test_event["id"])
+
+        # Get all test events to show persistence
+        test_events = redis_store.get_patient_events("PERSISTENCE_TEST")
+
+        return {
+            "status": "success" if saved and retrieved else "failed",
+            "mode": "redis" if redis_connected else "in_memory",
+            "test_id": test_id,
+            "saved": saved,
+            "retrieved": retrieved is not None,
+            "retrieved_value": retrieved.get("test_value") if retrieved else None,
+            "total_test_events": len(test_events),
+            "persisted_tests": [e.get("test_value") for e in test_events[-5:]],
+            "message": "Events persist across restarts when Redis is connected" if redis_connected else "In-memory mode - data lost on restart"
+        }
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
 
 
 
