@@ -524,9 +524,16 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Trial rescue analysis failed: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Trial rescue analysis failed: {str(e)}"
-        )
+        import traceback
+        error_traceback = traceback.format_exc()
+        logger.error(f"Trial rescue analysis failed: {e}\n{error_traceback}")
+        # Return error details for debugging
+        return {
+            "success": False,
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "traceback": error_traceback.split('\n')[-5:],  # Last 5 lines of traceback
+            "trial_name": request.trial_name or "Unknown",
+            "engine_version": "1.0.3",
+        }
 
