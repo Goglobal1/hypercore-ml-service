@@ -22,21 +22,37 @@ logger = logging.getLogger(__name__)
 
 
 def _sanitize_value(v):
-    """Sanitize a value for JSON serialization (handle NaN/Inf)."""
+    """Sanitize a value for JSON serialization (handle NaN/Inf and numpy types)."""
     if v is None:
         return None
+    # Handle numpy arrays
+    if isinstance(v, np.ndarray):
+        return [_sanitize_value(item) for item in v.tolist()]
+    # Handle numpy scalar types
+    if isinstance(v, (np.floating, np.integer)):
+        val = float(v)
+        if math.isnan(val) or math.isinf(val):
+            return None
+        return val
+    if isinstance(v, np.bool_):
+        return bool(v)
+    # Handle Python float
     if isinstance(v, float):
         if math.isnan(v) or math.isinf(v):
             return None
         return v
-    if isinstance(v, (np.floating, np.integer)):
-        if np.isnan(v) or np.isinf(v):
-            return None
-        return float(v)
+    # Handle dict
     if isinstance(v, dict):
-        return {k: _sanitize_value(val) for k, val in v.items()}
+        return {str(k): _sanitize_value(val) for k, val in v.items()}
+    # Handle list/tuple
     if isinstance(v, (list, tuple)):
         return [_sanitize_value(item) for item in v]
+    # Handle pandas types
+    if hasattr(v, 'item'):  # numpy scalar method
+        try:
+            return _sanitize_value(v.item())
+        except (ValueError, AttributeError):
+            pass
     return v
 
 from app.models.pharmaceutical_models import (
