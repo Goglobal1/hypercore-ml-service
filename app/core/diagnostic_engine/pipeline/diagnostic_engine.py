@@ -67,6 +67,20 @@ try:
 except ImportError:
     LLM_REASONER_AVAILABLE = False
 
+# HPO Phenotype Mapping integration (Layer 4f)
+try:
+    from ..layers.hpo_mapper import HPOMapper, get_hpo_mapper
+    HPO_MAPPER_AVAILABLE = True
+except ImportError:
+    HPO_MAPPER_AVAILABLE = False
+
+# DisGeNET Genetic Mapping integration (Layer 4g)
+try:
+    from ..layers.disgenet_mapper import DisGeNETMapper, get_disgenet_mapper
+    DISGENET_MAPPER_AVAILABLE = True
+except ImportError:
+    DISGENET_MAPPER_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -192,6 +206,34 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] LLM Reasoner not initialized: {e}")
 
+        # Initialize HPO Phenotype Mapper (Layer 4f)
+        self.hpo_mapper = None
+        self.hpo_mapper_available = False
+
+        if HPO_MAPPER_AVAILABLE:
+            try:
+                self.hpo_mapper = get_hpo_mapper()
+                self.hpo_mapper_available = self.hpo_mapper.available
+                stats = self.hpo_mapper.get_stats()
+                logger.info(f"[DiagnosticEngine] HPO Mapper: {stats['builtin_mappings']} mappings, "
+                           f"obo={stats['obo_loaded']}, hpoa={stats['hpoa_loaded']}")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] HPO Mapper not initialized: {e}")
+
+        # Initialize DisGeNET Genetic Mapper (Layer 4g)
+        self.disgenet_mapper = None
+        self.disgenet_mapper_available = False
+
+        if DISGENET_MAPPER_AVAILABLE:
+            try:
+                self.disgenet_mapper = get_disgenet_mapper()
+                self.disgenet_mapper_available = self.disgenet_mapper.available
+                stats = self.disgenet_mapper.get_stats()
+                logger.info(f"[DiagnosticEngine] DisGeNET Mapper: {stats['genes_count']} genes, "
+                           f"{stats['associations_count']} associations")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] DisGeNET Mapper not initialized: {e}")
+
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
         with open(path, 'r') as f:
@@ -251,6 +293,36 @@ class DiagnosticEngine:
                     logger.info(f"[DiagnosticEngine] Layer 4e: {len(llm_diagnoses)} LLM diagnoses")
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] LLM reasoning error: {e}")
+
+        # Layer 4f: HPO Phenotype Mapping
+        # Map abnormalities to HPO terms, then to diseases
+        hpo_diagnoses = []
+        if self.hpo_mapper_available and HPO_MAPPER_AVAILABLE:
+            try:
+                hpo_diagnoses = self.hpo_mapper.analyze(
+                    axis_scores=axis_scores,
+                    features=features,
+                    raw_data=raw_patient_data
+                )
+                if hpo_diagnoses:
+                    logger.info(f"[DiagnosticEngine] Layer 4f: {len(hpo_diagnoses)} HPO diagnoses")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] HPO mapping error: {e}")
+
+        # Layer 4g: DisGeNET Genetic Mapping
+        # Look up gene-disease associations if genetic markers present
+        genetic_diagnoses = []
+        if self.disgenet_mapper_available and DISGENET_MAPPER_AVAILABLE:
+            try:
+                genetic_diagnoses = self.disgenet_mapper.analyze(
+                    raw_data=raw_patient_data,
+                    features=features,
+                    axis_scores=axis_scores
+                )
+                if genetic_diagnoses:
+                    logger.info(f"[DiagnosticEngine] Layer 4g: {len(genetic_diagnoses)} genetic diagnoses")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] DisGeNET mapping error: {e}")
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -394,13 +466,19 @@ class DiagnosticEngine:
 
             # Metadata
             'data_completeness': normalized.get('metadata', {}).get('completeness', 0),
-            'engine_version': '2.3.0-llm-reasoning',
+            'engine_version': '2.4.0-hpo-disgenet',
 
             # Utility Gate (Phase 6)
             'utility_gate': utility_gate_results,
 
             # LLM Medical Reasoning (Layer 4e)
-            'layer_4e_llm_diagnoses': llm_diagnoses
+            'layer_4e_llm_diagnoses': llm_diagnoses,
+
+            # HPO Phenotype Mapping (Layer 4f)
+            'layer_4f_hpo_diagnoses': hpo_diagnoses,
+
+            # DisGeNET Genetic Mapping (Layer 4g)
+            'layer_4g_genetic_diagnoses': genetic_diagnoses
         }
 
     def analyze_batch(self, patients: List[Dict], history_map: Dict[str, List] = None) -> List[Dict]:
