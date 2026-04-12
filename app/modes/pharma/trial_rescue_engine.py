@@ -131,7 +131,7 @@ class TrialRescueEngine:
             self.utility_gate = None
             logger.warning("Utility Gate not available - rescue opportunities will not be filtered")
 
-        self.version = "1.0.3"  # Added defensive error handling in subgroup helpers
+        self.version = "1.0.4"  # Added Utility Gate error handling
 
     def analyze(self, input_data: TrialRescueInput) -> TrialRescueResult:
         """
@@ -228,20 +228,27 @@ class TrialRescueEngine:
 
                 # Apply Utility Gate
                 if self.utility_gate:
-                    decision = self._apply_utility_gate(opp)
-                    opp.utility_decision = decision.action.value
-                    opp.utility_breakdown = {
-                        "handler_score": decision.breakdown.handler_score,
-                        "net_utility": decision.breakdown.net_utility,
-                        "rightness": decision.breakdown.rightness,
-                        "novelty": decision.breakdown.novelty,
-                        "convincing": decision.breakdown.convincing,
-                    }
+                    try:
+                        decision = self._apply_utility_gate(opp)
+                        opp.utility_decision = decision.action.value
+                        opp.utility_breakdown = {
+                            "handler_score": decision.breakdown.handler_score,
+                            "net_utility": decision.breakdown.net_utility,
+                            "rightness": decision.breakdown.rightness,
+                            "novelty": decision.breakdown.novelty,
+                            "convincing": decision.breakdown.convincing,
+                        }
 
-                    if decision.should_surface:
+                        if decision.should_surface:
+                            surfaced.append(opp)
+                        else:
+                            suppressed.append(opp)
+                    except Exception as e:
+                        logger.warning(f"Utility Gate evaluation failed for {opp.opportunity_id}: {e}")
+                        # Surface opportunity if utility gate fails
+                        opp.utility_decision = "surfaced_fallback"
+                        opp.utility_breakdown = {}
                         surfaced.append(opp)
-                    else:
-                        suppressed.append(opp)
                 else:
                     # No utility gate - surface all
                     surfaced.append(opp)
