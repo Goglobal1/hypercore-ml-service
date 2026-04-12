@@ -21938,7 +21938,8 @@ def redis_status() -> Dict[str, Any]:
         result = {
             "status": "connected" if redis_connected else "fallback",
             "mode": "redis" if redis_connected else "in_memory",
-            "redis_url_configured": bool(os.environ.get('REDIS_URL')),
+            "redis_url_configured": bool(os.environ.get('REDIS_PRIVATE_URL') or os.environ.get('REDIS_URL')),
+            "redis_var_used": "REDIS_PRIVATE_URL" if os.environ.get('REDIS_PRIVATE_URL') else ("REDIS_URL" if os.environ.get('REDIS_URL') else "none"),
         }
 
         if redis_connected:

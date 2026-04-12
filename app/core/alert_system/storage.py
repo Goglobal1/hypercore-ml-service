@@ -13,8 +13,14 @@ import logging
 
 
 def get_redis_url() -> str:
-    """Get Redis URL from environment variable (Railway provides REDIS_URL)."""
-    return os.environ.get('REDIS_URL', 'redis://localhost:6379')
+    """Get Redis URL from environment variable.
+    Railway uses REDIS_PRIVATE_URL for internal connections.
+    """
+    return (
+        os.environ.get('REDIS_PRIVATE_URL') or
+        os.environ.get('REDIS_URL') or
+        'redis://localhost:6379'
+    )
 
 from .models import (
     PatientState,

@@ -11,8 +11,14 @@ from urllib.parse import urlparse
 
 
 def get_redis_url() -> str:
-    """Get Redis URL from environment, read at runtime not import time."""
-    return os.environ.get('REDIS_URL', 'redis://localhost:6379')
+    """Get Redis URL from environment, read at runtime not import time.
+    Railway uses REDIS_PRIVATE_URL for internal connections.
+    """
+    return (
+        os.environ.get('REDIS_PRIVATE_URL') or
+        os.environ.get('REDIS_URL') or
+        'redis://localhost:6379'
+    )
 
 
 class RedisStore:
