@@ -10,11 +10,11 @@ Provides:
 6. PharmGKB pharmacogenomics integration
 7. ChEMBL drug-target relationships
 
-Data sources:
-- F:/DATASETS/PHARMACEUTICAL/FDA_FAERS/
-- F:/DATASETS/PHARMACEUTICAL/ClinicalTrials_AACT/
-- F:/DATASETS/PHARMACEUTICAL/PharmGKB/
-- F:/DATASETS/PHARMACEUTICAL/ChEMBL/
+Data sources (configured via environment variables):
+- FAERS_PATH: FDA FAERS adverse events
+- AACT_PATH: ClinicalTrials.gov AACT data
+- PHARMGKB_PATH: PharmGKB pharmacogenomics
+- CHEMBL_PATH: ChEMBL drug-target data
 """
 
 import os
@@ -61,9 +61,10 @@ except ImportError:
     CHEMBL_AVAILABLE = False
     logger.warning("ChEMBL integration not available")
 
-# Data paths
-FAERS_PATH = Path("F:/DATASETS/PHARMACEUTICAL/FDA_FAERS")
-AACT_PATH = Path("F:/DATASETS/PHARMACEUTICAL/ClinicalTrials_AACT")
+# Data paths - use environment variables with fallbacks
+_BASE_DIR = Path(__file__).parent.parent
+FAERS_PATH = Path(os.environ.get('FAERS_PATH', _BASE_DIR / 'data' / 'faers'))
+AACT_PATH = Path(os.environ.get('AACT_PATH', _BASE_DIR / 'data' / 'aact'))
 
 # Pharmacogenomic associations (gene -> drugs affected)
 PHARMACOGENOMIC_MAP = {

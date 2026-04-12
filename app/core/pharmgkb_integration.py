@@ -24,8 +24,9 @@ csv.field_size_limit(sys.maxsize)
 
 logger = logging.getLogger(__name__)
 
-# PharmGKB data path
-PHARMGKB_PATH = Path("F:/DATASETS/PHARMACEUTICAL/PharmGKB")
+# PharmGKB data path - use environment variable with fallback
+_BASE_DIR = Path(__file__).parent.parent
+PHARMGKB_PATH = Path(os.environ.get('PHARMGKB_PATH', _BASE_DIR / 'data' / 'pharmgkb'))
 
 # Data caches
 _relationships_cache: Dict[str, List[Dict]] = {}

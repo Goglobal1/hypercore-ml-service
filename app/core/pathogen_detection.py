@@ -8,9 +8,9 @@ Provides:
 4. Vaccination coverage monitoring
 5. Clinical-pathogen correlation analysis
 
-Data sources:
-- F:/DATASETS/SURVEILLANCE/WHO/
-- F:/DATASETS/SURVEILLANCE/CDC_WONDER/
+Data sources (configured via environment variables):
+- WHO_PATH: WHO surveillance data
+- CDC_WONDER_PATH: CDC WONDER data
 """
 
 import os
@@ -25,10 +25,11 @@ import statistics
 
 logger = logging.getLogger(__name__)
 
-# Data paths
-WHO_PATH = Path("F:/DATASETS/SURVEILLANCE/WHO")
+# Data paths - use environment variables with fallbacks
+_BASE_DIR = Path(__file__).parent.parent
+WHO_PATH = Path(os.environ.get('WHO_PATH', _BASE_DIR / 'data' / 'who'))
 WHO_INDICATORS_PATH = WHO_PATH / "Indicators"
-CDC_WONDER_PATH = Path("F:/DATASETS/SURVEILLANCE/CDC_WONDER")
+CDC_WONDER_PATH = Path(os.environ.get('CDC_WONDER_PATH', _BASE_DIR / 'data' / 'cdc_wonder'))
 
 # Known pathogens and their characteristics
 PATHOGEN_DATABASE = {

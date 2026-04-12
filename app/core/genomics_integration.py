@@ -7,10 +7,10 @@ This module provides:
 3. Gene-to-phenotype mapper
 4. Clinical trajectory correlation analysis
 
-Data paths:
-- GEO: F:/DATASETS/GENE_EXPRESSION/GEO_Datasets/
-- ClinVar: F:/DATASETS/GENETICS/ClinVar/variant_summary.txt.gz
-- Cohorts: pattern_library/
+Data paths (configured via environment variables):
+- GEO_DATA_PATH: Gene expression datasets
+- CLINVAR_PATH: ClinVar variant summary
+- COHORT_PATH: Pattern library cohorts
 """
 
 import gzip
@@ -26,10 +26,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Configuration
-GEO_DATA_PATH = Path("F:/DATASETS/GENE_EXPRESSION/GEO_Datasets")
-CLINVAR_PATH = Path("F:/DATASETS/GENETICS/ClinVar/variant_summary.txt.gz")
-COHORT_PATH = Path("C:/Users/letsa/Documents/hypercore-ml-service/pattern_library")
+# Configuration - use environment variables with fallbacks
+_BASE_DIR = Path(__file__).parent.parent.parent
+GEO_DATA_PATH = Path(os.environ.get('GEO_DATA_PATH', _BASE_DIR / 'data' / 'geo'))
+CLINVAR_PATH = Path(os.environ.get('CLINVAR_PATH', _BASE_DIR / 'data' / 'clinvar' / 'variant_summary.txt.gz'))
+COHORT_PATH = Path(os.environ.get('COHORT_PATH', _BASE_DIR / 'pattern_library'))
 
 # Gene symbol aliases for common clinical genes
 GENE_ALIASES = {

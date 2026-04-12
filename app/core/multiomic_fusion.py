@@ -29,20 +29,23 @@ from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
-# Data source paths configuration
+# Base directory for relative fallback paths
+_BASE_DIR = Path(__file__).parent.parent
+
+# Data source paths configuration - use environment variables with fallbacks
 DATA_PATHS = {
-    "geo": Path("F:/DATASETS/GENE_EXPRESSION/GEO_Datasets"),
-    "clinvar": Path("F:/DATASETS/GENETICS/ClinVar"),
-    "hpa": Path("F:/DATASETS/PROTEOMICS/Human_Protein_Atlas"),
-    "mimic": Path("F:/DATASETS/ICU_CLINICAL/MIMIC-IV"),
-    "eicu": Path("F:/DATASETS/ICU_CLINICAL/eICU"),
-    "northwestern": Path("F:/DATASETS/ICU_CLINICAL/Northwestern_ICU"),
-    "faers": Path("F:/DATASETS/PHARMACEUTICAL/FDA_FAERS"),
-    "aact": Path("F:/DATASETS/PHARMACEUTICAL/ClinicalTrials_AACT"),
-    "nhanes": Path("F:/DATASETS/POPULATION/NHANES"),
-    "who": Path("F:/DATASETS/SURVEILLANCE/WHO"),
-    "cdc_wonder": Path("F:/DATASETS/SURVEILLANCE/CDC_WONDER"),
-    "cohorts": Path("C:/Users/letsa/Documents/hypercore-ml-service/pattern_library"),
+    "geo": Path(os.environ.get('GEO_DATA_PATH', _BASE_DIR / 'data' / 'geo')),
+    "clinvar": Path(os.environ.get('CLINVAR_PATH', _BASE_DIR / 'data' / 'clinvar')),
+    "hpa": Path(os.environ.get('HPA_PATH', _BASE_DIR / 'data' / 'hpa')),
+    "mimic": Path(os.environ.get('MIMIC_PATH', _BASE_DIR / 'data' / 'mimic')),
+    "eicu": Path(os.environ.get('EICU_PATH', _BASE_DIR / 'data' / 'eicu')),
+    "northwestern": Path(os.environ.get('NORTHWESTERN_PATH', _BASE_DIR / 'data' / 'northwestern')),
+    "faers": Path(os.environ.get('FAERS_PATH', _BASE_DIR / 'data' / 'faers')),
+    "aact": Path(os.environ.get('AACT_PATH', _BASE_DIR / 'data' / 'aact')),
+    "nhanes": Path(os.environ.get('NHANES_PATH', _BASE_DIR / 'data' / 'nhanes')),
+    "who": Path(os.environ.get('WHO_PATH', _BASE_DIR / 'data' / 'who')),
+    "cdc_wonder": Path(os.environ.get('CDC_WONDER_PATH', _BASE_DIR / 'data' / 'cdc_wonder')),
+    "cohorts": Path(os.environ.get('COHORT_PATH', _BASE_DIR.parent / 'pattern_library')),
 }
 
 # Omic layer mapping

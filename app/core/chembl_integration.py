@@ -13,14 +13,16 @@ Database: ChEMBL 36 SQLite
 
 import sqlite3
 import logging
+import os
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
-# ChEMBL database path
-CHEMBL_PATH = Path("F:/DATASETS/PHARMACEUTICAL/ChEMBL")
+# ChEMBL database path - use environment variable with fallback
+_BASE_DIR = Path(__file__).parent.parent
+CHEMBL_PATH = Path(os.environ.get('CHEMBL_PATH', _BASE_DIR / 'data' / 'chembl'))
 CHEMBL_DB_PATH = CHEMBL_PATH / "chembl_36" / "chembl_36_sqlite" / "chembl_36.db"
 
 # Check if database exists

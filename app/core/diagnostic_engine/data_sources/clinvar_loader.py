@@ -8,6 +8,7 @@ ClinVar contains 1.5+ million genetic variant → disease mappings.
 import gzip
 import threading
 import logging
+import os
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 from collections import defaultdict
@@ -15,8 +16,11 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
-# Default path to ClinVar data
-CLINVAR_PATH = Path("F:/DATASETS/GENETICS/ClinVar/variant_summary.txt.gz")
+# ClinVar path from environment variable or relative fallback
+CLINVAR_PATH = Path(os.environ.get(
+    'CLINVAR_PATH',
+    os.path.join(os.path.dirname(__file__), '..', 'data', 'clinvar', 'variant_summary.txt.gz')
+))
 
 
 @dataclass
