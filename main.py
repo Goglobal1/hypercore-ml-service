@@ -231,7 +231,7 @@ except ImportError:
 # Phase 6: Utility Engine (Alert Decision Layer)
 try:
     from routes import utility_router, event_router, feedback_router
-    from utility import get_utility_engine, get_event_manager, get_feedback_tracker, get_redis_store
+    from utility import get_utility_engine, get_event_manager, get_feedback_tracker, get_redis_store, reset_redis_store
     UTILITY_ENGINE_AVAILABLE = True
     print("[HYPERCORE] Phase 6 Utility Engine: OK")
 except ImportError as e:
@@ -22010,6 +22010,27 @@ def redis_test_persistence() -> Dict[str, Any]:
         return {"status": "error", "error": str(e)}
 
 
+@app.post("/redis/reconnect")
+@bulletproof_endpoint("redis/reconnect", min_rows=0)
+def redis_reconnect() -> Dict[str, Any]:
+    """Force Redis reconnection. Use if Redis was unavailable during startup."""
+    if not UTILITY_ENGINE_AVAILABLE:
+        return {"status": "unavailable", "reason": "Utility engine not loaded"}
+
+    try:
+        # Force reset and reconnect
+        redis_store = reset_redis_store()
+        redis_connected = redis_store._redis is not None
+
+        return {
+            "status": "reconnected" if redis_connected else "failed",
+            "mode": "redis" if redis_connected else "in_memory",
+            "redis_url": redis_store._redis_url[:50] + "..." if redis_store._redis_url else None,
+            "message": "Redis connection established" if redis_connected else "Could not connect to Redis"
+        }
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
 
 
 # ---------------------------------------------------------------------

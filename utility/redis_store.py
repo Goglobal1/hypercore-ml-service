@@ -383,4 +383,17 @@ def get_redis_store() -> RedisStore:
     global _store
     if _store is None:
         _store = RedisStore()
+    # Try to reconnect if not connected but URL is available
+    elif _store._redis is None:
+        current_url = get_redis_url()
+        if current_url != 'redis://localhost:6379':
+            print(f"[HYPERCORE] Redis URL available, attempting reconnect...")
+            _store._connect()
+    return _store
+
+
+def reset_redis_store() -> RedisStore:
+    """Force reset and reconnect the Redis store singleton."""
+    global _store
+    _store = RedisStore()
     return _store
