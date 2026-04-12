@@ -13,10 +13,31 @@ from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 import pandas as pd
+import numpy as np
 import io
 import logging
+import math
 
 logger = logging.getLogger(__name__)
+
+
+def _sanitize_value(v):
+    """Sanitize a value for JSON serialization (handle NaN/Inf)."""
+    if v is None:
+        return None
+    if isinstance(v, float):
+        if math.isnan(v) or math.isinf(v):
+            return None
+        return v
+    if isinstance(v, (np.floating, np.integer)):
+        if np.isnan(v) or np.isinf(v):
+            return None
+        return float(v)
+    if isinstance(v, dict):
+        return {k: _sanitize_value(val) for k, val in v.items()}
+    if isinstance(v, (list, tuple)):
+        return [_sanitize_value(item) for item in v]
+    return v
 
 from app.models.pharmaceutical_models import (
     DrugProfile,
@@ -417,8 +438,8 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
         engine = get_trial_rescue_engine()
         result = engine.analyze(rescue_input)
 
-        # Convert to dict for response
-        return {
+        # Convert to dict for response (sanitize NaN/Inf values)
+        response = {
             "success": result.success,
             "trial_name": result.trial_name,
             "timestamp": result.timestamp,
@@ -430,23 +451,23 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
             "surfaced_opportunities": len(result.surfaced_opportunities),
             "suppressed_opportunities": len(result.suppressed_opportunities),
             "hard_escalation_triggered": result.hard_escalation_triggered,
-            "estimated_total_asset_value_usd": result.estimated_total_asset_value_usd,
+            "estimated_total_asset_value_usd": _sanitize_value(result.estimated_total_asset_value_usd),
             "top_opportunities": [
                 {
                     "opportunity_id": o.opportunity_id,
                     "opportunity_type": o.opportunity_type,
                     "title": o.title,
                     "description": o.description,
-                    "confidence": o.confidence,
-                    "effect_size": o.effect_size,
-                    "estimated_asset_value_usd": o.estimated_asset_value_usd,
+                    "confidence": _sanitize_value(o.confidence),
+                    "effect_size": _sanitize_value(o.effect_size),
+                    "estimated_asset_value_usd": _sanitize_value(o.estimated_asset_value_usd),
                     "hard_escalation_flag": o.hard_escalation_flag,
                     "utility_decision": o.utility_decision,
-                    "utility_breakdown": o.utility_breakdown,
+                    "utility_breakdown": _sanitize_value(o.utility_breakdown),
                     "recommended_actions": o.recommended_actions,
                     "regulatory_pathway": o.regulatory_pathway,
                     "evidence": o.evidence,
-                    "pvalue": o.pvalue,
+                    "pvalue": _sanitize_value(o.pvalue),
                 }
                 for o in result.surfaced_opportunities[:10]
             ],
@@ -455,13 +476,13 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                     "subgroup_id": s.subgroup_id,
                     "subgroup_name": s.subgroup_name,
                     "n_patients": s.n_patients,
-                    "percentage_of_total": s.percentage_of_total,
-                    "response_rate": s.response_rate,
-                    "relative_improvement": s.relative_response_improvement,
-                    "effect_size": s.effect_size,
-                    "pvalue": s.pvalue,
-                    "biological_plausibility": s.biological_plausibility,
-                    "defining_features": s.defining_features,
+                    "percentage_of_total": _sanitize_value(s.percentage_of_total),
+                    "response_rate": _sanitize_value(s.response_rate),
+                    "relative_improvement": _sanitize_value(s.relative_response_improvement),
+                    "effect_size": _sanitize_value(s.effect_size),
+                    "pvalue": _sanitize_value(s.pvalue),
+                    "biological_plausibility": _sanitize_value(s.biological_plausibility),
+                    "defining_features": _sanitize_value(s.defining_features),
                 }
                 for s in result.subgroups[:10]
             ],
@@ -469,10 +490,10 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 {
                     "variable_name": c.variable_name,
                     "confounder_type": c.confounder_type,
-                    "impact_score": c.impact_score,
-                    "unadjusted_effect": c.unadjusted_effect,
-                    "adjusted_effect": c.adjusted_effect,
-                    "effect_change_percentage": c.effect_change_percentage,
+                    "impact_score": _sanitize_value(c.impact_score),
+                    "unadjusted_effect": _sanitize_value(c.unadjusted_effect),
+                    "adjusted_effect": _sanitize_value(c.adjusted_effect),
+                    "effect_change_percentage": _sanitize_value(c.effect_change_percentage),
                     "adjustment_method": c.adjustment_method,
                     "recommendation": c.recommendation,
                 }
@@ -482,11 +503,11 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 {
                     "endpoint_name": e.endpoint_name,
                     "endpoint_type": e.endpoint_type,
-                    "effect_size": e.effect_size,
-                    "pvalue": e.pvalue,
-                    "improvement_over_primary": e.improvement_over_primary,
-                    "clinical_relevance": e.clinical_relevance,
-                    "regulatory_acceptability": e.regulatory_acceptability,
+                    "effect_size": _sanitize_value(e.effect_size),
+                    "pvalue": _sanitize_value(e.pvalue),
+                    "improvement_over_primary": _sanitize_value(e.improvement_over_primary),
+                    "clinical_relevance": _sanitize_value(e.clinical_relevance),
+                    "regulatory_acceptability": _sanitize_value(e.regulatory_acceptability),
                 }
                 for e in result.alternative_endpoints[:10]
             ],
@@ -496,8 +517,9 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 "secondary_recommendations": result.report.secondary_recommendations if result.report else [],
                 "regulatory_considerations": result.report.regulatory_considerations if result.report else [],
             } if result.report else None,
-            "metadata": result.metadata,
+            "metadata": _sanitize_value(result.metadata),
         }
+        return response
 
     except HTTPException:
         raise
