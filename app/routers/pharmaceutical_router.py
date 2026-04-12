@@ -501,10 +501,16 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                     "opportunity_id": str(o.opportunity_id),
                     "opportunity_type": str(o.opportunity_type),
                     "title": str(o.title),
+                    "description": str(o.description)[:100] if o.description else None,
+                    "confidence": _sanitize_value(o.confidence),
+                    "effect_size": _sanitize_value(o.effect_size),
+                    "estimated_asset_value_usd": _sanitize_value(o.estimated_asset_value_usd),
+                    "hard_escalation_flag": bool(o.hard_escalation_flag),
+                    "utility_decision": str(o.utility_decision) if o.utility_decision else None,
                 }
                 for o in result.surfaced_opportunities[:3]
             ],
-            "debug": "minimal_opportunities",
+            "debug": "more_opp_fields",
         }
 
         # Convert to dict for response (sanitize NaN/Inf values)
