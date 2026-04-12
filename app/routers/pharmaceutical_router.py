@@ -453,49 +453,20 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
         engine = get_trial_rescue_engine()
         result = engine.analyze(rescue_input)
 
-        # DEBUG: Return response with confounders
+        # Convert to dict for response (with explicit type conversions for JSON safety)
         return {
             "success": result.success,
-            "trial_name": result.trial_name,
-            "engine_version": result.engine_version,
-            "subgroups_found": result.subgroups_found,
-            "confounders_found": result.confounders_found,
-            "alternative_endpoints_found": result.alternative_endpoints_found,
-            "confounders": [
-                {
-                    "variable_name": c.variable_name,
-                    "confounder_type": c.confounder_type,
-                    "impact_score": _sanitize_value(c.impact_score),
-                    "unadjusted_effect": _sanitize_value(c.unadjusted_effect),
-                    "adjusted_effect": _sanitize_value(c.adjusted_effect),
-                    "effect_change_percentage": _sanitize_value(c.effect_change_percentage),
-                    "adjustment_method": c.adjustment_method,
-                    "recommendation": c.recommendation,
-                }
-                for c in result.confounders[:10]
-            ],
-            "alternative_endpoints": [
-                {
-                    "endpoint_name": e.endpoint_name,
-                    "endpoint_type": e.endpoint_type,
-                    "effect_size": _sanitize_value(e.effect_size),
-                    "pvalue": _sanitize_value(e.pvalue),
-                    "improvement_over_primary": _sanitize_value(e.improvement_over_primary),
-                    "clinical_relevance": _sanitize_value(e.clinical_relevance),
-                    "regulatory_acceptability": _sanitize_value(e.regulatory_acceptability),
-                }
-                for e in result.alternative_endpoints[:10]
-            ],
-            "report": {
-                "executive_summary": result.report.executive_summary if result.report else None,
-                "primary_recommendation": result.report.primary_recommendation if result.report else None,
-                "secondary_recommendations": result.report.secondary_recommendations if result.report else [],
-                "regulatory_considerations": result.report.regulatory_considerations if result.report else [],
-            } if result.report else None,
-            "metadata": _sanitize_value(result.metadata),
+            "trial_name": str(result.trial_name),
+            "timestamp": str(result.timestamp),
+            "engine_version": str(result.engine_version),
+            "utility_gate_mode": str(result.utility_gate_mode),
+            "subgroups_found": int(result.subgroups_found),
+            "confounders_found": int(result.confounders_found),
+            "alternative_endpoints_found": int(result.alternative_endpoints_found),
             "surfaced_opportunities": len(result.surfaced_opportunities),
             "suppressed_opportunities": len(result.suppressed_opportunities),
-            "top_opportunities_count": len(result.surfaced_opportunities),
+            "hard_escalation_triggered": bool(result.hard_escalation_triggered),
+            "estimated_total_asset_value_usd": _sanitize_value(result.estimated_total_asset_value_usd),
             "top_opportunities": [
                 {
                     "opportunity_id": str(o.opportunity_id),
@@ -515,47 +486,11 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 }
                 for o in result.surfaced_opportunities[:10]
             ],
-            "debug": "full_opportunities",
-        }
-
-        # Convert to dict for response (sanitize NaN/Inf values)
-        response = {
-            "success": result.success,
-            "trial_name": result.trial_name,
-            "timestamp": result.timestamp,
-            "engine_version": result.engine_version,
-            "utility_gate_mode": result.utility_gate_mode,
-            "subgroups_found": result.subgroups_found,
-            "confounders_found": result.confounders_found,
-            "alternative_endpoints_found": result.alternative_endpoints_found,
-            "surfaced_opportunities": len(result.surfaced_opportunities),
-            "suppressed_opportunities": len(result.suppressed_opportunities),
-            "hard_escalation_triggered": result.hard_escalation_triggered,
-            "estimated_total_asset_value_usd": _sanitize_value(result.estimated_total_asset_value_usd),
-            "top_opportunities": [
-                {
-                    "opportunity_id": o.opportunity_id,
-                    "opportunity_type": o.opportunity_type,
-                    "title": o.title,
-                    "description": o.description,
-                    "confidence": _sanitize_value(o.confidence),
-                    "effect_size": _sanitize_value(o.effect_size),
-                    "estimated_asset_value_usd": _sanitize_value(o.estimated_asset_value_usd),
-                    "hard_escalation_flag": o.hard_escalation_flag,
-                    "utility_decision": o.utility_decision,
-                    "utility_breakdown": _sanitize_value(o.utility_breakdown),
-                    "recommended_actions": o.recommended_actions,
-                    "regulatory_pathway": o.regulatory_pathway,
-                    "evidence": o.evidence,
-                    "pvalue": _sanitize_value(o.pvalue),
-                }
-                for o in result.surfaced_opportunities[:10]
-            ],
             "subgroups": [
                 {
-                    "subgroup_id": s.subgroup_id,
-                    "subgroup_name": s.subgroup_name,
-                    "n_patients": s.n_patients,
+                    "subgroup_id": str(s.subgroup_id),
+                    "subgroup_name": str(s.subgroup_name),
+                    "n_patients": int(s.n_patients),
                     "percentage_of_total": _sanitize_value(s.percentage_of_total),
                     "response_rate": _sanitize_value(s.response_rate),
                     "relative_improvement": _sanitize_value(s.relative_response_improvement),
@@ -568,21 +503,21 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
             ],
             "confounders": [
                 {
-                    "variable_name": c.variable_name,
-                    "confounder_type": c.confounder_type,
+                    "variable_name": str(c.variable_name),
+                    "confounder_type": str(c.confounder_type),
                     "impact_score": _sanitize_value(c.impact_score),
                     "unadjusted_effect": _sanitize_value(c.unadjusted_effect),
                     "adjusted_effect": _sanitize_value(c.adjusted_effect),
                     "effect_change_percentage": _sanitize_value(c.effect_change_percentage),
-                    "adjustment_method": c.adjustment_method,
-                    "recommendation": c.recommendation,
+                    "adjustment_method": str(c.adjustment_method),
+                    "recommendation": str(c.recommendation),
                 }
                 for c in result.confounders[:10]
             ],
             "alternative_endpoints": [
                 {
-                    "endpoint_name": e.endpoint_name,
-                    "endpoint_type": e.endpoint_type,
+                    "endpoint_name": str(e.endpoint_name),
+                    "endpoint_type": str(e.endpoint_type),
                     "effect_size": _sanitize_value(e.effect_size),
                     "pvalue": _sanitize_value(e.pvalue),
                     "improvement_over_primary": _sanitize_value(e.improvement_over_primary),
@@ -592,14 +527,13 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 for e in result.alternative_endpoints[:10]
             ],
             "report": {
-                "executive_summary": result.report.executive_summary if result.report else None,
-                "primary_recommendation": result.report.primary_recommendation if result.report else None,
-                "secondary_recommendations": result.report.secondary_recommendations if result.report else [],
-                "regulatory_considerations": result.report.regulatory_considerations if result.report else [],
+                "executive_summary": str(result.report.executive_summary) if result.report else None,
+                "primary_recommendation": str(result.report.primary_recommendation) if result.report else None,
+                "secondary_recommendations": list(result.report.secondary_recommendations) if result.report else [],
+                "regulatory_considerations": list(result.report.regulatory_considerations) if result.report else [],
             } if result.report else None,
             "metadata": _sanitize_value(result.metadata),
         }
-        return response
 
     except HTTPException:
         raise
