@@ -99,6 +99,20 @@ class ConfounderDetector:
         Returns:
             List of Confounder objects sorted by impact
         """
+        try:
+            return self._detect_confounders_impl(df, treatment_col, outcome_col, covariate_cols)
+        except Exception as e:
+            logger.error(f"Confounder detection failed: {e}", exc_info=True)
+            return []
+
+    def _detect_confounders_impl(
+        self,
+        df: pd.DataFrame,
+        treatment_col: str,
+        outcome_col: str,
+        covariate_cols: List[str],
+    ) -> List[Confounder]:
+        """Internal implementation of confounder detection."""
         confounders = []
 
         # Calculate unadjusted treatment effect

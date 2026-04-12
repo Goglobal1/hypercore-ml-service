@@ -175,18 +175,27 @@ class RescueReportBuilder:
 
         # 1. Generate subgroup opportunities
         for sg in subgroups:
-            opp = self._create_subgroup_opportunity(sg, base_asset_value, trial_name)
-            opportunities.append(opp)
+            try:
+                opp = self._create_subgroup_opportunity(sg, base_asset_value, trial_name)
+                opportunities.append(opp)
+            except Exception as e:
+                logger.warning(f"Failed to create subgroup opportunity: {e}")
 
         # 2. Generate confounder adjustment opportunities
         for conf in confounders:
-            opp = self._create_confounder_opportunity(conf, base_asset_value, trial_name)
-            opportunities.append(opp)
+            try:
+                opp = self._create_confounder_opportunity(conf, base_asset_value, trial_name)
+                opportunities.append(opp)
+            except Exception as e:
+                logger.warning(f"Failed to create confounder opportunity: {e}")
 
         # 3. Generate alternative endpoint opportunities
         for ep in alternative_endpoints:
-            opp = self._create_endpoint_opportunity(ep, base_asset_value, trial_name)
-            opportunities.append(opp)
+            try:
+                opp = self._create_endpoint_opportunity(ep, base_asset_value, trial_name)
+                opportunities.append(opp)
+            except Exception as e:
+                logger.warning(f"Failed to create endpoint opportunity: {e}")
 
         # Sort by estimated asset value (before Utility Gate filtering)
         opportunities.sort(key=lambda x: x.estimated_asset_value_usd, reverse=True)

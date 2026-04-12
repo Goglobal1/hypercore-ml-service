@@ -101,6 +101,24 @@ class EndpointReinterpreter:
         Returns:
             List of AlternativeEndpoint objects sorted by effect size
         """
+        try:
+            return self._find_alternatives_impl(
+                df, treatment_col, primary_outcome_col,
+                secondary_outcome_cols, biomarker_cols
+            )
+        except Exception as e:
+            logger.error(f"Endpoint reinterpretation failed: {e}", exc_info=True)
+            return []
+
+    def _find_alternatives_impl(
+        self,
+        df: pd.DataFrame,
+        treatment_col: str,
+        primary_outcome_col: str,
+        secondary_outcome_cols: Optional[List[str]] = None,
+        biomarker_cols: Optional[List[str]] = None,
+    ) -> List[AlternativeEndpoint]:
+        """Internal implementation of find_alternatives."""
         alternatives = []
 
         # Calculate primary endpoint effect
