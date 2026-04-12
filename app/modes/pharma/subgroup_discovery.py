@@ -363,16 +363,20 @@ class SubgroupDiscovery:
         ci: float = 0.95
     ) -> Tuple[float, float]:
         """Calculate bootstrap confidence interval for treatment effect."""
-        np.random.seed(self.random_state)
-        effects = []
+        try:
+            np.random.seed(self.random_state)
+            effects = []
 
-        for _ in range(n_bootstrap):
-            t_sample = np.random.choice(treated_outcomes, size=len(treated_outcomes), replace=True)
-            c_sample = np.random.choice(control_outcomes, size=len(control_outcomes), replace=True)
-            effects.append(t_sample.mean() - c_sample.mean())
+            for _ in range(n_bootstrap):
+                t_sample = np.random.choice(treated_outcomes, size=len(treated_outcomes), replace=True)
+                c_sample = np.random.choice(control_outcomes, size=len(control_outcomes), replace=True)
+                effects.append(t_sample.mean() - c_sample.mean())
 
-        alpha = (1 - ci) / 2
-        return np.percentile(effects, alpha * 100), np.percentile(effects, (1 - alpha) * 100)
+            alpha = (1 - ci) / 2
+            return np.percentile(effects, alpha * 100), np.percentile(effects, (1 - alpha) * 100)
+        except Exception as e:
+            logger.debug(f"Bootstrap CI failed: {e}")
+            return (0.0, 0.0)
 
     def _identify_defining_features(
         self,
@@ -383,41 +387,48 @@ class SubgroupDiscovery:
         """Identify features that define a subgroup."""
         defining = {}
 
-        for col in feature_cols:
-            cluster_values = df.loc[cluster_mask, col]
-            non_cluster_values = df.loc[~cluster_mask, col]
+        try:
+            for col in feature_cols:
+                try:
+                    cluster_values = df.loc[cluster_mask, col]
+                    non_cluster_values = df.loc[~cluster_mask, col]
 
-            if cluster_values.dtype in ['float64', 'int64']:
-                # Numeric: check if range is significantly different
-                cluster_mean = cluster_values.mean()
-                cluster_std = cluster_values.std()
-                non_cluster_mean = non_cluster_values.mean()
+                    if cluster_values.dtype in ['float64', 'int64']:
+                        # Numeric: check if range is significantly different
+                        cluster_mean = cluster_values.mean()
+                        cluster_std = cluster_values.std()
+                        non_cluster_mean = non_cluster_values.mean()
 
-                # Use effect size to determine if feature is defining
-                pooled_std = np.sqrt((cluster_std**2 + non_cluster_values.std()**2) / 2)
-                if pooled_std > 0:
-                    effect = abs(cluster_mean - non_cluster_mean) / pooled_std
-                    if effect > 0.5:  # Medium effect size
-                        defining[col] = {
-                            "type": "numeric",
-                            "cluster_mean": cluster_mean,
-                            "cluster_range": (cluster_values.min(), cluster_values.max()),
-                            "effect_size": effect,
-                        }
-            else:
-                # Categorical: check if distribution is different
-                cluster_mode = cluster_values.mode().iloc[0] if len(cluster_values.mode()) > 0 else None
-                cluster_freq = (cluster_values == cluster_mode).mean() if cluster_mode else 0
+                        # Use effect size to determine if feature is defining
+                        pooled_std = np.sqrt((cluster_std**2 + non_cluster_values.std()**2) / 2)
+                        if pooled_std > 0:
+                            effect = abs(cluster_mean - non_cluster_mean) / pooled_std
+                            if effect > 0.5:  # Medium effect size
+                                defining[col] = {
+                                    "type": "numeric",
+                                    "cluster_mean": float(cluster_mean),
+                                    "cluster_range": (float(cluster_values.min()), float(cluster_values.max())),
+                                    "effect_size": float(effect),
+                                }
+                    else:
+                        # Categorical: check if distribution is different
+                        cluster_mode = cluster_values.mode().iloc[0] if len(cluster_values.mode()) > 0 else None
+                        cluster_freq = (cluster_values == cluster_mode).mean() if cluster_mode else 0
 
-                non_cluster_freq = (non_cluster_values == cluster_mode).mean() if cluster_mode else 0
+                        non_cluster_freq = (non_cluster_values == cluster_mode).mean() if cluster_mode else 0
 
-                if cluster_freq - non_cluster_freq > 0.2:  # 20% difference
-                    defining[col] = {
-                        "type": "categorical",
-                        "dominant_value": cluster_mode,
-                        "cluster_frequency": cluster_freq,
-                        "difference": cluster_freq - non_cluster_freq,
-                    }
+                        if cluster_freq - non_cluster_freq > 0.2:  # 20% difference
+                            defining[col] = {
+                                "type": "categorical",
+                                "dominant_value": str(cluster_mode) if cluster_mode else None,
+                                "cluster_frequency": float(cluster_freq),
+                                "difference": float(cluster_freq - non_cluster_freq),
+                            }
+                except Exception as e:
+                    logger.debug(f"Error analyzing feature {col}: {e}")
+                    continue
+        except Exception as e:
+            logger.debug(f"Error identifying defining features: {e}")
 
         return defining
 

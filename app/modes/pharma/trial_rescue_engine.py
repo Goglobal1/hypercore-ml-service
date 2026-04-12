@@ -131,7 +131,7 @@ class TrialRescueEngine:
             self.utility_gate = None
             logger.warning("Utility Gate not available - rescue opportunities will not be filtered")
 
-        self.version = "1.0.2"  # Added NaN/Inf sanitization
+        self.version = "1.0.3"  # Added defensive error handling in subgroup helpers
 
     def analyze(self, input_data: TrialRescueInput) -> TrialRescueResult:
         """
