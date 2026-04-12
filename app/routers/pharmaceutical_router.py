@@ -453,7 +453,7 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
         engine = get_trial_rescue_engine()
         result = engine.analyze(rescue_input)
 
-        # DEBUG: Return minimal response first
+        # DEBUG: Return response with confounders
         return {
             "success": result.success,
             "trial_name": result.trial_name,
@@ -461,7 +461,20 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
             "subgroups_found": result.subgroups_found,
             "confounders_found": result.confounders_found,
             "alternative_endpoints_found": result.alternative_endpoints_found,
-            "debug": "minimal_response",
+            "confounders": [
+                {
+                    "variable_name": c.variable_name,
+                    "confounder_type": c.confounder_type,
+                    "impact_score": _sanitize_value(c.impact_score),
+                    "unadjusted_effect": _sanitize_value(c.unadjusted_effect),
+                    "adjusted_effect": _sanitize_value(c.adjusted_effect),
+                    "effect_change_percentage": _sanitize_value(c.effect_change_percentage),
+                    "adjustment_method": c.adjustment_method,
+                    "recommendation": c.recommendation,
+                }
+                for c in result.confounders[:10]
+            ],
+            "debug": "confounders_only",
         }
 
         # Convert to dict for response (sanitize NaN/Inf values)
