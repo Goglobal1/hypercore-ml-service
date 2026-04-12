@@ -474,7 +474,19 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 }
                 for c in result.confounders[:10]
             ],
-            "debug": "confounders_only",
+            "alternative_endpoints": [
+                {
+                    "endpoint_name": e.endpoint_name,
+                    "endpoint_type": e.endpoint_type,
+                    "effect_size": _sanitize_value(e.effect_size),
+                    "pvalue": _sanitize_value(e.pvalue),
+                    "improvement_over_primary": _sanitize_value(e.improvement_over_primary),
+                    "clinical_relevance": _sanitize_value(e.clinical_relevance),
+                    "regulatory_acceptability": _sanitize_value(e.regulatory_acceptability),
+                }
+                for e in result.alternative_endpoints[:10]
+            ],
+            "debug": "confounders_and_endpoints",
         }
 
         # Convert to dict for response (sanitize NaN/Inf values)
