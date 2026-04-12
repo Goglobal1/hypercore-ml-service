@@ -18,6 +18,7 @@
 # Dependencies: fastapi, uvicorn, pandas, numpy, scikit-learn
 
 import io
+import os
 import hashlib
 import hmac
 import json
