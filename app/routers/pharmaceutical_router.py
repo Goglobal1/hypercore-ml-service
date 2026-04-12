@@ -493,7 +493,28 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
                 "regulatory_considerations": result.report.regulatory_considerations if result.report else [],
             } if result.report else None,
             "metadata": _sanitize_value(result.metadata),
-            "debug": "with_report",
+            "surfaced_opportunities": len(result.surfaced_opportunities),
+            "suppressed_opportunities": len(result.suppressed_opportunities),
+            "top_opportunities": [
+                {
+                    "opportunity_id": o.opportunity_id,
+                    "opportunity_type": o.opportunity_type,
+                    "title": o.title,
+                    "description": o.description,
+                    "confidence": _sanitize_value(o.confidence),
+                    "effect_size": _sanitize_value(o.effect_size),
+                    "estimated_asset_value_usd": _sanitize_value(o.estimated_asset_value_usd),
+                    "hard_escalation_flag": o.hard_escalation_flag,
+                    "utility_decision": o.utility_decision,
+                    "utility_breakdown": _sanitize_value(o.utility_breakdown),
+                    "recommended_actions": o.recommended_actions,
+                    "regulatory_pathway": o.regulatory_pathway,
+                    "evidence": o.evidence,
+                    "pvalue": _sanitize_value(o.pvalue),
+                }
+                for o in result.surfaced_opportunities[:10]
+            ],
+            "debug": "with_opportunities",
         }
 
         # Convert to dict for response (sanitize NaN/Inf values)
