@@ -60,6 +60,12 @@ try:
 except ImportError:
     UTILITY_GATE_AVAILABLE = False
 
+# LLM Medical Reasoning integration (Layer 4e)
+try:
+    from ..layers.llm_medical_reasoner import LLMMedicalReasoner, get_llm_reasoner
+    LLM_REASONER_AVAILABLE = True
+except ImportError:
+    LLM_REASONER_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -171,6 +177,21 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] Utility Gate not initialized: {e}")
 
+        # Initialize LLM Medical Reasoner (Layer 4e)
+        self.llm_reasoner = None
+        self.llm_reasoner_available = False
+
+        if LLM_REASONER_AVAILABLE:
+            try:
+                self.llm_reasoner = get_llm_reasoner()
+                self.llm_reasoner_available = self.llm_reasoner.available
+                if self.llm_reasoner_available:
+                    logger.info(f"[DiagnosticEngine] LLM Reasoner: {self.llm_reasoner.model}")
+                else:
+                    logger.info("[DiagnosticEngine] LLM Reasoner: not configured (missing API key)")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] LLM Reasoner not initialized: {e}")
+
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
         with open(path, 'r') as f:
@@ -204,6 +225,32 @@ class DiagnosticEngine:
             axis_scores=axis_scores,
             raw_data=raw_patient_data
         )
+
+        # Layer 4e: LLM Medical Reasoning
+        # Send unexplained abnormalities to Claude for diagnosis
+        llm_diagnoses = []
+        if self.llm_reasoner_available and LLM_REASONER_AVAILABLE:
+            try:
+                unexplained = self._get_unexplained_abnormalities(
+                    features=features,
+                    axis_scores=axis_scores,
+                    diseases=diseases
+                )
+                if unexplained:
+                    patient_context = {
+                        'age': raw_patient_data.get('age'),
+                        'sex': raw_patient_data.get('sex', raw_patient_data.get('gender')),
+                        'history': raw_patient_data.get('medical_history', raw_patient_data.get('history')),
+                        'medications': raw_patient_data.get('medications')
+                    }
+                    llm_diagnoses = self.llm_reasoner.reason_about_abnormalities(
+                        abnormal_labs=unexplained,
+                        patient_context=patient_context,
+                        axis_scores=axis_scores
+                    )
+                    logger.info(f"[DiagnosticEngine] Layer 4e: {len(llm_diagnoses)} LLM diagnoses")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] LLM reasoning error: {e}")
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -347,10 +394,13 @@ class DiagnosticEngine:
 
             # Metadata
             'data_completeness': normalized.get('metadata', {}).get('completeness', 0),
-            'engine_version': '2.2.0-utility-gate',
-            
+            'engine_version': '2.3.0-llm-reasoning',
+
             # Utility Gate (Phase 6)
-            'utility_gate': utility_gate_results
+            'utility_gate': utility_gate_results,
+
+            # LLM Medical Reasoning (Layer 4e)
+            'layer_4e_llm_diagnoses': llm_diagnoses
         }
 
     def analyze_batch(self, patients: List[Dict], history_map: Dict[str, List] = None) -> List[Dict]:
@@ -374,6 +424,77 @@ class DiagnosticEngine:
             results.append(result)
 
         return results
+
+    def _get_unexplained_abnormalities(
+        self,
+        features: Dict,
+        axis_scores: Dict,
+        diseases: List
+    ) -> Dict[str, Any]:
+        """
+        Identify abnormal values not explained by existing disease matches.
+
+        Args:
+            features: Engineered features from Layer 2
+            axis_scores: Axis scores from Layer 3
+            diseases: Disease matches from Layer 4
+
+        Returns:
+            Dict of unexplained abnormal labs with their values and references
+        """
+        unexplained = {}
+
+        # Get all evidence markers used by matched diseases
+        explained_markers = set()
+        for disease in diseases:
+            for evidence in disease.get('evidence', []):
+                if isinstance(evidence, str):
+                    # Extract marker name from evidence string
+                    marker = evidence.split(':')[0].strip().lower()
+                    explained_markers.add(marker)
+                elif isinstance(evidence, dict):
+                    marker = evidence.get('marker', '').lower()
+                    explained_markers.add(marker)
+
+        # Get abnormal markers from axis scores
+        for axis_name, axis_data in axis_scores.items():
+            if not isinstance(axis_data, dict):
+                continue
+
+            # Check for abnormal markers in this axis
+            for marker_data in axis_data.get('abnormal_markers', []):
+                if isinstance(marker_data, dict):
+                    marker_name = marker_data.get('marker', '').lower()
+                    if marker_name and marker_name not in explained_markers:
+                        unexplained[marker_name] = {
+                            'value': marker_data.get('value'),
+                            'unit': marker_data.get('unit', ''),
+                            'reference_range': marker_data.get('reference', ''),
+                            'status': marker_data.get('status', 'abnormal'),
+                            'axis': axis_name,
+                            'score': marker_data.get('score', 0)
+                        }
+
+        # Also check raw features for abnormal values not in axis scores
+        raw_features = features.get('raw_features', {})
+        for marker, value in raw_features.items():
+            marker_lower = marker.lower()
+            if marker_lower not in explained_markers and marker_lower not in unexplained:
+                # Check if this value is abnormal based on reference ranges
+                if isinstance(value, (int, float)):
+                    ref_info = self.reference_ranges.get(marker, {})
+                    if ref_info:
+                        low = ref_info.get('low', float('-inf'))
+                        high = ref_info.get('high', float('inf'))
+                        if value < low or value > high:
+                            unexplained[marker_lower] = {
+                                'value': value,
+                                'unit': ref_info.get('unit', ''),
+                                'reference_range': f"{low}-{high}",
+                                'status': 'low' if value < low else 'high'
+                            }
+
+        return unexplained
 
     def _determine_state(self, axes: Dict, diseases: List, convergence: Dict) -> str:
         """Determine overall clinical state (S0-S3)."""
