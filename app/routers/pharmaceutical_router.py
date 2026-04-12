@@ -453,6 +453,17 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
         engine = get_trial_rescue_engine()
         result = engine.analyze(rescue_input)
 
+        # DEBUG: Return minimal response first
+        return {
+            "success": result.success,
+            "trial_name": result.trial_name,
+            "engine_version": result.engine_version,
+            "subgroups_found": result.subgroups_found,
+            "confounders_found": result.confounders_found,
+            "alternative_endpoints_found": result.alternative_endpoints_found,
+            "debug": "minimal_response",
+        }
+
         # Convert to dict for response (sanitize NaN/Inf values)
         response = {
             "success": result.success,
