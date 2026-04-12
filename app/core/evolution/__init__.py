@@ -76,6 +76,12 @@ from .database import (
 )
 from .audit import AuditTrail, get_audit_trail, audit_log
 from .sampling import UCB1Sampler
+from .cognition import (
+    CognitionStore,
+    CognitionConfig,
+    get_cognition_store,
+    load_all_default_knowledge,
+)
 
 __all__ = [
     # Enums
@@ -130,6 +136,11 @@ __all__ = [
     "audit_log",
     # Sampling
     "UCB1Sampler",
+    # Cognition
+    "CognitionStore",
+    "CognitionConfig",
+    "get_cognition_store",
+    "load_all_default_knowledge",
 ]
 
 __version__ = "1.0.0"
