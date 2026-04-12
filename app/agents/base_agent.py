@@ -485,14 +485,15 @@ class BaseAgent(ABC):
             session_id: Optional session identifier
 
         Returns:
-            Request ID for tracking outcomes
+            Signal ID for tracking outcomes
         """
         signal = self._emitter.emit(
             signal_type=signal_type,
             payload=payload,
             session_id=session_id,
         )
-        return signal.request_id
+        # Use signal_id as the tracking ID (request_id may be None)
+        return signal.signal_id
 
     def record_outcome(
         self,

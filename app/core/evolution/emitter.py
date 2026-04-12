@@ -236,9 +236,12 @@ class EvolutionEmitter:
             metadata=metadata or {},
         )
 
-        # Track for outcome linking
-        if request_id:
-            with self._signal_lock:
+        # Track for outcome linking using signal_id
+        # This allows outcomes to be linked even without a request_id
+        with self._signal_lock:
+            self._pending_signals[signal.signal_id] = signal
+            # Also track by request_id if provided
+            if request_id:
                 self._pending_signals[request_id] = signal
 
         # Send to controller
