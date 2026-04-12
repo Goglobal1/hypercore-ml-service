@@ -402,11 +402,12 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
 
     Hard escalation is triggered when estimated_asset_value_usd >= $1,000,000,000.
     """
-    if not TRIAL_RESCUE_AVAILABLE:
-        raise HTTPException(
-            status_code=503,
-            detail="Trial Rescue Engine not available"
-        )
+    import traceback
+
+    # Wrap EVERYTHING in try/except to capture any error
+    try:
+        if not TRIAL_RESCUE_AVAILABLE:
+            return {"success": False, "error": "Trial Rescue Engine not available"}
 
     try:
         # Parse CSV data
@@ -524,7 +525,6 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
         error_traceback = traceback.format_exc()
         logger.error(f"Trial rescue analysis failed: {e}\n{error_traceback}")
         # Return error details for debugging
@@ -534,6 +534,14 @@ async def analyze_trial_rescue(request: TrialRescueRequest):
             "error_type": type(e).__name__,
             "traceback": error_traceback.split('\n')[-5:],  # Last 5 lines of traceback
             "trial_name": request.trial_name or "Unknown",
-            "engine_version": "1.0.3",
+            "engine_version": "1.0.4",
+        }
+
+    except Exception as outer_e:
+        # Catch-all for any errors including import errors, etc.
+        return {
+            "success": False,
+            "error": f"Outer exception: {str(outer_e)}",
+            "error_type": type(outer_e).__name__,
         }
 
