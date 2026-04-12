@@ -6,10 +6,17 @@ Provides endpoints for:
 - Clinical trials search (AACT)
 - Drug response prediction (pharmacogenomics)
 - Drug-drug interaction checking
+- Trial Rescue Engine (Pharma Mode)
 """
 
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
+import pandas as pd
+import io
+import logging
+
+logger = logging.getLogger(__name__)
 
 from app.models.pharmaceutical_models import (
     DrugProfile,
@@ -327,3 +334,177 @@ async def list_faers_quarters():
         "quarters": quarters,
         "date_range": f"{quarters[0]} to {quarters[-1]}" if quarters else "No data"
     }
+
+# ============================================================================
+# TRIAL RESCUE ENGINE
+# ============================================================================
+
+# Import Trial Rescue Engine
+try:
+    from app.modes.pharma import (
+        get_trial_rescue_engine,
+        TrialRescueInput,
+    )
+    TRIAL_RESCUE_AVAILABLE = True
+except ImportError:
+    TRIAL_RESCUE_AVAILABLE = False
+    logger.warning("Trial Rescue Engine not available")
+
+
+class TrialRescueRequest(BaseModel):
+    """Request model for trial rescue analysis."""
+    trial_data: str = Field(..., description="CSV string with trial data")
+    treatment_column: str = Field(default="treatment", description="Column name for treatment assignment (0/1)")
+    outcome_column: str = Field(default="outcome", description="Column name for outcome variable")
+    patient_id_column: str = Field(default="patient_id", description="Column name for patient IDs")
+    trial_name: Optional[str] = Field(default=None, description="Name of the trial")
+    sponsor: Optional[str] = Field(default=None, description="Trial sponsor")
+    phase: Optional[str] = Field(default=None, description="Trial phase (1, 2, 3)")
+    indication: Optional[str] = Field(default=None, description="Target indication")
+    base_asset_value_usd: float = Field(default=100_000_000, description="Base asset value in USD")
+
+
+@router.post("/trial-rescue")
+async def analyze_trial_rescue(request: TrialRescueRequest):
+    """
+    Analyze a clinical trial for rescue opportunities.
+
+    The Trial Rescue Engine finds hidden value in "failed" trials through:
+    1. Subgroup Discovery - Find hidden responder populations
+    2. Confounder Detection - Identify masking variables
+    3. Endpoint Reinterpretation - Find alternative endpoints with effect
+    4. Rescue Strategy Generation - Rank by UTILITY (not p-value!)
+    5. Asset Valuation - Calculate potential value with hard escalation flags
+
+    CRITICAL: Opportunities are ranked by handler_score + net_utility + asset_value,
+    NOT by p-value alone.
+
+    Hard escalation is triggered when estimated_asset_value_usd >= $1,000,000,000.
+    """
+    if not TRIAL_RESCUE_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Trial Rescue Engine not available"
+        )
+
+    try:
+        # Parse CSV data
+        df = pd.read_csv(io.StringIO(request.trial_data))
+
+        # Validate required columns
+        required_cols = [request.treatment_column, request.outcome_column]
+        missing = [c for c in required_cols if c not in df.columns]
+        if missing:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Missing required columns: {missing}"
+            )
+
+        # Create input
+        rescue_input = TrialRescueInput(
+            trial_data=df,
+            treatment_column=request.treatment_column,
+            outcome_column=request.outcome_column,
+            patient_id_column=request.patient_id_column,
+            trial_name=request.trial_name,
+            sponsor=request.sponsor,
+            phase=request.phase,
+            indication=request.indication,
+            base_asset_value_usd=request.base_asset_value_usd,
+        )
+
+        # Run analysis
+        engine = get_trial_rescue_engine()
+        result = engine.analyze(rescue_input)
+
+        # Convert to dict for response
+        return {
+            "success": result.success,
+            "trial_name": result.trial_name,
+            "timestamp": result.timestamp,
+            "engine_version": result.engine_version,
+            "utility_gate_mode": result.utility_gate_mode,
+            "subgroups_found": result.subgroups_found,
+            "confounders_found": result.confounders_found,
+            "alternative_endpoints_found": result.alternative_endpoints_found,
+            "surfaced_opportunities": len(result.surfaced_opportunities),
+            "suppressed_opportunities": len(result.suppressed_opportunities),
+            "hard_escalation_triggered": result.hard_escalation_triggered,
+            "estimated_total_asset_value_usd": result.estimated_total_asset_value_usd,
+            "top_opportunities": [
+                {
+                    "opportunity_id": o.opportunity_id,
+                    "opportunity_type": o.opportunity_type,
+                    "title": o.title,
+                    "description": o.description,
+                    "confidence": o.confidence,
+                    "effect_size": o.effect_size,
+                    "estimated_asset_value_usd": o.estimated_asset_value_usd,
+                    "hard_escalation_flag": o.hard_escalation_flag,
+                    "utility_decision": o.utility_decision,
+                    "utility_breakdown": o.utility_breakdown,
+                    "recommended_actions": o.recommended_actions,
+                    "regulatory_pathway": o.regulatory_pathway,
+                    "evidence": o.evidence,
+                    "pvalue": o.pvalue,
+                }
+                for o in result.surfaced_opportunities[:10]
+            ],
+            "subgroups": [
+                {
+                    "subgroup_id": s.subgroup_id,
+                    "subgroup_name": s.subgroup_name,
+                    "n_patients": s.n_patients,
+                    "percentage_of_total": s.percentage_of_total,
+                    "response_rate": s.response_rate,
+                    "relative_improvement": s.relative_response_improvement,
+                    "effect_size": s.effect_size,
+                    "pvalue": s.pvalue,
+                    "biological_plausibility": s.biological_plausibility,
+                    "defining_features": s.defining_features,
+                }
+                for s in result.subgroups[:10]
+            ],
+            "confounders": [
+                {
+                    "variable_name": c.variable_name,
+                    "confounder_type": c.confounder_type,
+                    "impact_score": c.impact_score,
+                    "unadjusted_effect": c.unadjusted_effect,
+                    "adjusted_effect": c.adjusted_effect,
+                    "effect_change_percentage": c.effect_change_percentage,
+                    "adjustment_method": c.adjustment_method,
+                    "recommendation": c.recommendation,
+                }
+                for c in result.confounders[:10]
+            ],
+            "alternative_endpoints": [
+                {
+                    "endpoint_name": e.endpoint_name,
+                    "endpoint_type": e.endpoint_type,
+                    "effect_size": e.effect_size,
+                    "pvalue": e.pvalue,
+                    "improvement_over_primary": e.improvement_over_primary,
+                    "clinical_relevance": e.clinical_relevance,
+                    "regulatory_acceptability": e.regulatory_acceptability,
+                }
+                for e in result.alternative_endpoints[:10]
+            ],
+            "report": {
+                "executive_summary": result.report.executive_summary if result.report else None,
+                "primary_recommendation": result.report.primary_recommendation if result.report else None,
+                "secondary_recommendations": result.report.secondary_recommendations if result.report else [],
+                "regulatory_considerations": result.report.regulatory_considerations if result.report else [],
+            } if result.report else None,
+            "metadata": result.metadata,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Trial rescue analysis failed: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Trial rescue analysis failed: {str(e)}"
+        )
+
