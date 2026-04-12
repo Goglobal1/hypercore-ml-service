@@ -3,12 +3,18 @@ Alert System Storage Layer - Unified Implementation
 Abstract storage interface with in-memory, PostgreSQL, and Redis implementations.
 """
 
+import os
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 import json
 import logging
+
+
+def get_redis_url() -> str:
+    """Get Redis URL from environment variable (Railway provides REDIS_URL)."""
+    return os.environ.get('REDIS_URL', 'redis://localhost:6379')
 
 from .models import (
     PatientState,
@@ -351,12 +357,12 @@ class RedisCacheWrapper(StorageBackend):
     - TTL-based cache invalidation
     """
 
-    def __init__(self, backend: StorageBackend, redis_url: str = "redis://localhost:6379"):
+    def __init__(self, backend: StorageBackend, redis_url: Optional[str] = None):
         self.backend = backend
-        self.redis_url = redis_url
+        self.redis_url = redis_url or get_redis_url()
         self._cache: Dict[str, Any] = {}  # Simple dict cache for now
         self._cache_ttl_seconds = 300  # 5 minutes
-        logger.info("Redis cache wrapper initialized (using dict cache fallback)")
+        logger.info(f"Redis cache wrapper initialized with URL configured: {bool(os.environ.get('REDIS_URL'))}")
 
     def get_patient_state(self, patient_id: str, risk_domain: str) -> Optional[PatientState]:
         # Check cache first
@@ -460,7 +466,7 @@ def init_storage(
         raise ValueError(f"Unknown storage backend: {backend}")
 
     if use_cache:
-        _storage = RedisCacheWrapper(_storage, redis_url or "redis://localhost:6379")
+        _storage = RedisCacheWrapper(_storage, redis_url or get_redis_url())
 
     logger.info(f"Storage initialized: {backend}, cache={use_cache}")
     return _storage

@@ -7,9 +7,13 @@ import json
 import redis
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
-# Get Redis URL from Railway environment
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+
+def get_redis_url() -> str:
+    """Get Redis URL from environment, read at runtime not import time."""
+    return os.environ.get('REDIS_URL', 'redis://localhost:6379')
+
 
 class RedisStore:
     """
@@ -20,11 +24,24 @@ class RedisStore:
     def __init__(self):
         self._redis = None
         self._fallback = {}  # In-memory fallback
+        self._redis_url = None
         self._connect()
 
     def _connect(self):
+        # Read REDIS_URL at connection time, not import time
+        self._redis_url = get_redis_url()
+
+        # Log connection attempt (mask password for security)
         try:
-            self._redis = redis.from_url(REDIS_URL, decode_responses=True)
+            parsed = urlparse(self._redis_url)
+            masked_url = f"{parsed.scheme}://{parsed.hostname}:{parsed.port or 6379}"
+            is_railway = 'railway' in (parsed.hostname or '')
+            print(f"[HYPERCORE] Redis connecting to: {masked_url} (Railway: {is_railway})")
+        except:
+            print(f"[HYPERCORE] Redis URL configured: {bool(self._redis_url)}")
+
+        try:
+            self._redis = redis.from_url(self._redis_url, decode_responses=True)
             self._redis.ping()
             print("[HYPERCORE] Redis connected for Utility Engine persistence")
         except Exception as e:
