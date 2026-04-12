@@ -144,150 +144,190 @@ class SubgroupDiscovery:
             if X[col].dtype == 'object':
                 X[col] = pd.Categorical(X[col]).codes
 
-        # Scale features
-        X_scaled = self.scaler.fit_transform(X)
+        # Scale features with error handling
+        try:
+            X_scaled = self.scaler.fit_transform(X)
+
+            # Check for NaN/Inf values after scaling
+            if np.any(np.isnan(X_scaled)) or np.any(np.isinf(X_scaled)):
+                logger.warning("Scaled features contain NaN/Inf, replacing with 0")
+                X_scaled = np.nan_to_num(X_scaled, nan=0.0, posinf=0.0, neginf=0.0)
+        except Exception as e:
+            logger.warning(f"Feature scaling failed: {e}")
+            return []
+
+        n_samples = X_scaled.shape[0]
+        n_features = X_scaled.shape[1]
+        logger.info(f"Clustering {n_samples} samples with {n_features} features")
 
         # Try multiple clustering methods
         clustering_results = []
 
         # Method 1: KMeans with different k values
-        for n_clusters in [3, 4, 5, 6]:
+        # Only try k values that make sense for the sample size
+        max_clusters = min(6, n_samples // (min_size // 2 + 1))  # Ensure enough samples per cluster
+        k_values = [k for k in [2, 3, 4, 5, 6] if k <= max_clusters]
+
+        for n_clusters in k_values:
             try:
-                kmeans = KMeans(n_clusters=n_clusters, random_state=self.random_state, n_init=10)
+                kmeans = KMeans(
+                    n_clusters=n_clusters,
+                    random_state=self.random_state,
+                    n_init=10,
+                    max_iter=300
+                )
                 labels = kmeans.fit_predict(X_scaled)
                 clustering_results.append(("kmeans", n_clusters, labels))
+                logger.debug(f"KMeans k={n_clusters} succeeded")
             except Exception as e:
                 logger.debug(f"KMeans k={n_clusters} failed: {e}")
 
         # Method 2: DBSCAN with different eps values
-        for eps in [0.5, 1.0, 1.5]:
+        # Adjust min_samples based on dataset size
+        dbscan_min_samples = max(3, min(min_size, n_samples // 10))
+
+        for eps in [0.3, 0.5, 1.0, 1.5, 2.0]:
             try:
-                dbscan = DBSCAN(eps=eps, min_samples=min_size)
+                dbscan = DBSCAN(eps=eps, min_samples=dbscan_min_samples)
                 labels = dbscan.fit_predict(X_scaled)
-                if len(set(labels)) > 1:  # At least 2 clusters (including noise)
+                n_clusters_found = len(set(labels)) - (1 if -1 in labels else 0)
+                if n_clusters_found >= 2:  # At least 2 real clusters
                     clustering_results.append(("dbscan", eps, labels))
+                    logger.debug(f"DBSCAN eps={eps} found {n_clusters_found} clusters")
             except Exception as e:
                 logger.debug(f"DBSCAN eps={eps} failed: {e}")
 
-        # Analyze each clustering result
+        logger.info(f"Generated {len(clustering_results)} clustering results")
+
+        # Analyze each clustering result with error handling
         for method, param, labels in clustering_results:
-            df_temp = df.copy()
-            df_temp["_cluster"] = labels
+            try:
+                df_temp = df.copy()
+                df_temp["_cluster"] = labels
 
-            for cluster_id in set(labels):
-                if cluster_id == -1:  # Skip DBSCAN noise
-                    continue
+                for cluster_id in set(labels):
+                    if cluster_id == -1:  # Skip DBSCAN noise
+                        continue
 
-                cluster_mask = df_temp["_cluster"] == cluster_id
-                cluster_df = df_temp[cluster_mask]
+                    try:
+                        cluster_mask = df_temp["_cluster"] == cluster_id
+                        cluster_df = df_temp[cluster_mask]
 
-                if len(cluster_df) < min_size:
-                    continue
+                        if len(cluster_df) < min_size:
+                            continue
 
-                # Split cluster into treated and control
-                cluster_treated = cluster_df[cluster_df[treatment_col] == 1]
-                cluster_control = cluster_df[cluster_df[treatment_col] == 0]
+                        # Split cluster into treated and control
+                        cluster_treated = cluster_df[cluster_df[treatment_col] == 1]
+                        cluster_control = cluster_df[cluster_df[treatment_col] == 0]
 
-                if len(cluster_treated) < 5 or len(cluster_control) < 5:
-                    continue
+                        if len(cluster_treated) < 5 or len(cluster_control) < 5:
+                            continue
 
-                # Calculate cluster response rates
-                cluster_treated_response = cluster_treated[outcome_col].mean()
-                cluster_control_response = cluster_control[outcome_col].mean()
-                cluster_effect = cluster_treated_response - cluster_control_response
+                        # Calculate cluster response rates
+                        cluster_treated_response = cluster_treated[outcome_col].mean()
+                        cluster_control_response = cluster_control[outcome_col].mean()
+                        cluster_effect = cluster_treated_response - cluster_control_response
 
-                # Calculate improvement over overall
-                if overall_effect != 0:
-                    relative_improvement = (cluster_effect - overall_effect) / abs(overall_effect)
-                else:
-                    relative_improvement = cluster_effect
+                        # Calculate improvement over overall
+                        if overall_effect != 0:
+                            relative_improvement = (cluster_effect - overall_effect) / abs(overall_effect)
+                        else:
+                            relative_improvement = cluster_effect
 
-                absolute_improvement = cluster_effect - overall_effect
+                        absolute_improvement = cluster_effect - overall_effect
 
-                # Only consider subgroups with meaningful improvement
-                if relative_improvement < self.MIN_IMPROVEMENT_THRESHOLD:
-                    continue
+                        # Only consider subgroups with meaningful improvement
+                        if relative_improvement < self.MIN_IMPROVEMENT_THRESHOLD:
+                            continue
 
-                # Statistical test (two-sample t-test on treatment effect)
-                try:
-                    # Compare cluster vs non-cluster treatment effects
-                    non_cluster = df_temp[~cluster_mask]
-                    non_cluster_treated = non_cluster[non_cluster[treatment_col] == 1]
-                    non_cluster_control = non_cluster[non_cluster[treatment_col] == 0]
+                        # Statistical test (two-sample t-test on treatment effect)
+                        try:
+                            # Compare cluster vs non-cluster treatment effects
+                            non_cluster = df_temp[~cluster_mask]
+                            non_cluster_treated = non_cluster[non_cluster[treatment_col] == 1]
+                            non_cluster_control = non_cluster[non_cluster[treatment_col] == 0]
 
-                    if len(non_cluster_treated) >= 5 and len(non_cluster_control) >= 5:
-                        cluster_outcomes = cluster_treated[outcome_col].values - cluster_control[outcome_col].mean()
-                        non_cluster_outcomes = non_cluster_treated[outcome_col].values - non_cluster_control[outcome_col].mean()
+                            if len(non_cluster_treated) >= 5 and len(non_cluster_control) >= 5:
+                                cluster_outcomes = cluster_treated[outcome_col].values - cluster_control[outcome_col].mean()
+                                non_cluster_outcomes = non_cluster_treated[outcome_col].values - non_cluster_control[outcome_col].mean()
 
-                        t_stat, pvalue = stats.ttest_ind(cluster_outcomes, non_cluster_outcomes)
-                    else:
-                        pvalue = 1.0
-                except Exception:
-                    pvalue = 1.0
+                                t_stat, pvalue = stats.ttest_ind(cluster_outcomes, non_cluster_outcomes)
+                            else:
+                                pvalue = 1.0
+                        except Exception:
+                            pvalue = 1.0
 
-                # Calculate effect size (Cohen's d)
-                try:
-                    pooled_std = np.sqrt(
-                        (cluster_treated[outcome_col].var() + cluster_control[outcome_col].var()) / 2
-                    )
-                    effect_size = cluster_effect / pooled_std if pooled_std > 0 else 0.0
-                except Exception:
-                    effect_size = 0.0
+                        # Calculate effect size (Cohen's d)
+                        try:
+                            pooled_std = np.sqrt(
+                                (cluster_treated[outcome_col].var() + cluster_control[outcome_col].var()) / 2
+                            )
+                            effect_size = cluster_effect / pooled_std if pooled_std > 0 else 0.0
+                        except Exception:
+                            effect_size = 0.0
 
-                # Calculate confidence interval (bootstrap)
-                ci_lower, ci_upper = self._bootstrap_ci(
-                    cluster_treated[outcome_col].values,
-                    cluster_control[outcome_col].values
-                )
+                        # Calculate confidence interval (bootstrap)
+                        ci_lower, ci_upper = self._bootstrap_ci(
+                            cluster_treated[outcome_col].values,
+                            cluster_control[outcome_col].values
+                        )
 
-                # Identify defining features
-                defining_features = self._identify_defining_features(
-                    df, cluster_mask, feature_cols
-                )
+                        # Identify defining features
+                        defining_features = self._identify_defining_features(
+                            df, cluster_mask, feature_cols
+                        )
 
-                # Calculate plausibility scores
-                biological_plausibility = self._estimate_biological_plausibility(defining_features)
-                clinical_actionability = self._estimate_clinical_actionability(
-                    n_patients=len(cluster_df),
-                    effect_size=effect_size,
-                    defining_features=defining_features
-                )
+                        # Calculate plausibility scores
+                        biological_plausibility = self._estimate_biological_plausibility(defining_features)
+                        clinical_actionability = self._estimate_clinical_actionability(
+                            n_patients=len(cluster_df),
+                            effect_size=effect_size,
+                            defining_features=defining_features
+                        )
 
-                # Generate subgroup name and description
-                subgroup_name = self._generate_subgroup_name(defining_features)
-                description = self._generate_description(
-                    defining_features, cluster_treated_response, relative_improvement
-                )
+                        # Generate subgroup name and description
+                        subgroup_name = self._generate_subgroup_name(defining_features)
+                        description = self._generate_description(
+                            defining_features, cluster_treated_response, relative_improvement
+                        )
 
-                # Get patient IDs
-                patient_ids = cluster_df.index.tolist() if "patient_id" not in cluster_df.columns else cluster_df["patient_id"].tolist()
+                        # Get patient IDs
+                        patient_ids = cluster_df.index.tolist() if "patient_id" not in cluster_df.columns else cluster_df["patient_id"].tolist()
 
-                subgroup = ResponderSubgroup(
-                    subgroup_id=f"{method}_{param}_{cluster_id}",
-                    subgroup_name=subgroup_name,
-                    description=description,
-                    n_patients=len(cluster_df),
-                    percentage_of_total=len(cluster_df) / len(df) * 100,
-                    defining_features=defining_features,
-                    response_rate=cluster_treated_response,
-                    overall_response_rate=overall_treated_response,
-                    relative_response_improvement=relative_improvement,
-                    absolute_response_improvement=absolute_improvement,
-                    pvalue=pvalue,
-                    effect_size=effect_size,
-                    confidence_interval=(ci_lower, ci_upper),
-                    biological_plausibility=biological_plausibility,
-                    clinical_actionability=clinical_actionability,
-                    cluster_method=method,
-                    cluster_id=cluster_id,
-                    patient_ids=patient_ids,
-                    metadata={
-                        "method_param": param,
-                        "cluster_effect": cluster_effect,
-                        "overall_effect": overall_effect,
-                    }
-                )
-                subgroups.append(subgroup)
+                        subgroup = ResponderSubgroup(
+                            subgroup_id=f"{method}_{param}_{cluster_id}",
+                            subgroup_name=subgroup_name,
+                            description=description,
+                            n_patients=len(cluster_df),
+                            percentage_of_total=len(cluster_df) / len(df) * 100,
+                            defining_features=defining_features,
+                            response_rate=cluster_treated_response,
+                            overall_response_rate=overall_treated_response,
+                            relative_response_improvement=relative_improvement,
+                            absolute_response_improvement=absolute_improvement,
+                            pvalue=pvalue,
+                            effect_size=effect_size,
+                            confidence_interval=(ci_lower, ci_upper),
+                            biological_plausibility=biological_plausibility,
+                            clinical_actionability=clinical_actionability,
+                            cluster_method=method,
+                            cluster_id=cluster_id,
+                            patient_ids=patient_ids,
+                            metadata={
+                                "method_param": param,
+                                "cluster_effect": cluster_effect,
+                                "overall_effect": overall_effect,
+                            }
+                        )
+                        subgroups.append(subgroup)
+
+                    except Exception as e:
+                        logger.debug(f"Error analyzing cluster {cluster_id} from {method}: {e}")
+                        continue
+
+            except Exception as e:
+                logger.warning(f"Error processing {method} clustering: {e}")
+                continue
 
         # Remove duplicates (similar subgroups from different methods)
         subgroups = self._deduplicate_subgroups(subgroups)
