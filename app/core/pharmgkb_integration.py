@@ -25,7 +25,8 @@ csv.field_size_limit(sys.maxsize)
 logger = logging.getLogger(__name__)
 
 # PharmGKB data path - use environment variable with fallback
-_BASE_DIR = Path(__file__).parent.parent
+# Go up 3 levels: pharmgkb_integration.py -> core -> app -> project_root
+_BASE_DIR = Path(__file__).parent.parent.parent
 PHARMGKB_PATH = Path(os.environ.get('PHARMGKB_PATH', _BASE_DIR / 'data' / 'pharmgkb'))
 
 # Data caches

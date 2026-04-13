@@ -26,6 +26,13 @@ RUN mkdir -p data/hpo && \
     curl -L -o data/hpo/phenotype_to_genes.txt https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2026-02-16/phenotype_to_genes.txt && \
     echo "HPO files downloaded:" && ls -la data/hpo/
 
+# Download ClinVar variant summary (genomic variants database)
+RUN mkdir -p data/clinvar && \
+    curl -L -o data/clinvar/variant_summary.txt.gz https://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/variant_summary.txt.gz && \
+    echo "ClinVar downloaded:" && ls -la data/clinvar/
+
+# Note: PharmGKB data requires account - gracefully handled as optional
+
 # Verify files exist
 RUN ls -la app/core/endpoints/ && ls -la app/core/pathways/
 
