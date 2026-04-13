@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21544075">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21544075</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131515.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-oxo-valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131515" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b3f30_b4899">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction bfba7</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11879205" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction bfba7</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b4899.PA166131518" />
+ <bp:left rdf:resource="pgkb.metabolite.b3f30.PA166131514" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pubchem.PA451846">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3121</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.activation.ce65e_f33ef">
+ <bp:controlled rdf:resource="pgkb.activation.ce65e_f33ef.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.ce65e.PA166131515" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation f4ca6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11879205" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACTIVATION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation f4ca6</bp:displayName>
+</bp:Control>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b3f30_f3217">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d2065</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11879205" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d2065</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f3217.PA166131519" />
+ <bp:left rdf:resource="pgkb.metabolite.b3f30.PA166131514" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.2858383">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2858383</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_a8ed5">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction cd670</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15761113" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18838507" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12732356" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17687269" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction cd670</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a8ed5.PA166131364" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.15761113">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">15761113</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b6b8e_a59b2">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction caadb</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7905390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.1676665" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10859157" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction caadb</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a59b2.PA166131520" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.a9f07.PA449780" />
+ <bp:left rdf:resource="pgkb.metabolite.b6b8e.PA166131512" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.1676665">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1676665</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.14597963">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">14597963</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b4899.PA166131518">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">c3-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">c3-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131518.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12732356">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12732356</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.d6f88.PA166131254">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-ene valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-ene valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131254.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ff8c3_ee3fb">
+ <bp:controller rdf:resource="pgkb.gene.ff8c3.PA121" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis da774</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis da774</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_d4e02" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131245.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-ene valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131245" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA27596">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA27596</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ce65e.PA166131515">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-oxo-valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-oxo-valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131515.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.e49f0.PA451846">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA451846.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d01c4_c2e42">
+ <bp:controller rdf:resource="pgkb.gene.d01c4.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ff5fd</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ff5fd</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_cc5f9" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b5da5_ae7f8">
+ <bp:controller rdf:resource="pgkb.gene.b5da5.PA29984" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis eea72</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis eea72</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b9e7f_ad695" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131514.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-oh valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131514" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.1988037">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1988037</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Pathway rdf:about="pgkb.phenotype.f33ef.PA164925725">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Toxic liver disease</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/disease/PA164925725" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Toxic liver disease</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">This black box pathway represents a phenotype</bp:comment>
+</bp:Pathway>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA126.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA126" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_d5a27">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b79da</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9353388" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16945988" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b79da</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.d5a27.PA166131245" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA27596.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ECH1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA27596" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="pubchem.PA166131364">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">71752850</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19641884">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19641884</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.2112956">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2112956</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.15483197">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">15483197</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b9e7f_d0ef1">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ec2d5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15483197" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ec2d5</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.d0ef1.PA166131521" />
+ <bp:left rdf:resource="pgkb.metabolite.b9e7f.PA166131510" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131246.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-ene valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131246" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131517.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxy valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131517" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.a9f07.PA449780">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glutathione</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glutathione</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA449780.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pubchem.PA449780">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">124886</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.9762695">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9762695</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b3f30_ce65e">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b9cb4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21843514" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11879205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.1988037" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b9cb4</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ce65e.PA166131515" />
+ <bp:left rdf:resource="pgkb.metabolite.b3f30.PA166131514" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131510.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131510" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_e0afc">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dc64a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.14597963" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16945988" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dc64a</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e0afc.PA166131516" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pubchem.PA166131289">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">134459</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b6b8e.PA166131512">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2,4-diene valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2,4-diene valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131512.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131521.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid-dephosphocoenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131521" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bd34a_b3570">
+ <bp:controller rdf:resource="pgkb.gene.bd34a.PA24427" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e872f</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e872f</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.d5a27_d6f88" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA121.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA121" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/disease/PA164925725">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA164925725</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f963d_b79da">
+ <bp:controller rdf:resource="pgkb.gene.f963d.PA121" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis da11d</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis da11d</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_d5a27" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA24427">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA24427</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.activation.ce65e_f33ef.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation f4ca6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11879205" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation f4ca6</bp:displayName>
+ <bp:participant rdf:resource="pgkb.phenotype.f33ef.PA164925725" />
+</bp:Interaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131513.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-ene valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131513" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cfa30_c62ed">
+ <bp:controller rdf:resource="pgkb.gene.cfa30.PA27596" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a5ee5</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a5ee5</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ad695_b3f30" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ad695_f9a72">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction be6d3</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21544075" />
+ <bp:xref rdf:resource="publicationXref.pubMed.2112956" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction be6d3</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f9a72.PA166131513" />
+ <bp:left rdf:resource="pgkb.metabolite.ad695.PA166131250" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b9e7f_ad695">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ae7f8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.2112956" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21430231" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ae7f8</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ad695.PA166131250" />
+ <bp:left rdf:resource="pgkb.metabolite.b9e7f.PA166131510" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA165964265">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA165964265</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7548749">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7548749</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ac030_c2e42">
+ <bp:controller rdf:resource="pgkb.gene.ac030.PA123" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis cab38</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis cab38</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_cc5f9" />
+</bp:Catalysis>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA165964265">
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d6f88_b6b8e" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f9a72_f47cb" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b3f30_ce65e" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_e0afc" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f963d_c2e42" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b3f30_b4899" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bd34a_b3570" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.ce65e_f33ef" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b3f30_f3217" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.a59b2_d263c" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_a8ed5" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f963d_b79da" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.ce65e_f33ef.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.d5a27_f33ef" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cfa30_c62ed" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ad695_f9a72" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b6b8e_a59b2" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b9e7f_ad695" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.a59b2_d263c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.d5a27_f33ef.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ac030_c2e42" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ff8c3_ee3fb" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b4fa5_b9cb4" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f963d_dc64a" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d01c4_c2e42" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b7ed3_faa23" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ad695_b6b8e" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce65e_a59b2" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ac030_dc64a" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_cc5f9" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d6f88_a59b2" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b5da5_ae7f8" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.b6b8e_f33ef.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_db2f6" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d5a27_d6f88" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_d4e02" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_d5a27" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e49f0_b9e7f" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bd34a_ae7f8" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.b6b8e_f33ef" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d01c4_dc64a" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ad695_b3f30" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ac030_b79da" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d01c4_b79da" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b9e7f_d0ef1" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Valproic Acid Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA165964265" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Valproic Acid Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.9353388">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9353388</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ad695_b6b8e">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e1ae9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21544075" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10859157" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e1ae9</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b6b8e.PA166131512" />
+ <bp:left rdf:resource="pgkb.metabolite.ad695.PA166131250" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce65e_a59b2">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dc42b</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7905390" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dc42b</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a59b2.PA166131520" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.a9f07.PA449780" />
+ <bp:left rdf:resource="pgkb.metabolite.ce65e.PA166131515" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131516.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxy valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131516" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.cc5f9.PA166131517">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxy valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxy valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131517.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA29984.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">IVD</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA29984" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA162391638">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA162391638</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131289">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131289</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.activation.b6b8e_f33ef.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation d45e9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.2979731" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19641884" />
+ <bp:xref rdf:resource="publicationXref.pubMed.2858383" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation d45e9</bp:displayName>
+ <bp:participant rdf:resource="pgkb.phenotype.f33ef.PA164925725" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA451846">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA451846</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449780">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449780</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.d5a27.PA166131245">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-ene valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-ene valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131245.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.bd34a.PA24427">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACADSB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACADSB</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA24427.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA24427.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACADSB</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA24427" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b9e7f.PA166131510">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131510.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA126">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA126</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_b9e7f">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction faa23</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21843514" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction faa23</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b9e7f.PA166131510" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.db2f6.PA166131246">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-ene valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-ene valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131246.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21843514">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21843514</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ad695_b3f30">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c62ed</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21843514" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c62ed</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b3f30.PA166131514" />
+ <bp:left rdf:resource="pgkb.metabolite.ad695.PA166131250" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.geneGroup.b7ed3">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACSM</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACSM</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131254.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-ene valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131254" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA121">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA121</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21430231">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21430231</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16945988">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16945988</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA123">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA123</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.cfa30.PA27596">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ECH1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ECH1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA27596.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131515">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131515</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d6f88_b6b8e">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e89c5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11502730" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10859157" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e89c5</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b6b8e.PA166131512" />
+ <bp:left rdf:resource="pgkb.metabolite.d6f88.PA166131254" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131514">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131514</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131517">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131517</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131516">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131516</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131511">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131511</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7905390">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7905390</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA123.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA123" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131510">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131510</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131513">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131513</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131512">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131512</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f963d_c2e42">
+ <bp:controller rdf:resource="pgkb.gene.f963d.PA121" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8333</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8333</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_cc5f9" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131519.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">c5-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131519" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.f963d.PA121">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA121.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a59b2.PA166131520">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">thiol conjugates of valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">thiol conjugates of valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131520.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131250.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-ene valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131250" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.d0ef1.PA166131521">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid-dephosphocoenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid-dephosphocoenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131521.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b3f30.PA166131514">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-oh valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-oh valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131514.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.ac030.PA123">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA123.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131364.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproate glucuronide</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166131364" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131364" />
+</bp:SmallMoleculeReference>
+
+<bp:Pathway rdf:about="pgkb.process.d263c.pathwayProcesses:1447731040">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Detoxification</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/pathwayProcesses/pathwayProcesses:1447731040" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Detoxification</bp:displayName>
+</bp:Pathway>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.a59b2_d263c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To d3786</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9762695" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To d3786</bp:displayName>
+ <bp:participant rdf:resource="pgkb.process.d263c.pathwayProcesses:1447731040" />
+</bp:Interaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131511.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2,3-diene valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131511" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a8ed5.PA166131364">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproate glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproate glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131364.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b7ed3_faa23">
+ <bp:controller rdf:resource="pgkb.geneGroup.b7ed3" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d329c</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d329c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_b9e7f" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ac030_dc64a">
+ <bp:controller rdf:resource="pgkb.gene.ac030.PA123" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bcf1e</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bcf1e</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_e0afc" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131520.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">thiol conjugates of valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131520" />
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA162391638.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">HSD17B10</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA162391638" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d6f88_a59b2">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b9a3b</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7905390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.1676665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b9a3b</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a59b2.PA166131520" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.a9f07.PA449780" />
+ <bp:left rdf:resource="pgkb.metabolite.d6f88.PA166131254" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d5a27_d6f88">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b3570</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11502730" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7548749" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b3570</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.d6f88.PA166131254" />
+ <bp:left rdf:resource="pgkb.metabolite.d5a27.PA166131245" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11879205">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11879205</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_d4e02">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ee3fb</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.16945988" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ee3fb</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.d4e02.PA166131289" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d01c4_dc64a">
+ <bp:controller rdf:resource="pgkb.gene.d01c4.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d7e73</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d7e73</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_e0afc" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ac030_b79da">
+ <bp:controller rdf:resource="pgkb.gene.ac030.PA123" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b61fa</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b61fa</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_d5a27" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f47cb.PA166131511">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2,3-diene valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2,3-diene valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131511.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d01c4_b79da">
+ <bp:controller rdf:resource="pgkb.gene.d01c4.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis fe5ab</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis fe5ab</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_d5a27" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA29984">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA29984</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11502730">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11502730</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f3217.PA166131519">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">c5-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">c5-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131519.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f9a72.PA166131513">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-ene valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-ene valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131513.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f9a72_f47cb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b6ba0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21544075" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b6ba0</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f47cb.PA166131511" />
+ <bp:left rdf:resource="pgkb.metabolite.f9a72.PA166131513" />
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131289.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-hydroxy valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131289" />
+ <bp:xref rdf:resource="pubchem.PA166131289" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA449780.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glutathione</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA449780" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449780" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131254">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131254</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.d01c4.PA126">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA126.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA451846.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">valproic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA451846" />
+ <bp:xref rdf:resource="pubchem.PA451846" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131250">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131250</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:Control rdf:about="pgkb.leadsTo.a59b2_d263c">
+ <bp:controlled rdf:resource="pgkb.leadsTo.a59b2_d263c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.a59b2.PA166131520" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To d3786</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9762695" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To d3786</bp:displayName>
+</bp:Control>
+
+<bp:Control rdf:about="pgkb.activation.d5a27_f33ef">
+ <bp:controlled rdf:resource="pgkb.activation.d5a27_f33ef.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.d5a27.PA166131245" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation cc0b5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19641884" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACTIVATION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation cc0b5</bp:displayName>
+</bp:Control>
+
+<bp:Interaction rdf:about="pgkb.activation.d5a27_f33ef.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation cc0b5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19641884" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation cc0b5</bp:displayName>
+ <bp:participant rdf:resource="pgkb.phenotype.f33ef.PA164925725" />
+</bp:Interaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10859157">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10859157</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/pathwayProcesses/pathwayProcesses:1447731040">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pathwayProcesses:1447731040</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b4fa5_b9cb4">
+ <bp:controller rdf:resource="pgkb.gene.b4fa5.PA162391638" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d3194</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d3194</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b3f30_ce65e" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f963d_dc64a">
+ <bp:controller rdf:resource="pgkb.gene.f963d.PA121" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8b64</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8b64</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e49f0_e0afc" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.17687269">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">17687269</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.2979731">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2979731</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131246">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131246</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131521">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131521</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131518.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">c3-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131518" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_cc5f9">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c2e42</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.14597963" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16945988" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c2e42</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.cc5f9.PA166131517" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131364">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131364</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131520">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131520</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131245">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131245</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e49f0_db2f6">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction bfce6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20602621" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction bfce6</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.db2f6.PA166131246" />
+ <bp:left rdf:resource="pgkb.drug.e49f0.PA451846" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18838507">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18838507</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131512.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2,4-diene valproic acid-coenzyme A</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131512" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bd34a_ae7f8">
+ <bp:controller rdf:resource="pgkb.gene.bd34a.PA24427" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e6136</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e6136</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b9e7f_ad695" />
+</bp:Catalysis>
+
+<bp:Control rdf:about="pgkb.activation.b6b8e_f33ef">
+ <bp:controlled rdf:resource="pgkb.activation.b6b8e_f33ef.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.b6b8e.PA166131512" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation d45e9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.2979731" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19641884" />
+ <bp:xref rdf:resource="publicationXref.pubMed.2858383" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACTIVATION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation d45e9</bp:displayName>
+</bp:Control>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20602621">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20602621</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e0afc.PA166131516">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxy valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxy valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131516.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.b5da5.PA29984">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">IVD</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">IVD</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA29984.entityRef" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.gene.ff8c3.PA121">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA121.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.d4e02.PA166131289">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-hydroxy valproic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3-hydroxy valproic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131289.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ad695.PA166131250">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-ene valproic acid-coenzyme A</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-ene valproic acid-coenzyme A</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131250.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131519">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131519</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131518">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131518</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.b4fa5.PA162391638">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">HSD17B10</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">HSD17B10</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709341" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA162391638.entityRef" />
+</bp:Protein>
+</rdf:RDF>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:Protein rdf:about="pgkb.gene.bf0ac.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11038154">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11038154</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16372822">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16372822</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA27093.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP1A2</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA27093" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246781">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246781</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246782">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246782</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.29935043">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">29935043</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA452632.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">acenocoumarol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA452632" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246742">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246742</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bf0ac_b946d">
+ <bp:controller rdf:resource="pgkb.gene.bf0ac.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e397c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e397c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_e5628" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.fa548.PA127">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C18</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C18</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA127.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.d9aa0.PA166246761">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">R-6-hydroxyacenocoumarol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">R-6-hydroxyacenocoumarol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246761.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ff276_f3275">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e8ef7</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11038154" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e8ef7</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f3275.PA166246742" />
+ <bp:left rdf:resource="pgkb.drug.ff276.PA452632" />
+</bp:BiochemicalReaction>
+
+<bp:Pathway rdf:about="pgkb.pathway.NEW_PATHWAY">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bf0ac_c5b88" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.fa548_c5b88" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.facca_b7bfc" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.facca_b946d" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.facca_e8ef7" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ff276_eb17f" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bf0ac_b946d" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bf0ac_b7bfc" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b9f57_b7bfc" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ff276_e5628" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ff276_d9aa0" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.facca_c5b88" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ff276_f3275" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Acenocoumarol Pathway, Pharmacokinetics</bp:standardName>
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Acenocoumarol Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA452632">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA452632</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f3275.PA166246742">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">S-6-hydroxyacenocoumarol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">S-6-hydroxyacenocoumarol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246742.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.fa548_c5b88">
+ <bp:controller rdf:resource="pgkb.gene.fa548.PA127" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b01a9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19578179" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.29935043" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b01a9</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_eb17f" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.facca.PA126">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA126.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.facca_b7bfc">
+ <bp:controller rdf:resource="pgkb.gene.facca.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bc5d4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.15116052" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bc5d4</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_d9aa0" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA126.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA126" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246742.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">S-6-hydroxyacenocoumarol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246742" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19578179">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19578179</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.ff276.PA452632">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">acenocoumarol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">acenocoumarol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA452632.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8220911">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8220911</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246761.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">R-6-hydroxyacenocoumarol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246761" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.15116052">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">15116052</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ff276_e5628">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b946d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11038154" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b946d</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e5628.PA166246782" />
+ <bp:left rdf:resource="pgkb.drug.ff276.PA452632" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ff276_d9aa0">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b7bfc</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11038154" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b7bfc</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.d9aa0.PA166246761" />
+ <bp:left rdf:resource="pgkb.drug.ff276.PA452632" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.facca_c5b88">
+ <bp:controller rdf:resource="pgkb.gene.facca.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dd981</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.15116052" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dd981</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_eb17f" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bf0ac_c5b88">
+ <bp:controller rdf:resource="pgkb.gene.bf0ac.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f0b65</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f0b65</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_eb17f" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.b9f57.PA27093">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP1A2</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP1A2</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA27093.entityRef" />
+</bp:Protein>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA27093">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA27093</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.facca_e8ef7">
+ <bp:controller rdf:resource="pgkb.gene.facca.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis eddd0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.15116052" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis eddd0</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_f3275" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246761">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246761</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246781.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">S-7-hydroxyacenocoumarol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246781" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bf0ac_b7bfc">
+ <bp:controller rdf:resource="pgkb.gene.bf0ac.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c9416</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11038154" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c9416</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_d9aa0" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b9f57_b7bfc">
+ <bp:controller rdf:resource="pgkb.gene.b9f57.PA27093" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c4fcf</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11038154" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c4fcf</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_d9aa0" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.eb17f.PA166246781">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">S-7-hydroxyacenocoumarol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">S-7-hydroxyacenocoumarol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246781.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e5628.PA166246782">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">R-7-hydroxyacenocoumarol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">R-7-hydroxyacenocoumarol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246782.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA127.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C18</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA127" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.facca_b946d">
+ <bp:controller rdf:resource="pgkb.gene.facca.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ec905</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15116052" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ec905</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ff276_e5628" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA124">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA124</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA127">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA127</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA126">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA126</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ff276_eb17f">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c5b88</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8220911" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11038154" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16372822" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c5b88</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.eb17f.PA166246781" />
+ <bp:left rdf:resource="pgkb.drug.ff276.PA452632" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246782.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">R-7-hydroxyacenocoumarol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246782" />
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA124.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA124" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+</rdf:RDF>

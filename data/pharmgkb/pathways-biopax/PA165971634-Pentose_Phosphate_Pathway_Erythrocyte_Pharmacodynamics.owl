@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178279.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Nicotinamide adenine dinucleotide phosphate</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166178279" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178279" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a839a_e51ed">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dbba8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7713590" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20122995" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dbba8</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.e51ed.PA166160614" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.a839a.PA166178277" />
+</bp:BiochemicalReaction>
+
+<bp:Pathway rdf:about="pgkb.pathway.f0f52.PA165980399">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Oxidative Stress Regulatory Pathway (Erythrocyte)</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA165980399" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Oxidative Stress Regulatory Pathway (Erythrocyte)</bp:displayName>
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178281">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6022</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178280">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5884</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ccd5b_c277a">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c0ae6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.13799836" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16204390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18177777" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c0ae6</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.c277a.PA166178274" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.ccd5b.PA449773" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12845393">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12845393</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.defb7_ec9f5.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To b16ff</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22024786" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12845393" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7073040" />
+ <bp:xref rdf:resource="publicationXref.pubMed.869945" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10533013" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To b16ff</bp:displayName>
+ <bp:participant rdf:resource="pgkb.pathway.ec9f5.PA165980834" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA28841">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA28841</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.f7670.PA166178276">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6-phosphogluconate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6-phosphogluconate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178276.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA33240.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PGLS</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA33240" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178280.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Dihydronicotinamide adenine dinucleotide phosphate</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166178280" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178280" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7713590">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7713590</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178278.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fructose-6-phosphate</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166178278" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178278" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ddba5_f5da0">
+ <bp:controller rdf:resource="pgkb.gene.ddba5.PA28469" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e4d2b</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e4d2b</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.c277a_a63db" />
+</bp:Catalysis>
+
+<bp:Pathway rdf:about="pgkb.pathway.ec9f5.PA165980834">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Methylene Blue Pathway, Pharmacodynamics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA165980834" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Methylene Blue Pathway, Pharmacodynamics</bp:displayName>
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA33240">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA33240</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.leadsTo.defb7_f0f52">
+ <bp:controlled rdf:resource="pgkb.leadsTo.defb7_f0f52.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.defb7.PA166178280" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To c31f8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To c31f8</bp:displayName>
+</bp:Control>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b6939_f85fc">
+ <bp:controller rdf:resource="pgkb.gene.b6939.PA28841" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b9121</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b9121</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.c277a_cac45" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA28841.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GPI</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA28841" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10533013">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10533013</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166160614.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ribose phosphate</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166160614" />
+ <bp:xref rdf:resource="pubchem.PA166160614" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.13799836">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">13799836</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ddba5_f67e7">
+ <bp:controller rdf:resource="pgkb.gene.ddba5.PA28469" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b3d5f</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b3d5f</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bd29c_defb7" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.daf74.PA166178280">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Dihydronicotinamide adenine dinucleotide phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Dihydronicotinamide adenine dinucleotide phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178280.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pubchem.PA166160614">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">77982</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166160613">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7339</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178281.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">adenosine diphosphate</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166178281" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178281" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA29300">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA29300</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449773">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449773</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA165980399">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA165980399</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA448048">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA448048</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA165971634">
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.defb7_f0f52.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.daf74_ec9f5" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.dd4dd_de12d" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.cf360_ccd5b" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a839a_e51ed" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.acdd8_d1171" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.cac45_e51ed" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bd29c_defb7" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.cac45_c277a" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ccd5b_c277a" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.cac45_d1171" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.dd4dd_d464e" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a63db_f7670" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f7670_a839a" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.cac45_e51ed.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.defb7_ec9f5.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.c277a_a63db" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.daf74_f0f52.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ddba5_f5da0" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f2319_c0ae6" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.c277a_cac45" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.defb7_f0f52" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b6939_f85fc" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.daf74_f0f52" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.daf74_ec9f5.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a8a7e_daf74" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.acdd8_d1171.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e51ed_b692a" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.defb7_ec9f5" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ddba5_f67e7" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b692a_acdd8" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d268f_dc4ed" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d1632_e82f4" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.cac45_d1171.subinteraction" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Pentose Phosphate Pathway (Erythrocyte), Pharmacodynamics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA165971634" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Pentose Phosphate Pathway (Erythrocyte), Pharmacodynamics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.22024786">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">22024786</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178277.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ribulose-5-phosphate</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166178277" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178277" />
+</bp:SmallMoleculeReference>
+
+<bp:Transport rdf:about="pgkb.transport.cf360_ccd5b">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport e82f4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport e82f4</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.ccd5b.PA449773" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.cf360.PA449773" />
+</bp:Transport>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7073040">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7073040</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.869945">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">869945</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bd29c_defb7">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f67e7</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16204390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18177777" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20350285" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f67e7</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.defb7.PA166178280" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.bd29c.PA166178279" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA33229.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PGD</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA33229" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178274.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose-6-phosphate</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178274" />
+ <bp:xref rdf:resource="pubchem.PA166178274" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.ddba5.PA28469">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">G6PD</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">G6PD</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA28469.entityRef" />
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.cac45_c277a">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction fd8ab</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction fd8ab</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.c277a.PA166178274" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.cac45.PA166178278" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.gene.d1632.PA35875">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712699" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA35875.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166160613.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">phosphoribosyl pyrophosphate</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166160613" />
+ <bp:xref rdf:resource="pubchem.PA166160613" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/pathwayProcesses/pathwayProcesses:1449245129">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pathwayProcesses:1449245129</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA28469">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA28469</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.b692a.PA166160613">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">phosphoribosyl pyrophosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">phosphoribosyl pyrophosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166160613.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Interaction rdf:about="pgkb.activation.cac45_e51ed.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation ed84c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation ed84c</bp:displayName>
+ <bp:participant rdf:resource="pgkb.biologicalIntermediate.e51ed.PA166160614" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA165980834">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA165980834</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.a839a.PA166178277">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ribulose-5-phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ribulose-5-phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178277.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.daf74_f0f52.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To d74c1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To d74c1</bp:displayName>
+ <bp:participant rdf:resource="pgkb.pathway.f0f52.PA165980399" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.bd29c.PA166178279">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Nicotinamide adenine dinucleotide phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Nicotinamide adenine dinucleotide phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178279.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20122995">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20122995</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.ccd5b.PA449773">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA449773.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pubchem.PA449773">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5793</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.c277a_cac45">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f85fc</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f85fc</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.cac45.PA166178278" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.c277a.PA166178274" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.defb7.PA166178280">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Dihydronicotinamide adenine dinucleotide phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Dihydronicotinamide adenine dinucleotide phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178280.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.acdd8.PA166178281">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">adenosine diphosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">adenosine diphosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178281.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b692a_acdd8">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c67c9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7713590" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c67c9</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.acdd8.PA166178281" />
+ <bp:left rdf:resource="pgkb.drug.a22d7.PA448048" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.b692a.PA166160613" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pubchem.PA448048">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">190</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.cac45_d1171.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To a58dd</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To a58dd</bp:displayName>
+ <bp:participant rdf:resource="pgkb.process.d1171.pathwayProcesses:1449245129" />
+</bp:Interaction>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.defb7_f0f52.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To c31f8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To c31f8</bp:displayName>
+ <bp:participant rdf:resource="pgkb.pathway.f0f52.PA165980399" />
+</bp:Interaction>
+
+<bp:Control rdf:about="pgkb.leadsTo.daf74_ec9f5">
+ <bp:controlled rdf:resource="pgkb.leadsTo.daf74_ec9f5.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.daf74.PA166178280" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To b892c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22024786" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12845393" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7073040" />
+ <bp:xref rdf:resource="publicationXref.pubMed.869945" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10533013" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To b892c</bp:displayName>
+</bp:Control>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.a63db.PA166178275">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6-phosphogluconolactone</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6-phosphogluconolactone</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178275.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Control rdf:about="pgkb.leadsTo.acdd8_d1171">
+ <bp:controlled rdf:resource="pgkb.leadsTo.acdd8_d1171.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.acdd8.PA166178281" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To f062c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7713590" />
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To f062c</bp:displayName>
+</bp:Control>
+
+<bp:Control rdf:about="pgkb.activation.cac45_e51ed">
+ <bp:controlled rdf:resource="pgkb.activation.cac45_e51ed.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.cac45.PA166178278" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation ed84c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACTIVATION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation ed84c</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178280">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178280</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18226191">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18226191</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178281">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178281</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a63db_f7670">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dc4ed</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16204390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18177777" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20350285" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dc4ed</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.f7670.PA166178276" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.a63db.PA166178275" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.gene.f2319.PA29300">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">HK1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">HK1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA29300.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.a8a7e.PA166178279">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Nicotinamide adenine dinucleotide phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Nicotinamide adenine dinucleotide phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178279.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.a22d7.PA448048">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">adenine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">adenine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA448048.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f2319_c0ae6">
+ <bp:controller rdf:resource="pgkb.gene.f2319.PA29300" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis fb033</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis fb033</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ccd5b_c277a" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.dd4dd.PA33229">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PGD</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PGD</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA33229.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178275">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178275</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178274">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178274</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA29300.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">HK1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA29300" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178277">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178277</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178276">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178276</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178279">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178279</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178278">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178278</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA165971634">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA165971634</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a8a7e_daf74">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction de12d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18177777" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction de12d</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.daf74.PA166178280" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.a8a7e.PA166178279" />
+</bp:BiochemicalReaction>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.acdd8_d1171.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To f062c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7713590" />
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To f062c</bp:displayName>
+ <bp:participant rdf:resource="pgkb.process.d1171.pathwayProcesses:1449245129" />
+</bp:Interaction>
+
+<bp:Control rdf:about="pgkb.leadsTo.defb7_ec9f5">
+ <bp:controlled rdf:resource="pgkb.leadsTo.defb7_ec9f5.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.defb7.PA166178280" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To b16ff</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22024786" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12845393" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7073040" />
+ <bp:xref rdf:resource="publicationXref.pubMed.869945" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10533013" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To b16ff</bp:displayName>
+</bp:Control>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178275.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6-phosphogluconolactone</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178275" />
+ <bp:xref rdf:resource="pubchem.PA166178275" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.cf360.PA449773">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA449773.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.c277a.PA166178274">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose-6-phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose-6-phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178274.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.15862084">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">15862084</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d268f_dc4ed">
+ <bp:controller rdf:resource="pgkb.gene.d268f.PA33240" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f5ab5</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f5ab5</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a63db_f7670" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20350285">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20350285</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA448048.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">adenine</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA448048" />
+ <bp:xref rdf:resource="pubchem.PA448048" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.cac45.PA166178278">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fructose-6-phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fructose-6-phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178278.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA35875">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA35875</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.dd4dd_de12d">
+ <bp:controller rdf:resource="pgkb.gene.dd4dd.PA33229" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis eba90</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis eba90</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a8a7e_daf74" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166160614">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160614</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16204390">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16204390</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166160613">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160613</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:Protein rdf:about="pgkb.gene.d268f.PA33240">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PGLS</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PGLS</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA33240.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA449773.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glucose</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449773" />
+ <bp:xref rdf:resource="pubchem.PA449773" />
+</bp:SmallMoleculeReference>
+
+<bp:Control rdf:about="pgkb.leadsTo.cac45_d1171">
+ <bp:controlled rdf:resource="pgkb.leadsTo.cac45_d1171.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.cac45.PA166178278" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To a58dd</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To a58dd</bp:displayName>
+</bp:Control>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.dd4dd_d464e">
+ <bp:controller rdf:resource="pgkb.gene.dd4dd.PA33229" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bb8da</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bb8da</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.f7670_a839a" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f7670_a839a">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d464e</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16204390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18177777" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20350285" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d464e</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.a839a.PA166178277" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.f7670.PA166178276" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA35875.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA35875" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.c277a_a63db">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f5da0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18226191" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16204390" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18177777" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20350285" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f5da0</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.a63db.PA166178275" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.c277a.PA166178274" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA28469.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">G6PD</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA28469" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.e51ed.PA166160614">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ribose phosphate</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ribose phosphate</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166160614.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA33229">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA33229</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.b6939.PA28841">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GPI</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GPI</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA28841.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21376665">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21376665</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Control rdf:about="pgkb.leadsTo.daf74_f0f52">
+ <bp:controlled rdf:resource="pgkb.leadsTo.daf74_f0f52.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.daf74.PA166178280" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To d74c1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15862084" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21376665" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To d74c1</bp:displayName>
+</bp:Control>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.daf74_ec9f5.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To b892c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22024786" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12845393" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7073040" />
+ <bp:xref rdf:resource="publicationXref.pubMed.869945" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10533013" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To b892c</bp:displayName>
+ <bp:participant rdf:resource="pgkb.pathway.ec9f5.PA165980834" />
+</bp:Interaction>
+
+<bp:Pathway rdf:about="pgkb.process.d1171.pathwayProcesses:1449245129">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glycolysis</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/pathwayProcesses/pathwayProcesses:1449245129" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glycolysis</bp:displayName>
+</bp:Pathway>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178276.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6-phosphogluconate</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178276" />
+ <bp:xref rdf:resource="pubchem.PA166178276" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e51ed_b692a">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b78ac</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7713590" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b78ac</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.b692a.PA166160613" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.e51ed.PA166160614" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18177777">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18177777</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d1632_e82f4">
+ <bp:controller rdf:resource="pgkb.gene.d1632.PA35875" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aa589</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aa589</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.cf360_ccd5b" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178278">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">69507</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178277">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">439184</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178279">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5886</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178274">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5958</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178276">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">91493</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178275">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">439452</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+</rdf:RDF>

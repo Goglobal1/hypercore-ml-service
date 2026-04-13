@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.28081667">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">28081667</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Interaction rdf:about="pgkb.activation.f4cc1_ea6ed.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation idb896df3a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28081667" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation idb896df3a</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.ea6ed.PA26092" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA166233701">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166233701</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.f4cc1_b4b37.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To a5754</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28081667" />
+ <bp:xref rdf:resource="publicationXref.pubMed.24913773" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18509326" />
+ <bp:xref rdf:resource="publicationXref.pubMed.6345332" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To a5754</bp:displayName>
+ <bp:participant rdf:resource="pgkb.phenotype.b4b37.PA164925725" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f4cc1.PA166233801">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">trifluoroacetyl chloride</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">trifluoroacetyl chloride</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166233801.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f759d.PA166233482">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-chloro-1,1,1-trifluoroethane</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-chloro-1,1,1-trifluoroethane</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166233482.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b8972_e133c">
+ <bp:controller rdf:resource="pgkb.gene.b8972.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e9f86</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10805064" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e9f86</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bef31_f759d" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a1c5c.PA166232721">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">trifluoroacetic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">trifluoroacetic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166232721.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Control rdf:about="pgkb.leadsTo.f4cc1_b4b37">
+ <bp:controlled rdf:resource="pgkb.leadsTo.f4cc1_b4b37.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.f4cc1.PA166233801" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To a5754</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28081667" />
+ <bp:xref rdf:resource="publicationXref.pubMed.24913773" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18509326" />
+ <bp:xref rdf:resource="publicationXref.pubMed.6345332" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To a5754</bp:displayName>
+</bp:Control>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ba002.PA449667">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA449667.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bef31_f759d">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e133c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e133c</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f759d.PA166233482" />
+ <bp:left rdf:resource="pgkb.drug.bef31.PA449845" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166233482.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-chloro-1,1,1-trifluoroethane</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166233482" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f4cc1_a1c5c">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction id90104e17</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9103523" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction id90104e17</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a1c5c.PA166232721" />
+ <bp:left rdf:resource="pgkb.metabolite.f4cc1.PA166233801" />
+</bp:BiochemicalReaction>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.ea6ed_b4b37.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To e5da4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28081667" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To e5da4</bp:displayName>
+ <bp:participant rdf:resource="pgkb.phenotype.b4b37.PA164925725" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449845">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449845</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11506127">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11506127</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166233481.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-chloro-1,1-difluoroethene</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166233481" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.b8972.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166232721">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166232721</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.bef31.PA449845">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">halothane</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">halothane</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA449845.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.9103523">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9103523</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bef31_b09c1">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ddb39</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ddb39</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ba002.PA449667" />
+ <bp:right rdf:resource="pgkb.metabolite.b09c1.PA166233481" />
+ <bp:left rdf:resource="pgkb.drug.bef31.PA449845" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b8972_ddb39">
+ <bp:controller rdf:resource="pgkb.gene.b8972.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b51e0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10805064" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b51e0</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bef31_b09c1" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166233801.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">trifluoroacetyl chloride</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166233801" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.ea6ed.PA26092">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CASP8</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CASP8</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA26092.entityRef" />
+</bp:Protein>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA166233701">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c979c_e133c" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.ea6ed_b4b37.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ceb4c_db473" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bef31_f4cc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.f4cc1_ea6ed.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.f4cc1_b4b37.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c979c_ddb39" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b8972_e133c" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.ea6ed_b4b37" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b8972_ddb39" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bef31_b09c1" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.f4cc1_b4b37" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bef31_f759d" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.f4cc1_ea6ed" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f4cc1_a1c5c" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Halothane Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA166233701" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Halothane Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA129.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA129" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.c979c.PA121">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA121.entityRef" />
+</bp:Protein>
+
+<bp:Control rdf:about="pgkb.activation.f4cc1_ea6ed">
+ <bp:controlled rdf:resource="pgkb.activation.f4cc1_ea6ed.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.f4cc1.PA166233801" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation idb896df3a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28081667" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACTIVATION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation idb896df3a</bp:displayName>
+</bp:Control>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA449667.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449667" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166233484">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166233484</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ceb4c_db473">
+ <bp:controller rdf:resource="pgkb.gene.ceb4c.PA129" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a955d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9103523" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a955d</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bef31_f4cc1" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166233801">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166233801</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166233484.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">bromide</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166233484" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b09c1.PA166233481">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-chloro-1,1-difluoroethene</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-chloro-1,1-difluoroethene</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166233481.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c979c_ddb39">
+ <bp:controller rdf:resource="pgkb.gene.c979c.PA121" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8219</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11506127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10805064" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8219</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bef31_b09c1" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA121.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2A6</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA121" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Pathway rdf:about="pgkb.phenotype.b4b37.PA164925725">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Toxic liver disease</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/disease/PA164925725" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Toxic liver disease</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">This black box pathway represents a phenotype</bp:comment>
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/disease/PA164925725">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA164925725</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166232721.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">trifluoroacetic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166232721" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.24913773">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">24913773</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA130">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA130</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166233482">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166233482</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166233481">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166233481</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.ceb4c.PA129">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA129.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c979c_e133c">
+ <bp:controller rdf:resource="pgkb.gene.c979c.PA121" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c0a7c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11506127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10805064" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c0a7c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bef31_f759d" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449667">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449667</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bef31_f4cc1">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction db473</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9103523" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8886607" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction db473</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b3038.PA166233484" />
+ <bp:right rdf:resource="pgkb.metabolite.f4cc1.PA166233801" />
+ <bp:left rdf:resource="pgkb.drug.bef31.PA449845" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10805064">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10805064</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA26092">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA26092</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA26092.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CASP8</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA26092" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA449845.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">halothane</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449845" />
+</bp:SmallMoleculeReference>
+
+<bp:Control rdf:about="pgkb.leadsTo.ea6ed_b4b37">
+ <bp:controlled rdf:resource="pgkb.leadsTo.ea6ed_b4b37.subinteraction" />
+ <bp:controller rdf:resource="pgkb.gene.ea6ed.PA26092" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To e5da4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28081667" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To e5da4</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA129">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA129</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b3038.PA166233484">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">bromide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">bromide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166233484.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA130.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA130" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8886607">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8886607</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18509326">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18509326</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA121">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA121</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.6345332">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">6345332</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+</rdf:RDF>

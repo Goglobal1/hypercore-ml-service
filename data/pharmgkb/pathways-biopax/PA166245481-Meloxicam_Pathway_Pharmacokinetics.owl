@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a477b_cda0e">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d57bf</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.10092958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d57bf</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.cda0e.PA166245462" />
+ <bp:left rdf:resource="pgkb.metabolite.a477b.PA166245381" />
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d1e90_a56c4">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b90b9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.10092958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b90b9</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a56c4.PA166245461" />
+ <bp:left rdf:resource="pgkb.drug.d1e90.PA450353" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10381752">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10381752</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.d1e90.PA450353">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">meloxicam</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">meloxicam</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA450353.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166245461.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-methylthiazol-2-ylcarbamoylcarboxylic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166245461" />
+</bp:SmallMoleculeReference>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d1e90_e5673">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ed601</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9493314" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10381752" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10092958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ed601</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e5673.PA166245382" />
+ <bp:left rdf:resource="pgkb.drug.d1e90.PA450353" />
+</bp:BiochemicalReaction>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709361">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709361" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166245462.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-[(hydroxyacetyl)amino]-5- thiazolecarboxylic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166245462" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA450353.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">meloxicam</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA450353" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f81a6_ed601">
+ <bp:controller rdf:resource="pgkb.gene.f81a6.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f0512</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9493314" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10381752" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f0512</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.d1e90_e5673" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.9493314">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9493314</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA130">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA130</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e5673_a477b">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e6286</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9493314" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10092958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e6286</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a477b.PA166245381" />
+ <bp:left rdf:resource="pgkb.metabolite.e5673.PA166245382" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:Pathway rdf:about="pgkb.pathway.NEW_PATHWAY">
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a477b_cda0e" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.dfca5_ed601" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f81a6_ed601" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d1e90_a56c4" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e5673_a477b" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d1e90_e5673" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Meloxicam Pathway, Pharmacokinetics</bp:standardName>
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Meloxicam Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA450353">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA450353</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.f81a6.PA126">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA126.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10092958">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10092958</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a477b.PA166245381">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-carboxymeloxicam</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-carboxymeloxicam</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166245381.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166245382.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-hydroxymeloxicam</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166245382" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166245461">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166245461</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166245381">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166245381</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e5673.PA166245382">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-hydroxymeloxicam</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-hydroxymeloxicam</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166245382.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166245382">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166245382</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166245381.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-carboxymeloxicam</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166245381" />
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA126.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA126" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.dfca5_ed601">
+ <bp:controller rdf:resource="pgkb.gene.dfca5.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f1956</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.9493314" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10381752" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f1956</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.d1e90_e5673" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166245462">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166245462</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.dfca5.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.cda0e.PA166245462">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-[(hydroxyacetyl)amino]-5- thiazolecarboxylic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-[(hydroxyacetyl)amino]-5- thiazolecarboxylic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166245462.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA126">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA126</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA130.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA130" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a56c4.PA166245461">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-methylthiazol-2-ylcarbamoylcarboxylic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-methylthiazol-2-ylcarbamoylcarboxylic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166245461.entityRef" />
+</bp:SmallMolecule>
+</rdf:RDF>

@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.29397568">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">29397568</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.gene.fc31c.PA360">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT2B4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT2B4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA360.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23111421">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23111421</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Interaction rdf:about="pgkb.inhibition.f7527_b1d5a.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c6473</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15199474" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11127873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c6473</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.b1d5a.PA134971947" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.aefbf.PA449053">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA449053.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16772608">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16772608</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.eaaf4_f7527">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b6460</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21301779" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17361128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22374717" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21900914" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11127873" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12485953" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b6460</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f7527.PA166131260" />
+ <bp:left rdf:resource="pgkb.metabolite.eaaf4.PA166131290" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.c7795.PA449780" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131290.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-oxo-clopidogrel</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131290" />
+ <bp:xref rdf:resource="pubchem.PA166131290" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131260">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131260</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ed325_ddab4">
+ <bp:controller rdf:resource="pgkb.gene.ed325.PA123" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b6d67</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b6d67</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b7d6f_eaaf4" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c57a0_ddab4">
+ <bp:controller rdf:resource="pgkb.gene.c57a0.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis cc867</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19106083" />
+ <bp:xref rdf:resource="publicationXref.pubMed.25008027" />
+ <bp:xref rdf:resource="publicationXref.pubMed.29397568" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis cc867</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b7d6f_eaaf4" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA107">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA107</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166182027">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9861403</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.a72db.PA33529">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PON1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PON1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA33529.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166182027.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel carboxylic acid</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166182027" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166182027" />
+</bp:SmallMoleculeReference>
+
+<bp:Transport rdf:about="pgkb.transport.aefbf_b24c0">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport c8d5e</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.10440419" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10440420" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport c8d5e</bp:displayName>
+ <bp:right rdf:resource="pgkb.drug.b24c0.PA449053" />
+ <bp:left rdf:resource="pgkb.drug.aefbf.PA449053" />
+</bp:Transport>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b7d6f_a0128">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction a09d2</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.16943252" />
+ <bp:xref rdf:resource="publicationXref.pubMed.10440420" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction a09d2</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a0128.PA166182027" />
+ <bp:left rdf:resource="pgkb.drug.b7d6f.PA449053" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b384c_d4cf0">
+ <bp:controller rdf:resource="pgkb.gene.b384c.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f4bf7</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22374717" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f4bf7</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.eaaf4_c910e" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.eaaf4_ddfeb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dfa33</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21301779" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22103858" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction dfa33</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ddfeb.PA166182316" />
+ <bp:left rdf:resource="pgkb.metabolite.eaaf4.PA166131290" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.gene.cb30d.PA361">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT2B7</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT2B7</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA361.entityRef" />
+</bp:Protein>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA154424674">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a162c_ddab4" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.fc31c_f5bea" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bf7f8_a09d2" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a0128_e256e" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.b24c0_b7d6f" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.eaaf4_f7527" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.f7527_b1d5a.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.eaaf4_c910e" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ed325_ddab4" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c57a0_ddab4" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a72db_dfa33" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.eaaf4_f9337" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cb30d_f5bea" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.f7527_b1d5a" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.aefbf_b24c0" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.b24c0_aefbf" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cb40b_ddab4" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c5349_cebe5" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b7d6f_a0128" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a162c_b6460" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b384c_d4cf0" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.eaaf4_ddfeb" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b384c_b6460" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b7d6f_eaaf4" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Clopidogrel Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA154424674" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Clopidogrel Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166182061.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel acyl glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166182061" />
+ <bp:xref rdf:resource="pubchem.PA166182061" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f9337.PA166182093">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H2</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H2</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166182093.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.17361128">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">17361128</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19106083">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19106083</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA449780">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">124886</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA27093">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA27093</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.fc31c_f5bea">
+ <bp:controller rdf:resource="pgkb.gene.fc31c.PA360" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis cb679</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.29138287" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis cb679</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a0128_e256e" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bf7f8_a09d2">
+ <bp:controller rdf:resource="pgkb.gene.bf7f8.PA107" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e5706</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23111421" />
+ <bp:xref rdf:resource="publicationXref.pubMed.25704243" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e5706</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b7d6f_a0128" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.b384c.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.gene.ed325.PA123">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA123.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166131290">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166131290</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cb30d_f5bea">
+ <bp:controller rdf:resource="pgkb.gene.cb30d.PA361" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f0445</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.29240983" />
+ <bp:xref rdf:resource="publicationXref.pubMed.29138287" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f0445</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a0128_e256e" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166182093">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166182093</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c910e.PA166182094">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H3</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H3</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166182094.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166182094">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166182094</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.29138287">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">29138287</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA130">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA130</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA33529">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA33529</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166131290">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">13748464</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.b24c0.PA449053">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA449053.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166182316.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel endo-thiol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166182316" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20801498">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20801498</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA33529.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PON1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA33529" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e256e.PA166182061">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel acyl glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel acyl glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166182061.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.eaaf4.PA166131290">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-oxo-clopidogrel</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-oxo-clopidogrel</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131290.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21170047">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21170047</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA449053.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA449053" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449053" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10440420">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10440420</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449780">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449780</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA124">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA124</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.10440419">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">10440419</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a72db_dfa33">
+ <bp:controller rdf:resource="pgkb.gene.a72db.PA33529" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f31e3</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22374717" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21900914" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21170047" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23418418" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21819538" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f31e3</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.eaaf4_ddfeb" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.25008027">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">25008027</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21900914">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21900914</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a0128.PA166182027">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel carboxylic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel carboxylic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166182027.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.b7d6f.PA449053">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA449053.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA134971947.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">P2RY12</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA134971947" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166182027">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166182027</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23056288">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23056288</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA361</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA360">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA360</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.1510701">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1510701</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.17112805">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">17112805</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA123">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA123</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA124.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA124" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166182093.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H2</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166182093" />
+ <bp:xref rdf:resource="pubchem.PA166182093" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.cb40b.PA27093">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP1A2</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP1A2</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA27093.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.29240983">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">29240983</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.27380588">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">27380588</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA123.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA123" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ddfeb.PA166182316">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel endo-thiol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel endo-thiol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166182316.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA27093.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP1A2</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA27093" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.c57a0.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.c7795.PA449780">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glutathione</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glutathione</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA449780.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pubchem.PA166182061">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">96359892</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21301779">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21301779</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.22374717">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">22374717</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.eaaf4_f9337">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ff164</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21301779" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ff164</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.f9337.PA166182093" />
+ <bp:left rdf:resource="pgkb.metabolite.eaaf4.PA166131290" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.gene.c5349.PA267">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA267.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA361.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT2B7</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA361" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11127873">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11127873</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21819538">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21819538</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a162c_b6460">
+ <bp:controller rdf:resource="pgkb.gene.a162c.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bb031</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.17361128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22374717" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bb031</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.eaaf4_f7527" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b384c_b6460">
+ <bp:controller rdf:resource="pgkb.gene.b384c.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e17c6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22374717" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e17c6</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.eaaf4_f7527" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a162c_ddab4">
+ <bp:controller rdf:resource="pgkb.gene.a162c.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ea998</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22374717" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ea998</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b7d6f_eaaf4" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166182094.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H3</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166182094" />
+ <bp:xref rdf:resource="pubchem.PA166182094" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166182316">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166182316</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA267.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA267" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19812348">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19812348</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA360.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT2B4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA360" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.eaaf4_c910e">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d4cf0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21301779" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d4cf0</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.c910e.PA166182094" />
+ <bp:left rdf:resource="pgkb.metabolite.eaaf4.PA166131290" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19706858">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19706858</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA107.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CES1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA107" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA267">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA267</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA134971947">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA134971947</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.b24c0_aefbf">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport cebe5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.17112805" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport cebe5</bp:displayName>
+ <bp:right rdf:resource="pgkb.drug.aefbf.PA449053" />
+ <bp:left rdf:resource="pgkb.drug.b24c0.PA449053" />
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cb40b_ddab4">
+ <bp:controller rdf:resource="pgkb.gene.cb40b.PA27093" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bd21c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bd21c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b7d6f_eaaf4" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.a162c.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c5349_cebe5">
+ <bp:controller rdf:resource="pgkb.gene.c5349.PA267" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c72db</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.19106083" />
+ <bp:xref rdf:resource="publicationXref.pubMed.27380588" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23056288" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20801498" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c72db</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.b24c0_aefbf" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b7d6f_eaaf4">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ddab4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.16772608" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19812348" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19706858" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ddab4</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.eaaf4.PA166131290" />
+ <bp:left rdf:resource="pgkb.drug.b7d6f.PA449053" />
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23418418">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23418418</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA449780.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">glutathione</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA449780" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449780" />
+</bp:SmallMoleculeReference>
+
+<bp:Transport rdf:about="pgkb.transport.b24c0_b7d6f">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport c7039</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.1510701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport c7039</bp:displayName>
+ <bp:right rdf:resource="pgkb.drug.b7d6f.PA449053" />
+ <bp:left rdf:resource="pgkb.drug.b24c0.PA449053" />
+</bp:Transport>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449053">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449053</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16943252">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16943252</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.22103858">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">22103858</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.f7527_b1d5a">
+ <bp:controlled rdf:resource="pgkb.inhibition.f7527_b1d5a.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.f7527.PA166131260" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c6473</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.15199474" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11127873" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c6473</bp:displayName>
+</bp:Control>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f7527.PA166131260">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166131260.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.bf7f8.PA107">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CES1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CES1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA107.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.15199474">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">15199474</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA449053">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">60606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12485953">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12485953</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a0128_e256e">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f5bea</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.29138287" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f5bea</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e256e.PA166182061" />
+ <bp:left rdf:resource="pgkb.metabolite.a0128.PA166182027" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.25704243">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">25704243</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166182093">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">71712270</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA154424674">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA154424674</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166182094">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">91826982</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA166131260">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">71712269</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.b1d5a.PA134971947">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">P2RY12</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">P2RY12</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712699" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA134971947.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA130.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA130" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166182061">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166182061</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166131260.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">clopidogrel thiol metabolite H4</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166131260" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166131260" />
+</bp:SmallMoleculeReference>
+</rdf:RDF>

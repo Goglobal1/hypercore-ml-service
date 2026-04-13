@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:Protein rdf:about="pgkb.gene.e462e.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.f9425.PA450180">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA450180.entityRef" />
+</bp:SmallMolecule>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709360">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709360" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transmembrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:Transport rdf:about="pgkb.transport.bfbb8_f9425">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport a0098</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11770010" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport a0098</bp:displayName>
+ <bp:right rdf:resource="pgkb.drug.f9425.PA450180" />
+ <bp:left rdf:resource="pgkb.drug.bfbb8.PA450180" />
+</bp:Transport>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709361">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709361" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b5242.PA166225541">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxylansoprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxylansoprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166225541.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e462e_c7df2">
+ <bp:controller rdf:resource="pgkb.gene.e462e.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bf2fb</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bf2fb</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bfbb8_b7607" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.bfbb8.PA450180">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA450180.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ad872.PA166225542">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole sulfone</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole sulfone</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166225542.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20371754">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20371754</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166225541.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxylansoprazole</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166225541" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166227301">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166227301</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.beb73.PA166227301">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxylansoprazole sulfone</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxylansoprazole sulfone</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166227301.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bfbb8_ad872">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction a35b2</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11829200" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19652384" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction a35b2</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ad872.PA166225542" />
+ <bp:left rdf:resource="pgkb.drug.bfbb8.PA450180" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16755125">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16755125</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d78ba_b17e6">
+ <bp:controller rdf:resource="pgkb.gene.d78ba.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis fee3f</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11829200" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19652384" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis fee3f</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bfbb8_b5242" />
+</bp:Catalysis>
+
+<bp:Pathway rdf:about="pgkb.pathway.NEW_PATHWAY">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e462e_c227a" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d7d68_b5242" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d78ba_b903e" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e462e_aa091" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ad872_beb73" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bfbb8_b7607" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.d7d68_ad872" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.bfbb8_f9425" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e462e_c7df2" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b5242_beb73" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bfbb8_b5242" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c2360_a0098" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e462e_a35b2" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bfbb8_ad872" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d78ba_bfd96" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d78ba_b17e6" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Lansoprazole Pathway, Pharmacokinetics</bp:standardName>
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Lansoprazole Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA267.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA267" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d78ba_b903e">
+ <bp:controller rdf:resource="pgkb.gene.d78ba.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e505e</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20371754" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e505e</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.d7d68_b5242" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ad872_beb73">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction bfd96</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction bfd96</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.beb73.PA166227301" />
+ <bp:left rdf:resource="pgkb.metabolite.ad872.PA166225542" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.gene.d78ba.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709359">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005576</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d7d68_ad872">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction aa091</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20371754" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16755125" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction aa091</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ad872.PA166225542" />
+ <bp:left rdf:resource="pgkb.drug.d7d68.PA166110257" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA267">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA267</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/transmembraneTypes/transmembraneTypes:1444712699">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005886</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11770010">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11770010</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166110257">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166110257</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA166110257.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dexlansoprazole</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166110257" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b5242_beb73">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c227a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c227a</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.beb73.PA166227301" />
+ <bp:left rdf:resource="pgkb.metabolite.b5242.PA166225541" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709360">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0016021</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bfbb8_b5242">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b17e6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11829200" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19652384" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b17e6</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b5242.PA166225541" />
+ <bp:left rdf:resource="pgkb.drug.bfbb8.PA450180" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c2360_a0098">
+ <bp:controller rdf:resource="pgkb.gene.c2360.PA267" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a1418</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11770010" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a1418</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.bfbb8_f9425" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA450180">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA450180</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d78ba_bfd96">
+ <bp:controller rdf:resource="pgkb.gene.d78ba.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a6b37</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a6b37</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ad872_beb73" />
+</bp:Catalysis>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709359">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709359" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Extracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166227281">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166227281</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23512128">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23512128</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166225541">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166225541</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b7607.PA166227281">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole sulfide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole sulfide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166227281.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166225542">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166225542</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA130">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA130</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.d7d68.PA166110257">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dexlansoprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dexlansoprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA166110257.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e462e_a35b2">
+ <bp:controller rdf:resource="pgkb.gene.e462e.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dbbea</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11829200" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19652384" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dbbea</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bfbb8_ad872" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19652384">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19652384</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166227301.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5-hydroxylansoprazole sulfone</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166227301" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e462e_c227a">
+ <bp:controller rdf:resource="pgkb.gene.e462e.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e9ece</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e9ece</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b5242_beb73" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.d7d68_b5242">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b903e</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20371754" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16755125" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b903e</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b5242.PA166225541" />
+ <bp:left rdf:resource="pgkb.drug.d7d68.PA166110257" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e462e_aa091">
+ <bp:controller rdf:resource="pgkb.gene.e462e.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bdfc2</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20371754" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bdfc2</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.d7d68_ad872" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA450180.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA450180" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bfbb8_b7607">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c7df2</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23512128" />
+ <bp:xref rdf:resource="publicationXref.pubMed.31846760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c7df2</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b7607.PA166227281" />
+ <bp:left rdf:resource="pgkb.drug.bfbb8.PA450180" />
+</bp:BiochemicalReaction>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444712699">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/transmembraneTypes/transmembraneTypes:1444712699" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Plasma Membrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA124">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA124</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA130.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA130" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166227281.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole sulfide</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166227281" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11829200">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11829200</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166225542.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lansoprazole sulfone</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166225542" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.c2360.PA267">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712699" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA267.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.31846760">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">31846760</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA124.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA124" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+</rdf:RDF>

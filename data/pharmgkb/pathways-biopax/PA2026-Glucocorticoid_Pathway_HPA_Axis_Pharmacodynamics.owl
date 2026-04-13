@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005886">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005886</bp:id>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.Glucocorticoids">
+ <bp:standardName rdf:datatype = "xsd:string">Glucocorticoids</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA119">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA119</bp:id>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91051">
+ <bp:right rdf:resource="pgkb.pe.efb3a" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of ACTH To Glucocorticoids</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.f3db3" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of ACTH To Glucocorticoids</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Control rdf:about="pgkb.control.inhibition.39">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Inhibition</bp:comment>
+ <bp:controlType rdf:datatype = "xsd:string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "xsd:string">Control_Inhibition 39</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ed91035" />
+ <bp:controller rdf:resource="pgkb.pe.efb3a" />
+ <bp:standardName rdf:datatype = "xsd:string">Control_Inhibition 39</bp:standardName>
+</bp:Control>
+
+<bp:Control rdf:about="pgkb.control.inhibition.28">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Inhibition</bp:comment>
+ <bp:controlType rdf:datatype = "xsd:string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "xsd:string">Control_Inhibition 28</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ed91024" />
+ <bp:controller rdf:resource="pgkb.pe.efb3a" />
+ <bp:standardName rdf:datatype = "xsd:string">Control_Inhibition 28</bp:standardName>
+</bp:Control>
+
+<bp:PublicationXref rdf:about="efe">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">14736736</bp:id>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="f74">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">8882784</bp:id>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA119">
+ <bp:standardName rdf:datatype = "xsd:string">CRH</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA119" />
+</bp:ProteinReference>
+
+<bp:Pathway rdf:about="pgkb.pwy.PA2026">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.classification == H02AB::Glucocorticoids (H02AB)	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.coe == PD::PD	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">re-drawn 06-20-11 by katrin</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.subId == PS208646</bp:comment>
+ <bp:dataSource rdf:resource="pgkb.provanence.pharmgkb" />
+ <bp:displayName rdf:datatype = "xsd:string">Glucocorticoid Pathway (HPA Axis), Pharmacodynamics</bp:displayName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91032" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91045" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91081" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91040" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91060" />
+ <bp:pathwayComponent rdf:resource="pgkb.control.inhibition.39" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91051" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91078" />
+ <bp:pathwayComponent rdf:resource="pgkb.control.inhibition.28" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91075" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91063" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91066" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91072" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91054" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91069" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91057" />
+ <bp:pathwayComponent rdf:resource="pgkb.control.inhibition.44" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91024" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91029" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91035" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ed91048" />
+ <bp:xref rdf:resource="pgkb.xref.PA2026" />
+ <bp:standardName rdf:datatype = "xsd:string">Glucocorticoid Pathway (HPA Axis), Pharmacodynamics</bp:standardName>
+</bp:Pathway>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91054">
+ <bp:right rdf:resource="pgkb.pe.e64dd" />
+ <bp:xref rdf:resource="a82" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRHR1</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.a2763" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRHR1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA26875">
+ <bp:standardName rdf:datatype = "xsd:string">CRHR2</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA26875" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA2026">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==null</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA2026</bp:id>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA26874">
+ <bp:standardName rdf:datatype = "xsd:string">CRHR1</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA26874" />
+</bp:ProteinReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA133787055">
+ <bp:standardName rdf:datatype = "xsd:string">UCN2</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA133787055" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91057">
+ <bp:right rdf:resource="pgkb.pe.a2763" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.d128e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005622">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005622</bp:id>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.control.inhibition.44">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Inhibition</bp:comment>
+ <bp:controlType rdf:datatype = "xsd:string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "xsd:string">Control_Inhibition 44</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ed91040" />
+ <bp:controller rdf:resource="pgkb.pe.efb3a" />
+ <bp:standardName rdf:datatype = "xsd:string">Control_Inhibition 44</bp:standardName>
+</bp:Control>
+
+<bp:Protein rdf:about="pgkb.pe.b05be.prime">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == peptide hormone secreting cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">POMC</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA33526" />
+ <bp:standardName rdf:datatype = "xsd:string">POMC</bp:standardName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA37163">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA37163</bp:id>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.a2763.prime">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuroendocrine cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRH</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA119" />
+ <bp:standardName rdf:datatype = "xsd:string">CRH</bp:standardName>
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA37163">
+ <bp:standardName rdf:datatype = "xsd:string">UCN</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA37163" />
+</bp:ProteinReference>
+
+<bp:Provenance rdf:about="pgkb.provanence.pharmgkb">
+ <bp:displayName rdf:datatype = "xsd:string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">http://pharmgkb.org</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">PharmGKB</bp:standardName>
+</bp:Provenance>
+
+<bp:UnificationXref rdf:about="pgkb.xref.NCBI_TAXON_9606">
+ <bp:db rdf:datatype = "xsd:string">NCBI_Taxonomy</bp:db>
+ <bp:id rdf:datatype = "xsd:string">9606</bp:id>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91060">
+ <bp:right rdf:resource="pgkb.pe.d128e" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.a2763" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91063">
+ <bp:right rdf:resource="pgkb.pe.aa159" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR2</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.ae680" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR2</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91066">
+ <bp:right rdf:resource="pgkb.pe.b7fa8" />
+ <bp:xref rdf:resource="bf3" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRHR1</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.a2763" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRHR1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91069">
+ <bp:right rdf:resource="pgkb.pe.b4a13" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN3 To CRHR2</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.c9d8b" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN3 To CRHR2</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA26875">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA26875</bp:id>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA26874">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA26874</bp:id>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.b05be">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == peptide hormone secreting cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">POMC</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA33526" />
+ <bp:standardName rdf:datatype = "xsd:string">POMC</bp:standardName>
+</bp:Protein>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005886">
+ <bp:term rdf:datatype = "xsd:string">Plasma Membrane</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005886" />
+</bp:CellularLocationVocabulary>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91024">
+ <bp:right rdf:resource="pgkb.pe.b05be.prime" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of POMC To POMC</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.b05be" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of POMC To POMC</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.pe.a83fa">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == peptide hormone secreting cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">UCN</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37163" />
+ <bp:standardName rdf:datatype = "xsd:string">UCN</bp:standardName>
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.ACTH">
+ <bp:standardName rdf:datatype = "xsd:string">ACTH</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.pe.e64dd">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == peptide hormone secreting cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRHR1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA26874" />
+ <bp:standardName rdf:datatype = "xsd:string">CRHR1</bp:standardName>
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91029">
+ <bp:right rdf:resource="pgkb.pe.e64dd" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR1</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.a83fa" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkg.bs.NCBI_TAXON_9609">
+ <bp:xref rdf:resource="pgkb.xref.NCBI_TAXON_9606" />
+ <bp:standardName rdf:datatype = "xsd:string">Homo sapiens</bp:standardName>
+</bp:BioSource>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91032">
+ <bp:right rdf:resource="pgkb.pe.d089a" />
+ <bp:xref rdf:resource="a82" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRHR1</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.d128e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRHR1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.pe.b4a13">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRHR2</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA26875" />
+ <bp:standardName rdf:datatype = "xsd:string">CRHR2</bp:standardName>
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.aa159">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuron</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRHR2</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA26875" />
+ <bp:standardName rdf:datatype = "xsd:string">CRHR2</bp:standardName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005576">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005576</bp:id>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.a2763">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuroendocrine cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRH</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA119" />
+ <bp:standardName rdf:datatype = "xsd:string">CRH</bp:standardName>
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="bf3">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">9190925</bp:id>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91078">
+ <bp:right rdf:resource="pgkb.pe.b4a13" />
+ <bp:xref rdf:resource="e21" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR2</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.e01ee" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR2</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.pe.d089a">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuron</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRHR1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA26874" />
+ <bp:standardName rdf:datatype = "xsd:string">CRHR1</bp:standardName>
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91075">
+ <bp:right rdf:resource="pgkb.pe.b7fa8" />
+ <bp:xref rdf:resource="bf3" />
+ <bp:xref rdf:resource="e21" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR1</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.e01ee" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.pe.b7fa8">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRHR1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA26874" />
+ <bp:standardName rdf:datatype = "xsd:string">CRHR1</bp:standardName>
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA130413153">
+ <bp:standardName rdf:datatype = "xsd:string">UCN3</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA130413153" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91072">
+ <bp:right rdf:resource="pgkb.pe.b4a13" />
+ <bp:xref rdf:resource="efe" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN2 To CRHR2</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.f7a52" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN2 To CRHR2</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.pe.c9d8b">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">UCN3</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130413153" />
+ <bp:standardName rdf:datatype = "xsd:string">UCN3</bp:standardName>
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.ae680">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuron</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">UCN</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37163" />
+ <bp:standardName rdf:datatype = "xsd:string">UCN</bp:standardName>
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.d128e">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuron</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRH</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA119" />
+ <bp:standardName rdf:datatype = "xsd:string">CRH</bp:standardName>
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.f7a52">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">UCN2</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA133787055" />
+ <bp:standardName rdf:datatype = "xsd:string">UCN2</bp:standardName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA130413153">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA130413153</bp:id>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="a82">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">10393986</bp:id>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.e01ee">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">UCN</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37163" />
+ <bp:standardName rdf:datatype = "xsd:string">UCN</bp:standardName>
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91035">
+ <bp:right rdf:resource="pgkb.pe.a2763.prime" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.a2763" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91045">
+ <bp:right rdf:resource="pgkb.pe.b05be" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRHR1 To POMC</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.e64dd" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRHR1 To POMC</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91081">
+ <bp:right rdf:resource="pgkb.pe.e64dd" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR1</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.e01ee" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of UCN To CRHR1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91040">
+ <bp:right rdf:resource="pgkb.pe.d128e.prime" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.d128e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of CRH To CRH</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA33526">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA33526</bp:id>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="e21">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">11836334</bp:id>
+</bp:PublicationXref>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005622">
+ <bp:term rdf:datatype = "xsd:string">Intracellular</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005622" />
+</bp:CellularLocationVocabulary>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f3db3">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Biological Intermediate</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == peptide hormone secreting cell</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">ACTH</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.ACTH" />
+ <bp:standardName rdf:datatype = "xsd:string">ACTH</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.efb3a">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Biological Intermediate</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == cortical cell of adrenal gland</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Glucocorticoids</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.Glucocorticoids" />
+ <bp:standardName rdf:datatype = "xsd:string">Glucocorticoids</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA133787055">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA133787055</bp:id>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.d128e.prime">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == neuron</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">CRH</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA119" />
+ <bp:standardName rdf:datatype = "xsd:string">CRH</bp:standardName>
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA33526">
+ <bp:standardName rdf:datatype = "xsd:string">POMC</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA33526" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ed91048">
+ <bp:right rdf:resource="pgkb.pe.f3db3" />
+ <bp:xref rdf:resource="f74" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of POMC To ACTH</bp:displayName>
+ <bp:left rdf:resource="pgkb.pe.b05be" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of POMC To ACTH</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005576">
+ <bp:term rdf:datatype = "xsd:string">Extracellular</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005576" />
+</bp:CellularLocationVocabulary>
+</rdf:RDF>

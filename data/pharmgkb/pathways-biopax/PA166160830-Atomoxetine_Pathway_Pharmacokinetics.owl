@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA134688071">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA134688071</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA123.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA123" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.cace8.PA128">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA128.entityRef" />
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.c2659_b36c3">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e994d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e994d</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b36c3.PA166160750" />
+ <bp:left rdf:resource="pgkb.metabolite.c2659.PA166160749" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b898b.PA166160753">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl-4-hydroxyatomoxetine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl-4-hydroxyatomoxetine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166160753.entityRef" />
+</bp:SmallMolecule>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709361">
+ <bp:xref rdf:resource="https://api.pharmgkb.org/data/ontologyTerm/cellularLocation/cellularLocation:1444709361" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:Pathway rdf:about="pgkb.pathway.null.PA166160830">
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.c2659_b36c3" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f66bd_eca82" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f66bd_c2659" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cace8_c4b3f" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b324c_c4b3f" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b898b_e319c" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.eca82_b898b" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f66bd_a93e4" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a8f9d_c9288" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.edcab_e54c5" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b9a32_d5a56" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Atomoxetine Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/pathway/PA166160830" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Atomoxetine Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.eca82_b898b">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c9288</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11854152" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c9288</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b898b.PA166160753" />
+ <bp:left rdf:resource="pgkb.metabolite.eca82.PA166160751" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166160749.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4&apos;-hydroxy atomoxetine</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166160749" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f66bd_eca82">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d5a56</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.11854152" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d5a56</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.eca82.PA166160751" />
+ <bp:left rdf:resource="pgkb.drug.f66bd.PA134688071" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f66bd_c2659">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e54c5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.27052878" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11854152" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e54c5</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.c2659.PA166160749" />
+ <bp:left rdf:resource="pgkb.drug.f66bd.PA134688071" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b898b_e319c">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b5c5d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b5c5d</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e319c.PA166160754" />
+ <bp:left rdf:resource="pgkb.metabolite.b898b.PA166160753" />
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f66bd_a93e4">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c4b3f</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c4b3f</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a93e4.PA166160755" />
+ <bp:left rdf:resource="pgkb.drug.f66bd.PA134688071" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e319c.PA166160754">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl-4-hydroxyatomoxetine glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl-4-hydroxyatomoxetine glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166160754.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166160753.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl-4-hydroxyatomoxetine</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166160753" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cace8_c4b3f">
+ <bp:controller rdf:resource="pgkb.gene.cace8.PA128" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ad351</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.27052878" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ad351</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.f66bd_a93e4" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.f66bd.PA134688071">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">atomoxetine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">atomoxetine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA134688071.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a93e4.PA166160755">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-hydroxymethyl atomoxetine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-hydroxymethyl atomoxetine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166160755.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b324c_c4b3f">
+ <bp:controller rdf:resource="pgkb.gene.b324c.PA123" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8b0b</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.27052878" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis b8b0b</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.f66bd_a93e4" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/data/ontologyTerm/cellularLocation/cellularLocation:1444709361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.a8f9d.PA128">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA128.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/pathway/PA166160830">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160830</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA128.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA128" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a8f9d_c9288">
+ <bp:controller rdf:resource="pgkb.gene.a8f9d.PA128" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d041c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d041c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.eca82_b898b" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.eca82.PA166160751">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl atomoxetine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl atomoxetine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166160751.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166160754.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl-4-hydroxyatomoxetine glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166160754" />
+</bp:SmallMoleculeReference>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166160749">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160749</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA128">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA128</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b36c3.PA166160750">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyatomoxetine-O-glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyatomoxetine-O-glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166160750.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166160755">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160755</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.11854152">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">11854152</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166160754">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160754</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166160753">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160753</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166160751">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160751</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166160755.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-hydroxymethyl atomoxetine</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166160755" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166160750">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166160750</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.edcab_e54c5">
+ <bp:controller rdf:resource="pgkb.gene.edcab.PA128" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dafaf</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.27052878" />
+ <bp:xref rdf:resource="publicationXref.pubMed.11854152" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dafaf</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.f66bd_c2659" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166160750.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyatomoxetine-O-glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166160750" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12485958">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12485958</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA124">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA124</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA123">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA123</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c2659.PA166160749">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4&apos;-hydroxy atomoxetine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4&apos;-hydroxy atomoxetine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166160749.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA134688071.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">atomoxetine</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA134688071" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.edcab.PA128">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA128.entityRef" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.gene.b9a32.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.27052878">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">27052878</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.gene.b324c.PA123">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2B6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA123.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166160751.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-desmethyl atomoxetine</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166160751" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b9a32_d5a56">
+ <bp:controller rdf:resource="pgkb.gene.b9a32.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a4cd6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12485958" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a4cd6</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.f66bd_eca82" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA124.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA124" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+</rdf:RDF>

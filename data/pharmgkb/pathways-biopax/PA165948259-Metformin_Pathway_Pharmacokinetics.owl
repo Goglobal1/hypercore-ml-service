@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.fe9a0">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==enterocyte</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.50">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 50</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d46" />
+ <bp:controller rdf:resource="pgkb.pe.c6c1b" />
+ <bp:xref rdf:resource="e2a" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 50</bp:displayName>
+</bp:Catalysis>
+
+<bp:Pathway rdf:about="pgkb.pwy.PA165948259">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.coe==PK::PK	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.subId==PS216316</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.classification==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">Li Gong</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Metformin Pathway, Pharmacokinetics</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Metformin Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA165948259" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:dataSource rdf:resource="pgkb.provanence.pharmgkb" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.50" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d22" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.40" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.62" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d34" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d46" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d51" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d41" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d29" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.26" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.38" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.28" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.f033d58" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.33" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.55" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.45" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.57" />
+</bp:Pathway>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0016323">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0016323" />
+ <bp:term rdf:datatype = "xsd:string">Basolateral Plasma Membrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:Transport rdf:about="pgkb.transport.f033d34">
+ <bp:right rdf:resource="pgkb.pe.ada4e" />
+ <bp:left rdf:resource="pgkb.pe.fbd94" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:xref rdf:resource="ffb" />
+ <bp:xref rdf:resource="fc1" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0016324">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0016324" />
+ <bp:term rdf:datatype = "xsd:string">Apical Plasma Membrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005622">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005622</bp:id>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.fbd94">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.e1397">
+ <bp:standardName rdf:datatype = "xsd:string">SLC47A1</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016324" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC47A1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA162403808" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="d58">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">17600084</bp:id>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.cc748">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.abc91">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="b8a">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">16263091</bp:id>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.55">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 55</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d51" />
+ <bp:controller rdf:resource="pgkb.pe.e8da1" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 55</bp:displayName>
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.57">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 57</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d51" />
+ <bp:controller rdf:resource="pgkb.pe.c6c8f" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 57</bp:displayName>
+</bp:Catalysis>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005622">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005622" />
+ <bp:term rdf:datatype = "xsd:string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:PublicationXref rdf:about="fc1">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">18384255</bp:id>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="e2a">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">19536068</bp:id>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA331">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA331</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA330">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA330</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.c109a">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A3</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016323" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A3</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA330" />
+</bp:Protein>
+
+<bp:Transport rdf:about="pgkb.transport.f033d22">
+ <bp:right rdf:resource="pgkb.pe.fe9a0" />
+ <bp:left rdf:resource="pgkb.pe.cc748" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.62">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 62</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d58" />
+ <bp:controller rdf:resource="pgkb.pe.e1397" />
+ <bp:xref rdf:resource="db2" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 62</bp:displayName>
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.NCBI_TAXON_9606">
+ <bp:db rdf:datatype = "xsd:string">NCBI_Taxonomy</bp:db>
+ <bp:id rdf:datatype = "xsd:string">9606</bp:id>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="ffb">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">21241070</bp:id>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA162403808">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA162403808</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.f033d29">
+ <bp:right rdf:resource="pgkb.pe.fbd94" />
+ <bp:left rdf:resource="pgkb.pe.fe9a0" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.26">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 26</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d22" />
+ <bp:controller rdf:resource="pgkb.pe.b9315" />
+ <bp:xref rdf:resource="d58" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 26</bp:displayName>
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0016324">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0016324</bp:id>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.28">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 28</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d22" />
+ <bp:controller rdf:resource="pgkb.pe.ff23c" />
+ <bp:xref rdf:resource="ffb" />
+ <bp:xref rdf:resource="b8a" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 28</bp:displayName>
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0016323">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0016323</bp:id>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provanence.pharmgkb">
+ <bp:standardName rdf:datatype = "xsd:string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">http://pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f1084">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA162403808">
+ <bp:standardName rdf:datatype = "xsd:string">SLC47A1</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA162403808" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.d5893">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA162403847">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA162403847</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.fba9e">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A2</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016323" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A2</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA331" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA329">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A1</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA329" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.c6c1b">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A1</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016324" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA329" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA162403847">
+ <bp:standardName rdf:datatype = "xsd:string">SLC47A2</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA162403847" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.cb915">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A1</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016323" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA329" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="a10">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">17509534</bp:id>
+</bp:PublicationXref>
+
+<bp:BioSource rdf:about="pgkg.bs.NCBI_TAXON_9609">
+ <bp:standardName rdf:datatype = "xsd:string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.NCBI_TAXON_9606" />
+</bp:BioSource>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005886">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005886</bp:id>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.f033d51">
+ <bp:right rdf:resource="pgkb.pe.d5893" />
+ <bp:left rdf:resource="pgkb.pe.abc91" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:xref rdf:resource="a10" />
+ <bp:xref rdf:resource="aba" />
+ <bp:xref rdf:resource="b00" />
+ <bp:xref rdf:resource="abe" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e47fa">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.c84a4">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A1</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016323" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==enterocyte</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA329" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA165948259">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA165948259</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Pathway</bp:comment>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA134976472">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA134976472</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.38">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 38</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d34" />
+ <bp:controller rdf:resource="pgkb.pe.c109a" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 38</bp:displayName>
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA134976472">
+ <bp:standardName rdf:datatype = "xsd:string">SLC29A4</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA134976472" />
+</bp:ProteinReference>
+
+<bp:Transport rdf:about="pgkb.transport.f033d58">
+ <bp:right rdf:resource="pgkb.pe.f1084" />
+ <bp:left rdf:resource="pgkb.pe.ada4e" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.33">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 33</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d29" />
+ <bp:controller rdf:resource="pgkb.pe.c84a4" />
+ <bp:xref rdf:resource="b8a" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 33</bp:displayName>
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA450395">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA450395" />
+</bp:SmallMoleculeReference>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005886">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005886" />
+ <bp:term rdf:datatype = "xsd:string">Plasma Membrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA331">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A2</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA331" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.c6c8f">
+ <bp:standardName rdf:datatype = "xsd:string">SLC47A2</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC47A2</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA162403847" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA330">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A3</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA330" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.ff23c">
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A3</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016324" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==enterocyte</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A3</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA330" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ada4e">
+ <bp:standardName rdf:datatype = "xsd:string">metformin</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450395" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">metformin</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.40">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 40</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d34" />
+ <bp:controller rdf:resource="pgkb.pe.cb915" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 40</bp:displayName>
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="aba">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">19164462</bp:id>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005576">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005576</bp:id>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA329">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA329</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.f033d46">
+ <bp:right rdf:resource="pgkb.pe.abc91" />
+ <bp:left rdf:resource="pgkb.pe.e47fa" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:PublicationXref rdf:about="b00">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">18674516</bp:id>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.b9315">
+ <bp:standardName rdf:datatype = "xsd:string">SLC29A4</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0016324" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==enterocyte</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC29A4</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA134976472" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="abe">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">19332510</bp:id>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.e8da1">
+ <bp:standardName rdf:datatype = "xsd:string">SLC47A1</bp:standardName>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">SLC47A1</bp:displayName>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA162403808" />
+</bp:Protein>
+
+<bp:Transport rdf:about="pgkb.transport.f033d41">
+ <bp:right rdf:resource="pgkb.pe.abc91" />
+ <bp:left rdf:resource="pgkb.pe.ada4e" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of metformin To metformin</bp:displayName>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.45">
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 45</bp:standardName>
+ <bp:controlled rdf:resource="pgkb.transport.f033d41" />
+ <bp:controller rdf:resource="pgkb.pe.fba9e" />
+ <bp:xref rdf:resource="fc1" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 45</bp:displayName>
+</bp:Catalysis>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005576">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005576" />
+ <bp:term rdf:datatype = "xsd:string">Extracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:PublicationXref rdf:about="db2">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">16330770</bp:id>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA450395">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA450395</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+</bp:UnificationXref>
+</rdf:RDF>

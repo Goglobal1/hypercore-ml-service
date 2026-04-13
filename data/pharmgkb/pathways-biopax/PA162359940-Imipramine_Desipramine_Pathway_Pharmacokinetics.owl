@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.a8a58">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxydesipramine glucuronide</bp:standardName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.2_Hydroxydesipramine_glucuronide" />
+ <bp:displayName rdf:datatype = "xsd:string">2-Hydroxydesipramine glucuronide</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.df44d35">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of 2-Hydroxyimipramine To 2-Hydroxyimipramine glucuronide</bp:standardName>
+ <bp:right rdf:resource="pgkb.pe.d45ed" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of 2-Hydroxyimipramine To 2-Hydroxyimipramine glucuronide</bp:displayName>
+ <bp:xref rdf:resource="c4f" />
+ <bp:xref rdf:resource="d70" />
+ <bp:xref rdf:resource="b76" />
+ <bp:xref rdf:resource="e2a" />
+ <bp:xref rdf:resource="db0" />
+ <bp:xref rdf:resource="fdc" />
+ <bp:xref rdf:resource="a9c" />
+ <bp:xref rdf:resource="a2f" />
+ <bp:left rdf:resource="pgkb.pe.bc76d" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="ebc">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">9084901</bp:id>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.df44d32">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of 2-Hydroxydesipramine To 2-Hydroxydesipramine glucuronide</bp:standardName>
+ <bp:right rdf:resource="pgkb.pe.a8a58" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of 2-Hydroxydesipramine To 2-Hydroxydesipramine glucuronide</bp:displayName>
+ <bp:xref rdf:resource="c4f" />
+ <bp:xref rdf:resource="d70" />
+ <bp:xref rdf:resource="b76" />
+ <bp:xref rdf:resource="e2a" />
+ <bp:xref rdf:resource="db0" />
+ <bp:xref rdf:resource="fdc" />
+ <bp:xref rdf:resource="a9c" />
+ <bp:xref rdf:resource="a2f" />
+ <bp:left rdf:resource="pgkb.pe.c11ba" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="c4f">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">10319193</bp:id>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005622">
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+ <bp:id rdf:datatype = "xsd:string">GO:0005622</bp:id>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="e2a">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">1813901</bp:id>
+</bp:PublicationXref>
+
+<bp:Provenance rdf:about="pgkb.provanence.pharmgkb">
+ <bp:displayName rdf:datatype = "xsd:string">PharmGKB</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">PharmGKB</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">http://pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA128">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA128</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.NCBI_TAXON_9606">
+ <bp:db rdf:datatype = "xsd:string">NCBI_Taxonomy</bp:db>
+ <bp:id rdf:datatype = "xsd:string">9606</bp:id>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA124">
+ <bp:xref rdf:resource="pgkb.xref.PA124" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C19</bp:standardName>
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.2_Hydroxyimipramine">
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxyimipramine</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA128">
+ <bp:xref rdf:resource="pgkb.xref.PA128" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="a9c">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">7461025</bp:id>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.31">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.df44d27" />
+ <bp:controller rdf:resource="pgkb.pe.a4805" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 31</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 31</bp:displayName>
+</bp:Catalysis>
+
+<bp:Pathway rdf:about="pgkb.pwy.PA162359940">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.subId == PS208561</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.coe == PK::PK	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.classification == N06A::Antidepressants	N::Nervous System	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">created by katrin 09/25/10</bp:comment>
+ <bp:displayName rdf:datatype = "xsd:string">Imipramine/Desipramine Pathway, Pharmacokinetics</bp:displayName>
+ <bp:xref rdf:resource="pgkb.xref.PA162359940" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.df44d35" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.31" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.21" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.df44d22" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.26" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.17" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.19" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.df44d13" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.df44d32" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.df44d27" />
+ <bp:standardName rdf:datatype = "xsd:string">Imipramine/Desipramine Pathway, Pharmacokinetics</bp:standardName>
+ <bp:dataSource rdf:resource="pgkb.provanence.pharmgkb" />
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA162359940">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA162359940</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==null</bp:comment>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="d70">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">3709631</bp:id>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.b763a">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == Primary Metabolizing Enzyme</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA124" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2C19</bp:displayName>
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.d45ed">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxyimipramine glucuronide</bp:standardName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.2_Hydroxyimipramine_glucuronide" />
+ <bp:displayName rdf:datatype = "xsd:string">2-Hydroxyimipramine glucuronide</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ba73e">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug == </bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">imipramine</bp:standardName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA449969" />
+ <bp:displayName rdf:datatype = "xsd:string">imipramine</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.b665d">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == Primary Metabolizing Enzyme</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA128" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2D6</bp:displayName>
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.dc802">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == Secondary Metabolizing Enzyme</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A4</bp:displayName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA124">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA124</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.2_Hydroxydesipramine_glucuronide">
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxydesipramine glucuronide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.bc76d">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxyimipramine</bp:standardName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.2_Hydroxyimipramine" />
+ <bp:displayName rdf:datatype = "xsd:string">2-Hydroxyimipramine</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:BioSource rdf:about="pgkg.bs.NCBI_TAXON_9609">
+ <bp:xref rdf:resource="pgkb.xref.NCBI_TAXON_9606" />
+ <bp:standardName rdf:datatype = "xsd:string">Homo sapiens</bp:standardName>
+</bp:BioSource>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA130">
+ <bp:xref rdf:resource="pgkb.xref.PA130" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.c4aba">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug == </bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">desipramine</bp:standardName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA449233" />
+ <bp:displayName rdf:datatype = "xsd:string">desipramine</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA27093">
+ <bp:xref rdf:resource="pgkb.xref.PA27093" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP1A2</bp:standardName>
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA27093">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA27093</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="a2f">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">6467794</bp:id>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.21">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == liver cell</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.df44d13" />
+ <bp:controller rdf:resource="pgkb.pe.a650f" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 21</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">liver cell</bp:displayName>
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.c11ba">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxydesipramine</bp:standardName>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.2_Hydroxydesipramine" />
+ <bp:displayName rdf:datatype = "xsd:string">2-Hydroxydesipramine</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA130">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA130</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA449969">
+ <bp:xref rdf:resource="pgkb.xref.PA449969" />
+ <bp:standardName rdf:datatype = "xsd:string">imipramine</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.pe.a650f">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == Secondary Metabolizing Enzyme</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA27093" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP1A2</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP1A2</bp:displayName>
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.df44d22">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of imipramine To 2-Hydroxyimipramine</bp:standardName>
+ <bp:right rdf:resource="pgkb.pe.bc76d" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of imipramine To 2-Hydroxyimipramine</bp:displayName>
+ <bp:xref rdf:resource="c4f" />
+ <bp:xref rdf:resource="d70" />
+ <bp:xref rdf:resource="b76" />
+ <bp:xref rdf:resource="e2a" />
+ <bp:xref rdf:resource="db0" />
+ <bp:xref rdf:resource="fdc" />
+ <bp:xref rdf:resource="a9c" />
+ <bp:xref rdf:resource="a2f" />
+ <bp:left rdf:resource="pgkb.pe.ba73e" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.26">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.df44d22" />
+ <bp:controller rdf:resource="pgkb.pe.b665d" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 26</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 26</bp:displayName>
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="b76">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">2687861</bp:id>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA449233">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA449233</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="db0">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">2687860</bp:id>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="fdc">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">16553509</bp:id>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.df44d27">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of desipramine To 2-Hydroxydesipramine</bp:standardName>
+ <bp:right rdf:resource="pgkb.pe.c11ba" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of desipramine To 2-Hydroxydesipramine</bp:displayName>
+ <bp:xref rdf:resource="c4f" />
+ <bp:xref rdf:resource="d70" />
+ <bp:xref rdf:resource="b76" />
+ <bp:xref rdf:resource="e2a" />
+ <bp:xref rdf:resource="db0" />
+ <bp:xref rdf:resource="fdc" />
+ <bp:xref rdf:resource="a9c" />
+ <bp:xref rdf:resource="a2f" />
+ <bp:left rdf:resource="pgkb.pe.c4aba" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.2_Hydroxydesipramine">
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxydesipramine</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.pe.a4805">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == Primary Metabolizing Enzyme</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA128" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2D6</bp:displayName>
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.19">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.df44d13" />
+ <bp:controller rdf:resource="pgkb.pe.b763a" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 19</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 19</bp:displayName>
+</bp:Catalysis>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005622">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005622" />
+ <bp:term rdf:datatype = "xsd:string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA449969">
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:id rdf:datatype = "xsd:string">PA449969</bp:id>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA449233">
+ <bp:xref rdf:resource="pgkb.xref.PA449233" />
+ <bp:standardName rdf:datatype = "xsd:string">desipramine</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.17">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.df44d13" />
+ <bp:controller rdf:resource="pgkb.pe.dc802" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 17</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 17</bp:displayName>
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.2_Hydroxyimipramine_glucuronide">
+ <bp:standardName rdf:datatype = "xsd:string">2-Hydroxyimipramine glucuronide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.df44d13">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Major</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of imipramine To desipramine</bp:standardName>
+ <bp:right rdf:resource="pgkb.pe.c4aba" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of imipramine To desipramine</bp:displayName>
+ <bp:xref rdf:resource="ebc" />
+ <bp:xref rdf:resource="cfe" />
+ <bp:left rdf:resource="pgkb.pe.ba73e" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="cfe">
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+ <bp:id rdf:datatype = "xsd:string">10319902</bp:id>
+</bp:PublicationXref>
+</rdf:RDF>

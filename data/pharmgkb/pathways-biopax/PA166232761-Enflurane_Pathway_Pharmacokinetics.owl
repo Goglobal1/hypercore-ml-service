@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166232101.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">difluoromethoxydifluoroacetic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166232101" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.f901d.PA449461">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">enflurane</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">enflurane</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA449461.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.f69d3.PA129">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA129.entityRef" />
+</bp:Protein>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA449461.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">enflurane</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449461" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f69d3_f1b32">
+ <bp:controller rdf:resource="pgkb.gene.f69d3.PA129" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bb384</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8162670" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8689955" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bb384</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.f901d_e17cd" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8689955">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8689955</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.3555939">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3555939</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e17cd.PA166232701">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-(difluoromethoxy)-2,2-difluoroacetyl fluoride</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-(difluoromethoxy)-2,2-difluoroacetyl fluoride</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166232701.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a9ca3.PA166232101">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">difluoromethoxydifluoroacetic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">difluoromethoxydifluoroacetic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166232101.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c7f67.PA449667">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA449667.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8162670">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8162670</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449667">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449667</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166232101">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166232101</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166232701">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166232701</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA166232761">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f69d3_f1b32" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e17cd_a9ca3" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.f901d_e17cd" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Enflurane Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA166232761" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Enflurane Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449461">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449461</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA166232761">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166232761</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166232701.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">2-(difluoromethoxy)-2,2-difluoroacetyl fluoride</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166232701" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA129">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA129</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA129.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA129" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e17cd_a9ca3">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction a3328</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8689955" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction a3328</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a9ca3.PA166232101" />
+ <bp:right rdf:resource="pgkb.metabolite.c7f67.PA449667" />
+ <bp:left rdf:resource="pgkb.metabolite.e17cd.PA166232701" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA449667.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449667" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.f901d_e17cd">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f1b32</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8162670" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8689955" />
+ <bp:xref rdf:resource="publicationXref.pubMed.3555939" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f1b32</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e17cd.PA166232701" />
+ <bp:left rdf:resource="pgkb.drug.f901d.PA449461" />
+</bp:BiochemicalReaction>
+</rdf:RDF>

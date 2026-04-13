@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.b8449.PA166159257">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dihydroxyvoriconazole o-glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dihydroxyvoriconazole o-glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159257.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.dbd78_c5de5">
+ <bp:controller rdf:resource="pgkb.gene.dbd78.PA37179" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aa908</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20304965" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aa908</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bbcde_c990f" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.fe32a.PA10233">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">voriconazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">voriconazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA10233.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159252.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyvoriconazole</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159252" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.d65d0_b1caf">
+ <bp:controller rdf:resource="pgkb.gene.d65d0.PA28189" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis df845</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18362161" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis df845</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.fe32a_e68b0">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction abf75</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17433262" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction abf75</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e68b0.PA166159252" />
+ <bp:left rdf:resource="pgkb.drug.fe32a.PA10233" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159256.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dihydroxyvoriconazole</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159256" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.fe32a_ba50d">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b1caf</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12695341" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16802848" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b1caf</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ba50d.PA166159251" />
+ <bp:left rdf:resource="pgkb.drug.fe32a.PA10233" />
+</bp:BiochemicalReaction>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709361">
+ <bp:xref rdf:resource="https://api.pharmgkb.org/data/ontologyTerm/cellularLocation/cellularLocation:1444709361" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12756205">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12756205</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.gene.e3206.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA165.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO1</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA165" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bbcde_c990f">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c5de5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23766489" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c5de5</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.c990f.PA166159255" />
+ <bp:left rdf:resource="pgkb.metabolite.bbcde.PA166159254" />
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.gene.a968b.PA37179">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA37179.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ba50d.PA166159251">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">voriconazole n-oxide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">voriconazole n-oxide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159251.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.d65d0.PA28189">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO5</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO5</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA28189.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.abb40_b1caf">
+ <bp:controller rdf:resource="pgkb.gene.abb40.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f4823</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12695341" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16802848" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f4823</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159255.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hydroxyvoriconazole o-glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159255" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159255">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159255</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159254">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159254</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159257">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159257</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159251.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">voriconazole n-oxide</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159251" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159256">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159256</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159251">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159251</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159253">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159253</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA166159252">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166159252</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.dbd78.PA37179">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA37179.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA126.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA126" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.ba9e6.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c7f5b.PA166159256">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dihydroxyvoriconazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dihydroxyvoriconazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159256.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e0bb8_b1d44">
+ <bp:controller rdf:resource="pgkb.gene.e0bb8.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f6485</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f6485</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_bbcde" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.abb40.PA126">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA126.entityRef" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.gene.e0bb8.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20002085">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20002085</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA130">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA130</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c990f.PA166159255">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hydroxyvoriconazole o-glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hydroxyvoriconazole o-glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159255.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159254.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hydroxyvoriconazole</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159254" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/data/ontologyTerm/cellularLocation/cellularLocation:1444709361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12695341">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12695341</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA28189.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO5</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA28189" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.17433262">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">17433262</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cee46_b1caf">
+ <bp:controller rdf:resource="pgkb.gene.cee46.PA165" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a6d78</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18362161" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a6d78</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.fe32a_bbcde">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b1d44</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23766489" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b1d44</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.bbcde.PA166159254" />
+ <bp:left rdf:resource="pgkb.drug.fe32a.PA10233" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA37179.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA37179" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA166.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO3</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA166" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:Protein rdf:about="pgkb.gene.a3958.PA37179">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">UGT1A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA37179.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159257.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dihydroxyvoriconazole o-glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159257" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.bbcde_c7f5b">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction cbd6c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23766489" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction cbd6c</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.c7f5b.PA166159256" />
+ <bp:left rdf:resource="pgkb.metabolite.bbcde.PA166159254" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.bbcde.PA166159254">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hydroxyvoriconazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hydroxyvoriconazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159254.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.c7f5b_b8449">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b43a8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23766489" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b43a8</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.b8449.PA166159257" />
+ <bp:left rdf:resource="pgkb.metabolite.c7f5b.PA166159256" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a3958_b43a8">
+ <bp:controller rdf:resource="pgkb.gene.a3958.PA37179" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a3da7</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a3da7</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.c7f5b_b8449" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23766489">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23766489</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA37179">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA37179</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c1ee7.PA166159253">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyvoriconazole 4-o-glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyvoriconazole 4-o-glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159253.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e68b0.PA166159252">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyvoriconazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyvoriconazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166159252.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA166">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/chemical/PA10233">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA10233</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA165">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA165</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e3206_cbd6c">
+ <bp:controller rdf:resource="pgkb.gene.e3206.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e4023</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e4023</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.bbcde_c7f5b" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA126">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA126</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA124">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA124</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.adc05.PA124">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA124.entityRef" />
+</bp:Protein>
+
+<bp:Pathway rdf:about="pgkb.pathway.null.NEW_PATHWAY">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.dbd78_c5de5" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.d65d0_b1caf" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.fe32a_e68b0" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.abb40_b1caf" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cee46_b1caf" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.fe32a_bbcde" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.adc05_b1caf" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bbcde_c7f5b" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.b44d2_b1caf" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e0bb8_b1d44" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a3958_b43a8" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.c7f5b_b8449" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cc810_abf75" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ba9e6_b1caf" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e3206_cbd6c" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a968b_d6ca1" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.bbcde_c990f" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e68b0_c1ee7" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Voriconazole Pathway, Pharmacokinetics</bp:standardName>
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Voriconazole Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA10233.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">voriconazole</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA10233" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16802848">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16802848</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.adc05_b1caf">
+ <bp:controller rdf:resource="pgkb.gene.adc05.PA124" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f9b4f</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12695341" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17433262" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16802848" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f9b4f</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.cc810.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18362161">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18362161</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.gene.b44d2.PA166">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO3</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO3</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA166.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.b44d2_b1caf">
+ <bp:controller rdf:resource="pgkb.gene.b44d2.PA166" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a23ea</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18362161" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a23ea</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://api.pharmgkb.org/v1/data/gene/PA28189">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA28189</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA130.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA130" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cc810_abf75">
+ <bp:controller rdf:resource="pgkb.gene.cc810.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ad4ec</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18362161" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17433262" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ad4ec</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_e68b0" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ba9e6_b1caf">
+ <bp:controller rdf:resource="pgkb.gene.ba9e6.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bd056</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12695341" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17433262" />
+ <bp:xref rdf:resource="publicationXref.pubMed.16802848" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis bd056</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.fe32a_ba50d" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.cee46.PA165">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">FMO1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA165.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a968b_d6ca1">
+ <bp:controller rdf:resource="pgkb.gene.a968b.PA37179" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e4dba</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20304965" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e4dba</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e68b0_c1ee7" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e68b0_c1ee7">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d6ca1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12756205" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20002085" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction d6ca1</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.c1ee7.PA166159253" />
+ <bp:left rdf:resource="pgkb.metabolite.e68b0.PA166159252" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA124.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C19</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/gene/PA124" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20304965">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20304965</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166159253.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4-hydroxyvoriconazole 4-o-glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://api.pharmgkb.org/v1/data/chemical/PA166159253" />
+</bp:SmallMoleculeReference>
+</rdf:RDF>

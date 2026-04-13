@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:Control rdf:about="pgkb.inhibition.a4b98_c6e28">
+ <bp:controlled rdf:resource="pgkb.inhibition.a4b98_c6e28.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.a4b98.PA166170895" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition bdc04</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition bdc04</bp:displayName>
+</bp:Control>
+
+<bp:Control rdf:about="pgkb.inhibition.e5ba9_e9d61">
+ <bp:controlled rdf:resource="pgkb.inhibition.e5ba9_e9d61.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e5ba9.PA10026" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition db290</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition db290</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA390">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA390</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246381">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246381</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA10026.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA10026" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.29443543">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">29443543</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709360">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709360" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transmembrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709361">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709361" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.df46e_af55b">
+ <bp:controller rdf:resource="pgkb.gene.df46e.PA128" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d28fe</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d28fe</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e5ba9_cce06" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.e5ba9.PA10026">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA10026.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ea72d_ac98d">
+ <bp:controller rdf:resource="pgkb.gene.ea72d.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dc377</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis dc377</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e5ba9_a4b98" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e5ba9_a7900">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b239c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b239c</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a7900.PA166246381" />
+ <bp:left rdf:resource="pgkb.drug.e5ba9.PA10026" />
+</bp:BiochemicalReaction>
+
+<bp:Interaction rdf:about="pgkb.inhibition.a4b98_c6e28.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition bdc04</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition bdc04</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.c6e28.PA390" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a4b98.PA166170895">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dehydroaripiprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dehydroaripiprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166170895.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246361.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole metabolite DM-1451</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246361" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166161216">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166161216</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246621">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246621</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.ea72d.PA130">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA130.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.cce06.PA166246361">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole metabolite DM-1451</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole metabolite DM-1451</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246361.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.c0456.PA449703">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">formaldehyde</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">formaldehyde</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA449703.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA449703.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">formaldehyde</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449703" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.28350572">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">28350572</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA131.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A5</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA131" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e9d61_da12a">
+ <bp:controller rdf:resource="pgkb.gene.e9d61.PA267" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a1929</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23737243" />
+ <bp:xref rdf:resource="publicationXref.pubMed.29443543" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a1929</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5ba9_b1138" />
+</bp:Catalysis>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e5ba9_c6e28.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f3d75</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f3d75</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.c6e28.PA390" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.a4648.PA166246641">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lauric acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lauric acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166246641.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA10026">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA10026</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e8835_e5ba9">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e326d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28350572" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e326d</bp:displayName>
+ <bp:right rdf:resource="pgkb.drug.e5ba9.PA10026" />
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.c0456.PA449703" />
+ <bp:left rdf:resource="pgkb.metabolite.e8835.PA166246621" />
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA267.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA267" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166246641.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">lauric acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246641" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709359">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005576</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA267">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA267</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.c66bd.PA131">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A5</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A5</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA131.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/transmembraneTypes/transmembraneTypes:1444712699">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0005886</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246381.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1-(2,3-dichlorophenyl)piperazine</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246381" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709360">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO:0016021</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">GO</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.b1138.PA10026">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA10026.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Interaction rdf:about="pgkb.inhibition.a4b98_e9d61.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f2693</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f2693</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.e9d61.PA267" />
+</bp:Interaction>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444709359">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/cellularLocation/cellularLocation:1444709359" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Extracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA166246401">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246401</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.e5ba9_b1138">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport da12a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.29325225" />
+ <bp:xref rdf:resource="publicationXref.pubMed.29443543" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport da12a</bp:displayName>
+ <bp:right rdf:resource="pgkb.drug.b1138.PA10026" />
+ <bp:left rdf:resource="pgkb.drug.e5ba9.PA10026" />
+</bp:Transport>
+
+<bp:Protein rdf:about="pgkb.gene.df46e.PA128">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA128.entityRef" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166170895.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">dehydroaripiprazole</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166170895" />
+</bp:SmallMoleculeReference>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA128.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2D6</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA128" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.e9d61.PA267">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCB1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712699" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA267.entityRef" />
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e5ba9_cce06">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction af55b</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction af55b</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.cce06.PA166246361" />
+ <bp:left rdf:resource="pgkb.drug.e5ba9.PA10026" />
+</bp:BiochemicalReaction>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246361">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246361</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ae93a_e8835">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e998e</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.28350572" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction e998e</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.a4648.PA166246641" />
+ <bp:right rdf:resource="pgkb.metabolite.e8835.PA166246621" />
+ <bp:left rdf:resource="pgkb.drug.ae93a.PA166161216" />
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c66bd_ac98d">
+ <bp:controller rdf:resource="pgkb.gene.c66bd.PA131" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d25c1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.29325225" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d25c1</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e5ba9_a4b98" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246621.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-hydroxymethyl aripiprazole</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246621" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246641">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246641</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.a4b98_e9d61">
+ <bp:controlled rdf:resource="pgkb.inhibition.a4b98_e9d61.subinteraction" />
+ <bp:controller rdf:resource="pgkb.metabolite.a4b98.PA166170895" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f2693</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f2693</bp:displayName>
+</bp:Control>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA166161216.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole lauroxil</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166161216" />
+</bp:SmallMoleculeReference>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA166246401">
+ <bp:pathwayComponent rdf:resource="pgkb.transport.e5ba9_b1138" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ea72d_b239c" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.a4b98_c6e28" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e5ba9_e9d61" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e5ba9_c6e28.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e8835_e5ba9" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e5ba9_cce06" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ae93a_e8835" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c66bd_ac98d" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.df46e_af55b" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ea72d_ac98d" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.a4b98_e9d61" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e5ba9_a7900" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.a4b98_c6e28.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.e5ba9_a4b98" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e5ba9_c6e28" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.a4b98_e9d61.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ea72d_af55b" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e5ba9_e9d61.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.df46e_ac98d" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e9d61_da12a" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Aripiprazole Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA166246401" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Aripiprazole Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA130">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA130</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a7900.PA166246381">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1-(2,3-dichlorophenyl)piperazine</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1-(2,3-dichlorophenyl)piperazine</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246381.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Control rdf:about="pgkb.inhibition.e5ba9_c6e28">
+ <bp:controlled rdf:resource="pgkb.inhibition.e5ba9_c6e28.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e5ba9.PA10026" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f3d75</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f3d75</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA131">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA131</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ea72d_af55b">
+ <bp:controller rdf:resource="pgkb.gene.ea72d.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aacb3</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aacb3</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e5ba9_cce06" />
+</bp:Catalysis>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e5ba9_e9d61.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition db290</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22847220" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition db290</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.e9d61.PA267" />
+</bp:Interaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.df46e_ac98d">
+ <bp:controller rdf:resource="pgkb.gene.df46e.PA128" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c3f59</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c3f59</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e5ba9_a4b98" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ea72d_b239c">
+ <bp:controller rdf:resource="pgkb.gene.ea72d.PA130" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c7f50</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c7f50</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.e5ba9_a7900" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA390.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCG2</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA390" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.29325225">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">29325225</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449703">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449703</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e8835.PA166246621">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-hydroxymethyl aripiprazole</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">N-hydroxymethyl aripiprazole</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246621.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166170895">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166170895</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.term.1444712699">
+ <bp:xref rdf:resource="https://pharmgkb.org/ontologyTerm/transmembraneTypes/transmembraneTypes:1444712699" />
+ <bp:term rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Plasma Membrane</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA130.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA130" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA128">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA128</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23737243">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23737243</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.ae93a.PA166161216">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole lauroxil</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">aripiprazole lauroxil</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA166161216.entityRef" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.e5ba9_a4b98">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ac98d</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.29325225" />
+ <bp:xref rdf:resource="publicationXref.pubMed.17164689" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21476873" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction ac98d</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a4b98.PA166170895" />
+ <bp:left rdf:resource="pgkb.drug.e5ba9.PA10026" />
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.17164689">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">17164689</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.22847220">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">22847220</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21476873">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21476873</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.gene.c6e28.PA390">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCG2</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCG2</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712699" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA390.entityRef" />
+</bp:Protein>
+</rdf:RDF>

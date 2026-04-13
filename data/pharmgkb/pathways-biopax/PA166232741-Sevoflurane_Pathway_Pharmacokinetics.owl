@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a536a_ebe42">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b18ec</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7486145" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8214760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b18ec</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.ebe42.PA166232681" />
+ <bp:right rdf:resource="pgkb.metabolite.f43d4.PA449667" />
+ <bp:left rdf:resource="pgkb.drug.a536a.PA451341" />
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166233501">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166233501</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166233501.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hexafluoroisopropanol glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166233501" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7486145">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7486145</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.a367d.PA166233501">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hexafluoroisopropanol glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hexafluoroisopropanol glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166233501.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.gene.fae1d.PA129">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA129.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.ebe42.PA166232681">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hexafluoroisopropanol</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hexafluoroisopropanol</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166232681.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA451341">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA451341</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.fae1d_b18ec">
+ <bp:controller rdf:resource="pgkb.gene.fae1d.PA129" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e0ca2</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7486145" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8214760" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e0ca2</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a536a_ebe42" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166232681.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">hexafluoroisopropanol</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166232681" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166232681">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166232681</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449667">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449667</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ebe42_a367d">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f1ca9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.8094451" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f1ca9</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.a367d.PA166233501" />
+ <bp:left rdf:resource="pgkb.metabolite.ebe42.PA166232681" />
+</bp:BiochemicalReaction>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA166232741">
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a536a_ebe42" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ebe42_a367d" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.fae1d_b18ec" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Sevoflurane Pathway, Pharmacokinetics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA166232741" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Sevoflurane Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.a536a.PA451341">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">sevoflurane</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">sevoflurane</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA451341.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8214760">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8214760</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA166232741">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166232741</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8094451">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8094451</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA129">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA129</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA451341.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">sevoflurane</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA451341" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.f43d4.PA449667">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA449667.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA129.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2E1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA129" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA449667.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">fluoride</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449667" />
+</bp:SmallMoleculeReference>
+</rdf:RDF>

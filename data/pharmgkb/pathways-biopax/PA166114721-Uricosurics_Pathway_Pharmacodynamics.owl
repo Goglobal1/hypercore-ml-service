@@ -1,0 +1,1094 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.eccce_baa72">
+ <bp:controller rdf:resource="pgkb.gene.eccce.PA389" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis df5a5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis df5a5</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.c8131_e5cc6" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA165980774">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA165980774</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.dd611.PA390">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCG2</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCG2</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA390.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA35820.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC17A1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA35820" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.e965f.PA37771">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA37771.entityRef" />
+</bp:Protein>
+
+<bp:Interaction rdf:about="pgkb.inhibition.dd1c6_e0047.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition dc11a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12472777" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition dc11a</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.e0047.PA388" />
+</bp:Interaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23253231">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23253231</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.c0104.PA131890628">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">tranilast</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">tranilast</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA131890628.entityRef" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.e5cc6.PA166178378">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178378.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Control rdf:about="pgkb.inhibition.dd1c6_e0047">
+ <bp:controlled rdf:resource="pgkb.inhibition.dd1c6_e0047.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.dd1c6.PA134852920" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition dc11a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12472777" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition dc11a</bp:displayName>
+</bp:Control>
+
+<bp:Protein rdf:about="pgkb.gene.bfc61.PA30347">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">LGALS9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">LGALS9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA30347.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18636784">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18636784</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA32814">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA32814</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.af23e.PA35820">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC17A1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC17A1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA35820.entityRef" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.gene.aefb8.PA30347">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">LGALS9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">LGALS9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712701" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA30347.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.e4a19.PA451106">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">probenecid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">probenecid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA451106.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA35822">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA35822</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA35820">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA35820</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA451550">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5342</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.c0de9_efcc1">
+ <bp:controller rdf:resource="pgkb.gene.c0de9.PA35822" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d065c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis d065c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_df876" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.e9611.PA451299">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">salicyclic acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">salicyclic acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA451299.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Control rdf:about="pgkb.inhibition.dd1c6_a29a1">
+ <bp:controlled rdf:resource="pgkb.inhibition.dd1c6_a29a1.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.dd1c6.PA134852920" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c9b4b</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c9b4b</bp:displayName>
+</bp:Control>
+
+<bp:Protein rdf:about="pgkb.gene.eccce.PA389">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A8</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A8</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712701" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA389.entityRef" />
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.c8131.PA166178378">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178378.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Interaction rdf:about="pgkb.inhibition.f1331_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition a2bd0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23253231" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition a2bd0</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.f1331.PA451898">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">vitamin c</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">vitamin c</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA451898.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Transport rdf:about="pgkb.transport.df876_e5cc6">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport ef2e3</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.18636784" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport ef2e3</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.e5cc6.PA166178378" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.df876.PA166178378" />
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.a29a1_d19e9">
+ <bp:controller rdf:resource="pgkb.gene.a29a1.PA37771" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e490f</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18842065" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis e490f</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_c8131" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18600508">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18600508</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.gene.e0047.PA388">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A6</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A6</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712701" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA388.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.f7fb6_ef2e3">
+ <bp:controller rdf:resource="pgkb.gene.f7fb6.PA32814" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aa065</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18411268" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis aa065</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.df876_e5cc6" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA451550">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA451550</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.biologicalIntermediate.PA166178378.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA166178378" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166178378" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/pathway/PA166114721">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166114721</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA451299">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA451299</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.22359229">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">22359229</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.dd1c6.PA134852920">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">benzbromarone</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">benzbromarone</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA134852920.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Interaction rdf:about="pgkb.inhibition.bc8f9_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition bdd69</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition bdd69</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="pubchem.PA451106">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">4911</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.c8131_e5cc6">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport baa72</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport baa72</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.e5cc6.PA166178378" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.c8131.PA166178378" />
+</bp:Transport>
+
+<bp:Pathway rdf:about="pgkb.pathway.b2d5c.PA165980774">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Uric Acid-Lowering Drugs Pathway, Pharmacodynamics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA165980774" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Uric Acid-Lowering Drugs Pathway, Pharmacodynamics</bp:displayName>
+</bp:Pathway>
+
+<bp:Pathway rdf:about="pgkb.pathway.PA166114721">
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.eccce_baa72" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.dd1c6_e0047.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cd44c_ef2e3" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.c0104_a29a1" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.cb299_ef2e3" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.ee40b_efcc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.dd1c6_e0047" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e965f_efcc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.af23e_efcc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.c0de9_efcc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.dd1c6_a29a1" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.f1331_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.df876_e5cc6" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.f1e9a_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.a29a1_d19e9" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.f1331_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.f7fb6_ef2e3" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_cb299" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_cb299.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e9611_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.bf241_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.bc8f9_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.c7dc1_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.c8131_e5cc6" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.c7dc1_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.dd611_efcc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.c0104_a29a1.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.bfc61_efcc1" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.e5cc6_df876" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_f7fb6" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.c8131_b2d5c" />
+ <bp:pathwayComponent rdf:resource="pgkb.leadsTo.c8131_b2d5c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.aefb8_d19e9" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.c0104_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.activation.f1e9a_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_e0047.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_e0047" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.bf241_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.c0104_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e965f_ef2e3" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.e5cc6_c8131" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e4a19_f7fb6.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.bc8f9_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.dd1c6_cd44c" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.dd1c6_cd44c.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e0047_baa72" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.dd1c6_a29a1.subinteraction" />
+ <bp:pathwayComponent rdf:resource="pgkb.inhibition.e9611_cd44c.subinteraction" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Uricosurics Pathway, Pharmacodynamics</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/pathway/PA166114721" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Uricosurics Pathway, Pharmacodynamics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA450268.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">losartan</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA450268" />
+ <bp:xref rdf:resource="pubchem.PA450268" />
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA390.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCG2</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA390" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.bfc61_efcc1">
+ <bp:controller rdf:resource="pgkb.gene.bfc61.PA30347" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c51e8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c51e8</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_df876" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pubchem.PA451299">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">338</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.biologicalIntermediate.df876.PA166178378">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">uric acid</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709359" />
+ <bp:entityReference rdf:resource="pgkb.biologicalIntermediate.PA166178378.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.aefb8_d19e9">
+ <bp:controller rdf:resource="pgkb.gene.aefb8.PA30347" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c337a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c337a</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_c8131" />
+</bp:Catalysis>
+
+<bp:Control rdf:about="pgkb.inhibition.c0104_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.c0104_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.c0104.PA131890628" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition fd364</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition fd364</bp:displayName>
+</bp:Control>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA451898.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">vitamin c</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA451898" />
+ <bp:xref rdf:resource="pubchem.PA451898" />
+</bp:SmallMoleculeReference>
+
+<bp:Control rdf:about="pgkb.inhibition.e4a19_e0047">
+ <bp:controlled rdf:resource="pgkb.inhibition.e4a19_e0047.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e4a19.PA451106" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition b2964</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12472777" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition b2964</bp:displayName>
+</bp:Control>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e4a19_e0047.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition b2964</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.12472777" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition b2964</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.e0047.PA388" />
+</bp:Interaction>
+
+<bp:Interaction rdf:about="pgkb.inhibition.c0104_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition fd364</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition fd364</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.1948784">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1948784</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e965f_ef2e3">
+ <bp:controller rdf:resource="pgkb.gene.e965f.PA37771" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a57d2</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18842065" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a57d2</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.df876_e5cc6" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA451106.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">probenecid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA451106" />
+ <bp:xref rdf:resource="pubchem.PA451106" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.20613716">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">20613716</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Transport rdf:about="pgkb.transport.e5cc6_c8131">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport d19e9</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18842065" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport d19e9</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.c8131.PA166178378" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.e5cc6.PA166178378" />
+</bp:Transport>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA38478.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A12</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA38478" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.f7fb6.PA32814">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A13</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A13</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA32814.entityRef" />
+</bp:Protein>
+
+<bp:Interaction rdf:about="pgkb.inhibition.dd1c6_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f10f8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f10f8</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e0047_baa72">
+ <bp:controller rdf:resource="pgkb.gene.e0047.PA388" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ffab6</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12472777" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ffab6</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.c8131_e5cc6" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA388.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A6</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA388" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e9611_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c32a4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c32a4</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA37771.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A9</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA37771" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.668783">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">668783</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18411268">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18411268</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e4a19_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c9db1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c9db1</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA390">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA390</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA450268">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA450268</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.cd44c.PA38478">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A12</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A12</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA38478.entityRef" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cd44c_ef2e3">
+ <bp:controller rdf:resource="pgkb.gene.cd44c.PA38478" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c7b2c</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18670416" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23253231" />
+ <bp:xref rdf:resource="publicationXref.pubMed.668783" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.1948784" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8743498" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis c7b2c</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.df876_e5cc6" />
+</bp:Catalysis>
+
+<bp:Control rdf:about="pgkb.inhibition.c0104_a29a1">
+ <bp:controlled rdf:resource="pgkb.inhibition.c0104_a29a1.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.c0104.PA131890628" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition e68f4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition e68f4</bp:displayName>
+</bp:Control>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.cb299_ef2e3">
+ <bp:controller rdf:resource="pgkb.gene.cb299.PA38295" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ffa5e</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ffa5e</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.df876_e5cc6" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.ee40b_efcc1">
+ <bp:controller rdf:resource="pgkb.gene.ee40b.PA397" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f73e4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f73e4</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_df876" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.f1e9a.PA33165">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PDZK1</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PDZK1</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA33165.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA32814.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A13</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA32814" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e965f_efcc1">
+ <bp:controller rdf:resource="pgkb.gene.e965f.PA37771" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ac391</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18842065" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis ac391</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_df876" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.gene.ee40b.PA397">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCC4</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCC4</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA397.entityRef" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA38295.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A11</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA38295" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.gene.cb299.PA38295">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A11</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A11</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA38295.entityRef" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA397">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA397</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18842065">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18842065</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA451106">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA451106</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA131890628.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">tranilast</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA131890628" />
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.af23e_efcc1">
+ <bp:controller rdf:resource="pgkb.gene.af23e.PA35820" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a5f2a</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis a5f2a</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_df876" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.22945592">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">22945592</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pubchem.PA450268">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3961</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12472777">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12472777</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA134852920">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA134852920</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.12024214">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">12024214</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA33165">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA33165</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA389">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA389</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA388">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA388</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.activation.f1e9a_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation a1860</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18600508" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19503597" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Activation a1860</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA38295">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA38295</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA449982.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">indomethacin</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA449982" />
+ <bp:xref rdf:resource="pubchem.PA449982" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.19503597">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">19503597</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.c7dc1.PA451550">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">sulfinpyrazone</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">sulfinpyrazone</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA451550.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA30347.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">LGALS9</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA30347" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Control rdf:about="pgkb.inhibition.f1331_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.f1331_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.f1331.PA451898" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition a2bd0</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23253231" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition a2bd0</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="pubchem.PA166178378">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">1175</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.e4a19_cb299">
+ <bp:controlled rdf:resource="pgkb.inhibition.e4a19_cb299.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e4a19.PA451106" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition b1698</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition b1698</bp:displayName>
+</bp:Control>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA134852920.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">benzbromarone</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA134852920" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.23318701">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">23318701</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA35822.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC17A3</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA35822" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e4a19_cb299.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition b1698</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition b1698</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cb299.PA38295" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA451898">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA451898</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.e9611_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.e9611_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e9611.PA451299" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c32a4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c32a4</bp:displayName>
+</bp:Control>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA30347">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA30347</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.bf241_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.bf241_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.bf241.PA450268" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition e3b98</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18670416" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8743498" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition e3b98</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="pubchem.PA449982">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3715</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA37771">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA37771</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.c7dc1_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.c7dc1_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.c7dc1.PA451550" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition eb4e5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.668783" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.1948784" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition eb4e5</bp:displayName>
+</bp:Control>
+
+<bp:Interaction rdf:about="pgkb.inhibition.c7dc1_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition eb4e5</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.668783" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.1948784" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition eb4e5</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.bc8f9.PA449982">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">indomethacin</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">indomethacin</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA449982.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.dd611_efcc1">
+ <bp:controller rdf:resource="pgkb.gene.dd611.PA390" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f3381</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis f3381</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.transport.e5cc6_df876" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA389.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC22A8</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA389" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Interaction rdf:about="pgkb.inhibition.c0104_a29a1.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition e68f4</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition e68f4</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.a29a1.PA37771" />
+</bp:Interaction>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.bf241.PA450268">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">losartan</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">losartan</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA450268.entityRef" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.8743498">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">8743498</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA131890628">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA131890628</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA449982">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA449982</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.e5cc6_df876">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport efcc1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:xref rdf:resource="publicationXref.pubMed.20613716" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Transport efcc1</bp:displayName>
+ <bp:right rdf:resource="pgkb.biologicalIntermediate.df876.PA166178378" />
+ <bp:left rdf:resource="pgkb.biologicalIntermediate.e5cc6.PA166178378" />
+</bp:Transport>
+
+<bp:Control rdf:about="pgkb.inhibition.e4a19_f7fb6">
+ <bp:controlled rdf:resource="pgkb.inhibition.e4a19_f7fb6.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e4a19.PA451106" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f1574</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18411268" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f1574</bp:displayName>
+</bp:Control>
+
+<bp:Control rdf:about="pgkb.leadsTo.c8131_b2d5c">
+ <bp:controlled rdf:resource="pgkb.leadsTo.c8131_b2d5c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.biologicalIntermediate.c8131.PA166178378" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To b95bc</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Leads To b95bc</bp:displayName>
+</bp:Control>
+
+<bp:Interaction rdf:about="pgkb.leadsTo.c8131_b2d5c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To b95bc</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Leads To b95bc</bp:displayName>
+ <bp:participant rdf:resource="pgkb.pathway.b2d5c.PA165980774" />
+</bp:Interaction>
+
+<bp:Control rdf:about="pgkb.activation.f1e9a_cd44c">
+ <bp:controlled rdf:resource="pgkb.activation.f1e9a_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.gene.f1e9a.PA33165" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation a1860</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18600508" />
+ <bp:xref rdf:resource="publicationXref.pubMed.19503597" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22359229" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ACTIVATION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Activation a1860</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA38478">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA38478</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:Interaction rdf:about="pgkb.inhibition.bf241_cd44c.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition e3b98</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18670416" />
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.8743498" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition e3b98</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.cd44c.PA38478" />
+</bp:Interaction>
+
+<bp:Control rdf:about="pgkb.inhibition.e4a19_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.e4a19_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.e4a19.PA451106" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c9db1</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition c9db1</bp:displayName>
+</bp:Control>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166178378">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166178378</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA451550.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">sulfinpyrazone</bp:standardName>
+ <bp:xref rdf:resource="pubchem.PA451550" />
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA451550" />
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA397.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">ABCC4</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA397" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:Interaction rdf:about="pgkb.inhibition.e4a19_f7fb6.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f1574</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.18411268" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition f1574</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.f7fb6.PA32814" />
+</bp:Interaction>
+
+<bp:UnificationXref rdf:about="pubchem.PA451898">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5785</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubchemCompound</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.gene.a29a1.PA37771">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC2A9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712701" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA37771.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.18670416">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">18670416</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Control rdf:about="pgkb.inhibition.bc8f9_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.bc8f9_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.bc8f9.PA449982" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition bdd69</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition bdd69</bp:displayName>
+</bp:Control>
+
+<bp:Control rdf:about="pgkb.inhibition.dd1c6_cd44c">
+ <bp:controlled rdf:resource="pgkb.inhibition.dd1c6_cd44c.subinteraction" />
+ <bp:controller rdf:resource="pgkb.drug.dd1c6.PA134852920" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f10f8</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:xref rdf:resource="publicationXref.pubMed.21272127" />
+ <bp:xref rdf:resource="publicationXref.pubMed.12024214" />
+ <bp:xref rdf:resource="publicationXref.pubMed.23318701" />
+ <bp:controlType rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Inhibition f10f8</bp:displayName>
+</bp:Control>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA451299.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">salicyclic acid</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA451299" />
+ <bp:xref rdf:resource="pubchem.PA451299" />
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA33165.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PDZK1</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA33165" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.21272127">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">21272127</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Interaction rdf:about="pgkb.inhibition.dd1c6_a29a1.subinteraction">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c9b4b</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.22945592" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Subinteraction of Inhibition c9b4b</bp:displayName>
+ <bp:participant rdf:resource="pgkb.gene.a29a1.PA37771" />
+</bp:Interaction>
+
+<bp:Protein rdf:about="pgkb.gene.c0de9.PA35822">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC17A3</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">SLC17A3</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444712700" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA35822.entityRef" />
+</bp:Protein>
+</rdf:RDF>

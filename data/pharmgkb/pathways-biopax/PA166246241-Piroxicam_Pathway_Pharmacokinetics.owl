@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e3560.PA166242201">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-hydroxypiroxicam</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-hydroxypiroxicam</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166242201.entityRef" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA450985">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA450985</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.32164968">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">32164968</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BioSource rdf:about="pgkb.ncbiTaxon.9606">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="https://purl.bioontology.org/ontology/NCBITAXON/9606" />
+</bp:BioSource>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b3d4c_c067b">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b9547</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7021122" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction b9547</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.c067b.PA166246221" />
+ <bp:left rdf:resource="pgkb.drug.b3d4c.PA450985" />
+</bp:BiochemicalReaction>
+
+<bp:Provenance rdf:about="pgkb.provenance.pharmgkb">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">https://www.pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b3d4c_e9bef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c7791</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.7908879" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7021122" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction c7791</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e9bef.PA166246201" />
+ <bp:left rdf:resource="pgkb.drug.b3d4c.PA450985" />
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246201">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246201</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.89124">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">89124</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166246221">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166246221</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/chemical/PA166242201">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA166242201</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="https://purl.bioontology.org/ontology/NCBITAXON/9606">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">9606</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">NCBI Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246221.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">desmethyl piroxicam</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246221" />
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.gene.e0276.PA126">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.gene.PA126.entityRef" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.16198655">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">16198655</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166242201.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">5&apos;-hydroxypiroxicam</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166242201" />
+</bp:SmallMoleculeReference>
+
+<bp:Pathway rdf:about="pgkb.pathway.NEW_PATHWAY">
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b3d4c_c067b" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.e0276_f8082" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b3d4c_e3560" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.b3d4c_e9bef" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Piroxicam Pathway, Pharmacokinetics</bp:standardName>
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Piroxicam Pathway, Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provenance.pharmgkb" />
+</bp:Pathway>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.c067b.PA166246221">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">desmethyl piroxicam</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">desmethyl piroxicam</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246221.entityRef" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.e0276_f8082">
+ <bp:controller rdf:resource="pgkb.gene.e0276.PA126" />
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis da154</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.16198655" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Catalysis da154</bp:displayName>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.b3d4c_e3560" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7908879">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7908879</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.7021122">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">7021122</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="publicationXref.pubMed.3582473">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">3582473</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">pubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.drug.PA450985.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">piroxicam</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA450985" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.metabolite.e9bef.PA166246201">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">piroxicam glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">piroxicam glucuronide</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.metabolite.PA166246201.entityRef" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.gene.PA126.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">CYP2C9</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/gene/PA126" />
+ <bp:organism rdf:resource="pgkb.ncbiTaxon.9606" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="https://pharmgkb.org/gene/PA126">
+ <bp:id rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PA126</bp:id>
+ <bp:db rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.metabolite.PA166246201.entityRef">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">piroxicam glucuronide</bp:standardName>
+ <bp:xref rdf:resource="https://pharmgkb.org/chemical/PA166246201" />
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.b3d4c_e3560">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f8082</bp:standardName>
+ <bp:xref rdf:resource="publicationXref.pubMed.16198655" />
+ <bp:xref rdf:resource="publicationXref.pubMed.89124" />
+ <bp:xref rdf:resource="publicationXref.pubMed.32164968" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7908879" />
+ <bp:xref rdf:resource="publicationXref.pubMed.7021122" />
+ <bp:xref rdf:resource="publicationXref.pubMed.3582473" />
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">Biochemical Reaction f8082</bp:displayName>
+ <bp:right rdf:resource="pgkb.metabolite.e3560.PA166242201" />
+ <bp:left rdf:resource="pgkb.drug.b3d4c.PA450985" />
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.drug.b3d4c.PA450985">
+ <bp:standardName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">piroxicam</bp:standardName>
+ <bp:displayName rdf:datatype = "http://www.w3.org/2001/XMLSchema#string">piroxicam</bp:displayName>
+ <bp:cellularLocation rdf:resource="pgkb.term.1444709361" />
+ <bp:entityReference rdf:resource="pgkb.drug.PA450985.entityRef" />
+</bp:SmallMolecule>
+</rdf:RDF>

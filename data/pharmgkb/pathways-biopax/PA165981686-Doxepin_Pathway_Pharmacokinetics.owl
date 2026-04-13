@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:Protein rdf:about="pgkb.pe.c646b">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA124" />
+ <bp:displayName rdf:datatype = "xsd:string">CYP2C19</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C19</bp:standardName>
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.adedc">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.doxepin_N_oxide_glucuronide" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">doxepin-N-oxide glucuronide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">doxepin-N-oxide glucuronide</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA449409">
+ <bp:xref rdf:resource="pgkb.xref.PA449409" />
+ <bp:standardName rdf:datatype = "xsd:string">doxepin</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="d54">
+ <bp:id rdf:datatype = "xsd:string">11037801</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.b956b">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA128" />
+ <bp:displayName rdf:datatype = "xsd:string">CYP2D6</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.41">
+ <bp:controller rdf:resource="pgkb.pe.ee549" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ca67a33" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 41</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Minor</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 41</bp:standardName>
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a27">
+ <bp:right rdf:resource="pgkb.pe.f6a7b" />
+ <bp:xref rdf:resource="b52" />
+ <bp:xref rdf:resource="bd7" />
+ <bp:left rdf:resource="pgkb.pe.ad28e" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of hydroxy-doxepin To hydroxy-doxepin glucuronide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of hydroxy-doxepin To hydroxy-doxepin glucuronide</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA449409">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA449409</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005622">
+ <bp:id rdf:datatype = "xsd:string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a24">
+ <bp:right rdf:resource="pgkb.pe.adedc" />
+ <bp:xref rdf:resource="b52" />
+ <bp:left rdf:resource="pgkb.pe.b6e8b" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin-N-oxide To doxepin-N-oxide glucuronide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin-N-oxide To doxepin-N-oxide glucuronide</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="bd7">
+ <bp:id rdf:datatype = "xsd:string">9733660</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.doxepin_N_oxide_glucuronide">
+ <bp:standardName rdf:datatype = "xsd:string">doxepin-N-oxide glucuronide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.hydroxy_desmethyldoxepin">
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-desmethyldoxepin</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a21">
+ <bp:right rdf:resource="pgkb.pe.af821" />
+ <bp:xref rdf:resource="b96" />
+ <bp:left rdf:resource="pgkb.pe.e1a43" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of desmethyldoxepin  To didesmethyldoxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of desmethyldoxepin  To didesmethyldoxepin</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.48">
+ <bp:controller rdf:resource="pgkb.pe.b956b" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ca67a44" />
+ <bp:xref rdf:resource="d54" />
+ <bp:xref rdf:resource="b2c" />
+ <bp:xref rdf:resource="bb1" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 48</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 48</bp:standardName>
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.desmethyldoxepin">
+ <bp:standardName rdf:datatype = "xsd:string">desmethyldoxepin </bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.43">
+ <bp:controller rdf:resource="pgkb.pe.c646b" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ca67a33" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 43</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 43</bp:standardName>
+</bp:Catalysis>
+
+<bp:Pathway rdf:about="pgkb.pwy.PA165981686">
+ <bp:dataSource rdf:resource="pgkb.provanence.pharmgkb" />
+ <bp:displayName rdf:datatype = "xsd:string">Doxepin Pathway, Pharmacokinetics</bp:displayName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:xref rdf:resource="pgkb.xref.PA165981686" />
+ <bp:standardName rdf:datatype = "xsd:string">Doxepin Pathway, Pharmacokinetics</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">created 10/22/12</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.subId == PS216483</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.classification == N06AA::Non-selective monoamine reuptake inhibitors	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.coe == PK::PK	</bp:comment>
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a27" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.41" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a16" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a33" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a24" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a44" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a30" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.37" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a21" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.48" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.39" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.20" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ca67a49" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.43" />
+</bp:Pathway>
+
+<bp:Provenance rdf:about="pgkb.provanence.pharmgkb">
+ <bp:comment rdf:datatype = "xsd:string">http://pharmgkb.org</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">PharmGKB</bp:displayName>
+</bp:Provenance>
+
+<bp:Protein rdf:about="pgkb.pe.ee549">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA126" />
+ <bp:displayName rdf:datatype = "xsd:string">CYP2C9</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C9</bp:standardName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA126">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA126</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ad28e">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.hydroxy_doxepin" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">hydroxy-doxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-doxepin</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA128">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA128</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.NCBI_TAXON_9606">
+ <bp:id rdf:datatype = "xsd:string">9606</bp:id>
+ <bp:db rdf:datatype = "xsd:string">NCBI_Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA124">
+ <bp:xref rdf:resource="pgkb.xref.PA124" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C19</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA128">
+ <bp:xref rdf:resource="pgkb.xref.PA128" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.doxepin_N_oxide">
+ <bp:standardName rdf:datatype = "xsd:string">doxepin-N-oxide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA126">
+ <bp:xref rdf:resource="pgkb.xref.PA126" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C9</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.hydroxy_doxepin_glucuronide">
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-doxepin glucuronide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="bb1">
+ <bp:id rdf:datatype = "xsd:string">16007002</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b6e8b">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.doxepin_N_oxide" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">doxepin-N-oxide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">doxepin-N-oxide</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA165981686">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==null</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA165981686</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a16">
+ <bp:right rdf:resource="pgkb.pe.ad28e" />
+ <bp:left rdf:resource="pgkb.pe.a48d5" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin To hydroxy-doxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin To hydroxy-doxepin</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e972d">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.hydroxy_desmethyldoxepin" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">hydroxy-desmethyldoxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-desmethyldoxepin</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.37">
+ <bp:controller rdf:resource="pgkb.pe.d557f" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ca67a33" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 37</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Minor</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 37</bp:standardName>
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.39">
+ <bp:controller rdf:resource="pgkb.pe.c8910" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ca67a33" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 39</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Minor</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 39</bp:standardName>
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.a48d5">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA449409" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">doxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">doxepin</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA124">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA124</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BioSource rdf:about="pgkg.bs.NCBI_TAXON_9609">
+ <bp:xref rdf:resource="pgkb.xref.NCBI_TAXON_9606" />
+ <bp:standardName rdf:datatype = "xsd:string">Homo sapiens</bp:standardName>
+</bp:BioSource>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA130">
+ <bp:xref rdf:resource="pgkb.xref.PA130" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.d557f">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA27093" />
+ <bp:displayName rdf:datatype = "xsd:string">CYP1A2</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">CYP1A2</bp:standardName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA27093">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA27093</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA27093">
+ <bp:xref rdf:resource="pgkb.xref.PA27093" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP1A2</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:PublicationXref rdf:about="b2c">
+ <bp:id rdf:datatype = "xsd:string">2360109</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.c8910">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130" />
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A4</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role == NA</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA130">
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:id rdf:datatype = "xsd:string">PA130</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a44">
+ <bp:right rdf:resource="pgkb.pe.e972d" />
+ <bp:left rdf:resource="pgkb.pe.e1a43" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of desmethyldoxepin  To hydroxy-desmethyldoxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of desmethyldoxepin  To hydroxy-desmethyldoxepin</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e1a43">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.desmethyldoxepin" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">desmethyldoxepin </bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">desmethyldoxepin </bp:standardName>
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.hydroxy_doxepin">
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-doxepin</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.20">
+ <bp:controller rdf:resource="pgkb.pe.b956b" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ca67a16" />
+ <bp:xref rdf:resource="d54" />
+ <bp:xref rdf:resource="b2c" />
+ <bp:xref rdf:resource="bb1" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 20</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 20</bp:standardName>
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a49">
+ <bp:right rdf:resource="pgkb.pe.ca7e6" />
+ <bp:xref rdf:resource="b52" />
+ <bp:xref rdf:resource="bd7" />
+ <bp:left rdf:resource="pgkb.pe.e972d" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of hydroxy-desmethyldoxepin To hydroxy-desmethyldoxepin glucuronide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of hydroxy-desmethyldoxepin To hydroxy-desmethyldoxepin glucuronide</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.didesmethyldoxepin">
+ <bp:standardName rdf:datatype = "xsd:string">didesmethyldoxepin</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.hydroxy_desmethyldoxepin_glucuronide">
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-desmethyldoxepin glucuronide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="b52">
+ <bp:id rdf:datatype = "xsd:string">1981729</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.af821">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.didesmethyldoxepin" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">didesmethyldoxepin</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">didesmethyldoxepin</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="b96">
+ <bp:id rdf:datatype = "xsd:string">9181631</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005622">
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005622" />
+ <bp:term rdf:datatype = "xsd:string">Intracellular</bp:term>
+</bp:CellularLocationVocabulary>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f6a7b">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.hydroxy_doxepin_glucuronide" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">hydroxy-doxepin glucuronide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-doxepin glucuronide</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="b87">
+ <bp:id rdf:datatype = "xsd:string">12180536</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a33">
+ <bp:right rdf:resource="pgkb.pe.e1a43" />
+ <bp:xref rdf:resource="b87" />
+ <bp:xref rdf:resource="d54" />
+ <bp:xref rdf:resource="b2c" />
+ <bp:left rdf:resource="pgkb.pe.a48d5" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin To desmethyldoxepin </bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin To desmethyldoxepin </bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ca7e6">
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.hydroxy_desmethyldoxepin_glucuronide" />
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:displayName rdf:datatype = "xsd:string">hydroxy-desmethyldoxepin glucuronide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state == NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell == liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type == Metabolite</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">hydroxy-desmethyldoxepin glucuronide</bp:standardName>
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ca67a30">
+ <bp:right rdf:resource="pgkb.pe.b6e8b" />
+ <bp:xref rdf:resource="b52" />
+ <bp:left rdf:resource="pgkb.pe.a48d5" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin To doxepin-N-oxide</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength == Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType == Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId == </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible == false</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName == </bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of doxepin To doxepin-N-oxide</bp:standardName>
+</bp:BiochemicalReaction>
+</rdf:RDF>

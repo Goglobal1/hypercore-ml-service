@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA116">
+ <bp:id rdf:datatype = "xsd:string">PA116</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa70">
+ <bp:right rdf:resource="pgkb.pe.e55d3" />
+ <bp:left rdf:resource="pgkb.pe.b17b1" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of N-desmethyl-tramadol (M2) To N,N-didesmethyl-tramadol (M3)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of N-desmethyl-tramadol (M2) To N,N-didesmethyl-tramadol (M3)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005886">
+ <bp:id rdf:datatype = "xsd:string">GO:0005886</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.a9eaa92">
+ <bp:right rdf:resource="pgkb.pe.b9f8a" />
+ <bp:left rdf:resource="pgkb.pe.b3008" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of N,O-didesmethyl-tramadol conjugates To N,O-didesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of N,O-didesmethyl-tramadol conjugates To N,O-didesmethyl-tramadol conjugates</bp:displayName>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.76">
+ <bp:controller rdf:resource="pgkb.pe.b3390" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa70" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 76</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 76</bp:displayName>
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_N_O_tridesmethyl_tramadol_conjugates">
+ <bp:standardName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol conjugates</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_O_didesmethyl_tramadol_conjugates">
+ <bp:standardName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol conjugates</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.pe.a87c6">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A4</bp:displayName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA451735">
+ <bp:id rdf:datatype = "xsd:string">PA451735</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.a9eaa95">
+ <bp:right rdf:resource="pgkb.pe.a2f9d" />
+ <bp:left rdf:resource="pgkb.pe.bb10e" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="bec" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of O-desmethyl-tramadol glucuronide To O-desmethyl-tramadol glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of O-desmethyl-tramadol glucuronide To O-desmethyl-tramadol glucuronide</bp:displayName>
+</bp:Transport>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b17b1">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M2</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_desmethyl_tramadol_M2" />
+ <bp:standardName rdf:datatype = "xsd:string">N-desmethyl-tramadol (M2)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N-desmethyl-tramadol (M2)</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA116">
+ <bp:xref rdf:resource="pgkb.xref.PA116" />
+ <bp:standardName rdf:datatype = "xsd:string">ABCC2</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.74">
+ <bp:controller rdf:resource="pgkb.pe.b293c" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa70" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 74</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 74</bp:displayName>
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.O_desmethyl_tramadol_M1">
+ <bp:standardName rdf:datatype = "xsd:string">O-desmethyl-tramadol (M1)</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA165946349">
+ <bp:id rdf:datatype = "xsd:string">PA165946349</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Pathway</bp:comment>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005622">
+ <bp:id rdf:datatype = "xsd:string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f2a05">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M5</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==Active</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_O_didesmethyl_tramadol_M5" />
+ <bp:standardName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol (M5)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol (M5)</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa28">
+ <bp:right rdf:resource="pgkb.pe.b23b3" />
+ <bp:left rdf:resource="pgkb.pe.df401" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of tramadol To O-desmethyl-tramadol (M1)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of tramadol To O-desmethyl-tramadol (M1)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b3008">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M5 conjugates</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_O_didesmethyl_tramadol_conjugates" />
+ <bp:standardName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol conjugates</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.bf77f">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA329" />
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A1</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">SLC22A1</bp:displayName>
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_desmethyl_tramadol_M2">
+ <bp:standardName rdf:datatype = "xsd:string">N-desmethyl-tramadol (M2)</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.c7ee0">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M4 conjugates</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_N_O_tridesmethyl_tramadol_conjugates" />
+ <bp:standardName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol conjugates</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Provenance rdf:about="pgkb.provanence.pharmgkb">
+ <bp:displayName rdf:datatype = "xsd:string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">http://pharmgkb.org</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">PharmGKB</bp:standardName>
+</bp:Provenance>
+
+<bp:Pathway rdf:about="pgkb.pwy.PA165946349">
+ <bp:xref rdf:resource="pgkb.xref.PA165946349" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa51" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa77" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa70" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.a9eaa92" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.76" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.99" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.a9eaa95" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.74" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.a9eaa89" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.a9eaa43" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.a9eaa40" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.62" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.a9eaa46" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.67" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa80" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa28" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.69" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa83" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa86" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa63" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.50" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.55" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.37" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.57" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.39" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.32" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa58" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.a9eaa33" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">Tramadol Pharmacokinetics</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Tramadol Pharmacokinetics</bp:displayName>
+ <bp:dataSource rdf:resource="pgkb.provanence.pharmgkb" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.classification==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">controller for ABCCC2 reference: http://www.aapsj.org/abstracts/AM_2006/staged/AAPS2006-002938.PDF
+submission id: PS216310 </bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.subId==PS216310</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.coe==PK::PK	</bp:comment>
+</bp:Pathway>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA128">
+ <bp:id rdf:datatype = "xsd:string">PA128</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.NCBI_TAXON_9606">
+ <bp:id rdf:datatype = "xsd:string">9606</bp:id>
+ <bp:db rdf:datatype = "xsd:string">NCBI_Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA329">
+ <bp:xref rdf:resource="pgkb.xref.PA329" />
+ <bp:standardName rdf:datatype = "xsd:string">SLC22A1</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA123">
+ <bp:xref rdf:resource="pgkb.xref.PA123" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2B6</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa63">
+ <bp:right rdf:resource="pgkb.pe.f2a05" />
+ <bp:left rdf:resource="pgkb.pe.b23b3" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of O-desmethyl-tramadol (M1) To N,O-didesmethyl-tramadol (M5)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of O-desmethyl-tramadol (M1) To N,O-didesmethyl-tramadol (M5)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="bec">
+ <bp:id rdf:datatype = "xsd:string">21562485</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.b3390">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A4</bp:displayName>
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA128">
+ <bp:xref rdf:resource="pgkb.xref.PA128" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.db6ae">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA123" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2B6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2B6</bp:displayName>
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA361">
+ <bp:id rdf:datatype = "xsd:string">PA361</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.d9e21">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA116" />
+ <bp:standardName rdf:datatype = "xsd:string">ABCC2</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">ABCC2</bp:displayName>
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA361">
+ <bp:xref rdf:resource="pgkb.xref.PA361" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT2B7</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005886">
+ <bp:term rdf:datatype = "xsd:string">Plasma Membrane</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005886" />
+</bp:CellularLocationVocabulary>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.37">
+ <bp:controller rdf:resource="pgkb.pe.ed828" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa33" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 37</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 37</bp:displayName>
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.39">
+ <bp:controller rdf:resource="pgkb.pe.bbeda" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa33" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 39</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 39</bp:displayName>
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.pe.d86fd">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA123" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2B6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2B6</bp:displayName>
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa58">
+ <bp:right rdf:resource="pgkb.pe.f2a05" />
+ <bp:left rdf:resource="pgkb.pe.b17b1" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of N-desmethyl-tramadol (M2) To N,O-didesmethyl-tramadol (M5)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of N-desmethyl-tramadol (M2) To N,O-didesmethyl-tramadol (M5)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.32">
+ <bp:controller rdf:resource="pgkb.pe.da8d0" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa28" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 32</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 32</bp:displayName>
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA123">
+ <bp:id rdf:datatype = "xsd:string">PA123</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.O_desmethyl_tramadol_glucuronide">
+ <bp:standardName rdf:datatype = "xsd:string">O-desmethyl-tramadol glucuronide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa77">
+ <bp:right rdf:resource="pgkb.pe.da54b" />
+ <bp:left rdf:resource="pgkb.pe.e55d3" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of N,N-didesmethyl-tramadol (M3) To N,N,O-tridesmethyl-tramadol (M4)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of N,N-didesmethyl-tramadol (M3) To N,N,O-tridesmethyl-tramadol (M4)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa51">
+ <bp:right rdf:resource="pgkb.pe.b17b1" />
+ <bp:left rdf:resource="pgkb.pe.df401" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of tramadol To N-desmethyl-tramadol (M2)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of tramadol To N-desmethyl-tramadol (M2)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkg.bs.NCBI_TAXON_9609">
+ <bp:standardName rdf:datatype = "xsd:string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.NCBI_TAXON_9606" />
+</bp:BioSource>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA329">
+ <bp:id rdf:datatype = "xsd:string">PA329</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.bb10e">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.O_desmethyl_tramadol_glucuronide" />
+ <bp:standardName rdf:datatype = "xsd:string">O-desmethyl-tramadol glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">O-desmethyl-tramadol glucuronide</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b9f8a">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_O_didesmethyl_tramadol_conjugates" />
+ <bp:standardName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol conjugates</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA130">
+ <bp:xref rdf:resource="pgkb.xref.PA130" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b23b3">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==Active</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M1</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.O_desmethyl_tramadol_M1" />
+ <bp:standardName rdf:datatype = "xsd:string">O-desmethyl-tramadol (M1)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">O-desmethyl-tramadol (M1)</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005576">
+ <bp:id rdf:datatype = "xsd:string">GO:0005576</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.99">
+ <bp:controller rdf:resource="pgkb.pe.d9e21" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.transport.a9eaa95" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 99</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 99</bp:displayName>
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="a2d">
+ <bp:id rdf:datatype = "xsd:string">20797434</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.da8d0">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA128" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2D6</bp:displayName>
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e55d3">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M3</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_N_didesmethyl_tramadol_M3" />
+ <bp:standardName rdf:datatype = "xsd:string">N,N-didesmethyl-tramadol (M3)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,N-didesmethyl-tramadol (M3)</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.b293c">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA123" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2B6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2B6</bp:displayName>
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_N_O_tridesmethyl_tramadol_M4">
+ <bp:standardName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol (M4)</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Transport rdf:about="pgkb.transport.a9eaa89">
+ <bp:right rdf:resource="pgkb.pe.eba05" />
+ <bp:left rdf:resource="pgkb.pe.c7ee0" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of N,N,O-tridesmethyl-tramadol conjugates To N,N,O-tridesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of N,N,O-tridesmethyl-tramadol conjugates To N,N,O-tridesmethyl-tramadol conjugates</bp:displayName>
+</bp:Transport>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA130">
+ <bp:id rdf:datatype = "xsd:string">PA130</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_N_didesmethyl_tramadol_M3">
+ <bp:standardName rdf:datatype = "xsd:string">N,N-didesmethyl-tramadol (M3)</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Transport rdf:about="pgkb.transport.a9eaa43">
+ <bp:right rdf:resource="pgkb.pe.e3fae" />
+ <bp:left rdf:resource="pgkb.pe.b23b3" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="bec" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of O-desmethyl-tramadol (M1) To O-desmethyl-tramadol (M1)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of O-desmethyl-tramadol (M1) To O-desmethyl-tramadol (M1)</bp:displayName>
+</bp:Transport>
+
+<bp:Transport rdf:about="pgkb.transport.a9eaa40">
+ <bp:right rdf:resource="pgkb.pe.df401" />
+ <bp:left rdf:resource="pgkb.pe.b91a8" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of tramadol To tramadol</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of tramadol To tramadol</bp:displayName>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.62">
+ <bp:controller rdf:resource="pgkb.pe.e287e" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa58" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 62</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 62</bp:displayName>
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.67">
+ <bp:controller rdf:resource="pgkb.pe.bed38" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa63" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 67</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 67</bp:displayName>
+</bp:Catalysis>
+
+<bp:Transport rdf:about="pgkb.transport.a9eaa46">
+ <bp:right rdf:resource="pgkb.pe.b23b3" />
+ <bp:left rdf:resource="pgkb.pe.e3fae" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="bec" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of O-desmethyl-tramadol (M1) To O-desmethyl-tramadol (M1)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of O-desmethyl-tramadol (M1) To O-desmethyl-tramadol (M1)</bp:displayName>
+</bp:Transport>
+
+<bp:PublicationXref rdf:about="fb7">
+ <bp:id rdf:datatype = "xsd:string">11454734</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.bed38">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A4</bp:displayName>
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa80">
+ <bp:right rdf:resource="pgkb.pe.da54b" />
+ <bp:left rdf:resource="pgkb.pe.f2a05" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of N,O-didesmethyl-tramadol (M5) To N,N,O-tridesmethyl-tramadol (M4)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of N,O-didesmethyl-tramadol (M5) To N,N,O-tridesmethyl-tramadol (M4)</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.df401">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA451735" />
+ <bp:standardName rdf:datatype = "xsd:string">tramadol</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">tramadol</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e3fae">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.O_desmethyl_tramadol_M1" />
+ <bp:standardName rdf:datatype = "xsd:string">O-desmethyl-tramadol (M1)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">O-desmethyl-tramadol (M1)</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa83">
+ <bp:right rdf:resource="pgkb.pe.b3008" />
+ <bp:left rdf:resource="pgkb.pe.f2a05" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="fb7" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of N,O-didesmethyl-tramadol (M5) To N,O-didesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of N,O-didesmethyl-tramadol (M5) To N,O-didesmethyl-tramadol conjugates</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.69">
+ <bp:controller rdf:resource="pgkb.pe.db6ae" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa63" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 69</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 69</bp:displayName>
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA37183">
+ <bp:id rdf:datatype = "xsd:string">PA37183</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa86">
+ <bp:right rdf:resource="pgkb.pe.c7ee0" />
+ <bp:left rdf:resource="pgkb.pe.da54b" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of N,N,O-tridesmethyl-tramadol (M4) To N,N,O-tridesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of N,N,O-tridesmethyl-tramadol (M4) To N,N,O-tridesmethyl-tramadol conjugates</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA37183">
+ <bp:xref rdf:resource="pgkb.xref.PA37183" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A8</bp:standardName>
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.a2f9d">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.O_desmethyl_tramadol_glucuronide" />
+ <bp:standardName rdf:datatype = "xsd:string">O-desmethyl-tramadol glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">O-desmethyl-tramadol glucuronide</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.eba05">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_N_O_tridesmethyl_tramadol_conjugates" />
+ <bp:standardName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol conjugates</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol conjugates</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.ed828">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA361" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT2B7</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">UGT2B7</bp:displayName>
+</bp:Protein>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005622">
+ <bp:term rdf:datatype = "xsd:string">Intracellular</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005622" />
+</bp:CellularLocationVocabulary>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_O_didesmethyl_tramadol_M5">
+ <bp:standardName rdf:datatype = "xsd:string">N,O-didesmethyl-tramadol (M5)</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.50">
+ <bp:controller rdf:resource="pgkb.pe.bf77f" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.transport.a9eaa46" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 50</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 50</bp:displayName>
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.da54b">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">M4</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_N_O_tridesmethyl_tramadol_M4" />
+ <bp:standardName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol (M4)</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">N,N,O-tridesmethyl-tramadol (M4)</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA451735">
+ <bp:xref rdf:resource="pgkb.xref.PA451735" />
+ <bp:standardName rdf:datatype = "xsd:string">tramadol</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:Protein rdf:about="pgkb.pe.bbeda">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37183" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A8</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">UGT1A8</bp:displayName>
+</bp:Protein>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b91a8">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA451735" />
+ <bp:standardName rdf:datatype = "xsd:string">tramadol</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">tramadol</bp:displayName>
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.55">
+ <bp:controller rdf:resource="pgkb.pe.d86fd" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa51" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 55</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 55</bp:displayName>
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.57">
+ <bp:controller rdf:resource="pgkb.pe.a87c6" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.a9eaa51" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 57</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 57</bp:displayName>
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.a9eaa33">
+ <bp:right rdf:resource="pgkb.pe.bb10e" />
+ <bp:left rdf:resource="pgkb.pe.b23b3" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+ <bp:xref rdf:resource="a2d" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of O-desmethyl-tramadol (M1) To O-desmethyl-tramadol glucuronide</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of O-desmethyl-tramadol (M1) To O-desmethyl-tramadol glucuronide</bp:displayName>
+</bp:BiochemicalReaction>
+
+<bp:Protein rdf:about="pgkb.pe.e287e">
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA128" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2D6</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">CYP2D6</bp:displayName>
+</bp:Protein>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005576">
+ <bp:term rdf:datatype = "xsd:string">Extracellular</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005576" />
+</bp:CellularLocationVocabulary>
+</rdf:RDF>

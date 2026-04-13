@@ -1,0 +1,1526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#"
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+<owl:Ontology rdf:about="">
+ <owl:imports rdf:resource="http://www.biopax.org/release/biopax-level3.owl#" />
+</owl:Ontology>
+
+<bp:PublicationXref rdf:about="abb">
+ <bp:id rdf:datatype = "xsd:string">868138</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA164748728">
+ <bp:id rdf:datatype = "xsd:string">PA164748728</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA37174">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A10</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA37174" />
+</bp:ProteinReference>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70690">
+ <bp:left rdf:resource="pgkb.pe.ee1a5" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of inosine monophosphate  To xanthine monophosphate </bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.a6518" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of inosine monophosphate  To xanthine monophosphate </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.75">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70671" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 75</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 75</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.e3755" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706157">
+ <bp:left rdf:resource="pgkb.pe.fb387" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine-N-oxide</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.d6a5b" />
+ <bp:xref rdf:resource="c1e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine-N-oxide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b9abc">
+ <bp:displayName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_2_hydroxyethyl_morpholine" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b2dd9">
+ <bp:displayName rdf:datatype = "xsd:string">N-(2-carboxymethyl)- morpholine</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-carboxymethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_2_carboxymethyl_morpholine" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e24d4">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.mycophenolic_acid_7_O_glucornide" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005622">
+ <bp:id rdf:datatype = "xsd:string">GO:0005622</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.d2b44">
+ <bp:displayName rdf:datatype = "xsd:string">IMPDH1</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">IMPDH1</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA29862" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="a59">
+ <bp:id rdf:datatype = "xsd:string">15570183</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.c56e8">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA164748728" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.f4b12">
+ <bp:displayName rdf:datatype = "xsd:string">UGT2B7</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">UGT2B7</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA361" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.89">
+ <bp:controlled rdf:resource="pgkb.transport.ce70685" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 89</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 89</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.c2f47" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.pe.b2017">
+ <bp:displayName rdf:datatype = "xsd:string">CES2</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">CES2</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA377" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.cf4a0">
+ <bp:displayName rdf:datatype = "xsd:string">ABCC2</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">ABCC2</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA116" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.80">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70676" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 80</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 80</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.e28bc" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.82">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70676" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 82</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 82</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.a5a4a" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA361">
+ <bp:id rdf:datatype = "xsd:string">PA361</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.84">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70676" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 84</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 84</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.b958f" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="e00">
+ <bp:id rdf:datatype = "xsd:string">15205394</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706143">
+ <bp:left rdf:resource="pgkb.pe.fb387" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.f0ecb" />
+ <bp:xref rdf:resource="c1e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:Transport rdf:about="pgkb.transport.ce70685">
+ <bp:left rdf:resource="pgkb.pe.b3dd5" />
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of mycophenolic acid- acyl glucoronide  To mycophenolic acid- acyl glucoronide </bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.c2db9" />
+ <bp:xref rdf:resource="d3e" />
+ <bp:xref rdf:resource="b90" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of mycophenolic acid- acyl glucoronide  To mycophenolic acid- acyl glucoronide </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+</bp:Transport>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706150">
+ <bp:left rdf:resource="pgkb.pe.fb387" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-carboxymethyl)- morpholine</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.b2dd9" />
+ <bp:xref rdf:resource="c1e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-carboxymethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA361">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT2B7</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA361" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA37174">
+ <bp:id rdf:datatype = "xsd:string">PA37174</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="e73">
+ <bp:id rdf:datatype = "xsd:string">16251851</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.d41d3">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolate mofetil</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolate mofetil</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450566" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70671">
+ <bp:left rdf:resource="pgkb.pe.c56e8" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- acyl glucoronide </bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.b3dd5" />
+ <bp:xref rdf:resource="a12" />
+ <bp:xref rdf:resource="e16" />
+ <bp:xref rdf:resource="c2d" />
+ <bp:xref rdf:resource="c77" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- acyl glucoronide </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:BioSource rdf:about="pgkg.bs.NCBI_TAXON_9609">
+ <bp:standardName rdf:datatype = "xsd:string">Homo sapiens</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.NCBI_TAXON_9606" />
+</bp:BioSource>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70676">
+ <bp:left rdf:resource="pgkb.pe.c56e8" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To 6-O-desmethyl- mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.ce122" />
+ <bp:xref rdf:resource="a59" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To 6-O-desmethyl- mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_2_carboxymethyl_morpholine">
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-carboxymethyl)- morpholine</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="e16">
+ <bp:id rdf:datatype = "xsd:string">12021631</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005576">
+ <bp:id rdf:datatype = "xsd:string">GO:0005576</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.104">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706100" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 104</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 104</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.f9bcf" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.a6518">
+ <bp:displayName rdf:datatype = "xsd:string">xanthine monophosphate </bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">xanthine monophosphate </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Biological Intermediate</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.xanthine_monophosphate" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706100">
+ <bp:left rdf:resource="pgkb.pe.c56e8" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- 7-O-glucornide</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.f3aac" />
+ <bp:xref rdf:resource="a12" />
+ <bp:xref rdf:resource="df6" />
+ <bp:xref rdf:resource="d44" />
+ <bp:xref rdf:resource="e00" />
+ <bp:xref rdf:resource="b34" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- 7-O-glucornide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.96">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70690" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 96</bp:displayName>
+ <bp:xref rdf:resource="abb" />
+ <bp:xref rdf:resource="a47" />
+ <bp:xref rdf:resource="b91" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 96</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.bbf68.prime" />
+</bp:Catalysis>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_2_hydroxyethyl_morpholine_N_oxide">
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine-N-oxide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.d6a5b">
+ <bp:displayName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine-N-oxide</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine-N-oxide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_2_hydroxyethyl_morpholine_N_oxide" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.94">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70690" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 94</bp:displayName>
+ <bp:xref rdf:resource="abb" />
+ <bp:xref rdf:resource="a47" />
+ <bp:xref rdf:resource="b91" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 94</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.d2b44.prime" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.pe.b958f">
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A4</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA130" />
+</bp:Protein>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706136">
+ <bp:left rdf:resource="pgkb.pe.fb387" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.c56e8" />
+ <bp:xref rdf:resource="ecf" />
+ <bp:xref rdf:resource="b34" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ee1a5">
+ <bp:displayName rdf:datatype = "xsd:string">inosine monophosphate </bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">inosine monophosphate </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Biological Intermediate</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.inosine_monophosphate" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.f9bcf">
+ <bp:displayName rdf:datatype = "xsd:string">UGT1A9</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A9</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==Primary Metabolizing Enzyme</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA419" />
+</bp:Protein>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA377">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CES2</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA377" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.154">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706150" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 154</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 154</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.b2017" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA130">
+ <bp:id rdf:datatype = "xsd:string">PA130</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.bbf68">
+ <bp:displayName rdf:datatype = "xsd:string">IMPDH2</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">IMPDH2</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA29863" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA131">
+ <bp:id rdf:datatype = "xsd:string">PA131</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="c2d">
+ <bp:id rdf:datatype = "xsd:string">16790554</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA37182">
+ <bp:id rdf:datatype = "xsd:string">PA37182</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.bbf68.prime">
+ <bp:displayName rdf:datatype = "xsd:string">IMPDH2</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">IMPDH2</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA29863" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.156">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706150" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 156</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 156</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.a25c8" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA450566">
+ <bp:id rdf:datatype = "xsd:string">PA450566</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.109">
+ <bp:controlled rdf:resource="pgkb.transport.ce706105" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 109</bp:displayName>
+ <bp:xref rdf:resource="d3e" />
+ <bp:xref rdf:resource="b90" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 109</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.cf4a0" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.pe.d8c24">
+ <bp:displayName rdf:datatype = "xsd:string">UGT1A8</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A8</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37183" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.inosine_monophosphate">
+ <bp:standardName rdf:datatype = "xsd:string">inosine monophosphate </bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.edc60">
+ <bp:displayName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine-N-oxide</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine-N-oxide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_2_hydroxyethyl_morpholine_N_oxide" />
+</bp:SmallMolecule>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA37183">
+ <bp:id rdf:datatype = "xsd:string">PA37183</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA37183">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A8</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA37183" />
+</bp:ProteinReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA37182">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A7</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA37182" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ce122">
+ <bp:displayName rdf:datatype = "xsd:string">6-O-desmethyl- mycophenolic acid</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">6-O-desmethyl- mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.6_O_desmethyl_mycophenolic_acid" />
+</bp:SmallMolecule>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706121">
+ <bp:left rdf:resource="pgkb.pe.d41d3" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.b9abc" />
+ <bp:xref rdf:resource="c1e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706116">
+ <bp:left rdf:resource="pgkb.pe.bbf68" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of IMPDH2 To IMPDH2</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.bbf68.prime" />
+ <bp:xref rdf:resource="e73" />
+ <bp:xref rdf:resource="a9b" />
+ <bp:xref rdf:resource="ba0" />
+ <bp:xref rdf:resource="a47" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of IMPDH2 To IMPDH2</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005622">
+ <bp:term rdf:datatype = "xsd:string">Intracellular</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005622" />
+</bp:CellularLocationVocabulary>
+
+<bp:PublicationXref rdf:about="b90">
+ <bp:id rdf:datatype = "xsd:string">17060857</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706126">
+ <bp:left rdf:resource="pgkb.pe.d41d3" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine-N-oxide</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.edc60" />
+ <bp:xref rdf:resource="c1e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-hydroxyethyl)- morpholine-N-oxide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:PublicationXref rdf:about="b91">
+ <bp:id rdf:datatype = "xsd:string">415850</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.e28bc">
+ <bp:displayName rdf:datatype = "xsd:string">CYP3A5</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A5</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA131" />
+</bp:Protein>
+
+<bp:Pathway rdf:about="pgkb.pwy.PA165964832">
+ <bp:dataSource rdf:resource="pgkb.provanence.pharmgkb" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70671" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70659" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70676" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.104" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70690" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.96" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706100" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.94" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.ce70697" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.75" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706136" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706157" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.154" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.63" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.67" />
+ <bp:pathwayComponent rdf:resource="pgkb.control.inhibition.120" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.156" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.65" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.130" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.109" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70654" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.48" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.ce706105" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70644" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.89" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce70649" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.80" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.82" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706121" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706116" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.84" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706126" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706143" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.149" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.ce70685" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.161" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706150" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.125" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.163" />
+ <bp:pathwayComponent rdf:resource="pgkb.biochemicalReaction.ce706131" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.147" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.53" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.140" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.142" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.ce706110" />
+ <bp:pathwayComponent rdf:resource="pgkb.catalysis.58" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.ce706113" />
+ <bp:pathwayComponent rdf:resource="pgkb.transport.ce70668" />
+ <bp:pathwayComponent rdf:resource="pgkb.control.inhibition.135" />
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:displayName rdf:datatype = "xsd:string">Mycophenolic acid Pathway, Pharmacokinetics/Pharmacodynamics</bp:displayName>
+ <bp:xref rdf:resource="pgkb.xref.PA165964832" />
+ <bp:standardName rdf:datatype = "xsd:string">Mycophenolic acid Pathway, Pharmacokinetics/Pharmacodynamics</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.coe==PD::PD	PK::PK	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.classification==L04AA::Selective immunosuppressants	</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">created 07/20/12</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.subId==PS216351</bp:comment>
+</bp:Pathway>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.161">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706157" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 161</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 161</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.a25c8" />
+</bp:Catalysis>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.163">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706157" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 163</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 163</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.b2017" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce706131">
+ <bp:left rdf:resource="pgkb.pe.d2b44" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of IMPDH1 To IMPDH1</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.d2b44.prime" />
+ <bp:xref rdf:resource="e73" />
+ <bp:xref rdf:resource="a9b" />
+ <bp:xref rdf:resource="ba0" />
+ <bp:xref rdf:resource="a47" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of IMPDH1 To IMPDH1</bp:standardName>
+</bp:BiochemicalReaction>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.mycophenolic_acid_acyl_glucoronide">
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.mycophenolic_acid_7_O_glucornide">
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA419">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A9</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA419" />
+</bp:ProteinReference>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA107">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CES1</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA107" />
+</bp:ProteinReference>
+
+<bp:Protein rdf:about="pgkb.pe.e3755">
+ <bp:displayName rdf:datatype = "xsd:string">UGT2B7</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">UGT2B7</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA361" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA164748728">
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA164748728" />
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.PA450566">
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolate mofetil</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA450566" />
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="a47">
+ <bp:id rdf:datatype = "xsd:string">10878285</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.bbfc0">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA164748728" />
+</bp:SmallMolecule>
+
+<bp:Transport rdf:about="pgkb.transport.ce70668">
+ <bp:left rdf:resource="pgkb.pe.f78e7" />
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.d9613" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:Transport>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA116">
+ <bp:id rdf:datatype = "xsd:string">PA116</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70659">
+ <bp:left rdf:resource="pgkb.pe.f78e7" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- 7-O-glucornide</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.e2864" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- 7-O-glucornide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:UnificationXref rdf:about="pgkb.xref.urn:miriam:GO-GO:0005886">
+ <bp:id rdf:datatype = "xsd:string">GO:0005886</bp:id>
+ <bp:db rdf:datatype = "xsd:string">Gene Ontology</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.af3bb">
+ <bp:displayName rdf:datatype = "xsd:string">CES2</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">CES2</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA377" />
+</bp:Protein>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.N_2_hydroxyethyl_morpholine">
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.6_O_desmethyl_mycophenolic_acid">
+ <bp:standardName rdf:datatype = "xsd:string">6-O-desmethyl- mycophenolic acid</bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:PublicationXref rdf:about="fd6">
+ <bp:id rdf:datatype = "xsd:string">21142914</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA116">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">ABCC2</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA116" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.e2864">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.mycophenolic_acid_7_O_glucornide" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="ba0">
+ <bp:id rdf:datatype = "xsd:string">1826793</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="c1e">
+ <bp:id rdf:datatype = "xsd:string">9646007</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Protein rdf:about="pgkb.pe.a5a4a">
+ <bp:displayName rdf:datatype = "xsd:string">CYP2C8</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C8</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA125" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="a12">
+ <bp:id rdf:datatype = "xsd:string">15470161</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.ddcb7">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA164748728" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.130">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706126" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 130</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 130</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.af3bb" />
+</bp:Catalysis>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70654">
+ <bp:left rdf:resource="pgkb.pe.f78e7" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- acyl glucoronide </bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.a6f87" />
+ <bp:xref rdf:resource="cb1" />
+ <bp:xref rdf:resource="d31" />
+ <bp:xref rdf:resource="e00" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolic acid To mycophenolic acid- acyl glucoronide </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.48">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70644" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 48</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 48</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.af3bb" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.a6f87">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.mycophenolic_acid_acyl_glucoronide" />
+</bp:SmallMolecule>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.c2db9">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.mycophenolic_acid_acyl_glucoronide" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="cb1">
+ <bp:id rdf:datatype = "xsd:string">10688250</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA125">
+ <bp:id rdf:datatype = "xsd:string">PA125</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Provenance rdf:about="pgkb.provanence.pharmgkb">
+ <bp:standardName rdf:datatype = "xsd:string">PharmGKB</bp:standardName>
+ <bp:displayName rdf:datatype = "xsd:string">PharmGKB</bp:displayName>
+ <bp:comment rdf:datatype = "xsd:string">http://pharmgkb.org</bp:comment>
+</bp:Provenance>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA125">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP2C8</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA125" />
+</bp:ProteinReference>
+
+<bp:UnificationXref rdf:about="pgkb.xref.NCBI_TAXON_9606">
+ <bp:id rdf:datatype = "xsd:string">9606</bp:id>
+ <bp:db rdf:datatype = "xsd:string">NCBI_Taxonomy</bp:db>
+</bp:UnificationXref>
+
+<bp:Protein rdf:about="pgkb.pe.c2f47">
+ <bp:displayName rdf:datatype = "xsd:string">ABCC2</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">ABCC2</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005886" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA116" />
+</bp:Protein>
+
+<bp:Protein rdf:about="pgkb.pe.be149">
+ <bp:displayName rdf:datatype = "xsd:string">UGT1A10</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A10</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37174" />
+</bp:Protein>
+
+<bp:PublicationXref rdf:about="a9b">
+ <bp:id rdf:datatype = "xsd:string">17480004</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.149">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706143" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 149</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 149</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.b2017" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA29862">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">IMPDH1</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA29862" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.147">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706143" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 147</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 147</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.a25c8" />
+</bp:Catalysis>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA29863">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">IMPDH2</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA29863" />
+</bp:ProteinReference>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.140">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706136" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 140</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 140</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.b2017" />
+</bp:Catalysis>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005886">
+ <bp:term rdf:datatype = "xsd:string">Plasma Membrane</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005886" />
+</bp:CellularLocationVocabulary>
+
+<bp:SmallMoleculeReference rdf:about="pgkb.er.SmallMolecule.xanthine_monophosphate">
+ <bp:standardName rdf:datatype = "xsd:string">xanthine monophosphate </bp:standardName>
+</bp:SmallMoleculeReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f0ecb">
+ <bp:displayName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-hydroxyethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_2_hydroxyethyl_morpholine" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.142">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706136" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 142</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 142</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.a25c8" />
+</bp:Catalysis>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA377">
+ <bp:id rdf:datatype = "xsd:string">PA377</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:PublicationXref rdf:about="af3">
+ <bp:id rdf:datatype = "xsd:string">19890249</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="d3e">
+ <bp:id rdf:datatype = "xsd:string">17906856</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA130">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A4</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA130" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f3aac">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- 7-O-glucornide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.mycophenolic_acid_7_O_glucornide" />
+</bp:SmallMolecule>
+
+<bp:ProteinReference rdf:about="pgkb.er.Protein.PA131">
+ <bp:organism rdf:resource="pgkg.bs.NCBI_TAXON_9609" />
+ <bp:standardName rdf:datatype = "xsd:string">CYP3A5</bp:standardName>
+ <bp:xref rdf:resource="pgkb.xref.PA131" />
+</bp:ProteinReference>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.d9613">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005576" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA164748728" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="c77">
+ <bp:id rdf:datatype = "xsd:string">12548138</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA165964832">
+ <bp:id rdf:datatype = "xsd:string">PA165964832</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Pathway</bp:comment>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.ce70697">
+ <bp:left rdf:resource="pgkb.pe.d9613" />
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.c56e8" />
+ <bp:xref rdf:resource="af3" />
+ <bp:xref rdf:resource="fd6" />
+ <bp:xref rdf:resource="d3e" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:Transport>
+
+<bp:Protein rdf:about="pgkb.pe.d2b44.prime">
+ <bp:displayName rdf:datatype = "xsd:string">IMPDH1</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">IMPDH1</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==lymphocyte</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA29862" />
+</bp:Protein>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.63">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70659" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 63</bp:displayName>
+ <bp:xref rdf:resource="a12" />
+ <bp:xref rdf:resource="e16" />
+ <bp:xref rdf:resource="c2d" />
+ <bp:xref rdf:resource="c77" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 63</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.d8c24" />
+</bp:Catalysis>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.f78e7">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA164748728" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="df6">
+ <bp:id rdf:datatype = "xsd:string">11226133</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:PublicationXref rdf:about="d44">
+ <bp:id rdf:datatype = "xsd:string">15258099</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b3dd5">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolic acid- acyl glucoronide </bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.mycophenolic_acid_acyl_glucoronide" />
+</bp:SmallMolecule>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.67">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70659" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 67</bp:displayName>
+ <bp:xref rdf:resource="a12" />
+ <bp:xref rdf:resource="e16" />
+ <bp:xref rdf:resource="c2d" />
+ <bp:xref rdf:resource="c77" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 67</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.c6a87" />
+</bp:Catalysis>
+
+<bp:Protein rdf:about="pgkb.pe.c6a87">
+ <bp:displayName rdf:datatype = "xsd:string">UGT1A7</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">UGT1A7</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA37182" />
+</bp:Protein>
+
+<bp:Control rdf:about="pgkb.control.inhibition.120">
+ <bp:controller rdf:resource="pgkb.pe.bbfc0" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706116" />
+ <bp:controlType rdf:datatype = "xsd:string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "xsd:string">Control_Inhibition 120</bp:displayName>
+ <bp:xref rdf:resource="e73" />
+ <bp:xref rdf:resource="a9b" />
+ <bp:xref rdf:resource="ba0" />
+ <bp:xref rdf:resource="a47" />
+ <bp:standardName rdf:datatype = "xsd:string">Control_Inhibition 120</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Inhibition</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+</bp:Control>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.65">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70659" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 65</bp:displayName>
+ <bp:xref rdf:resource="a12" />
+ <bp:xref rdf:resource="e16" />
+ <bp:xref rdf:resource="c2d" />
+ <bp:xref rdf:resource="c77" />
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 65</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.be149" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="b34">
+ <bp:id rdf:datatype = "xsd:string">19545654</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA107">
+ <bp:id rdf:datatype = "xsd:string">PA107</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Transport rdf:about="pgkb.transport.ce706105">
+ <bp:left rdf:resource="pgkb.pe.f3aac" />
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of mycophenolic acid- 7-O-glucornide To mycophenolic acid- 7-O-glucornide</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.e24d4" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of mycophenolic acid- 7-O-glucornide To mycophenolic acid- 7-O-glucornide</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+</bp:Transport>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA419">
+ <bp:id rdf:datatype = "xsd:string">PA419</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70644">
+ <bp:left rdf:resource="pgkb.pe.d41d3" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.f78e7" />
+ <bp:xref rdf:resource="ecf" />
+ <bp:xref rdf:resource="b34" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.b8e7d">
+ <bp:displayName rdf:datatype = "xsd:string">N-(2-carboxymethyl)- morpholine</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">N-(2-carboxymethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Metabolite</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==cell</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.N_2_carboxymethyl_morpholine" />
+</bp:SmallMolecule>
+
+<bp:PublicationXref rdf:about="ecf">
+ <bp:id rdf:datatype = "xsd:string">20823294</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:BiochemicalReaction rdf:about="pgkb.biochemicalReaction.ce70649">
+ <bp:left rdf:resource="pgkb.pe.d41d3" />
+ <bp:displayName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-carboxymethyl)- morpholine</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.b8e7d" />
+ <bp:xref rdf:resource="c1e" />
+ <bp:standardName rdf:datatype = "xsd:string">BiochemicalReaction Of mycophenolate mofetil To N-(2-carboxymethyl)- morpholine</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Biochemical Reaction</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:BiochemicalReaction>
+
+<bp:SmallMolecule rdf:about="pgkb.pe.fb387">
+ <bp:displayName rdf:datatype = "xsd:string">mycophenolate mofetil</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">mycophenolate mofetil</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Drug</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.prodrug==</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.SmallMolecule.PA450566" />
+</bp:SmallMolecule>
+
+<bp:Protein rdf:about="pgkb.pe.a25c8">
+ <bp:displayName rdf:datatype = "xsd:string">CES1</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">CES1</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.cell==liver cell</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.role==NA</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.state==NA</bp:comment>
+ <bp:cellularLocation rdf:resource="pgkb.v.urn:miriam:GO-GO:0005622" />
+ <bp:entityReference rdf:resource="pgkb.er.Protein.PA107" />
+</bp:Protein>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA29862">
+ <bp:id rdf:datatype = "xsd:string">PA29862</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:UnificationXref rdf:about="pgkb.xref.PA29863">
+ <bp:id rdf:datatype = "xsd:string">PA29863</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PharmGKB</bp:db>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.type==Gene</bp:comment>
+</bp:UnificationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.125">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706121" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 125</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 125</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.af3bb" />
+</bp:Catalysis>
+
+<bp:PublicationXref rdf:about="d31">
+ <bp:id rdf:datatype = "xsd:string">9647757</bp:id>
+ <bp:db rdf:datatype = "xsd:string">PubMed</bp:db>
+</bp:PublicationXref>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.53">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70649" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 53</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 53</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.af3bb" />
+</bp:Catalysis>
+
+<bp:Transport rdf:about="pgkb.transport.ce706110">
+ <bp:left rdf:resource="pgkb.pe.ddcb7" />
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.bbfc0" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:Transport>
+
+<bp:Catalysis rdf:about="pgkb.catalysis.58">
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce70654" />
+ <bp:displayName rdf:datatype = "xsd:string">Catalysis 58</bp:displayName>
+ <bp:standardName rdf:datatype = "xsd:string">Catalysis 58</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Catalysis</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:controller rdf:resource="pgkb.pe.f4b12" />
+</bp:Catalysis>
+
+<bp:Transport rdf:about="pgkb.transport.ce706113">
+ <bp:left rdf:resource="pgkb.pe.c56e8" />
+ <bp:displayName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:displayName>
+ <bp:right rdf:resource="pgkb.pe.ddcb7" />
+ <bp:standardName rdf:datatype = "xsd:string">Transport Of mycophenolic acid To mycophenolic acid</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Transport</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.isReversible==false</bp:comment>
+</bp:Transport>
+
+<bp:Control rdf:about="pgkb.control.inhibition.135">
+ <bp:controller rdf:resource="pgkb.pe.bbfc0" />
+ <bp:controlled rdf:resource="pgkb.biochemicalReaction.ce706131" />
+ <bp:controlType rdf:datatype = "xsd:string">INHIBITION</bp:controlType>
+ <bp:displayName rdf:datatype = "xsd:string">Control_Inhibition 135</bp:displayName>
+ <bp:xref rdf:resource="e73" />
+ <bp:xref rdf:resource="a9b" />
+ <bp:xref rdf:resource="ba0" />
+ <bp:xref rdf:resource="a47" />
+ <bp:standardName rdf:datatype = "xsd:string">Control_Inhibition 135</bp:standardName>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefId==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.biopaxInteractionType==Inhibition</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.reactionName==</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.lineStrength==Normal</bp:comment>
+ <bp:comment rdf:datatype = "xsd:string">pgkb.externalXrefDb==</bp:comment>
+</bp:Control>
+
+<bp:CellularLocationVocabulary rdf:about="pgkb.v.urn:miriam:GO-GO:0005576">
+ <bp:term rdf:datatype = "xsd:string">Extracellular</bp:term>
+ <bp:xref rdf:resource="pgkb.xref.urn:miriam:GO-GO:0005576" />
+</bp:CellularLocationVocabulary>
+</rdf:RDF>
