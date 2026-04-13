@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Cache bust: 2026-04-13-kg-preload
+# Cache bust: 2026-04-13-kg-force-load
 RUN echo "Build timestamp: $(date)"
 
 # Install dependencies first (layer caching)

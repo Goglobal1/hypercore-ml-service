@@ -574,13 +574,20 @@ async def startup_preload():
     def _preload_knowledge_graphs():
         """Background thread to load PrimeKG (8.1M edges) and Hetionet (2.25M edges)."""
         try:
-            from app.data import get_kg_manager
-            logger.info("Background: Loading Knowledge Graphs...")
-            kg = get_kg_manager(lazy_load=False)
-            stats = kg.get_stats()
-            primekg_edges = stats.get('primekg', {}).get('total_edges', 0)
-            hetionet_edges = stats.get('hetionet', {}).get('total_edges', 0)
-            logger.info(f"Background: KG loaded - PrimeKG: {primekg_edges:,} edges, Hetionet: {hetionet_edges:,} edges")
+            from app.data import get_primekg, get_hetionet
+
+            # Force load PrimeKG
+            logger.info("Background: Loading PrimeKG (8.1M edges)...")
+            primekg = get_primekg()
+            primekg._load()  # Force load
+            logger.info(f"Background: PrimeKG loaded - {len(primekg._edges):,} edges")
+
+            # Force load Hetionet
+            logger.info("Background: Loading Hetionet (2.25M edges)...")
+            hetionet = get_hetionet()
+            hetionet._load()  # Force load
+            logger.info(f"Background: Hetionet loaded - {len(hetionet._edges):,} edges")
+
         except Exception as e:
             logger.warning(f"Knowledge graph preload failed: {e}")
 
