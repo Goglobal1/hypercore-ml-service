@@ -570,7 +570,26 @@ async def startup_preload():
         clinvar_thread = threading.Thread(target=_preload_clinvar, daemon=True)
         clinvar_thread.start()
         logger.info("ClinVar loading started in background thread")
-    
+
+    def _preload_knowledge_graphs():
+        """Background thread to load PrimeKG (8.1M edges) and Hetionet (2.25M edges)."""
+        try:
+            from app.data import get_kg_manager
+            logger.info("Background: Loading Knowledge Graphs...")
+            kg = get_kg_manager(lazy_load=False)
+            stats = kg.get_stats()
+            primekg_edges = stats.get('primekg', {}).get('total_edges', 0)
+            hetionet_edges = stats.get('hetionet', {}).get('total_edges', 0)
+            logger.info(f"Background: KG loaded - PrimeKG: {primekg_edges:,} edges, Hetionet: {hetionet_edges:,} edges")
+        except Exception as e:
+            logger.warning(f"Knowledge graph preload failed: {e}")
+
+    # Start KG loading in background thread (doesn't block startup)
+    if KG_AVAILABLE:
+        kg_thread = threading.Thread(target=_preload_knowledge_graphs, daemon=True)
+        kg_thread.start()
+        logger.info("Knowledge graphs loading started in background thread")
+
     # Preload PharmGKB relationships (fast, do synchronously)
     if PHARMA_AVAILABLE:
         try:
