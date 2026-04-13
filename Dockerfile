@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Cache bust: 2026-04-13-kg-health-fix
+# Cache bust: 2026-04-13-kg-lazy-load
 RUN echo "Build timestamp: $(date)"
 
 # Install dependencies first (layer caching)

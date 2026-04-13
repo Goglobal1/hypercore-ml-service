@@ -81,6 +81,20 @@ try:
 except ImportError:
     DISGENET_MAPPER_AVAILABLE = False
 
+# Hetionet Gene-Disease Mapping (Layer 4h)
+try:
+    from ..layers.hetionet_mapper import HetionetMapper, get_hetionet_mapper
+    HETIONET_MAPPER_AVAILABLE = True
+except ImportError:
+    HETIONET_MAPPER_AVAILABLE = False
+
+# PrimeKG Disease Mechanism Paths (Layer 4i)
+try:
+    from ..layers.primekg_mapper import PrimeKGMapper, get_primekg_mapper
+    PRIMEKG_MAPPER_AVAILABLE = True
+except ImportError:
+    PRIMEKG_MAPPER_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -234,6 +248,30 @@ class DiagnosticEngine:
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] DisGeNET Mapper not initialized: {e}")
 
+        # Initialize Hetionet Mapper (Layer 4h) - lazy loading
+        self.hetionet_mapper = None
+        self.hetionet_mapper_available = False
+
+        if HETIONET_MAPPER_AVAILABLE:
+            try:
+                self.hetionet_mapper = get_hetionet_mapper()
+                self.hetionet_mapper_available = self.hetionet_mapper.available
+                logger.info(f"[DiagnosticEngine] Hetionet Mapper: available (lazy load)")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] Hetionet Mapper not initialized: {e}")
+
+        # Initialize PrimeKG Mapper (Layer 4i) - lazy loading
+        self.primekg_mapper = None
+        self.primekg_mapper_available = False
+
+        if PRIMEKG_MAPPER_AVAILABLE:
+            try:
+                self.primekg_mapper = get_primekg_mapper()
+                self.primekg_mapper_available = self.primekg_mapper.available
+                logger.info(f"[DiagnosticEngine] PrimeKG Mapper: available (lazy load)")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] PrimeKG Mapper not initialized: {e}")
+
     def _load_json(self, path: str) -> Dict:
         """Load JSON configuration file."""
         with open(path, 'r') as f:
@@ -323,6 +361,36 @@ class DiagnosticEngine:
                     logger.info(f"[DiagnosticEngine] Layer 4g: {len(genetic_diagnoses)} genetic diagnoses")
             except Exception as e:
                 logger.warning(f"[DiagnosticEngine] DisGeNET mapping error: {e}")
+
+        # Layer 4h: Hetionet Gene-Disease Mapping (supplements 4g)
+        # Additional gene-disease associations from Hetionet knowledge graph
+        hetionet_diagnoses = []
+        if self.hetionet_mapper_available and HETIONET_MAPPER_AVAILABLE:
+            try:
+                hetionet_diagnoses = self.hetionet_mapper.analyze(
+                    raw_data=raw_patient_data,
+                    features=features,
+                    axis_scores=axis_scores
+                )
+                if hetionet_diagnoses:
+                    logger.info(f"[DiagnosticEngine] Layer 4h: {len(hetionet_diagnoses)} Hetionet diagnoses")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] Hetionet mapping error: {e}")
+
+        # Layer 4i: PrimeKG Disease Mechanism Paths
+        # Explains WHY abnormal biomarkers suggest specific diseases
+        mechanism_diagnoses = []
+        if self.primekg_mapper_available and PRIMEKG_MAPPER_AVAILABLE:
+            try:
+                mechanism_diagnoses = self.primekg_mapper.analyze(
+                    raw_data=raw_patient_data,
+                    features=features,
+                    axis_scores=axis_scores
+                )
+                if mechanism_diagnoses:
+                    logger.info(f"[DiagnosticEngine] Layer 4i: {len(mechanism_diagnoses)} mechanism diagnoses")
+            except Exception as e:
+                logger.warning(f"[DiagnosticEngine] PrimeKG mapping error: {e}")
 
         # Layer 5: Detect unknown anomalies
         anomalies = self.anomaly_detector.detect_anomalies(features, axis_scores, diseases)
@@ -466,7 +534,7 @@ class DiagnosticEngine:
 
             # Metadata
             'data_completeness': normalized.get('metadata', {}).get('completeness', 0),
-            'engine_version': '2.4.0-hpo-disgenet',
+            'engine_version': '2.5.0-kg-integrated',
 
             # Utility Gate (Phase 6)
             'utility_gate': utility_gate_results,
@@ -478,7 +546,13 @@ class DiagnosticEngine:
             'layer_4f_hpo_diagnoses': hpo_diagnoses,
 
             # DisGeNET Genetic Mapping (Layer 4g)
-            'layer_4g_genetic_diagnoses': genetic_diagnoses
+            'layer_4g_genetic_diagnoses': genetic_diagnoses,
+
+            # Hetionet Gene-Disease Mapping (Layer 4h)
+            'layer_4h_hetionet_diagnoses': hetionet_diagnoses,
+
+            # PrimeKG Disease Mechanism Paths (Layer 4i)
+            'layer_4i_mechanism_diagnoses': mechanism_diagnoses
         }
 
     def analyze_batch(self, patients: List[Dict], history_map: Dict[str, List] = None) -> List[Dict]:
