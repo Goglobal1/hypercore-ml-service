@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Cache bust: 2026-04-12-hpo
+# Cache bust: 2026-04-13-kg
 RUN echo "Build timestamp: $(date)"
 
 # Install dependencies first (layer caching)
@@ -32,6 +32,20 @@ RUN mkdir -p data/clinvar && \
     echo "ClinVar downloaded:" && ls -la data/clinvar/
 
 # Note: PharmGKB data requires account - gracefully handled as optional
+
+# Download Hetionet knowledge graph (47K nodes, 2.25M edges)
+RUN mkdir -p data/external/hetionet/hetnet/tsv && \
+    curl -L -o data/external/hetionet/hetnet/tsv/hetionet-v1.0-nodes.tsv \
+        https://github.com/hetio/hetionet/raw/main/hetnet/tsv/hetionet-v1.0-nodes.tsv && \
+    curl -L -o data/external/hetionet/hetnet/tsv/hetionet-v1.0-edges.sif.gz \
+        https://github.com/hetio/hetionet/raw/main/hetnet/tsv/hetionet-v1.0-edges.sif.gz && \
+    echo "Hetionet downloaded:" && ls -la data/external/hetionet/hetnet/tsv/
+
+# Download PrimeKG knowledge graph (129K nodes, 8.1M edges, ~937MB)
+RUN mkdir -p data/external/PrimeKG && \
+    curl -L -o data/external/PrimeKG/kg.csv \
+        https://dataverse.harvard.edu/api/access/datafile/6180620 && \
+    echo "PrimeKG downloaded:" && ls -lh data/external/PrimeKG/
 
 # Verify files exist
 RUN ls -la app/core/endpoints/ && ls -la app/core/pathways/
