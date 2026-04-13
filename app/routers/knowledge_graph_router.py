@@ -45,15 +45,56 @@ async def kg_health():
     Check knowledge graph module health and data availability.
 
     Returns availability status and statistics for PrimeKG and Hetionet.
+    Note: Returns quickly even if data is still loading in background.
     """
-    kg = get_kg_manager()
-    stats = kg.get_stats()
+    from app.data import get_primekg, get_hetionet
+
+    primekg = get_primekg()
+    hetionet = get_hetionet()
+
+    # Check availability without triggering load
+    available = {
+        'primekg': primekg.available,
+        'hetionet': hetionet.available,
+    }
+
+    # Only get stats if already loaded (don't trigger load)
+    primekg_stats = None
+    hetionet_stats = None
+
+    if primekg._loaded:
+        primekg_stats = {
+            'loaded': True,
+            'total_edges': len(primekg._edges),
+            'total_nodes': len(primekg._nodes),
+        }
+    elif primekg.available:
+        primekg_stats = {'loaded': False, 'status': 'loading'}
+
+    if hetionet._loaded:
+        hetionet_stats = {
+            'loaded': True,
+            'total_edges': len(hetionet._edges),
+            'total_nodes': len(hetionet._nodes),
+        }
+    elif hetionet.available:
+        hetionet_stats = {'loaded': False, 'status': 'loading'}
+
+    any_loaded = primekg._loaded or hetionet._loaded
+    any_available = primekg.available or hetionet.available
+
+    if any_loaded:
+        status = "healthy"
+    elif any_available:
+        status = "loading"
+    else:
+        status = "no_data"
 
     return KGHealthResponse(
-        status="healthy" if kg.any_available else "no_data",
-        available_graphs=stats.get("available_graphs", {}),
-        primekg_stats=stats.get("primekg"),
-        hetionet_stats=stats.get("hetionet"),
+        status=status,
+        available_graphs=available,
+        primekg_stats=primekg_stats,
+        hetionet_stats=hetionet_stats,
     )
 
 
