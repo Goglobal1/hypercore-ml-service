@@ -21,7 +21,8 @@ from contextlib import contextmanager
 logger = logging.getLogger(__name__)
 
 # ChEMBL database path - use environment variable with fallback
-_BASE_DIR = Path(__file__).parent.parent
+# Go up 3 levels: chembl_integration.py -> core -> app -> project_root
+_BASE_DIR = Path(__file__).parent.parent.parent
 CHEMBL_PATH = Path(os.environ.get('CHEMBL_PATH', _BASE_DIR / 'data' / 'chembl'))
 CHEMBL_DB_PATH = CHEMBL_PATH / "chembl_36" / "chembl_36_sqlite" / "chembl_36.db"
 

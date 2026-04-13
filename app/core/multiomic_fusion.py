@@ -30,7 +30,8 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 # Base directory for relative fallback paths
-_BASE_DIR = Path(__file__).parent.parent
+# Go up 3 levels: multiomic_fusion.py -> core -> app -> project_root
+_BASE_DIR = Path(__file__).parent.parent.parent
 
 # Data source paths configuration - use environment variables with fallbacks
 DATA_PATHS = {

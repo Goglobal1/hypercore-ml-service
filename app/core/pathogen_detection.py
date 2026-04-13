@@ -26,7 +26,8 @@ import statistics
 logger = logging.getLogger(__name__)
 
 # Data paths - use environment variables with fallbacks
-_BASE_DIR = Path(__file__).parent.parent
+# Go up 3 levels: pathogen_detection.py -> core -> app -> project_root
+_BASE_DIR = Path(__file__).parent.parent.parent
 WHO_PATH = Path(os.environ.get('WHO_PATH', _BASE_DIR / 'data' / 'who'))
 WHO_INDICATORS_PATH = WHO_PATH / "Indicators"
 CDC_WONDER_PATH = Path(os.environ.get('CDC_WONDER_PATH', _BASE_DIR / 'data' / 'cdc_wonder'))

@@ -62,7 +62,8 @@ except ImportError:
     logger.warning("ChEMBL integration not available")
 
 # Data paths - use environment variables with fallbacks
-_BASE_DIR = Path(__file__).parent.parent
+# Go up 3 levels: drug_response_predictor.py -> core -> app -> project_root
+_BASE_DIR = Path(__file__).parent.parent.parent
 FAERS_PATH = Path(os.environ.get('FAERS_PATH', _BASE_DIR / 'data' / 'faers'))
 AACT_PATH = Path(os.environ.get('AACT_PATH', _BASE_DIR / 'data' / 'aact'))
 
