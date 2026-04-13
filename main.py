@@ -22018,19 +22018,35 @@ def redis_reconnect() -> Dict[str, Any]:
         return {"status": "unavailable", "reason": "Utility engine not loaded"}
 
     try:
+        # Check environment variables
+        redis_private = os.environ.get('REDIS_PRIVATE_URL', '')
+        redis_url = os.environ.get('REDIS_URL', '')
+
         # Force reset and reconnect
         redis_store = reset_redis_store()
         redis_connected = redis_store._redis is not None
 
+        # Mask password in URL for display
+        display_url = redis_store._redis_url
+        if display_url and '@' in display_url:
+            parts = display_url.split('@')
+            display_url = parts[0][:20] + "...@" + parts[1] if len(parts) > 1 else display_url[:30]
+
         return {
             "status": "reconnected" if redis_connected else "failed",
             "mode": "redis" if redis_connected else "in_memory",
-            "redis_url": redis_store._redis_url[:50] + "..." if redis_store._redis_url else None,
+            "env_vars": {
+                "REDIS_URL_set": bool(redis_url),
+                "REDIS_URL_length": len(redis_url),
+                "REDIS_PRIVATE_URL_set": bool(redis_private),
+            },
+            "url_used": display_url,
             "message": "Redis connection established" if redis_connected else "Could not connect to Redis"
         }
 
     except Exception as e:
-        return {"status": "error", "error": str(e)}
+        import traceback
+        return {"status": "error", "error": str(e), "trace": traceback.format_exc()}
 
 
 # ---------------------------------------------------------------------
