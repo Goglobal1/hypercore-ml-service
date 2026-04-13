@@ -228,6 +228,16 @@ try:
 except ImportError:
     UNIVERSAL_INGESTION_AVAILABLE = False
 
+# Knowledge Graph Integration (PrimeKG + Hetionet)
+try:
+    from app.routers.knowledge_graph_router import router as kg_router
+    from app.data import get_kg_manager
+    KG_AVAILABLE = True
+    print("[HYPERCORE] Knowledge Graph Integration: OK")
+except ImportError as e:
+    KG_AVAILABLE = False
+    print(f"[HYPERCORE] Knowledge graph not available: {e}")
+
 # Phase 6: Utility Engine (Alert Decision Layer)
 try:
     from routes import utility_router, event_router, feedback_router
@@ -525,6 +535,10 @@ if ALERT_SYSTEM_AVAILABLE:
 # Include universal data ingestion router (always available - never fails)
 if UNIVERSAL_INGESTION_AVAILABLE:
     app.include_router(universal_router)
+
+# Include knowledge graph router if available
+if KG_AVAILABLE:
+    app.include_router(kg_router)
 
 # Include Phase 6 Utility Engine routers
 if UTILITY_ENGINE_AVAILABLE:
