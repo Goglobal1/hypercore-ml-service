@@ -88,16 +88,14 @@ class PrimeKGLoader:
         'pathway': 'pathway',
     }
 
-    # Essential relationships for diagnostics (reduces 8.1M -> ~1M edges)
-    # This dramatically reduces memory usage while keeping diagnostic value
+    # MINIMAL relationships for Railway deployment (reduces 8.1M -> ~200K edges)
+    # Aggressive filtering to fit in constrained memory environment
     ESSENTIAL_RELATIONS = {
-        'disease_protein',      # ~160K edges - gene-disease associations
-        'drug_protein',         # Drug-target interactions
+        'disease_protein',      # ~160K edges - gene-disease associations (critical)
+        'drug_protein',         # Drug-target interactions (critical)
         'drug_disease',         # Drug indications
-        'protein_protein',      # ~642K edges - protein interactions (for mechanism paths)
-        'phenotype_protein',    # Phenotype-gene associations
-        'disease_phenotype_positive',  # Disease-phenotype associations
-        'disease_phenotype_negative',
+        # NOTE: Removed protein_protein (642K edges) to reduce memory
+        # Can be re-enabled on higher-memory deployments
     }
 
     def __init__(self, lazy_load: bool = True):

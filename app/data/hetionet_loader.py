@@ -109,20 +109,19 @@ class HetionetLoader:
         'Symptom': 'Symptom',
     }
 
-    # Essential metaedges for diagnostics (reduces 2.25M -> ~700K edges)
+    # MINIMAL metaedges for Railway deployment (reduces 2.25M -> ~200K edges)
+    # Aggressive filtering to fit in constrained memory environment
     ESSENTIAL_METAEDGES = {
         # Gene-Disease associations (critical for diagnostics)
-        'GaD', 'GdD', 'GuD', 'DaG', 'DdG', 'DuG',
+        'GaD', 'DaG',
         # Compound-Disease (drug indications)
         'CtD', 'CpD',
         # Compound-Gene (drug targets)
-        'CbG', 'CdG', 'CuG',
-        # Gene-Gene interactions
-        'GiG', 'Gr>G',
+        'CbG',
         # Disease relationships
-        'DrD', 'DpS',
-        # Gene-Pathway (mechanism understanding)
-        'GpPW',
+        'DpS',  # Disease-presents-Symptom
+        # NOTE: Removed GiG (147K), Gr>G (265K), GpPW (84K) to reduce memory
+        # Can be re-enabled on higher-memory deployments
     }
 
     def __init__(self, lazy_load: bool = True):
