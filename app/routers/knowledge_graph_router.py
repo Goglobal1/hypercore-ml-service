@@ -10,6 +10,7 @@ Endpoints support cross-validation between knowledge sources.
 
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import JSONResponse
 
 from app.models.knowledge_graph_models import (
     KGHealthResponse,
@@ -34,9 +35,93 @@ from app.models.knowledge_graph_models import (
     KnowledgeGraphSource,
     EntityType,
 )
-from app.data import get_kg_manager
+from app.data import get_kg_manager, get_primekg, get_hetionet
 
 router = APIRouter(prefix="/kg", tags=["knowledge-graph"])
+
+
+def _check_kg_loaded() -> Optional[JSONResponse]:
+    """
+    Check if knowledge graphs are loaded. Returns None if ready,
+    or a JSONResponse with loading status if not ready.
+
+    This prevents query endpoints from timing out while loading 10M+ edges.
+    """
+    primekg = get_primekg()
+    hetionet = get_hetionet()
+
+    primekg_ready = primekg._loaded if primekg.available else False
+    hetionet_ready = hetionet._loaded if hetionet.available else False
+
+    if not primekg_ready and not hetionet_ready:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "loading",
+                "message": "Knowledge graphs are still loading. Please try again in a few minutes.",
+                "primekg": {"available": primekg.available, "loaded": False},
+                "hetionet": {"available": hetionet.available, "loaded": False},
+                "hint": "Call GET /kg/load to start loading, or wait for lazy load on first query."
+            }
+        )
+    return None
+
+
+@router.post("/load")
+async def load_knowledge_graphs(background: bool = Query(True, description="Load in background thread")):
+    """
+    Trigger loading of knowledge graphs.
+
+    Args:
+        background: If True, load in background thread (non-blocking).
+                   If False, load synchronously (may timeout for large datasets).
+
+    Returns:
+        Loading status
+    """
+    import threading
+
+    primekg = get_primekg()
+    hetionet = get_hetionet()
+
+    if primekg._loaded and hetionet._loaded:
+        return {
+            "status": "already_loaded",
+            "primekg": {"loaded": True, "edges": len(primekg._edges)},
+            "hetionet": {"loaded": True, "edges": len(hetionet._edges)}
+        }
+
+    if background:
+        def _load_kgs():
+            try:
+                if primekg.available and not primekg._loaded:
+                    primekg._load()
+                if hetionet.available and not hetionet._loaded:
+                    hetionet._load()
+            except Exception:
+                pass
+
+        thread = threading.Thread(target=_load_kgs, daemon=True)
+        thread.start()
+
+        return {
+            "status": "loading_started",
+            "message": "Knowledge graphs are loading in background. Check /kg/health for progress.",
+            "primekg": {"available": primekg.available, "loaded": primekg._loaded},
+            "hetionet": {"available": hetionet.available, "loaded": hetionet._loaded}
+        }
+    else:
+        # Synchronous load - may timeout
+        if primekg.available:
+            primekg._load()
+        if hetionet.available:
+            hetionet._load()
+
+        return {
+            "status": "loaded",
+            "primekg": {"loaded": primekg._loaded, "edges": len(primekg._edges) if primekg._loaded else 0},
+            "hetionet": {"loaded": hetionet._loaded, "edges": len(hetionet._edges) if hetionet._loaded else 0}
+        }
 
 
 @router.get("/health", response_model=KGHealthResponse)
@@ -118,6 +203,11 @@ async def get_drug_targets(
     Returns:
         List of drug targets with validation information
     """
+    # Check if KGs are loaded
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
 
     sources = None if source == KnowledgeGraphSource.ALL else [source.value]
@@ -153,6 +243,10 @@ async def get_disease_genes(
     Returns:
         List of associated genes
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
 
     sources = None if source == KnowledgeGraphSource.ALL else [source.value]
@@ -185,6 +279,10 @@ async def get_gene_diseases(
     Returns:
         List of associated diseases
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
 
     sources = None if source == KnowledgeGraphSource.ALL else [source.value]
@@ -220,6 +318,10 @@ async def get_drug_indications(
     Returns:
         List of disease indications
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     indications = kg.get_drug_diseases(drug_name)[:limit]
 
@@ -254,6 +356,10 @@ async def get_protein_interactions(
     Returns:
         List of protein interactions
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     interactions = kg.get_protein_interactions(gene_name, limit=limit)
 
@@ -284,6 +390,10 @@ async def get_drug_side_effects(
     Returns:
         List of side effects
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     side_effects = kg.get_drug_side_effects(drug_name)[:limit]
 
@@ -315,6 +425,10 @@ async def get_gene_pathways(
     Returns:
         List of pathways
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     pathways = kg.get_gene_pathways(gene_name)[:limit]
 
@@ -348,6 +462,10 @@ async def search_entities(
     Returns:
         List of matching entities
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
 
     entity_type = type.value if type else None
@@ -379,6 +497,10 @@ async def get_entity_summary(entity_name: str):
     Returns:
         Comprehensive entity information including related entities
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     summary = kg.get_entity_summary(entity_name)
 
@@ -411,6 +533,10 @@ async def find_connections(request: ConnectionsRequest):
     Returns:
         Paths connecting the entities from each knowledge graph
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     paths = kg.find_connections(request.entity1, request.entity2, max_depth=request.max_depth)
 
@@ -430,6 +556,11 @@ async def get_kg_stats():
     Get detailed statistics for all knowledge graphs.
 
     Returns node counts, edge counts, and relationship type distributions.
+    Note: Returns loading status if graphs are not yet loaded.
     """
+    loading_response = _check_kg_loaded()
+    if loading_response:
+        return loading_response
+
     kg = get_kg_manager()
     return kg.get_stats()
