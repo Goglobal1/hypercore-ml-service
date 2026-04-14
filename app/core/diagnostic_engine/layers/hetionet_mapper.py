@@ -95,7 +95,7 @@ class HetionetMapper:
             hetio = _get_hetionet()
             self._loaded = hetio is not None and hetio._loaded
 
-    @lru_cache(maxsize=1000)
+    @lru_cache(maxsize=100)
     def _cached_gene_diseases(self, gene_symbol: str) -> tuple:
         """
         LRU-cached lookup of diseases for a gene.

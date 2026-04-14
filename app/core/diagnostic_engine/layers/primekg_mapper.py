@@ -144,7 +144,7 @@ class PrimeKGMapper:
             pkg = _get_primekg()
             self._loaded = pkg is not None and pkg._loaded
 
-    @lru_cache(maxsize=500)
+    @lru_cache(maxsize=100)
     def _cached_gene_diseases(self, gene_symbol: str) -> tuple:
         """Cached lookup of diseases for a gene."""
         pkg = _get_primekg()
@@ -157,7 +157,7 @@ class PrimeKGMapper:
             for d in diseases[:20]  # Limit per gene
         )
 
-    @lru_cache(maxsize=500)
+    @lru_cache(maxsize=100)
     def _cached_protein_interactions(self, gene_symbol: str) -> tuple:
         """Cached lookup of protein interactions."""
         pkg = _get_primekg()
