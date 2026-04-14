@@ -88,6 +88,18 @@ class PrimeKGLoader:
         'pathway': 'pathway',
     }
 
+    # Essential relationships for diagnostics (reduces 8.1M -> ~1M edges)
+    # This dramatically reduces memory usage while keeping diagnostic value
+    ESSENTIAL_RELATIONS = {
+        'disease_protein',      # ~160K edges - gene-disease associations
+        'drug_protein',         # Drug-target interactions
+        'drug_disease',         # Drug indications
+        'protein_protein',      # ~642K edges - protein interactions (for mechanism paths)
+        'phenotype_protein',    # Phenotype-gene associations
+        'disease_phenotype_positive',  # Disease-phenotype associations
+        'disease_phenotype_negative',
+    }
+
     def __init__(self, lazy_load: bool = True):
         """
         Initialize PrimeKG loader.
@@ -128,8 +140,13 @@ class PrimeKGLoader:
         if not self._loaded and self._available:
             self._load()
 
-    def _load(self):
-        """Load PrimeKG data from CSV."""
+    def _load(self, filter_essential: bool = True):
+        """Load PrimeKG data from CSV.
+
+        Args:
+            filter_essential: If True, only load essential relationships for diagnostics.
+                            Reduces 8.1M edges to ~1M edges (88% memory reduction).
+        """
         if self._loaded:
             return
 
@@ -137,15 +154,23 @@ class PrimeKGLoader:
             logger.warning(f"PrimeKG CSV not found at {PRIMEKG_CSV}")
             return
 
-        logger.info(f"Loading PrimeKG from {PRIMEKG_CSV}...")
+        logger.info(f"Loading PrimeKG from {PRIMEKG_CSV} (filtered={filter_essential})...")
 
+        skipped = 0
         try:
             with open(PRIMEKG_CSV, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
 
                 for row in reader:
+                    relation = row.get('relation', '')
+
+                    # Filter to essential relationships only
+                    if filter_essential and relation not in self.ESSENTIAL_RELATIONS:
+                        skipped += 1
+                        continue
+
                     edge = KGEdge(
-                        relation=row.get('relation', ''),
+                        relation=relation,
                         display_relation=row.get('display_relation', ''),
                         source_id=row.get('x_id', ''),
                         source_type=row.get('x_type', ''),
@@ -191,7 +216,7 @@ class PrimeKGLoader:
                         self._categorize_node(node)
 
             self._loaded = True
-            logger.info(f"Loaded {len(self._edges):,} edges and {len(self._nodes):,} nodes from PrimeKG")
+            logger.info(f"Loaded {len(self._edges):,} edges and {len(self._nodes):,} nodes from PrimeKG (skipped {skipped:,} non-essential)")
 
         except Exception as e:
             logger.error(f"Error loading PrimeKG: {e}")

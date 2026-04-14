@@ -109,6 +109,22 @@ class HetionetLoader:
         'Symptom': 'Symptom',
     }
 
+    # Essential metaedges for diagnostics (reduces 2.25M -> ~700K edges)
+    ESSENTIAL_METAEDGES = {
+        # Gene-Disease associations (critical for diagnostics)
+        'GaD', 'GdD', 'GuD', 'DaG', 'DdG', 'DuG',
+        # Compound-Disease (drug indications)
+        'CtD', 'CpD',
+        # Compound-Gene (drug targets)
+        'CbG', 'CdG', 'CuG',
+        # Gene-Gene interactions
+        'GiG', 'Gr>G',
+        # Disease relationships
+        'DrD', 'DpS',
+        # Gene-Pathway (mechanism understanding)
+        'GpPW',
+    }
+
     def __init__(self, lazy_load: bool = True):
         """
         Initialize Hetionet loader.
@@ -150,10 +166,17 @@ class HetionetLoader:
         if not self._loaded and self._available:
             self._load()
 
-    def _load(self):
-        """Load Hetionet data."""
+    def _load(self, filter_essential: bool = True):
+        """Load Hetionet data.
+
+        Args:
+            filter_essential: If True, only load essential metaedges for diagnostics.
+                            Reduces 2.25M edges to ~700K edges (69% memory reduction).
+        """
         if self._loaded:
             return
+
+        self._filter_essential = filter_essential
 
         # Try TSV format first (faster)
         if HETIONET_NODES.exists():
@@ -196,12 +219,19 @@ class HetionetLoader:
 
         # Load edges
         if HETIONET_EDGES.exists():
-            logger.info(f"Loading Hetionet edges from {HETIONET_EDGES}...")
+            filter_mode = getattr(self, '_filter_essential', True)
+            logger.info(f"Loading Hetionet edges from {HETIONET_EDGES} (filtered={filter_mode})...")
+            skipped = 0
             with gzip.open(HETIONET_EDGES, 'rt', encoding='utf-8') as f:
                 for line in f:
                     parts = line.strip().split('\t')
                     if len(parts) >= 3:
                         source_id, metaedge, target_id = parts[0], parts[1], parts[2]
+
+                        # Filter to essential metaedges only
+                        if filter_mode and metaedge not in self.ESSENTIAL_METAEDGES:
+                            skipped += 1
+                            continue
 
                         source_node = self._nodes.get(source_id)
                         target_node = self._nodes.get(target_id)
@@ -220,6 +250,9 @@ class HetionetLoader:
                         self._by_source[source_id].append(edge)
                         self._by_target[target_id].append(edge)
                         self._by_metaedge[metaedge].append(edge)
+
+            if skipped > 0:
+                logger.info(f"Skipped {skipped:,} non-essential edges")
 
     def _load_json(self):
         """Load from JSON format (bz2 compressed)."""
@@ -250,7 +283,16 @@ class HetionetLoader:
                 self._diseases[node.id] = node
 
         # Load edges
+        filter_mode = getattr(self, '_filter_essential', True)
+        skipped = 0
         for edge_data in data.get('edges', []):
+            metaedge = edge_data['kind']
+
+            # Filter to essential metaedges only
+            if filter_mode and metaedge not in self.ESSENTIAL_METAEDGES:
+                skipped += 1
+                continue
+
             source_id = edge_data['source']
             target_id = edge_data['target']
             source_node = self._nodes.get(source_id)
@@ -258,7 +300,7 @@ class HetionetLoader:
 
             edge = HetioEdge(
                 source_id=source_id,
-                metaedge=edge_data['kind'],
+                metaedge=metaedge,
                 target_id=target_id,
                 source_name=source_node.name if source_node else "",
                 target_name=target_node.name if target_node else "",
@@ -270,6 +312,9 @@ class HetionetLoader:
             self._by_source[source_id].append(edge)
             self._by_target[target_id].append(edge)
             self._by_metaedge[edge.metaedge].append(edge)
+
+        if skipped > 0:
+            logger.info(f"Skipped {skipped:,} non-essential edges (JSON)")
 
     def get_stats(self) -> Dict[str, Any]:
         """Get statistics about the loaded knowledge graph."""
