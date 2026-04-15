@@ -1739,6 +1739,11 @@ class DiscoveryResponse(BaseModel):
     data_transformation: Optional[Dict[str, Any]] = None
     longitudinal_insights: Optional[List[Dict[str, Any]]] = None
 
+    # Knowledge Graph layer results
+    kg_gene_diseases: Optional[List[Dict[str, Any]]] = None  # Layer 4h Hetionet
+    kg_mechanism_paths: Optional[List[Dict[str, Any]]] = None  # Layer 4i PrimeKG
+    kg_hpo_phenotypes: Optional[List[Dict[str, Any]]] = None  # Layer 4f HPO
+
 
 class MultiOmicFeatures(BaseModel):
     # Accept either list of floats OR dict of marker:value pairs
@@ -6996,6 +7001,10 @@ def run_discovery(req: DiscoveryRequest) -> DiscoveryResponse:
                     }
                     for i, r in enumerate(v2_result.get('recommendations', [])[:5])
                 ],
+                # Knowledge Graph layers
+                kg_gene_diseases=v2_result.get('layer_4h_hetionet_diagnoses'),
+                kg_mechanism_paths=v2_result.get('layer_4i_mechanism_diagnoses'),
+                kg_hpo_phenotypes=v2_result.get('layer_4f_hpo_diagnoses'),
                 error=None
             )
 
