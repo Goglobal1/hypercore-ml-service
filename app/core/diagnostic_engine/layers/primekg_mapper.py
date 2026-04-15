@@ -284,8 +284,15 @@ class PrimeKGMapper:
         """
         Main analysis for Layer 4i.
 
-        Only loads PrimeKG if abnormal biomarkers need explanation.
+        Only queries PrimeKG if already loaded (to prevent memory issues).
+        Use /kg/load endpoint to preload before calling this.
         """
+        # Check if PrimeKG is already loaded (don't trigger load during request)
+        pkg = _get_primekg()
+        if not pkg or not pkg._loaded:
+            logger.debug("[PrimeKGMapper] PrimeKG not loaded - skipping (use /kg/load to preload)")
+            return []
+
         if not axis_scores:
             return []
 
@@ -296,7 +303,7 @@ class PrimeKGMapper:
             logger.debug("[PrimeKGMapper] No abnormal biomarkers - skipping")
             return []
 
-        logger.info(f"[PrimeKGMapper] Found {len(abnormal)} abnormal biomarkers, loading PrimeKG...")
+        logger.info(f"[PrimeKGMapper] Found {len(abnormal)} abnormal biomarkers, querying PrimeKG...")
 
         # Find mechanism paths for each biomarker
         all_paths: List[MechanismPath] = []

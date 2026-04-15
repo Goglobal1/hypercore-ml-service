@@ -248,16 +248,23 @@ class HetionetMapper:
         """
         Main analysis method for Layer 4h.
 
-        Only loads Hetionet if genetic markers are present.
+        Only queries Hetionet if already loaded (to prevent memory issues).
+        Use /kg/load endpoint to preload before calling this.
         """
-        # Extract genes first (before loading Hetionet)
+        # Check if Hetionet is already loaded (don't trigger load during request)
+        hetio = _get_hetionet()
+        if not hetio or not hetio._loaded:
+            logger.debug("[HetionetMapper] Hetionet not loaded - skipping (use /kg/load to preload)")
+            return []
+
+        # Extract genes first
         genes = self.extract_genes_from_data(raw_data, features)
 
         if not genes:
-            logger.debug("[HetionetMapper] No genetic markers - skipping Hetionet load")
+            logger.debug("[HetionetMapper] No genetic markers - skipping")
             return []
 
-        logger.info(f"[HetionetMapper] Found genes: {genes}, loading Hetionet...")
+        logger.info(f"[HetionetMapper] Found genes: {genes}, querying Hetionet...")
 
         # Now load Hetionet and query
         diagnoses = self.find_diseases_by_genes(genes)
