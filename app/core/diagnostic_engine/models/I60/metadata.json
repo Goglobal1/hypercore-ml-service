@@ -1,0 +1,85 @@
+{
+  "disease_icd": "I60",
+  "disease_name": "Subarachnoid Hemorrhage",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6832298136645962,
+    "roc_auc": 0.7599259173515454,
+    "avg_precision": 0.7255729201420227,
+    "confusion_matrix": [
+      [
+        103,
+        56
+      ],
+      [
+        46,
+        117
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6912751677852349,
+        "recall": 0.6477987421383647,
+        "f1-score": 0.6688311688311688,
+        "support": 159.0
+      },
+      "1": {
+        "precision": 0.6763005780346821,
+        "recall": 0.7177914110429447,
+        "f1-score": 0.6964285714285714,
+        "support": 163.0
+      },
+      "accuracy": 0.6832298136645962,
+      "macro avg": {
+        "precision": 0.6837878729099585,
+        "recall": 0.6827950765906547,
+        "f1-score": 0.6826298701298701,
+        "support": 322.0
+      },
+      "weighted avg": {
+        "precision": 0.6836948630357315,
+        "recall": 0.6832298136645962,
+        "f1-score": 0.6828012825683633,
+        "support": 322.0
+      }
+    },
+    "train_samples": 1288,
+    "test_samples": 322,
+    "positive_rate": 0.5049689440993789
+  },
+  "threshold": 0.33172740878662926,
+  "created_at": "2026-04-15T22:16:14.747028"
+}
