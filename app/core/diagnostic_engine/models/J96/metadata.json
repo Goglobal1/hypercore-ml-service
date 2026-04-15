@@ -1,0 +1,86 @@
+{
+  "disease_icd": "J96",
+  "disease_name": "Respiratory Failure",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8286147623862488,
+    "roc_auc": 0.8974755633716412,
+    "avg_precision": 0.8789363987521179,
+    "confusion_matrix": [
+      [
+        773,
+        207
+      ],
+      [
+        132,
+        866
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8541436464088398,
+        "recall": 0.7887755102040817,
+        "f1-score": 0.8201591511936339,
+        "support": 980.0
+      },
+      "1": {
+        "precision": 0.8070829450139795,
+        "recall": 0.8677354709418837,
+        "f1-score": 0.8363109608884597,
+        "support": 998.0
+      },
+      "accuracy": 0.8286147623862488,
+      "macro avg": {
+        "precision": 0.8306132957114096,
+        "recall": 0.8282554905729826,
+        "f1-score": 0.8282350560410467,
+        "support": 1978.0
+      },
+      "weighted avg": {
+        "precision": 0.8303991671408567,
+        "recall": 0.8286147623862488,
+        "f1-score": 0.828308547591731,
+        "support": 1978.0
+      }
+    },
+    "train_samples": 7910,
+    "test_samples": 1978,
+    "positive_rate": 0.5046521035598706
+  },
+  "threshold": 0.3957240520237762,
+  "created_at": "2026-04-15T04:01:08.574174"
+}

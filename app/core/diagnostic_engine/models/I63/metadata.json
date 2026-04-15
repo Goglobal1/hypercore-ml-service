@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I63",
+  "disease_name": "Ischemic Stroke",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8176501860712387,
+    "roc_auc": 0.8842048018957945,
+    "avg_precision": 0.8677592520827137,
+    "confusion_matrix": [
+      [
+        720,
+        213
+      ],
+      [
+        130,
+        818
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8470588235294118,
+        "recall": 0.7717041800643086,
+        "f1-score": 0.807627593942793,
+        "support": 933.0
+      },
+      "1": {
+        "precision": 0.7934044616876819,
+        "recall": 0.8628691983122363,
+        "f1-score": 0.8266801414855988,
+        "support": 948.0
+      },
+      "accuracy": 0.8176501860712387,
+      "macro avg": {
+        "precision": 0.8202316426085468,
+        "recall": 0.8172866891882724,
+        "f1-score": 0.8171538677141958,
+        "support": 1881.0
+      },
+      "weighted avg": {
+        "precision": 0.8200177097463389,
+        "recall": 0.8176501860712387,
+        "f1-score": 0.8172298348096616,
+        "support": 1881.0
+      }
+    },
+    "train_samples": 7522,
+    "test_samples": 1881,
+    "positive_rate": 0.5040944379453366
+  },
+  "threshold": 0.529915351586958,
+  "created_at": "2026-04-15T04:11:49.249321"
+}
