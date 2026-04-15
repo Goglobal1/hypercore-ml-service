@@ -5,7 +5,7 @@ Orchestrates all 9 layers for signals-first disease detection.
 Data integrations (Phase 5 Unified):
 - Rule-based patterns: 21 core disease definitions
 - ClinVar: 209K+ genetic disease conditions
-- ML Models: 5 MIMIC-trained disease classifiers
+- ML Models: 15 MIMIC-trained disease classifiers
 - ICD-10: 97K+ diagnosis codes
 
 Utility Gate (Phase 6):

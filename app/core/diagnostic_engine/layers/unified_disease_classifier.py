@@ -4,7 +4,7 @@ Layer 4 Unified: Unified Disease Classification
 Combines all disease detection sources:
 - Rule-based patterns (disease_ontology.json) - 21 core diseases
 - ClinVar genetic conditions - 209K+ diseases
-- ML models trained on MIMIC-IV - 5 trained models
+- ML models trained on MIMIC-IV - 15 trained models
 - ICD-10 code mapping - 97K+ codes
 
 Provides intelligent merging with:
