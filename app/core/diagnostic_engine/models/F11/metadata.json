@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F11",
+  "disease_name": "Opioid Use Disorder",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.663597298956415,
+    "roc_auc": 0.7380375274340978,
+    "avg_precision": 0.7316766364659164,
+    "confusion_matrix": [
+      [
+        556,
+        257
+      ],
+      [
+        291,
+        525
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6564344746162928,
+        "recall": 0.6838868388683886,
+        "f1-score": 0.6698795180722892,
+        "support": 813.0
+      },
+      "1": {
+        "precision": 0.6713554987212276,
+        "recall": 0.6433823529411765,
+        "f1-score": 0.6570713391739674,
+        "support": 816.0
+      },
+      "accuracy": 0.663597298956415,
+      "macro avg": {
+        "precision": 0.6638949866687602,
+        "recall": 0.6636345959047826,
+        "f1-score": 0.6634754286231284,
+        "support": 1629.0
+      },
+      "weighted avg": {
+        "precision": 0.6639087261016378,
+        "recall": 0.663597298956415,
+        "f1-score": 0.663463634719907,
+        "support": 1629.0
+      }
+    },
+    "train_samples": 6516,
+    "test_samples": 1629,
+    "positive_rate": 0.5010435850214856
+  },
+  "threshold": 0.37788171710720914,
+  "created_at": "2026-04-16T01:54:37.231655"
+}
