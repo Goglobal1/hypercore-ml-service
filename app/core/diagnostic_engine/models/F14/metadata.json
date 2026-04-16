@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F14",
+  "disease_name": "Cocaine Use Disorder",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6724511930585684,
+    "roc_auc": 0.739361001317523,
+    "avg_precision": 0.7194304416731852,
+    "confusion_matrix": [
+      [
+        314,
+        146
+      ],
+      [
+        156,
+        306
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6680851063829787,
+        "recall": 0.6826086956521739,
+        "f1-score": 0.6752688172043011,
+        "support": 460.0
+      },
+      "1": {
+        "precision": 0.6769911504424779,
+        "recall": 0.6623376623376623,
+        "f1-score": 0.6695842450765864,
+        "support": 462.0
+      },
+      "accuracy": 0.6724511930585684,
+      "macro avg": {
+        "precision": 0.6725381284127283,
+        "recall": 0.6724731789949181,
+        "f1-score": 0.6724265311404438,
+        "support": 922.0
+      },
+      "weighted avg": {
+        "precision": 0.6725477878965238,
+        "recall": 0.6724511930585684,
+        "f1-score": 0.6724203656609127,
+        "support": 922.0
+      }
+    },
+    "train_samples": 3686,
+    "test_samples": 922,
+    "positive_rate": 0.5015190972222222
+  },
+  "threshold": 0.33260140344383066,
+  "created_at": "2026-04-16T02:06:59.421014"
+}

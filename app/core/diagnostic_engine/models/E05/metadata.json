@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E05",
+  "disease_name": "Hyperthyroidism and Thyroid Storm",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6233183856502242,
+    "roc_auc": 0.6738736926790024,
+    "avg_precision": 0.6484845288817823,
+    "confusion_matrix": [
+      [
+        132,
+        88
+      ],
+      [
+        80,
+        146
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6226415094339622,
+        "recall": 0.6,
+        "f1-score": 0.6111111111111112,
+        "support": 220.0
+      },
+      "1": {
+        "precision": 0.6239316239316239,
+        "recall": 0.6460176991150443,
+        "f1-score": 0.6347826086956522,
+        "support": 226.0
+      },
+      "accuracy": 0.6233183856502242,
+      "macro avg": {
+        "precision": 0.6232865666827931,
+        "recall": 0.6230088495575221,
+        "f1-score": 0.6229468599033816,
+        "support": 446.0
+      },
+      "weighted avg": {
+        "precision": 0.6232952445830016,
+        "recall": 0.6233183856502242,
+        "f1-score": 0.6231060852234571,
+        "support": 446.0
+      }
+    },
+    "train_samples": 1781,
+    "test_samples": 446,
+    "positive_rate": 0.5060619667714414
+  },
+  "threshold": 0.24341388989168752,
+  "created_at": "2026-04-16T02:14:20.709082"
+}
