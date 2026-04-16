@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F10",
+  "disease_name": "Alcohol Use Disorder",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6985446985446986,
+    "roc_auc": 0.7710103519400158,
+    "avg_precision": 0.7670192362608079,
+    "confusion_matrix": [
+      [
+        741,
+        241
+      ],
+      [
+        339,
+        603
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6861111111111111,
+        "recall": 0.754582484725051,
+        "f1-score": 0.7187196896217265,
+        "support": 982.0
+      },
+      "1": {
+        "precision": 0.7144549763033176,
+        "recall": 0.6401273885350318,
+        "f1-score": 0.6752519596864501,
+        "support": 942.0
+      },
+      "accuracy": 0.6985446985446986,
+      "macro avg": {
+        "precision": 0.7002830437072143,
+        "recall": 0.6973549366300413,
+        "f1-score": 0.6969858246540883,
+        "support": 1924.0
+      },
+      "weighted avg": {
+        "precision": 0.6999884089339066,
+        "recall": 0.6985446985446986,
+        "f1-score": 0.6974376721586131,
+        "support": 1924.0
+      }
+    },
+    "train_samples": 7692,
+    "test_samples": 1924,
+    "positive_rate": 0.4894966722129784
+  },
+  "threshold": 0.3878748200645401,
+  "created_at": "2026-04-16T01:17:16.029475"
+}

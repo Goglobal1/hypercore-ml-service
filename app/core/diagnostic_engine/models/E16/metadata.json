@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E16",
+  "disease_name": "Hypoglycemia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7562862669245648,
+    "roc_auc": 0.8480154454022989,
+    "avg_precision": 0.8281501466511989,
+    "confusion_matrix": [
+      [
+        195,
+        61
+      ],
+      [
+        65,
+        196
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.75,
+        "recall": 0.76171875,
+        "f1-score": 0.7558139534883721,
+        "support": 256.0
+      },
+      "1": {
+        "precision": 0.7626459143968871,
+        "recall": 0.7509578544061303,
+        "f1-score": 0.7567567567567568,
+        "support": 261.0
+      },
+      "accuracy": 0.7562862669245648,
+      "macro avg": {
+        "precision": 0.7563229571984436,
+        "recall": 0.7563383022030652,
+        "f1-score": 0.7562853551225645,
+        "support": 517.0
+      },
+      "weighted avg": {
+        "precision": 0.7563841076549082,
+        "recall": 0.7562862669245648,
+        "f1-score": 0.7562899141325663,
+        "support": 517.0
+      }
+    },
+    "train_samples": 2064,
+    "test_samples": 517,
+    "positive_rate": 0.5052305308020147
+  },
+  "threshold": 0.27060240869776814,
+  "created_at": "2026-04-16T01:01:52.506159"
+}

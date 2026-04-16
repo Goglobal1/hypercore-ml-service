@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E10",
+  "disease_name": "Type 1 Diabetes Mellitus",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8192252510760402,
+    "roc_auc": 0.8886116600790513,
+    "avg_precision": 0.8823443113327912,
+    "confusion_matrix": [
+      [
+        287,
+        58
+      ],
+      [
+        68,
+        284
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8084507042253521,
+        "recall": 0.8318840579710145,
+        "f1-score": 0.82,
+        "support": 345.0
+      },
+      "1": {
+        "precision": 0.8304093567251462,
+        "recall": 0.8068181818181818,
+        "f1-score": 0.8184438040345822,
+        "support": 352.0
+      },
+      "accuracy": 0.8192252510760402,
+      "macro avg": {
+        "precision": 0.8194300304752491,
+        "recall": 0.8193511198945982,
+        "f1-score": 0.8192219020172911,
+        "support": 697.0
+      },
+      "weighted avg": {
+        "precision": 0.8195402963055926,
+        "recall": 0.8192252510760402,
+        "f1-score": 0.8192140875468765,
+        "support": 697.0
+      }
+    },
+    "train_samples": 2788,
+    "test_samples": 697,
+    "positive_rate": 0.5053084648493543
+  },
+  "threshold": 0.3510455190006532,
+  "created_at": "2026-04-16T00:57:05.265653"
+}
