@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K92",
+  "disease_name": "Gastrointestinal Hemorrhage",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7737760270118177,
+    "roc_auc": 0.8483698667970739,
+    "avg_precision": 0.8249636879125303,
+    "confusion_matrix": [
+      [
+        657,
+        221
+      ],
+      [
+        181,
+        718
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7840095465393795,
+        "recall": 0.7482915717539863,
+        "f1-score": 0.7657342657342657,
+        "support": 878.0
+      },
+      "1": {
+        "precision": 0.7646432374866879,
+        "recall": 0.7986651835372637,
+        "f1-score": 0.7812840043525572,
+        "support": 899.0
+      },
+      "accuracy": 0.7737760270118177,
+      "macro avg": {
+        "precision": 0.7743263920130337,
+        "recall": 0.773478377645625,
+        "f1-score": 0.7735091350434115,
+        "support": 1777.0
+      },
+      "weighted avg": {
+        "precision": 0.7742119596860482,
+        "recall": 0.7737760270118177,
+        "f1-score": 0.773601015884994,
+        "support": 1777.0
+      }
+    },
+    "train_samples": 7108,
+    "test_samples": 1777,
+    "positive_rate": 0.5057962858750703
+  },
+  "threshold": 0.4595439105774253,
+  "created_at": "2026-04-16T23:18:57.455296"
+}

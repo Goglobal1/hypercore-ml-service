@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I26",
+  "disease_name": "Pulmonary Embolism",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8120805369127517,
+    "roc_auc": 0.890747628623801,
+    "avg_precision": 0.8751041856945354,
+    "confusion_matrix": [
+      [
+        523,
+        141
+      ],
+      [
+        111,
+        566
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8249211356466877,
+        "recall": 0.7876506024096386,
+        "f1-score": 0.8058551617873652,
+        "support": 664.0
+      },
+      "1": {
+        "precision": 0.8005657708628006,
+        "recall": 0.8360413589364845,
+        "f1-score": 0.8179190751445087,
+        "support": 677.0
+      },
+      "accuracy": 0.8120805369127517,
+      "macro avg": {
+        "precision": 0.8127434532547442,
+        "recall": 0.8118459806730616,
+        "f1-score": 0.8118871184659369,
+        "support": 1341.0
+      },
+      "weighted avg": {
+        "precision": 0.8126253996595949,
+        "recall": 0.8120805369127517,
+        "f1-score": 0.8119455938103227,
+        "support": 1341.0
+      }
+    },
+    "train_samples": 5363,
+    "test_samples": 1341,
+    "positive_rate": 0.5047732696897375
+  },
+  "threshold": 0.3943648524015635,
+  "created_at": "2026-04-16T23:23:09.767012"
+}

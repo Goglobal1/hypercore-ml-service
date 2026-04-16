@@ -1,0 +1,86 @@
+{
+  "disease_icd": "J44",
+  "disease_name": "Chronic Obstructive Pulmonary Disease",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.729757085020243,
+    "roc_auc": 0.811560319364631,
+    "avg_precision": 0.7843304104655382,
+    "confusion_matrix": [
+      [
+        708,
+        271
+      ],
+      [
+        263,
+        734
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.729145211122554,
+        "recall": 0.7231869254341164,
+        "f1-score": 0.7261538461538461,
+        "support": 979.0
+      },
+      "1": {
+        "precision": 0.7303482587064677,
+        "recall": 0.7362086258776329,
+        "f1-score": 0.7332667332667333,
+        "support": 997.0
+      },
+      "accuracy": 0.729757085020243,
+      "macro avg": {
+        "precision": 0.7297467349145108,
+        "recall": 0.7296977756558747,
+        "f1-score": 0.7297102897102897,
+        "support": 1976.0
+      },
+      "weighted avg": {
+        "precision": 0.7297522143822514,
+        "recall": 0.729757085020243,
+        "f1-score": 0.7297426864633342,
+        "support": 1976.0
+      }
+    },
+    "train_samples": 7903,
+    "test_samples": 1976,
+    "positive_rate": 0.5046057293248305
+  },
+  "threshold": 0.3868981972388278,
+  "created_at": "2026-04-16T23:27:13.601328"
+}

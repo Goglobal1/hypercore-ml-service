@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K85",
+  "disease_name": "Acute Pancreatitis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7806176783812566,
+    "roc_auc": 0.8780762250453721,
+    "avg_precision": 0.8693086687654769,
+    "confusion_matrix": [
+      [
+        351,
+        113
+      ],
+      [
+        93,
+        382
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7905405405405406,
+        "recall": 0.7564655172413793,
+        "f1-score": 0.7731277533039648,
+        "support": 464.0
+      },
+      "1": {
+        "precision": 0.7717171717171717,
+        "recall": 0.8042105263157895,
+        "f1-score": 0.7876288659793814,
+        "support": 475.0
+      },
+      "accuracy": 0.7806176783812566,
+      "macro avg": {
+        "precision": 0.7811288561288561,
+        "recall": 0.7803380217785845,
+        "f1-score": 0.7803783096416731,
+        "support": 939.0
+      },
+      "weighted avg": {
+        "precision": 0.7810186021048642,
+        "recall": 0.7806176783812566,
+        "f1-score": 0.780463246936364,
+        "support": 939.0
+      }
+    },
+    "train_samples": 3755,
+    "test_samples": 939,
+    "positive_rate": 0.5055389859394972
+  },
+  "threshold": 0.34255681338814,
+  "created_at": "2026-04-16T23:14:40.522588"
+}

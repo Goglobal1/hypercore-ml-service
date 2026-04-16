@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K56",
+  "disease_name": "Intestinal Obstruction",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7485549132947977,
+    "roc_auc": 0.8194947344221364,
+    "avg_precision": 0.7888712368939015,
+    "confusion_matrix": [
+      [
+        600,
+        257
+      ],
+      [
+        178,
+        695
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7712082262210797,
+        "recall": 0.7001166861143524,
+        "f1-score": 0.7339449541284404,
+        "support": 857.0
+      },
+      "1": {
+        "precision": 0.7300420168067226,
+        "recall": 0.7961053837342497,
+        "f1-score": 0.7616438356164383,
+        "support": 873.0
+      },
+      "accuracy": 0.7485549132947977,
+      "macro avg": {
+        "precision": 0.7506251215139012,
+        "recall": 0.748111034924301,
+        "f1-score": 0.7477943948724394,
+        "support": 1730.0
+      },
+      "weighted avg": {
+        "precision": 0.7504347575397307,
+        "recall": 0.7485549132947977,
+        "f1-score": 0.7479224821856787,
+        "support": 1730.0
+      }
+    },
+    "train_samples": 6917,
+    "test_samples": 1730,
+    "positive_rate": 0.5044524112408928
+  },
+  "threshold": 0.4252129922766443,
+  "created_at": "2026-04-16T23:31:59.507210"
+}
