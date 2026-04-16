@@ -1,0 +1,86 @@
+{
+  "disease_icd": "G92",
+  "disease_name": "Toxic Encephalopathy",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7932425617750882,
+    "roc_auc": 0.8641902339776195,
+    "avg_precision": 0.8342314133841862,
+    "confusion_matrix": [
+      [
+        746,
+        237
+      ],
+      [
+        173,
+        827
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8117519042437432,
+        "recall": 0.7589013224821973,
+        "f1-score": 0.7844374342797056,
+        "support": 983.0
+      },
+      "1": {
+        "precision": 0.7772556390977443,
+        "recall": 0.827,
+        "f1-score": 0.8013565891472868,
+        "support": 1000.0
+      },
+      "accuracy": 0.7932425617750882,
+      "macro avg": {
+        "precision": 0.7945037716707437,
+        "recall": 0.7929506612410986,
+        "f1-score": 0.7928970117134961,
+        "support": 1983.0
+      },
+      "weighted avg": {
+        "precision": 0.7943559056829772,
+        "recall": 0.7932425617750882,
+        "f1-score": 0.7929695345659291,
+        "support": 1983.0
+      }
+    },
+    "train_samples": 7932,
+    "test_samples": 1983,
+    "positive_rate": 0.5041855774079678
+  },
+  "threshold": 0.43073958126710915,
+  "created_at": "2026-04-16T22:41:55.620832"
+}

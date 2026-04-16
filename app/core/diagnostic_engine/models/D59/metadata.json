@@ -1,0 +1,86 @@
+{
+  "disease_icd": "D59",
+  "disease_name": "Acquired Hemolytic Anemia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8131868131868132,
+    "roc_auc": 0.8851449275362319,
+    "avg_precision": 0.8577514199241417,
+    "confusion_matrix": [
+      [
+        71,
+        19
+      ],
+      [
+        15,
+        77
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8255813953488372,
+        "recall": 0.7888888888888889,
+        "f1-score": 0.8068181818181818,
+        "support": 90.0
+      },
+      "1": {
+        "precision": 0.8020833333333334,
+        "recall": 0.8369565217391305,
+        "f1-score": 0.8191489361702128,
+        "support": 92.0
+      },
+      "accuracy": 0.8131868131868132,
+      "macro avg": {
+        "precision": 0.8138323643410853,
+        "recall": 0.8129227053140097,
+        "f1-score": 0.8129835589941973,
+        "support": 182.0
+      },
+      "weighted avg": {
+        "precision": 0.8137032541102309,
+        "recall": 0.8131868131868132,
+        "f1-score": 0.8130513103917358,
+        "support": 182.0
+      }
+    },
+    "train_samples": 724,
+    "test_samples": 182,
+    "positive_rate": 0.5055187637969095
+  },
+  "threshold": 0.4624020729294591,
+  "created_at": "2026-04-16T22:37:41.400817"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "B20",
+  "disease_name": "HIV Disease",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8491228070175438,
+    "roc_auc": 0.9319838455476753,
+    "avg_precision": 0.924853539829404,
+    "confusion_matrix": [
+      [
+        124,
+        17
+      ],
+      [
+        26,
+        118
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8266666666666667,
+        "recall": 0.8794326241134752,
+        "f1-score": 0.852233676975945,
+        "support": 141.0
+      },
+      "1": {
+        "precision": 0.8740740740740741,
+        "recall": 0.8194444444444444,
+        "f1-score": 0.8458781362007168,
+        "support": 144.0
+      },
+      "accuracy": 0.8491228070175438,
+      "macro avg": {
+        "precision": 0.8503703703703704,
+        "recall": 0.8494385342789599,
+        "f1-score": 0.849055906588331,
+        "support": 285.0
+      },
+      "weighted avg": {
+        "precision": 0.8506198830409357,
+        "recall": 0.8491228070175438,
+        "f1-score": 0.8490224563737245,
+        "support": 285.0
+      }
+    },
+    "train_samples": 1140,
+    "test_samples": 285,
+    "positive_rate": 0.5045614035087719
+  },
+  "threshold": 0.7078648283034736,
+  "created_at": "2026-04-16T22:46:22.022110"
+}

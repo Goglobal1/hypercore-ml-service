@@ -1,0 +1,86 @@
+{
+  "disease_icd": "C50",
+  "disease_name": "Breast Cancer",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6659919028340081,
+    "roc_auc": 0.7328415703630851,
+    "avg_precision": 0.7414549050800827,
+    "confusion_matrix": [
+      [
+        155,
+        90
+      ],
+      [
+        75,
+        174
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6739130434782609,
+        "recall": 0.6326530612244898,
+        "f1-score": 0.6526315789473685,
+        "support": 245.0
+      },
+      "1": {
+        "precision": 0.6590909090909091,
+        "recall": 0.6987951807228916,
+        "f1-score": 0.6783625730994152,
+        "support": 249.0
+      },
+      "accuracy": 0.6659919028340081,
+      "macro avg": {
+        "precision": 0.666501976284585,
+        "recall": 0.6657241209736907,
+        "f1-score": 0.6654970760233918,
+        "support": 494.0
+      },
+      "weighted avg": {
+        "precision": 0.6664419676433406,
+        "recall": 0.6659919028340081,
+        "f1-score": 0.6656012500887847,
+        "support": 494.0
+      }
+    },
+    "train_samples": 1976,
+    "test_samples": 494,
+    "positive_rate": 0.5036437246963563
+  },
+  "threshold": 0.3010454507257258,
+  "created_at": "2026-04-16T23:00:08.341282"
+}
