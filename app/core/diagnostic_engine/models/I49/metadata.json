@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I49",
+  "disease_name": "Other Cardiac Arrhythmias",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7113543091655267,
+    "roc_auc": 0.7856292669780811,
+    "avg_precision": 0.7828581566492403,
+    "confusion_matrix": [
+      [
+        529,
+        197
+      ],
+      [
+        225,
+        511
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7015915119363395,
+        "recall": 0.7286501377410468,
+        "f1-score": 0.7148648648648649,
+        "support": 726.0
+      },
+      "1": {
+        "precision": 0.7217514124293786,
+        "recall": 0.6942934782608695,
+        "f1-score": 0.7077562326869806,
+        "support": 736.0
+      },
+      "accuracy": 0.7113543091655267,
+      "macro avg": {
+        "precision": 0.711671462182859,
+        "recall": 0.7114718080009581,
+        "f1-score": 0.7113105487759228,
+        "support": 1462.0
+      },
+      "weighted avg": {
+        "precision": 0.7117404084909748,
+        "recall": 0.7113543091655267,
+        "f1-score": 0.7112862374483648,
+        "support": 1462.0
+      }
+    },
+    "train_samples": 5846,
+    "test_samples": 1462,
+    "positive_rate": 0.5035577449370553
+  },
+  "threshold": 0.33237289349007637,
+  "created_at": "2026-04-16T02:48:40.843372"
+}

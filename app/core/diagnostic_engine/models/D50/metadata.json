@@ -1,0 +1,86 @@
+{
+  "disease_icd": "D50",
+  "disease_name": "Iron Deficiency Anemia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7593340060544904,
+    "roc_auc": 0.8280600814663951,
+    "avg_precision": 0.8014804325246174,
+    "confusion_matrix": [
+      [
+        713,
+        269
+      ],
+      [
+        208,
+        792
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7741585233441911,
+        "recall": 0.7260692464358453,
+        "f1-score": 0.7493431424067262,
+        "support": 982.0
+      },
+      "1": {
+        "precision": 0.7464655984919887,
+        "recall": 0.792,
+        "f1-score": 0.7685589519650655,
+        "support": 1000.0
+      },
+      "accuracy": 0.7593340060544904,
+      "macro avg": {
+        "precision": 0.7603120609180899,
+        "recall": 0.7590346232179226,
+        "f1-score": 0.7589510471858958,
+        "support": 1982.0
+      },
+      "weighted avg": {
+        "precision": 0.7601863110070557,
+        "recall": 0.7593340060544904,
+        "f1-score": 0.759038303636968,
+        "support": 1982.0
+      }
+    },
+    "train_samples": 7925,
+    "test_samples": 1982,
+    "positive_rate": 0.5045927122236802
+  },
+  "threshold": 0.3868336062575764,
+  "created_at": "2026-04-16T02:44:52.457703"
+}

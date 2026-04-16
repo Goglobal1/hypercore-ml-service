@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K766",
+  "disease_name": "Portal Hypertension",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.9246704331450094,
+    "roc_auc": 0.9730825435559843,
+    "avg_precision": 0.9712159498889049,
+    "confusion_matrix": [
+      [
+        482,
+        44
+      ],
+      [
+        36,
+        500
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.9305019305019305,
+        "recall": 0.9163498098859315,
+        "f1-score": 0.9233716475095786,
+        "support": 526.0
+      },
+      "1": {
+        "precision": 0.9191176470588235,
+        "recall": 0.9328358208955224,
+        "f1-score": 0.9259259259259259,
+        "support": 536.0
+      },
+      "accuracy": 0.9246704331450094,
+      "macro avg": {
+        "precision": 0.924809788780377,
+        "recall": 0.924592815390727,
+        "f1-score": 0.9246487867177522,
+        "support": 1062.0
+      },
+      "weighted avg": {
+        "precision": 0.9247561904590818,
+        "recall": 0.9246704331450094,
+        "f1-score": 0.9246608125106729,
+        "support": 1062.0
+      }
+    },
+    "train_samples": 4246,
+    "test_samples": 1062,
+    "positive_rate": 0.5043330821401658
+  },
+  "threshold": 0.3978118956296118,
+  "created_at": "2026-04-16T02:37:06.194257"
+}

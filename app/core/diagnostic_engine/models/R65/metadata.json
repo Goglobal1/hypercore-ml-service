@@ -1,0 +1,86 @@
+{
+  "disease_icd": "R65",
+  "disease_name": "SIRS - Systemic Inflammatory Response",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8440181726400807,
+    "roc_auc": 0.9213598369011213,
+    "avg_precision": 0.9050884427641364,
+    "confusion_matrix": [
+      [
+        798,
+        183
+      ],
+      [
+        126,
+        874
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8636363636363636,
+        "recall": 0.8134556574923547,
+        "f1-score": 0.8377952755905512,
+        "support": 981.0
+      },
+      "1": {
+        "precision": 0.826868495742668,
+        "recall": 0.874,
+        "f1-score": 0.8497812348079727,
+        "support": 1000.0
+      },
+      "accuracy": 0.8440181726400807,
+      "macro avg": {
+        "precision": 0.8452524296895159,
+        "recall": 0.8437278287461774,
+        "f1-score": 0.8437882551992619,
+        "support": 1981.0
+      },
+      "weighted avg": {
+        "precision": 0.8450761072538822,
+        "recall": 0.8440181726400807,
+        "f1-score": 0.8438457345594667,
+        "support": 1981.0
+      }
+    },
+    "train_samples": 7923,
+    "test_samples": 1981,
+    "positive_rate": 0.504543618739903
+  },
+  "threshold": 0.3682308984662902,
+  "created_at": "2026-04-16T02:52:36.244149"
+}

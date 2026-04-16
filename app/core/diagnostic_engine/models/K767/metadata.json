@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K767",
+  "disease_name": "Hepatorenal Syndrome",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.9224137931034483,
+    "roc_auc": 0.9708680142687277,
+    "avg_precision": 0.966475273223351,
+    "confusion_matrix": [
+      [
+        103,
+        13
+      ],
+      [
+        5,
+        111
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.9537037037037037,
+        "recall": 0.8879310344827587,
+        "f1-score": 0.9196428571428571,
+        "support": 116.0
+      },
+      "1": {
+        "precision": 0.8951612903225806,
+        "recall": 0.9568965517241379,
+        "f1-score": 0.925,
+        "support": 116.0
+      },
+      "accuracy": 0.9224137931034483,
+      "macro avg": {
+        "precision": 0.9244324970131421,
+        "recall": 0.9224137931034483,
+        "f1-score": 0.9223214285714285,
+        "support": 232.0
+      },
+      "weighted avg": {
+        "precision": 0.9244324970131422,
+        "recall": 0.9224137931034483,
+        "f1-score": 0.9223214285714285,
+        "support": 232.0
+      }
+    },
+    "train_samples": 928,
+    "test_samples": 232,
+    "positive_rate": 0.5008620689655172
+  },
+  "threshold": 0.6141162464156394,
+  "created_at": "2026-04-16T02:33:14.981026"
+}
