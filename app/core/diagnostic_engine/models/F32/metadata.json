@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F32",
+  "disease_name": "Major Depressive Disorder",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6253164556962025,
+    "roc_auc": 0.6869986236829098,
+    "avg_precision": 0.6766953936375428,
+    "confusion_matrix": [
+      [
+        622,
+        356
+      ],
+      [
+        384,
+        613
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6182902584493042,
+        "recall": 0.6359918200408998,
+        "f1-score": 0.6270161290322581,
+        "support": 978.0
+      },
+      "1": {
+        "precision": 0.6326109391124871,
+        "recall": 0.6148445336008024,
+        "f1-score": 0.6236012207527976,
+        "support": 997.0
+      },
+      "accuracy": 0.6253164556962025,
+      "macro avg": {
+        "precision": 0.6254505987808956,
+        "recall": 0.6254181768208511,
+        "f1-score": 0.6253086748925278,
+        "support": 1975.0
+      },
+      "weighted avg": {
+        "precision": 0.6255194830676299,
+        "recall": 0.6253164556962025,
+        "f1-score": 0.6252922487514367,
+        "support": 1975.0
+      }
+    },
+    "train_samples": 7900,
+    "test_samples": 1975,
+    "positive_rate": 0.5047088607594936
+  },
+  "threshold": 0.37993385585454365,
+  "created_at": "2026-04-16T22:00:03.573561"
+}

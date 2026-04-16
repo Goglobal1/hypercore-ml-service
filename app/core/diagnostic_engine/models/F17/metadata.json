@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F17",
+  "disease_name": "Tobacco Use Disorder",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6218274111675127,
+    "roc_auc": 0.6789764996907854,
+    "avg_precision": 0.6677944204520436,
+    "confusion_matrix": [
+      [
+        622,
+        358
+      ],
+      [
+        387,
+        603
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6164519326065411,
+        "recall": 0.6346938775510204,
+        "f1-score": 0.6254399195575666,
+        "support": 980.0
+      },
+      "1": {
+        "precision": 0.627471383975026,
+        "recall": 0.6090909090909091,
+        "f1-score": 0.6181445412608918,
+        "support": 990.0
+      },
+      "accuracy": 0.6218274111675127,
+      "macro avg": {
+        "precision": 0.6219616582907835,
+        "recall": 0.6218923933209648,
+        "f1-score": 0.6217922304092292,
+        "support": 1970.0
+      },
+      "weighted avg": {
+        "precision": 0.621989626441465,
+        "recall": 0.6218274111675127,
+        "f1-score": 0.6217737142206591,
+        "support": 1970.0
+      }
+    },
+    "train_samples": 7876,
+    "test_samples": 1970,
+    "positive_rate": 0.5025391021734714
+  },
+  "threshold": 0.3364002840964357,
+  "created_at": "2026-04-16T22:12:56.947903"
+}

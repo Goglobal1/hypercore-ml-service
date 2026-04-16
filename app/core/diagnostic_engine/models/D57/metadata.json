@@ -1,0 +1,86 @@
+{
+  "disease_icd": "D57",
+  "disease_name": "Sickle Cell Disease",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7260869565217392,
+    "roc_auc": 0.8092105263157896,
+    "avg_precision": 0.8101375775317969,
+    "confusion_matrix": [
+      [
+        88,
+        26
+      ],
+      [
+        37,
+        79
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.704,
+        "recall": 0.7719298245614035,
+        "f1-score": 0.7364016736401674,
+        "support": 114.0
+      },
+      "1": {
+        "precision": 0.7523809523809524,
+        "recall": 0.6810344827586207,
+        "f1-score": 0.7149321266968326,
+        "support": 116.0
+      },
+      "accuracy": 0.7260869565217392,
+      "macro avg": {
+        "precision": 0.7281904761904762,
+        "recall": 0.7264821536600121,
+        "f1-score": 0.7256669001685,
+        "support": 230.0
+      },
+      "weighted avg": {
+        "precision": 0.7284008281573499,
+        "recall": 0.7260869565217392,
+        "f1-score": 0.7255735543122246,
+        "support": 230.0
+      }
+    },
+    "train_samples": 916,
+    "test_samples": 230,
+    "positive_rate": 0.5026178010471204
+  },
+  "threshold": 0.32824530918864747,
+  "created_at": "2026-04-16T22:21:28.735574"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F20",
+  "disease_name": "Schizophrenia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6621621621621622,
+    "roc_auc": 0.7187257453316896,
+    "avg_precision": 0.7118112511262361,
+    "confusion_matrix": [
+      [
+        204,
+        90
+      ],
+      [
+        110,
+        188
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6496815286624203,
+        "recall": 0.6938775510204082,
+        "f1-score": 0.6710526315789473,
+        "support": 294.0
+      },
+      "1": {
+        "precision": 0.6762589928057554,
+        "recall": 0.6308724832214765,
+        "f1-score": 0.6527777777777778,
+        "support": 298.0
+      },
+      "accuracy": 0.6621621621621622,
+      "macro avg": {
+        "precision": 0.6629702607340879,
+        "recall": 0.6623750171209424,
+        "f1-score": 0.6619152046783625,
+        "support": 592.0
+      },
+      "weighted avg": {
+        "precision": 0.6630600494643017,
+        "recall": 0.6621621621621622,
+        "f1-score": 0.6618534653074126,
+        "support": 592.0
+      }
+    },
+    "train_samples": 2368,
+    "test_samples": 592,
+    "positive_rate": 0.5030405405405406
+  },
+  "threshold": 0.2725105705684398,
+  "created_at": "2026-04-16T22:08:41.716885"
+}
