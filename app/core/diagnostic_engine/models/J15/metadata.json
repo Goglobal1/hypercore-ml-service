@@ -1,0 +1,86 @@
+{
+  "disease_icd": "J15",
+  "disease_name": "Bacterial Pneumonia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7911330049261084,
+    "roc_auc": 0.8732021930914514,
+    "avg_precision": 0.866697252165789,
+    "confusion_matrix": [
+      [
+        399,
+        104
+      ],
+      [
+        108,
+        404
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7869822485207101,
+        "recall": 0.7932405566600398,
+        "f1-score": 0.7900990099009901,
+        "support": 503.0
+      },
+      "1": {
+        "precision": 0.7952755905511811,
+        "recall": 0.7890625,
+        "f1-score": 0.792156862745098,
+        "support": 512.0
+      },
+      "accuracy": 0.7911330049261084,
+      "macro avg": {
+        "precision": 0.7911289195359457,
+        "recall": 0.7911515283300199,
+        "f1-score": 0.7911279363230441,
+        "support": 1015.0
+      },
+      "weighted avg": {
+        "precision": 0.7911656880474107,
+        "recall": 0.7911330049261084,
+        "f1-score": 0.7911370598085599,
+        "support": 1015.0
+      }
+    },
+    "train_samples": 4059,
+    "test_samples": 1015,
+    "positive_rate": 0.5045329128892393
+  },
+  "threshold": 0.4160939534524875,
+  "created_at": "2026-04-16T00:34:03.521235"
+}
