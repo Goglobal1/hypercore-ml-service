@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I44",
+  "disease_name": "Atrioventricular and Left Bundle-Branch Block",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7628657921291625,
+    "roc_auc": 0.8399640739416934,
+    "avg_precision": 0.8209253632576096,
+    "confusion_matrix": [
+      [
+        733,
+        250
+      ],
+      [
+        220,
+        779
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7691500524658972,
+        "recall": 0.745676500508647,
+        "f1-score": 0.7572314049586777,
+        "support": 983.0
+      },
+      "1": {
+        "precision": 0.7570456754130224,
+        "recall": 0.7797797797797797,
+        "f1-score": 0.7682445759368837,
+        "support": 999.0
+      },
+      "accuracy": 0.7628657921291625,
+      "macro avg": {
+        "precision": 0.7630978639394598,
+        "recall": 0.7627281401442134,
+        "f1-score": 0.7627379904477807,
+        "support": 1982.0
+      },
+      "weighted avg": {
+        "precision": 0.7630490067162392,
+        "recall": 0.7628657921291625,
+        "f1-score": 0.7627824432065222,
+        "support": 1982.0
+      }
+    },
+    "train_samples": 7924,
+    "test_samples": 1982,
+    "positive_rate": 0.5042398546335555
+  },
+  "threshold": 0.364238825901974,
+  "created_at": "2026-04-17T23:01:47.854297"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I67",
+  "disease_name": "Other Cerebrovascular Diseases",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.706581352833638,
+    "roc_auc": 0.788892119802268,
+    "avg_precision": 0.7780688071896044,
+    "confusion_matrix": [
+      [
+        363,
+        180
+      ],
+      [
+        141,
+        410
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7202380952380952,
+        "recall": 0.6685082872928176,
+        "f1-score": 0.6934097421203438,
+        "support": 543.0
+      },
+      "1": {
+        "precision": 0.6949152542372882,
+        "recall": 0.7441016333938294,
+        "f1-score": 0.7186678352322524,
+        "support": 551.0
+      },
+      "accuracy": 0.706581352833638,
+      "macro avg": {
+        "precision": 0.7075766747376917,
+        "recall": 0.7063049603433236,
+        "f1-score": 0.7060387886762981,
+        "support": 1094.0
+      },
+      "weighted avg": {
+        "precision": 0.7074840866535937,
+        "recall": 0.706581352833638,
+        "f1-score": 0.7061311400222283,
+        "support": 1094.0
+      }
+    },
+    "train_samples": 4376,
+    "test_samples": 1094,
+    "positive_rate": 0.5038391224862888
+  },
+  "threshold": 0.36095802081174083,
+  "created_at": "2026-04-17T23:19:45.258716"
+}

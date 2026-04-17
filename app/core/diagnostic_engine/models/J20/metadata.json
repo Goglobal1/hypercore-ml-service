@@ -1,0 +1,86 @@
+{
+  "disease_icd": "J20",
+  "disease_name": "Acute Bronchitis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7716535433070866,
+    "roc_auc": 0.832093253968254,
+    "avg_precision": 0.8494863580241272,
+    "confusion_matrix": [
+      [
+        49,
+        14
+      ],
+      [
+        15,
+        49
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.765625,
+        "recall": 0.7777777777777778,
+        "f1-score": 0.7716535433070866,
+        "support": 63.0
+      },
+      "1": {
+        "precision": 0.7777777777777778,
+        "recall": 0.765625,
+        "f1-score": 0.7716535433070866,
+        "support": 64.0
+      },
+      "accuracy": 0.7716535433070866,
+      "macro avg": {
+        "precision": 0.7717013888888888,
+        "recall": 0.7717013888888888,
+        "f1-score": 0.7716535433070866,
+        "support": 127.0
+      },
+      "weighted avg": {
+        "precision": 0.7717492344706911,
+        "recall": 0.7716535433070866,
+        "f1-score": 0.7716535433070866,
+        "support": 127.0
+      }
+    },
+    "train_samples": 507,
+    "test_samples": 127,
+    "positive_rate": 0.5031545741324921
+  },
+  "threshold": 0.6262802016274601,
+  "created_at": "2026-04-17T23:06:18.525714"
+}
