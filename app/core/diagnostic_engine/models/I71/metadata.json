@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I71",
+  "disease_name": "Aortic Aneurysm",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7394305435720449,
+    "roc_auc": 0.8192084338425802,
+    "avg_precision": 0.7947471550928704,
+    "confusion_matrix": [
+      [
+        409,
+        165
+      ],
+      [
+        137,
+        448
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7490842490842491,
+        "recall": 0.7125435540069687,
+        "f1-score": 0.7303571428571428,
+        "support": 574.0
+      },
+      "1": {
+        "precision": 0.7308319738988581,
+        "recall": 0.7658119658119659,
+        "f1-score": 0.7479131886477463,
+        "support": 585.0
+      },
+      "accuracy": 0.7394305435720449,
+      "macro avg": {
+        "precision": 0.7399581114915537,
+        "recall": 0.7391777599094673,
+        "f1-score": 0.7391351657524445,
+        "support": 1159.0
+      },
+      "weighted avg": {
+        "precision": 0.7398714958629775,
+        "recall": 0.7394305435720449,
+        "f1-score": 0.7392184774451523,
+        "support": 1159.0
+      }
+    },
+    "train_samples": 4636,
+    "test_samples": 1159,
+    "positive_rate": 0.5047454702329595
+  },
+  "threshold": 0.3241390309616022,
+  "created_at": "2026-04-17T00:08:32.063859"
+}
