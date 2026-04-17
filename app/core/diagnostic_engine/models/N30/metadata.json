@@ -1,0 +1,86 @@
+{
+  "disease_icd": "N30",
+  "disease_name": "Cystitis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7717842323651453,
+    "roc_auc": 0.83688895776297,
+    "avg_precision": 0.8129363092937393,
+    "confusion_matrix": [
+      [
+        184,
+        55
+      ],
+      [
+        55,
+        188
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7698744769874477,
+        "recall": 0.7698744769874477,
+        "f1-score": 0.7698744769874477,
+        "support": 239.0
+      },
+      "1": {
+        "precision": 0.7736625514403292,
+        "recall": 0.7736625514403292,
+        "f1-score": 0.7736625514403292,
+        "support": 243.0
+      },
+      "accuracy": 0.7717842323651453,
+      "macro avg": {
+        "precision": 0.7717685142138885,
+        "recall": 0.7717685142138885,
+        "f1-score": 0.7717685142138885,
+        "support": 482.0
+      },
+      "weighted avg": {
+        "precision": 0.7717842323651453,
+        "recall": 0.7717842323651453,
+        "f1-score": 0.7717842323651453,
+        "support": 482.0
+      }
+    },
+    "train_samples": 1926,
+    "test_samples": 482,
+    "positive_rate": 0.5045681063122923
+  },
+  "threshold": 0.48198567078274107,
+  "created_at": "2026-04-17T23:51:12.848248"
+}

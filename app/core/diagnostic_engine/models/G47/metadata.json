@@ -1,0 +1,86 @@
+{
+  "disease_icd": "G47",
+  "disease_name": "Sleep Disorders",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6680161943319838,
+    "roc_auc": 0.7445678678420236,
+    "avg_precision": 0.7224924595630272,
+    "confusion_matrix": [
+      [
+        649,
+        329
+      ],
+      [
+        327,
+        671
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6649590163934426,
+        "recall": 0.66359918200409,
+        "f1-score": 0.6642784032753326,
+        "support": 978.0
+      },
+      "1": {
+        "precision": 0.671,
+        "recall": 0.6723446893787575,
+        "f1-score": 0.6716716716716716,
+        "support": 998.0
+      },
+      "accuracy": 0.6680161943319838,
+      "macro avg": {
+        "precision": 0.6679795081967213,
+        "recall": 0.6679719356914238,
+        "f1-score": 0.6679750374735021,
+        "support": 1976.0
+      },
+      "weighted avg": {
+        "precision": 0.6680100799761067,
+        "recall": 0.6680161943319838,
+        "f1-score": 0.6680124527993946,
+        "support": 1976.0
+      }
+    },
+    "train_samples": 7900,
+    "test_samples": 1976,
+    "positive_rate": 0.5050627784528149
+  },
+  "threshold": 0.3193745673767922,
+  "created_at": "2026-04-17T23:34:51.251269"
+}

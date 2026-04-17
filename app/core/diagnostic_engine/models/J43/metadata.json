@@ -1,0 +1,86 @@
+{
+  "disease_icd": "J43",
+  "disease_name": "Emphysema",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6975806451612904,
+    "roc_auc": 0.7666847335140018,
+    "avg_precision": 0.7367475364907282,
+    "confusion_matrix": [
+      [
+        252,
+        117
+      ],
+      [
+        108,
+        267
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7,
+        "recall": 0.6829268292682927,
+        "f1-score": 0.691358024691358,
+        "support": 369.0
+      },
+      "1": {
+        "precision": 0.6953125,
+        "recall": 0.712,
+        "f1-score": 0.7035573122529645,
+        "support": 375.0
+      },
+      "accuracy": 0.6975806451612904,
+      "macro avg": {
+        "precision": 0.69765625,
+        "recall": 0.6974634146341463,
+        "f1-score": 0.6974576684721612,
+        "support": 744.0
+      },
+      "weighted avg": {
+        "precision": 0.6976373487903225,
+        "recall": 0.6975806451612904,
+        "f1-score": 0.697506859147813,
+        "support": 744.0
+      }
+    },
+    "train_samples": 2974,
+    "test_samples": 744,
+    "positive_rate": 0.5045723507261969
+  },
+  "threshold": 0.32199189131998524,
+  "created_at": "2026-04-17T23:43:05.697100"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "C22",
+  "disease_name": "Malignant Neoplasm of Liver",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8737113402061856,
+    "roc_auc": 0.935905612244898,
+    "avg_precision": 0.9220631335356719,
+    "confusion_matrix": [
+      [
+        159,
+        33
+      ],
+      [
+        16,
+        180
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.9085714285714286,
+        "recall": 0.828125,
+        "f1-score": 0.8664850136239782,
+        "support": 192.0
+      },
+      "1": {
+        "precision": 0.8450704225352113,
+        "recall": 0.9183673469387755,
+        "f1-score": 0.8801955990220048,
+        "support": 196.0
+      },
+      "accuracy": 0.8737113402061856,
+      "macro avg": {
+        "precision": 0.8768209255533199,
+        "recall": 0.8732461734693877,
+        "f1-score": 0.8733403063229915,
+        "support": 388.0
+      },
+      "weighted avg": {
+        "precision": 0.8764936007799373,
+        "recall": 0.8737113402061856,
+        "f1-score": 0.8734109794435998,
+        "support": 388.0
+      }
+    },
+    "train_samples": 1548,
+    "test_samples": 388,
+    "positive_rate": 0.5056818181818182
+  },
+  "threshold": 0.6408170693211411,
+  "created_at": "2026-04-17T23:30:32.200034"
+}
