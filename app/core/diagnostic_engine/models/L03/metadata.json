@@ -1,0 +1,86 @@
+{
+  "disease_icd": "L03",
+  "disease_name": "Cellulitis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7286075949367089,
+    "roc_auc": 0.7987978841448282,
+    "avg_precision": 0.7795303978726348,
+    "confusion_matrix": [
+      [
+        729,
+        252
+      ],
+      [
+        284,
+        710
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.71964461994077,
+        "recall": 0.7431192660550459,
+        "f1-score": 0.7311935807422267,
+        "support": 981.0
+      },
+      "1": {
+        "precision": 0.738045738045738,
+        "recall": 0.7142857142857143,
+        "f1-score": 0.7259713701431493,
+        "support": 994.0
+      },
+      "accuracy": 0.7286075949367089,
+      "macro avg": {
+        "precision": 0.728845178993254,
+        "recall": 0.72870249017038,
+        "f1-score": 0.728582475442688,
+        "support": 1975.0
+      },
+      "weighted avg": {
+        "precision": 0.7289057396351185,
+        "recall": 0.7286075949367089,
+        "f1-score": 0.7285652884204632,
+        "support": 1975.0
+      }
+    },
+    "train_samples": 7898,
+    "test_samples": 1975,
+    "positive_rate": 0.5034943786083257
+  },
+  "threshold": 0.30095234325499326,
+  "created_at": "2026-04-17T01:44:12.219037"
+}

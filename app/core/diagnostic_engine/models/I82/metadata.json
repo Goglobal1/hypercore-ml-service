@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I82",
+  "disease_name": "Venous Thromboembolism",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7783613445378151,
+    "roc_auc": 0.8621833494444959,
+    "avg_precision": 0.8428539424062436,
+    "confusion_matrix": [
+      [
+        693,
+        249
+      ],
+      [
+        173,
+        789
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8002309468822171,
+        "recall": 0.7356687898089171,
+        "f1-score": 0.7665929203539823,
+        "support": 942.0
+      },
+      "1": {
+        "precision": 0.7601156069364162,
+        "recall": 0.8201663201663202,
+        "f1-score": 0.789,
+        "support": 962.0
+      },
+      "accuracy": 0.7783613445378151,
+      "macro avg": {
+        "precision": 0.7801732769093166,
+        "recall": 0.7779175549876187,
+        "f1-score": 0.7777964601769911,
+        "support": 1904.0
+      },
+      "weighted avg": {
+        "precision": 0.7799625870986769,
+        "recall": 0.7783613445378151,
+        "f1-score": 0.7779141444188294,
+        "support": 1904.0
+      }
+    },
+    "train_samples": 7612,
+    "test_samples": 1904,
+    "positive_rate": 0.5050441361916772
+  },
+  "threshold": 0.4073791449930442,
+  "created_at": "2026-04-17T01:34:19.769352"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "J69",
+  "disease_name": "Aspiration Pneumonia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8247541931752458,
+    "roc_auc": 0.8948479763634758,
+    "avg_precision": 0.8753968987398395,
+    "confusion_matrix": [
+      [
+        706,
+        152
+      ],
+      [
+        151,
+        720
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.823803967327888,
+        "recall": 0.8228438228438228,
+        "f1-score": 0.8233236151603499,
+        "support": 858.0
+      },
+      "1": {
+        "precision": 0.8256880733944955,
+        "recall": 0.8266360505166476,
+        "f1-score": 0.8261617900172117,
+        "support": 871.0
+      },
+      "accuracy": 0.8247541931752458,
+      "macro avg": {
+        "precision": 0.8247460203611917,
+        "recall": 0.8247399366802353,
+        "f1-score": 0.8247427025887808,
+        "support": 1729.0
+      },
+      "weighted avg": {
+        "precision": 0.8247531034667054,
+        "recall": 0.8247541931752458,
+        "f1-score": 0.8247533724190697,
+        "support": 1729.0
+      }
+    },
+    "train_samples": 6915,
+    "test_samples": 1729,
+    "positive_rate": 0.5038176770013882
+  },
+  "threshold": 0.4595488550563583,
+  "created_at": "2026-04-17T01:39:26.204394"
+}
