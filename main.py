@@ -91,6 +91,22 @@ except ImportError:
     BUG_FIXES_AVAILABLE = False
     CSE_AVAILABLE = False
 
+# ML Disease Models integration (dynamic model loading for unknown disease detection)
+try:
+    from app.core.diagnostic_engine.ml.disease_models import DiseaseModelManager
+    ML_DISEASE_MODELS_AVAILABLE = True
+except ImportError:
+    ML_DISEASE_MODELS_AVAILABLE = False
+    DiseaseModelManager = None
+
+# Anthropic Claude API for LLM hypothesis generation
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+    anthropic = None
+
 # Comparison utilities for /compare endpoint
 try:
     from app.core.comparison_utils import (
@@ -15394,6 +15410,426 @@ def _get_novel_disease_actions(novelty_score: float, patient_count: int) -> List
 
 
 # ---------------------------------------------------------------------
+# MODULE 9b: ENHANCED UNKNOWN DISEASE DETECTION (ML + KG + LLM)
+# ---------------------------------------------------------------------
+
+def enhanced_unknown_disease_detection(
+    multi_patient_data: pd.DataFrame,
+    contamination: float = 0.1,
+    novelty_threshold: float = 0.7,
+    enable_kg_enrichment: bool = True,
+    enable_llm_hypothesis: bool = True
+) -> Dict[str, Any]:
+    """
+    Enhanced unknown disease detection using ML classifiers, Knowledge Graphs, and LLM.
+
+    This function integrates:
+    1. Statistical anomaly detection (Isolation Forest, DBSCAN)
+    2. Dynamic ML classifier scoring (all trained MIMIC-IV models)
+    3. Novelty classification (KNOWN/PARTIAL_MATCH/TRULY_UNKNOWN)
+    4. Knowledge graph enrichment (PrimeKG, Hetionet, HPO)
+    5. LLM hypothesis generation (Claude API)
+
+    Args:
+        multi_patient_data: DataFrame with patient lab/vitals data
+        contamination: Expected proportion of anomalies (0.01-0.5)
+        novelty_threshold: Threshold for novelty classification (0.0-1.0)
+        enable_kg_enrichment: Whether to query knowledge graphs
+        enable_llm_hypothesis: Whether to generate LLM hypotheses
+
+    Returns:
+        Comprehensive analysis with ML scores, KG context, and LLM hypothesis
+    """
+    result = {
+        "status": "success",
+        "timestamp": datetime.now().isoformat(),
+        "methodology": "enhanced_ml_kg_llm_pipeline",
+        "stages_completed": [],
+        "statistical_analysis": {},
+        "ml_classifier_analysis": {},
+        "novelty_classification": {},
+        "knowledge_graph_enrichment": {},
+        "llm_hypothesis": {},
+        "recommended_actions": [],
+        "summary": {}
+    }
+
+    if multi_patient_data.empty:
+        result["status"] = "error"
+        result["error"] = "No patient data provided"
+        return result
+
+    # =========================================================================
+    # STAGE 1: Statistical Anomaly Detection (existing pipeline)
+    # =========================================================================
+    try:
+        numeric_cols = multi_patient_data.select_dtypes(include=[np.number]).columns
+        if len(numeric_cols) < 2:
+            result["statistical_analysis"] = {"error": "Insufficient numeric features"}
+        else:
+            X = multi_patient_data[numeric_cols].copy()
+            X = X.fillna(X.median())
+
+            scaler = StandardScaler()
+            X_scaled = scaler.fit_transform(X)
+
+            # Isolation Forest
+            iso_forest = IsolationForest(contamination=contamination, random_state=42, n_jobs=-1)
+            iso_labels = iso_forest.fit_predict(X_scaled)
+            iso_scores = iso_forest.decision_function(X_scaled)
+
+            # DBSCAN clustering
+            dbscan = DBSCAN(eps=0.5, min_samples=3)
+            cluster_labels = dbscan.fit_predict(X_scaled)
+
+            anomaly_indices = np.where(iso_labels == -1)[0]
+            novel_cluster_indices = np.where(cluster_labels == -1)[0]
+
+            result["statistical_analysis"] = {
+                "total_patients": len(multi_patient_data),
+                "isolation_forest_anomalies": int(len(anomaly_indices)),
+                "dbscan_noise_points": int(len(novel_cluster_indices)),
+                "unique_clusters": int(len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)),
+                "anomaly_rate": round(len(anomaly_indices) / len(multi_patient_data), 4),
+                "mean_anomaly_score": round(float(np.mean(iso_scores)), 4)
+            }
+            result["stages_completed"].append("statistical_anomaly_detection")
+    except Exception as e:
+        result["statistical_analysis"] = {"error": str(e)}
+
+    # =========================================================================
+    # STAGE 2: Dynamic ML Classifier Scoring
+    # =========================================================================
+    ml_scores = {}
+    model_manager = None
+
+    if ML_DISEASE_MODELS_AVAILABLE:
+        try:
+            model_manager = DiseaseModelManager()
+            model_count = model_manager.load_models()
+
+            if model_count > 0:
+                # Prepare features for ML models
+                feature_vector = _prepare_ml_features(multi_patient_data)
+
+                if feature_vector is not None:
+                    # Score against ALL loaded models dynamically
+                    for icd_code, model in model_manager.models.items():
+                        try:
+                            prob = model.predict_proba(feature_vector)
+                            if prob is not None and len(prob) > 0:
+                                disease_name = getattr(model, 'disease_name', icd_code)
+                                ml_scores[icd_code] = {
+                                    "disease_name": disease_name,
+                                    "probability": round(float(prob[0]), 4),
+                                    "model_auc": round(model.metrics.get('roc_auc', 0), 4)
+                                }
+                        except Exception:
+                            continue
+
+                    # Sort by probability
+                    ml_scores = dict(sorted(ml_scores.items(),
+                                           key=lambda x: x[1]["probability"],
+                                           reverse=True))
+
+                    result["ml_classifier_analysis"] = {
+                        "models_loaded": model_count,
+                        "models_scored": len(ml_scores),
+                        "top_matches": dict(list(ml_scores.items())[:10]),
+                        "high_confidence_matches": {k: v for k, v in ml_scores.items()
+                                                    if v["probability"] > 0.7}
+                    }
+                    result["stages_completed"].append("ml_classifier_scoring")
+                else:
+                    result["ml_classifier_analysis"] = {"error": "Could not prepare features"}
+            else:
+                result["ml_classifier_analysis"] = {"error": "No models loaded"}
+        except Exception as e:
+            result["ml_classifier_analysis"] = {"error": str(e)}
+    else:
+        result["ml_classifier_analysis"] = {"status": "ML models not available"}
+
+    # =========================================================================
+    # STAGE 3: Novelty Classification
+    # =========================================================================
+    try:
+        max_ml_prob = max([v["probability"] for v in ml_scores.values()]) if ml_scores else 0
+        anomaly_rate = result["statistical_analysis"].get("anomaly_rate", 0)
+
+        if max_ml_prob > 0.8:
+            novelty_class = "KNOWN_DISEASE"
+            novelty_score = 1 - max_ml_prob
+            confidence = "high"
+        elif max_ml_prob > 0.5:
+            novelty_class = "PARTIAL_MATCH"
+            novelty_score = 0.5 + (1 - max_ml_prob) * 0.3
+            confidence = "medium"
+        else:
+            novelty_class = "TRULY_UNKNOWN"
+            novelty_score = 0.7 + anomaly_rate * 0.3
+            confidence = "low" if anomaly_rate < 0.2 else "medium"
+
+        result["novelty_classification"] = {
+            "classification": novelty_class,
+            "novelty_score": round(novelty_score, 4),
+            "confidence": confidence,
+            "best_ml_match_probability": round(max_ml_prob, 4),
+            "statistical_anomaly_rate": round(anomaly_rate, 4),
+            "interpretation": _get_novelty_interpretation(novelty_class, novelty_score)
+        }
+        result["stages_completed"].append("novelty_classification")
+    except Exception as e:
+        result["novelty_classification"] = {"error": str(e)}
+
+    # =========================================================================
+    # STAGE 4: Knowledge Graph Enrichment
+    # =========================================================================
+    if enable_kg_enrichment and result.get("novelty_classification", {}).get("classification") != "KNOWN_DISEASE":
+        try:
+            kg_context = _enrich_with_knowledge_graphs(
+                anomaly_features=result.get("statistical_analysis", {}),
+                partial_matches=list(ml_scores.keys())[:5] if ml_scores else []
+            )
+            result["knowledge_graph_enrichment"] = kg_context
+            result["stages_completed"].append("knowledge_graph_enrichment")
+        except Exception as e:
+            result["knowledge_graph_enrichment"] = {"error": str(e)}
+
+    # =========================================================================
+    # STAGE 5: LLM Hypothesis Generation
+    # =========================================================================
+    if enable_llm_hypothesis and ANTHROPIC_AVAILABLE and result.get("novelty_classification", {}).get("classification") in ["PARTIAL_MATCH", "TRULY_UNKNOWN"]:
+        try:
+            llm_hypothesis = _generate_llm_hypothesis(
+                statistical_findings=result.get("statistical_analysis", {}),
+                ml_matches=dict(list(ml_scores.items())[:5]) if ml_scores else {},
+                novelty_class=result.get("novelty_classification", {}),
+                kg_context=result.get("knowledge_graph_enrichment", {})
+            )
+            result["llm_hypothesis"] = llm_hypothesis
+            result["stages_completed"].append("llm_hypothesis_generation")
+        except Exception as e:
+            result["llm_hypothesis"] = {"error": str(e)}
+
+    # =========================================================================
+    # STAGE 6: Generate Recommended Actions
+    # =========================================================================
+    novelty_class = result.get("novelty_classification", {}).get("classification", "UNKNOWN")
+    novelty_score = result.get("novelty_classification", {}).get("novelty_score", 0.5)
+    patient_count = len(multi_patient_data)
+
+    result["recommended_actions"] = _get_enhanced_actions(
+        novelty_class=novelty_class,
+        novelty_score=novelty_score,
+        patient_count=patient_count,
+        ml_matches=ml_scores,
+        kg_available=bool(result.get("knowledge_graph_enrichment", {}).get("related_diseases"))
+    )
+    result["stages_completed"].append("action_recommendation")
+
+    # Summary
+    result["summary"] = {
+        "total_patients_analyzed": patient_count,
+        "novelty_classification": novelty_class,
+        "novelty_score": round(novelty_score, 4),
+        "ml_models_evaluated": result.get("ml_classifier_analysis", {}).get("models_loaded", 0),
+        "best_known_match": list(ml_scores.keys())[0] if ml_scores else None,
+        "stages_completed": len(result["stages_completed"]),
+        "recommendation_count": len(result["recommended_actions"])
+    }
+
+    return result
+
+
+def _prepare_ml_features(patient_data: pd.DataFrame) -> Optional[np.ndarray]:
+    """Prepare patient data for ML model prediction."""
+    try:
+        numeric_cols = patient_data.select_dtypes(include=[np.number]).columns
+        if len(numeric_cols) == 0:
+            return None
+
+        # Aggregate patient data to single feature vector (mean values)
+        feature_vector = patient_data[numeric_cols].mean().values.reshape(1, -1)
+        return feature_vector
+    except Exception:
+        return None
+
+
+def _get_novelty_interpretation(novelty_class: str, novelty_score: float) -> str:
+    """Get human-readable interpretation of novelty classification."""
+    interpretations = {
+        "KNOWN_DISEASE": f"Pattern strongly matches known disease in training set (novelty: {novelty_score:.2f})",
+        "PARTIAL_MATCH": f"Pattern partially matches known conditions but has unusual features (novelty: {novelty_score:.2f})",
+        "TRULY_UNKNOWN": f"Pattern does not match any trained disease models - potential novel condition (novelty: {novelty_score:.2f})"
+    }
+    return interpretations.get(novelty_class, "Classification unavailable")
+
+
+def _enrich_with_knowledge_graphs(
+    anomaly_features: Dict[str, Any],
+    partial_matches: List[str]
+) -> Dict[str, Any]:
+    """Query knowledge graphs for disease context."""
+    kg_result = {
+        "sources_queried": [],
+        "related_diseases": [],
+        "phenotype_associations": [],
+        "drug_interactions": [],
+        "pathway_associations": []
+    }
+
+    # PrimeKG integration (if available)
+    if PRIMEKG_AVAILABLE:
+        try:
+            kg_result["sources_queried"].append("PrimeKG")
+            for icd in partial_matches[:3]:
+                related = query_primekg_for_disease(icd)
+                if related:
+                    kg_result["related_diseases"].extend(related.get("related", []))
+                    kg_result["phenotype_associations"].extend(related.get("phenotypes", []))
+        except Exception:
+            pass
+
+    # Hetionet integration (if available)
+    if HETIONET_AVAILABLE:
+        try:
+            kg_result["sources_queried"].append("Hetionet")
+            for icd in partial_matches[:3]:
+                associations = query_hetionet_for_disease(icd)
+                if associations:
+                    kg_result["drug_interactions"].extend(associations.get("drugs", []))
+                    kg_result["pathway_associations"].extend(associations.get("pathways", []))
+        except Exception:
+            pass
+
+    # Deduplicate
+    kg_result["related_diseases"] = list(set(kg_result["related_diseases"]))[:10]
+    kg_result["phenotype_associations"] = list(set(kg_result["phenotype_associations"]))[:10]
+
+    if not kg_result["sources_queried"]:
+        kg_result["status"] = "No knowledge graphs available"
+
+    return kg_result
+
+
+def _generate_llm_hypothesis(
+    statistical_findings: Dict[str, Any],
+    ml_matches: Dict[str, Any],
+    novelty_class: Dict[str, Any],
+    kg_context: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Generate disease hypothesis using Claude API."""
+    if not ANTHROPIC_AVAILABLE:
+        return {"status": "Anthropic API not available"}
+
+    try:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            return {"status": "ANTHROPIC_API_KEY not configured"}
+
+        client = anthropic.Anthropic(api_key=api_key)
+
+        prompt = f"""You are a clinical diagnostic AI assistant analyzing a potential unknown disease pattern.
+
+STATISTICAL FINDINGS:
+- Total patients: {statistical_findings.get('total_patients', 'N/A')}
+- Anomaly rate: {statistical_findings.get('anomaly_rate', 'N/A')}
+- Unique clusters: {statistical_findings.get('unique_clusters', 'N/A')}
+
+ML CLASSIFIER RESULTS (top matches):
+{json.dumps(ml_matches, indent=2) if ml_matches else 'No strong matches found'}
+
+NOVELTY CLASSIFICATION:
+- Class: {novelty_class.get('classification', 'UNKNOWN')}
+- Score: {novelty_class.get('novelty_score', 'N/A')}
+
+KNOWLEDGE GRAPH CONTEXT:
+- Related diseases: {kg_context.get('related_diseases', [])}
+- Phenotype associations: {kg_context.get('phenotype_associations', [])}
+
+Based on this analysis, provide:
+1. A clinical hypothesis for what this pattern might represent
+2. Key differential diagnoses to consider
+3. Recommended diagnostic tests to confirm/rule out
+4. Any epidemiological concerns if this represents a novel pathogen
+
+Keep response concise and clinically actionable."""
+
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        hypothesis_text = response.content[0].text
+
+        return {
+            "status": "success",
+            "model_used": "claude-sonnet-4-20250514",
+            "hypothesis": hypothesis_text,
+            "generated_at": datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+def _get_enhanced_actions(
+    novelty_class: str,
+    novelty_score: float,
+    patient_count: int,
+    ml_matches: Dict[str, Any],
+    kg_available: bool
+) -> List[str]:
+    """Generate enhanced action recommendations based on full analysis."""
+    actions = []
+
+    if novelty_class == "TRULY_UNKNOWN":
+        if novelty_score > 0.85 and patient_count >= 5:
+            actions.extend([
+                "CRITICAL: Initiate public health notification protocol",
+                "Implement enhanced infection control measures",
+                "Collect specimens for broad pathogen screening (mNGS)",
+                "Establish case definition for epidemiological tracking",
+                "Alert CDC/WHO disease surveillance networks"
+            ])
+        elif novelty_score > 0.7:
+            actions.extend([
+                "HIGH PRIORITY: Infectious disease consultation",
+                "Extended diagnostic panel including rare pathogens",
+                "Implement enhanced monitoring for affected patients",
+                "Begin preliminary contact tracing"
+            ])
+        else:
+            actions.extend([
+                "MODERATE: Comprehensive clinical review",
+                "Consider atypical presentations of known conditions",
+                "Targeted diagnostic workup based on symptom pattern"
+            ])
+
+    elif novelty_class == "PARTIAL_MATCH":
+        top_match = list(ml_matches.keys())[0] if ml_matches else None
+        if top_match:
+            actions.append(f"Investigate potential variant of {top_match}")
+        actions.extend([
+            "Review clinical features against partial matches",
+            "Consider environmental or genetic modifiers",
+            "Standard diagnostic workup with extended differentials"
+        ])
+
+    else:  # KNOWN_DISEASE
+        top_match = list(ml_matches.keys())[0] if ml_matches else None
+        if top_match:
+            actions.append(f"Confirm diagnosis: {top_match}")
+        actions.append("Proceed with standard diagnostic and treatment protocols")
+
+    # Add KG-informed actions
+    if kg_available and novelty_class != "KNOWN_DISEASE":
+        actions.append("Review knowledge graph associations for additional diagnostic targets")
+
+    return actions
+
+
+# ---------------------------------------------------------------------
 # MODULE 10: OUTBREAK PREDICTION & GEOGRAPHIC CLUSTERING
 # ---------------------------------------------------------------------
 
@@ -15956,16 +16392,24 @@ class SurveillanceResponse(BaseModel):
 def detect_unknown_diseases(req: SurveillanceRequest) -> Dict[str, Any]:
     """
     Detect unknown/novel disease patterns from multi-patient data.
-    Uses ensemble anomaly detection + clustering.
+
+    Enhanced pipeline using:
+    - Statistical anomaly detection (Isolation Forest, DBSCAN)
+    - Dynamic ML classifier scoring (all trained MIMIC-IV models)
+    - Novelty classification (KNOWN/PARTIAL_MATCH/TRULY_UNKNOWN)
+    - Knowledge graph enrichment (PrimeKG, Hetionet)
+    - LLM hypothesis generation (Claude API)
     """
     try:
         df = pd.read_csv(io.StringIO(req.csv))
 
-        result = detect_unknown_disease_patterns(
+        # Use enhanced detection with ML + KG + LLM integration
+        result = enhanced_unknown_disease_detection(
             multi_patient_data=df,
-            known_disease_profiles=None,
             contamination=req.contamination_rate,
-            novelty_threshold=req.novelty_threshold
+            novelty_threshold=req.novelty_threshold,
+            enable_kg_enrichment=True,
+            enable_llm_hypothesis=True
         )
 
         return _sanitize_for_json(result)
