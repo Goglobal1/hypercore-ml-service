@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E78",
+  "disease_name": "Hyperlipidemia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7045108971109985,
+    "roc_auc": 0.7814418580751246,
+    "avg_precision": 0.7737992270073839,
+    "confusion_matrix": [
+      [
+        651,
+        324
+      ],
+      [
+        259,
+        739
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7153846153846154,
+        "recall": 0.6676923076923077,
+        "f1-score": 0.6907161803713527,
+        "support": 975.0
+      },
+      "1": {
+        "precision": 0.6952022577610536,
+        "recall": 0.7404809619238477,
+        "f1-score": 0.7171276079573022,
+        "support": 998.0
+      },
+      "accuracy": 0.7045108971109985,
+      "macro avg": {
+        "precision": 0.7052934365728345,
+        "recall": 0.7040866348080776,
+        "f1-score": 0.7039218941643275,
+        "support": 1973.0
+      },
+      "weighted avg": {
+        "precision": 0.7051757999217088,
+        "recall": 0.7045108971109985,
+        "f1-score": 0.7040758381162984,
+        "support": 1973.0
+      }
+    },
+    "train_samples": 7890,
+    "test_samples": 1973,
+    "positive_rate": 0.5059312582378587
+  },
+  "threshold": 0.3113471272128464,
+  "created_at": "2026-04-17T03:05:01.848722"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K65",
+  "disease_name": "Peritonitis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7792521109770808,
+    "roc_auc": 0.8700913906513768,
+    "avg_precision": 0.8589827078023387,
+    "confusion_matrix": [
+      [
+        321,
+        89
+      ],
+      [
+        94,
+        325
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7734939759036145,
+        "recall": 0.7829268292682927,
+        "f1-score": 0.7781818181818182,
+        "support": 410.0
+      },
+      "1": {
+        "precision": 0.785024154589372,
+        "recall": 0.7756563245823389,
+        "f1-score": 0.78031212484994,
+        "support": 419.0
+      },
+      "accuracy": 0.7792521109770808,
+      "macro avg": {
+        "precision": 0.7792590652464932,
+        "recall": 0.7792915769253158,
+        "f1-score": 0.7792469715158791,
+        "support": 829.0
+      },
+      "weighted avg": {
+        "precision": 0.7793216536712048,
+        "recall": 0.7792521109770808,
+        "f1-score": 0.7792585353035829,
+        "support": 829.0
+      }
+    },
+    "train_samples": 3316,
+    "test_samples": 829,
+    "positive_rate": 0.5059107358262968
+  },
+  "threshold": 0.29609236467654393,
+  "created_at": "2026-04-17T02:43:27.604415"
+}

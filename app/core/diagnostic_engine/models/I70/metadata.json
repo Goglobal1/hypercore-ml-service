@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I70",
+  "disease_name": "Atherosclerosis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7649687220732797,
+    "roc_auc": 0.8512363427257044,
+    "avg_precision": 0.8392744038795265,
+    "confusion_matrix": [
+      [
+        401,
+        154
+      ],
+      [
+        109,
+        455
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7862745098039216,
+        "recall": 0.7225225225225225,
+        "f1-score": 0.7530516431924883,
+        "support": 555.0
+      },
+      "1": {
+        "precision": 0.7471264367816092,
+        "recall": 0.8067375886524822,
+        "f1-score": 0.7757885763000852,
+        "support": 564.0
+      },
+      "accuracy": 0.7649687220732797,
+      "macro avg": {
+        "precision": 0.7667004732927654,
+        "recall": 0.7646300555875023,
+        "f1-score": 0.7644201097462868,
+        "support": 1119.0
+      },
+      "weighted avg": {
+        "precision": 0.7665430413637212,
+        "recall": 0.7649687220732797,
+        "f1-score": 0.7645115451341189,
+        "support": 1119.0
+      }
+    },
+    "train_samples": 4472,
+    "test_samples": 1119,
+    "positive_rate": 0.5043820425684136
+  },
+  "threshold": 0.41846178975472803,
+  "created_at": "2026-04-17T02:54:16.350996"
+}

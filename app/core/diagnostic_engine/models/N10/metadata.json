@@ -1,0 +1,86 @@
+{
+  "disease_icd": "N10",
+  "disease_name": "Acute Pyelonephritis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7058823529411765,
+    "roc_auc": 0.7511875511875513,
+    "avg_precision": 0.7019408694216669,
+    "confusion_matrix": [
+      [
+        71,
+        39
+      ],
+      [
+        26,
+        85
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7319587628865979,
+        "recall": 0.6454545454545455,
+        "f1-score": 0.6859903381642513,
+        "support": 110.0
+      },
+      "1": {
+        "precision": 0.6854838709677419,
+        "recall": 0.7657657657657657,
+        "f1-score": 0.723404255319149,
+        "support": 111.0
+      },
+      "accuracy": 0.7058823529411765,
+      "macro avg": {
+        "precision": 0.7087213169271699,
+        "recall": 0.7056101556101556,
+        "f1-score": 0.7046972967417001,
+        "support": 221.0
+      },
+      "weighted avg": {
+        "precision": 0.7086161701128738,
+        "recall": 0.7058823529411765,
+        "f1-score": 0.7047819436130914,
+        "support": 221.0
+      }
+    },
+    "train_samples": 882,
+    "test_samples": 221,
+    "positive_rate": 0.5031731640979148
+  },
+  "threshold": 0.21227969335006125,
+  "created_at": "2026-04-17T02:48:52.948563"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K57",
+  "disease_name": "Diverticular Disease",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7094272076372315,
+    "roc_auc": 0.77979905866604,
+    "avg_precision": 0.7348868514389411,
+    "confusion_matrix": [
+      [
+        542,
+        289
+      ],
+      [
+        198,
+        647
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7324324324324324,
+        "recall": 0.6522262334536703,
+        "f1-score": 0.6900063653723743,
+        "support": 831.0
+      },
+      "1": {
+        "precision": 0.6912393162393162,
+        "recall": 0.7656804733727811,
+        "f1-score": 0.7265581134194273,
+        "support": 845.0
+      },
+      "accuracy": 0.7094272076372315,
+      "macro avg": {
+        "precision": 0.7118358743358744,
+        "recall": 0.7089533534132257,
+        "f1-score": 0.7082822393959007,
+        "support": 1676.0
+      },
+      "weighted avg": {
+        "precision": 0.7116638267145428,
+        "recall": 0.7094272076372315,
+        "f1-score": 0.7084349018280782,
+        "support": 1676.0
+      }
+    },
+    "train_samples": 6700,
+    "test_samples": 1676,
+    "positive_rate": 0.5040592168099332
+  },
+  "threshold": 0.42277266779683387,
+  "created_at": "2026-04-17T02:38:26.410000"
+}
