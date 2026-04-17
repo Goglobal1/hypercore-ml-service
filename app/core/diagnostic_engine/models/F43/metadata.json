@@ -1,0 +1,86 @@
+{
+  "disease_icd": "F43",
+  "disease_name": "Stress Reaction and Adjustment Disorders",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6796558704453441,
+    "roc_auc": 0.742053795993218,
+    "avg_precision": 0.7245046384701643,
+    "confusion_matrix": [
+      [
+        665,
+        316
+      ],
+      [
+        317,
+        678
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6771894093686355,
+        "recall": 0.6778797145769623,
+        "f1-score": 0.6775343861436577,
+        "support": 981.0
+      },
+      "1": {
+        "precision": 0.682092555331992,
+        "recall": 0.6814070351758794,
+        "f1-score": 0.6817496229260935,
+        "support": 995.0
+      },
+      "accuracy": 0.6796558704453441,
+      "macro avg": {
+        "precision": 0.6796409823503138,
+        "recall": 0.6796433748764208,
+        "f1-score": 0.6796420045348757,
+        "support": 1976.0
+      },
+      "weighted avg": {
+        "precision": 0.679658351794516,
+        "recall": 0.6796558704453441,
+        "f1-score": 0.6796569370538417,
+        "support": 1976.0
+      }
+    },
+    "train_samples": 7901,
+    "test_samples": 1976,
+    "positive_rate": 0.5036954540852485
+  },
+  "threshold": 0.3607116216846673,
+  "created_at": "2026-04-17T22:22:38.385547"
+}

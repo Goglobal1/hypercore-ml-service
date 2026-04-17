@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E21",
+  "disease_name": "Hyperparathyroidism",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.745417515274949,
+    "roc_auc": 0.8286373290853577,
+    "avg_precision": 0.8299919840644652,
+    "confusion_matrix": [
+      [
+        180,
+        63
+      ],
+      [
+        62,
+        186
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.743801652892562,
+        "recall": 0.7407407407407407,
+        "f1-score": 0.7422680412371134,
+        "support": 243.0
+      },
+      "1": {
+        "precision": 0.7469879518072289,
+        "recall": 0.75,
+        "f1-score": 0.7484909456740443,
+        "support": 248.0
+      },
+      "accuracy": 0.745417515274949,
+      "macro avg": {
+        "precision": 0.7453948023498954,
+        "recall": 0.7453703703703703,
+        "f1-score": 0.7453794934555789,
+        "support": 491.0
+      },
+      "weighted avg": {
+        "precision": 0.7454110258677908,
+        "recall": 0.745417515274949,
+        "f1-score": 0.7454111783050541,
+        "support": 491.0
+      }
+    },
+    "train_samples": 1961,
+    "test_samples": 491,
+    "positive_rate": 0.5040783034257749
+  },
+  "threshold": 0.3542316872589949,
+  "created_at": "2026-04-17T22:27:14.744241"
+}

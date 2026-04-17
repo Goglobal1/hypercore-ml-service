@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I35",
+  "disease_name": "Nonrheumatic Aortic Valve Disorders",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.78125,
+    "roc_auc": 0.8574652363925308,
+    "avg_precision": 0.8421495655638732,
+    "confusion_matrix": [
+      [
+        638,
+        187
+      ],
+      [
+        177,
+        662
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7828220858895706,
+        "recall": 0.7733333333333333,
+        "f1-score": 0.7780487804878049,
+        "support": 825.0
+      },
+      "1": {
+        "precision": 0.7797408716136631,
+        "recall": 0.7890345649582837,
+        "f1-score": 0.7843601895734598,
+        "support": 839.0
+      },
+      "accuracy": 0.78125,
+      "macro avg": {
+        "precision": 0.7812814787516169,
+        "recall": 0.7811839491458086,
+        "f1-score": 0.7812044850306323,
+        "support": 1664.0
+      },
+      "weighted avg": {
+        "precision": 0.7812685169127159,
+        "recall": 0.78125,
+        "f1-score": 0.7812310354294302,
+        "support": 1664.0
+      }
+    },
+    "train_samples": 6652,
+    "test_samples": 1664,
+    "positive_rate": 0.5043290043290043
+  },
+  "threshold": 0.27342566692538695,
+  "created_at": "2026-04-17T22:08:07.914281"
+}

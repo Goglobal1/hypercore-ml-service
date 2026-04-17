@@ -1,0 +1,86 @@
+{
+  "disease_icd": "N13",
+  "disease_name": "Obstructive Uropathy",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6951219512195121,
+    "roc_auc": 0.7792609807111318,
+    "avg_precision": 0.7767075566370492,
+    "confusion_matrix": [
+      [
+        431,
+        219
+      ],
+      [
+        181,
+        481
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.704248366013072,
+        "recall": 0.6630769230769231,
+        "f1-score": 0.6830427892234548,
+        "support": 650.0
+      },
+      "1": {
+        "precision": 0.6871428571428572,
+        "recall": 0.7265861027190332,
+        "f1-score": 0.7063142437591777,
+        "support": 662.0
+      },
+      "accuracy": 0.6951219512195121,
+      "macro avg": {
+        "precision": 0.6956956115779646,
+        "recall": 0.6948315128979782,
+        "f1-score": 0.6946785164913163,
+        "support": 1312.0
+      },
+      "weighted avg": {
+        "precision": 0.6956173851654484,
+        "recall": 0.6951219512195121,
+        "f1-score": 0.6947849408260832,
+        "support": 1312.0
+      }
+    },
+    "train_samples": 5247,
+    "test_samples": 1312,
+    "positive_rate": 0.5041927123037049
+  },
+  "threshold": 0.3850780054801527,
+  "created_at": "2026-04-17T22:17:56.848122"
+}
