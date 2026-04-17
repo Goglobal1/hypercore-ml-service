@@ -1,0 +1,86 @@
+{
+  "disease_icd": "N20",
+  "disease_name": "Kidney and Ureter Calculus",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6402214022140221,
+    "roc_auc": 0.7137895812053116,
+    "avg_precision": 0.7012292478584983,
+    "confusion_matrix": [
+      [
+        179,
+        88
+      ],
+      [
+        107,
+        168
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6258741258741258,
+        "recall": 0.6704119850187266,
+        "f1-score": 0.6473779385171791,
+        "support": 267.0
+      },
+      "1": {
+        "precision": 0.65625,
+        "recall": 0.610909090909091,
+        "f1-score": 0.632768361581921,
+        "support": 275.0
+      },
+      "accuracy": 0.6402214022140221,
+      "macro avg": {
+        "precision": 0.6410620629370629,
+        "recall": 0.6406605379639088,
+        "f1-score": 0.64007315004955,
+        "support": 542.0
+      },
+      "weighted avg": {
+        "precision": 0.6412862391298737,
+        "recall": 0.6402214022140221,
+        "f1-score": 0.6399653302935703,
+        "support": 542.0
+      }
+    },
+    "train_samples": 2165,
+    "test_samples": 542,
+    "positive_rate": 0.5064647210934614
+  },
+  "threshold": 0.28469165842539845,
+  "created_at": "2026-04-17T21:36:28.457647"
+}

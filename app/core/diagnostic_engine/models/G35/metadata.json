@@ -1,0 +1,86 @@
+{
+  "disease_icd": "G35",
+  "disease_name": "Multiple Sclerosis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.689873417721519,
+    "roc_auc": 0.7527540760325282,
+    "avg_precision": 0.7648174543867039,
+    "confusion_matrix": [
+      [
+        109,
+        48
+      ],
+      [
+        50,
+        109
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6855345911949685,
+        "recall": 0.6942675159235668,
+        "f1-score": 0.689873417721519,
+        "support": 157.0
+      },
+      "1": {
+        "precision": 0.6942675159235668,
+        "recall": 0.6855345911949685,
+        "f1-score": 0.689873417721519,
+        "support": 159.0
+      },
+      "accuracy": 0.689873417721519,
+      "macro avg": {
+        "precision": 0.6899010535592677,
+        "recall": 0.6899010535592677,
+        "f1-score": 0.689873417721519,
+        "support": 316.0
+      },
+      "weighted avg": {
+        "precision": 0.6899286893970163,
+        "recall": 0.689873417721519,
+        "f1-score": 0.689873417721519,
+        "support": 316.0
+      }
+    },
+    "train_samples": 1262,
+    "test_samples": 316,
+    "positive_rate": 0.5031685678073511
+  },
+  "threshold": 0.3916788513746926,
+  "created_at": "2026-04-17T21:31:56.892745"
+}

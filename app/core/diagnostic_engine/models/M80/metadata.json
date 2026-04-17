@@ -1,0 +1,85 @@
+{
+  "disease_icd": "M80",
+  "disease_name": "Osteoporosis with Fracture",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7184466019417476,
+    "roc_auc": 0.8022247360482655,
+    "avg_precision": 0.788767884277777,
+    "confusion_matrix": [
+      [
+        68,
+        34
+      ],
+      [
+        24,
+        80
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7391304347826086,
+        "recall": 0.6666666666666666,
+        "f1-score": 0.7010309278350515,
+        "support": 102.0
+      },
+      "1": {
+        "precision": 0.7017543859649122,
+        "recall": 0.7692307692307693,
+        "f1-score": 0.7339449541284404,
+        "support": 104.0
+      },
+      "accuracy": 0.7184466019417476,
+      "macro avg": {
+        "precision": 0.7204424103737604,
+        "recall": 0.717948717948718,
+        "f1-score": 0.717487940981746,
+        "support": 206.0
+      },
+      "weighted avg": {
+        "precision": 0.7202609732435775,
+        "recall": 0.7184466019417476,
+        "f1-score": 0.7176477178084129,
+        "support": 206.0
+      }
+    },
+    "train_samples": 821,
+    "test_samples": 206,
+    "positive_rate": 0.5053554040895814
+  },
+  "threshold": 0.27546103210632994,
+  "created_at": "2026-04-17T21:53:56.279039"
+}
