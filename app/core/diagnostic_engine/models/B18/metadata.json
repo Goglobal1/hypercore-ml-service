@@ -1,0 +1,86 @@
+{
+  "disease_icd": "B18",
+  "disease_name": "Chronic Viral Hepatitis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.71875,
+    "roc_auc": 0.7938056954668733,
+    "avg_precision": 0.7742570431695083,
+    "confusion_matrix": [
+      [
+        245,
+        103
+      ],
+      [
+        95,
+        261
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7205882352941176,
+        "recall": 0.7040229885057471,
+        "f1-score": 0.7122093023255814,
+        "support": 348.0
+      },
+      "1": {
+        "precision": 0.717032967032967,
+        "recall": 0.7331460674157303,
+        "f1-score": 0.725,
+        "support": 356.0
+      },
+      "accuracy": 0.71875,
+      "macro avg": {
+        "precision": 0.7188106011635423,
+        "recall": 0.7185845279607387,
+        "f1-score": 0.7186046511627907,
+        "support": 704.0
+      },
+      "weighted avg": {
+        "precision": 0.7187904007756949,
+        "recall": 0.71875,
+        "f1-score": 0.7186773255813953,
+        "support": 704.0
+      }
+    },
+    "train_samples": 2813,
+    "test_samples": 704,
+    "positive_rate": 0.5049758316747228
+  },
+  "threshold": 0.27174506712979263,
+  "created_at": "2026-04-17T21:05:14.102517"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E84",
+  "disease_name": "Cystic Fibrosis",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.6089841755997958,
+    "roc_auc": 0.657727008361354,
+    "avg_precision": 0.6496915387679933,
+    "confusion_matrix": [
+      [
+        627,
+        355
+      ],
+      [
+        411,
+        566
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.6040462427745664,
+        "recall": 0.6384928716904277,
+        "f1-score": 0.6207920792079208,
+        "support": 982.0
+      },
+      "1": {
+        "precision": 0.6145494028230185,
+        "recall": 0.579324462640737,
+        "f1-score": 0.5964172813487882,
+        "support": 977.0
+      },
+      "accuracy": 0.6089841755997958,
+      "macro avg": {
+        "precision": 0.6092978227987924,
+        "recall": 0.6089086671655823,
+        "f1-score": 0.6086046802783545,
+        "support": 1959.0
+      },
+      "weighted avg": {
+        "precision": 0.6092844190723397,
+        "recall": 0.6089841755997958,
+        "f1-score": 0.6086357864522431,
+        "support": 1959.0
+      }
+    },
+    "train_samples": 7833,
+    "test_samples": 1959,
+    "positive_rate": 0.49867238562091504
+  },
+  "threshold": 0.28672895462650877,
+  "created_at": "2026-04-17T21:18:41.266289"
+}

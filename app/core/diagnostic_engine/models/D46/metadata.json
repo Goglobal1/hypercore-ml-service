@@ -1,0 +1,86 @@
+{
+  "disease_icd": "D46",
+  "disease_name": "Myelodysplastic Syndrome",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.835,
+    "roc_auc": 0.8977897789778977,
+    "avg_precision": 0.8793257987546582,
+    "confusion_matrix": [
+      [
+        78,
+        21
+      ],
+      [
+        12,
+        89
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8666666666666667,
+        "recall": 0.7878787878787878,
+        "f1-score": 0.8253968253968254,
+        "support": 99.0
+      },
+      "1": {
+        "precision": 0.8090909090909091,
+        "recall": 0.8811881188118812,
+        "f1-score": 0.8436018957345972,
+        "support": 101.0
+      },
+      "accuracy": 0.835,
+      "macro avg": {
+        "precision": 0.8378787878787879,
+        "recall": 0.8345334533453346,
+        "f1-score": 0.8344993605657113,
+        "support": 200.0
+      },
+      "weighted avg": {
+        "precision": 0.837590909090909,
+        "recall": 0.835,
+        "f1-score": 0.8345903859174001,
+        "support": 200.0
+      }
+    },
+    "train_samples": 800,
+    "test_samples": 200,
+    "positive_rate": 0.505
+  },
+  "threshold": 0.4587955884448491,
+  "created_at": "2026-04-17T21:22:59.084729"
+}

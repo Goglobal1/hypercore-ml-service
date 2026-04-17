@@ -1,0 +1,86 @@
+{
+  "disease_icd": "G30",
+  "disease_name": "Alzheimer Disease",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7211093990755008,
+    "roc_auc": 0.8006534085512944,
+    "avg_precision": 0.7693673110776482,
+    "confusion_matrix": [
+      [
+        233,
+        89
+      ],
+      [
+        92,
+        235
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7169230769230769,
+        "recall": 0.7236024844720497,
+        "f1-score": 0.7202472952086554,
+        "support": 322.0
+      },
+      "1": {
+        "precision": 0.7253086419753086,
+        "recall": 0.7186544342507645,
+        "f1-score": 0.7219662058371735,
+        "support": 327.0
+      },
+      "accuracy": 0.7211093990755008,
+      "macro avg": {
+        "precision": 0.7211158594491928,
+        "recall": 0.7211284593614071,
+        "f1-score": 0.7211067505229145,
+        "support": 649.0
+      },
+      "weighted avg": {
+        "precision": 0.7211481613176528,
+        "recall": 0.7211093990755008,
+        "f1-score": 0.7211133719043803,
+        "support": 649.0
+      }
+    },
+    "train_samples": 2594,
+    "test_samples": 649,
+    "positive_rate": 0.503854455750848
+  },
+  "threshold": 0.31434249900765404,
+  "created_at": "2026-04-17T21:00:38.666425"
+}
