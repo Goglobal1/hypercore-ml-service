@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E86",
+  "disease_name": "Volume Depletion",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7528996469994957,
+    "roc_auc": 0.8235055951169888,
+    "avg_precision": 0.8044710259937131,
+    "confusion_matrix": [
+      [
+        699,
+        284
+      ],
+      [
+        206,
+        794
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7723756906077348,
+        "recall": 0.711088504577823,
+        "f1-score": 0.7404661016949152,
+        "support": 983.0
+      },
+      "1": {
+        "precision": 0.7365491651205937,
+        "recall": 0.794,
+        "f1-score": 0.7641963426371511,
+        "support": 1000.0
+      },
+      "accuracy": 0.7528996469994957,
+      "macro avg": {
+        "precision": 0.7544624278641643,
+        "recall": 0.7525442522889115,
+        "f1-score": 0.7523312221660332,
+        "support": 1983.0
+      },
+      "weighted avg": {
+        "precision": 0.7543088598023181,
+        "recall": 0.7528996469994957,
+        "f1-score": 0.7524329402941266,
+        "support": 1983.0
+      }
+    },
+    "train_samples": 7930,
+    "test_samples": 1983,
+    "positive_rate": 0.5040855442348431
+  },
+  "threshold": 0.4121296877827838,
+  "created_at": "2026-04-17T02:06:58.857637"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "M10",
+  "disease_name": "Gout",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7573158425832492,
+    "roc_auc": 0.8376219556280593,
+    "avg_precision": 0.832762591447973,
+    "confusion_matrix": [
+      [
+        730,
+        253
+      ],
+      [
+        228,
+        771
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7620041753653445,
+        "recall": 0.7426246185147508,
+        "f1-score": 0.7521895929933025,
+        "support": 983.0
+      },
+      "1": {
+        "precision": 0.7529296875,
+        "recall": 0.7717717717717718,
+        "f1-score": 0.7622343054869006,
+        "support": 999.0
+      },
+      "accuracy": 0.7573158425832492,
+      "macro avg": {
+        "precision": 0.7574669314326723,
+        "recall": 0.7571981951432614,
+        "f1-score": 0.7572119492401015,
+        "support": 1982.0
+      },
+      "weighted avg": {
+        "precision": 0.7574303038328122,
+        "recall": 0.7573158425832492,
+        "f1-score": 0.7572524929837691,
+        "support": 1982.0
+      }
+    },
+    "train_samples": 7926,
+    "test_samples": 1982,
+    "positive_rate": 0.5038352846184901
+  },
+  "threshold": 0.33785709401104497,
+  "created_at": "2026-04-17T02:30:42.713333"
+}
