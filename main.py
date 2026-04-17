@@ -107,6 +107,28 @@ except ImportError:
     ANTHROPIC_AVAILABLE = False
     anthropic = None
 
+# Knowledge Graph integrations (PrimeKG, Hetionet)
+# These are placeholders - actual KG integration would require kg_client setup
+PRIMEKG_AVAILABLE = False  # Set True when PrimeKG client is configured
+HETIONET_AVAILABLE = False  # Set True when Hetionet client is configured
+
+
+def query_primekg_for_disease(icd_code: str) -> Optional[Dict[str, Any]]:
+    """Query PrimeKG for disease relationships. Placeholder for KG integration."""
+    if not PRIMEKG_AVAILABLE:
+        return None
+    # TODO: Implement actual PrimeKG query via API or local database
+    return {"related": [], "phenotypes": []}
+
+
+def query_hetionet_for_disease(icd_code: str) -> Optional[Dict[str, Any]]:
+    """Query Hetionet for disease associations. Placeholder for KG integration."""
+    if not HETIONET_AVAILABLE:
+        return None
+    # TODO: Implement actual Hetionet query via API or Neo4j
+    return {"drugs": [], "pathways": []}
+
+
 # Comparison utilities for /compare endpoint
 try:
     from app.core.comparison_utils import (
