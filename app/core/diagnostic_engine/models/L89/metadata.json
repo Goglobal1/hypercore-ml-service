@@ -1,0 +1,86 @@
+{
+  "disease_icd": "L89",
+  "disease_name": "Pressure Ulcer",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.837696335078534,
+    "roc_auc": 0.9170220283639554,
+    "avg_precision": 0.9154209673732676,
+    "confusion_matrix": [
+      [
+        465,
+        103
+      ],
+      [
+        83,
+        495
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8485401459854015,
+        "recall": 0.8186619718309859,
+        "f1-score": 0.8333333333333334,
+        "support": 568.0
+      },
+      "1": {
+        "precision": 0.8277591973244147,
+        "recall": 0.856401384083045,
+        "f1-score": 0.8418367346938775,
+        "support": 578.0
+      },
+      "accuracy": 0.837696335078534,
+      "macro avg": {
+        "precision": 0.8381496716549082,
+        "recall": 0.8375316779570154,
+        "f1-score": 0.8375850340136055,
+        "support": 1146.0
+      },
+      "weighted avg": {
+        "precision": 0.8380590043396333,
+        "recall": 0.837696335078534,
+        "f1-score": 0.8376221343685817,
+        "support": 1146.0
+      }
+    },
+    "train_samples": 4580,
+    "test_samples": 1146,
+    "positive_rate": 0.5040167656304576
+  },
+  "threshold": 0.4479126406424042,
+  "created_at": "2026-04-17T03:19:47.581508"
+}

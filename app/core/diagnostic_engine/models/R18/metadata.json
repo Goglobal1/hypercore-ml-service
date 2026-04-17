@@ -1,0 +1,86 @@
+{
+  "disease_icd": "R18",
+  "disease_name": "Ascites",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8361581920903954,
+    "roc_auc": 0.9115864148266383,
+    "avg_precision": 0.9121666687331044,
+    "confusion_matrix": [
+      [
+        442,
+        83
+      ],
+      [
+        91,
+        446
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8292682926829268,
+        "recall": 0.8419047619047619,
+        "f1-score": 0.8355387523629489,
+        "support": 525.0
+      },
+      "1": {
+        "precision": 0.8431001890359168,
+        "recall": 0.8305400372439479,
+        "f1-score": 0.8367729831144465,
+        "support": 537.0
+      },
+      "accuracy": 0.8361581920903954,
+      "macro avg": {
+        "precision": 0.8361842408594218,
+        "recall": 0.836222399574355,
+        "f1-score": 0.8361558677386978,
+        "support": 1062.0
+      },
+      "weighted avg": {
+        "precision": 0.8362623871665008,
+        "recall": 0.8361581920903954,
+        "f1-score": 0.8361628407937909,
+        "support": 1062.0
+      }
+    },
+    "train_samples": 4245,
+    "test_samples": 1062,
+    "positive_rate": 0.5051818353118522
+  },
+  "threshold": 0.5001955586310962,
+  "created_at": "2026-04-17T03:15:14.925364"
+}
