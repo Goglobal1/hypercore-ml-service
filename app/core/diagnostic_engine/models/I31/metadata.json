@@ -1,0 +1,86 @@
+{
+  "disease_icd": "I31",
+  "disease_name": "Other Diseases of Pericardium",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.759020618556701,
+    "roc_auc": 0.8274739583333335,
+    "avg_precision": 0.8006080778143074,
+    "confusion_matrix": [
+      [
+        280,
+        104
+      ],
+      [
+        83,
+        309
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7713498622589532,
+        "recall": 0.7291666666666666,
+        "f1-score": 0.749665327978581,
+        "support": 384.0
+      },
+      "1": {
+        "precision": 0.7481840193704601,
+        "recall": 0.7882653061224489,
+        "f1-score": 0.7677018633540372,
+        "support": 392.0
+      },
+      "accuracy": 0.759020618556701,
+      "macro avg": {
+        "precision": 0.7597669408147066,
+        "recall": 0.7587159863945578,
+        "f1-score": 0.7586835956663092,
+        "support": 776.0
+      },
+      "weighted avg": {
+        "precision": 0.7596475292534257,
+        "recall": 0.759020618556701,
+        "f1-score": 0.7587765674981414,
+        "support": 776.0
+      }
+    },
+    "train_samples": 3101,
+    "test_samples": 776,
+    "positive_rate": 0.5050296621098788
+  },
+  "threshold": 0.30335816274979105,
+  "created_at": "2026-04-18T00:11:19.453986"
+}

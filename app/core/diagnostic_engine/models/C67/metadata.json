@@ -1,0 +1,86 @@
+{
+  "disease_icd": "C67",
+  "disease_name": "Malignant Neoplasm of Bladder",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7363636363636363,
+    "roc_auc": 0.7991569551202578,
+    "avg_precision": 0.7696571945207195,
+    "confusion_matrix": [
+      [
+        77,
+        32
+      ],
+      [
+        26,
+        85
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7475728155339806,
+        "recall": 0.7064220183486238,
+        "f1-score": 0.7264150943396226,
+        "support": 109.0
+      },
+      "1": {
+        "precision": 0.7264957264957265,
+        "recall": 0.7657657657657657,
+        "f1-score": 0.7456140350877193,
+        "support": 111.0
+      },
+      "accuracy": 0.7363636363636363,
+      "macro avg": {
+        "precision": 0.7370342710148535,
+        "recall": 0.7360938920571948,
+        "f1-score": 0.7360145647136709,
+        "support": 220.0
+      },
+      "weighted avg": {
+        "precision": 0.7369384660646796,
+        "recall": 0.7363636363636363,
+        "f1-score": 0.7361018326261622,
+        "support": 220.0
+      }
+    },
+    "train_samples": 876,
+    "test_samples": 220,
+    "positive_rate": 0.5045620437956204
+  },
+  "threshold": 0.3294295135082775,
+  "created_at": "2026-04-17T23:58:57.429916"
+}

@@ -1,0 +1,86 @@
+{
+  "disease_icd": "G81",
+  "disease_name": "Hemiplegia",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7829153605015674,
+    "roc_auc": 0.8554981462781837,
+    "avg_precision": 0.8448845408694567,
+    "confusion_matrix": [
+      [
+        483,
+        150
+      ],
+      [
+        127,
+        516
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7918032786885246,
+        "recall": 0.7630331753554502,
+        "f1-score": 0.7771520514883347,
+        "support": 633.0
+      },
+      "1": {
+        "precision": 0.7747747747747747,
+        "recall": 0.80248833592535,
+        "f1-score": 0.7883880825057296,
+        "support": 643.0
+      },
+      "accuracy": 0.7829153605015674,
+      "macro avg": {
+        "precision": 0.7832890267316497,
+        "recall": 0.7827607556404002,
+        "f1-score": 0.7827700669970321,
+        "support": 1276.0
+      },
+      "weighted avg": {
+        "precision": 0.783222300619135,
+        "recall": 0.7829153605015674,
+        "f1-score": 0.7828140953317398,
+        "support": 1276.0
+      }
+    },
+    "train_samples": 5103,
+    "test_samples": 1276,
+    "positive_rate": 0.5039974917698699
+  },
+  "threshold": 0.42838287464620534,
+  "created_at": "2026-04-18T00:07:19.163092"
+}

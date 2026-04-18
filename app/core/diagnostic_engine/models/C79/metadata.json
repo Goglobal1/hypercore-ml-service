@@ -1,0 +1,86 @@
+{
+  "disease_icd": "C79",
+  "disease_name": "Secondary Malignant Neoplasm Other Sites",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7619335347432025,
+    "roc_auc": 0.837233825032861,
+    "avg_precision": 0.8222240449909406,
+    "confusion_matrix": [
+      [
+        620,
+        200
+      ],
+      [
+        194,
+        641
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7616707616707616,
+        "recall": 0.7560975609756098,
+        "f1-score": 0.758873929008568,
+        "support": 820.0
+      },
+      "1": {
+        "precision": 0.7621878715814506,
+        "recall": 0.7676646706586826,
+        "f1-score": 0.7649164677804295,
+        "support": 835.0
+      },
+      "accuracy": 0.7619335347432025,
+      "macro avg": {
+        "precision": 0.7619293166261061,
+        "recall": 0.7618811158171461,
+        "f1-score": 0.7618951983944988,
+        "support": 1655.0
+      },
+      "weighted avg": {
+        "precision": 0.7619316600244929,
+        "recall": 0.7619335347432025,
+        "f1-score": 0.7619225815007156,
+        "support": 1655.0
+      }
+    },
+    "train_samples": 6618,
+    "test_samples": 1655,
+    "positive_rate": 0.5042910673274508
+  },
+  "threshold": 0.32255452084780123,
+  "created_at": "2026-04-18T00:03:12.281952"
+}
