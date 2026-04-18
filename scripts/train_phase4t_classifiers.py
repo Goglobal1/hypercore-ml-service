@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""
+Phase 4t MIMIC-IV Classifier Training
+Train 6 additional disease models to expand Layer 4c coverage.
+
+Targets:
+- A09: Infectious Gastroenteritis and Colitis (Infectious/GI)
+- C78: Secondary Malignant Neoplasm of Respiratory/Digestive (Oncology)
+- E44: Protein-Calorie Malnutrition (Nutritional)
+- I65: Occlusion and Stenosis of Precerebral Arteries (Vascular)
+- K83: Other Diseases of Biliary Tract (Hepatobiliary)
+- S72: Fracture of Femur (Trauma)
+"""
+
+import sys
+import os
+
+# Set MIMIC_PATH if not already set
+if not os.environ.get('MIMIC_PATH'):
+    os.environ['MIMIC_PATH'] = 'C:/Users/letsa/Downloads/mimic-iv-3.1/mimic-iv-3.1'
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.core.diagnostic_engine.ml.disease_models import DiseaseModelManager
+
+# Phase 4t disease targets
+PHASE4T_DISEASES = [
+    {'icd': 'A09', 'name': 'Infectious Gastroenteritis and Colitis', 'max_patients': 5000},
+    {'icd': 'C78', 'name': 'Secondary Malignant Neoplasm Respiratory Digestive', 'max_patients': 5000},
+    {'icd': 'E44', 'name': 'Protein-Calorie Malnutrition', 'max_patients': 5000},
+    {'icd': 'I65', 'name': 'Occlusion Stenosis of Precerebral Arteries', 'max_patients': 5000},
+    {'icd': 'K83', 'name': 'Other Diseases of Biliary Tract', 'max_patients': 5000},
+    {'icd': 'S72', 'name': 'Fracture of Femur', 'max_patients': 5000},
+]
+
+
+def main():
+    print("=" * 70)
+    print("PHASE 4t: MIMIC-IV Disease Classifier Training")
+    print("=" * 70)
+    print(f"\nTraining {len(PHASE4T_DISEASES)} new disease models:")
+    for d in PHASE4T_DISEASES:
+        print(f"  - {d['icd']}: {d['name']}")
+    print()
+
+    # Initialize model manager
+    manager = DiseaseModelManager()
+
+    results = []
+    for disease in PHASE4T_DISEASES:
+        print("\n" + "=" * 70)
+        print(f"Training model for {disease['icd']}: {disease['name']}")
+        print("=" * 70)
+
+        try:
+            disease_model = manager.train_model(
+                disease_icd=disease['icd'],
+                disease_name=disease['name'],
+                max_patients=disease['max_patients']
+            )
+
+            if disease_model:
+                metrics = disease_model.metrics
+                results.append({
+                    'icd': disease['icd'],
+                    'name': disease['name'],
+                    'status': 'SUCCESS',
+                    'auc': metrics.get('roc_auc', 0),
+                    'accuracy': metrics.get('accuracy', 0),
+                    'samples': metrics.get('train_samples', 0)
+                })
+                print(f"\n[SUCCESS] {disease['icd']} trained - AUC: {metrics.get('roc_auc', 0):.4f}")
+            else:
+                results.append({
+                    'icd': disease['icd'],
+                    'name': disease['name'],
+                    'status': 'FAILED',
+                    'auc': 0,
+                    'accuracy': 0,
+                    'samples': 0
+                })
+                print(f"\n[FAILED] {disease['icd']} - No model returned")
+
+        except Exception as e:
+            results.append({
+                'icd': disease['icd'],
+                'name': disease['name'],
+                'status': 'ERROR',
+                'error': str(e),
+                'auc': 0,
+                'accuracy': 0,
+                'samples': 0
+            })
+            print(f"\n[ERROR] {disease['icd']} - {str(e)}")
+
+    # Summary
+    print("\n" + "=" * 70)
+    print("PHASE 4t TRAINING SUMMARY")
+    print("=" * 70)
+    print(f"{'ICD':<8} {'Disease':<45} {'Status':<10} {'AUC':<8} {'Samples'}")
+    print("-" * 75)
+
+    successful = 0
+    for r in results:
+        status_str = r['status']
+        auc_str = f"{r['auc']:.4f}" if r['auc'] > 0 else "N/A"
+        samples_str = f"{r['samples']:,}" if r['samples'] > 0 else "N/A"
+        print(f"{r['icd']:<8} {r['name']:<45} {status_str:<10} {auc_str:<8} {samples_str}")
+        if r['status'] == 'SUCCESS':
+            successful += 1
+
+    print("-" * 75)
+    print(f"Successfully trained: {successful}/{len(PHASE4T_DISEASES)} models")
+
+    # Total model count
+    print("\n" + "=" * 70)
+    print("TOTAL MODELS AFTER PHASE 4t")
+    print("=" * 70)
+    model_count = manager.load_models()
+    print(f"Total MIMIC-IV trained models: {model_count}")
+    for icd, model in sorted(manager.models.items()):
+        auc = model.metrics.get('roc_auc', 0) if hasattr(model, 'metrics') else 0
+        name = model.disease_name if hasattr(model, 'disease_name') else 'Unknown'
+        print(f"  {icd}: {name} (AUC: {auc:.4f})")
+
+    return results
+
+
+if __name__ == "__main__":
+    main()

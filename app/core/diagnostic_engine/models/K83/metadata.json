@@ -1,0 +1,86 @@
+{
+  "disease_icd": "K83",
+  "disease_name": "Other Diseases of Biliary Tract",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.8202846975088968,
+    "roc_auc": 0.9016129491892508,
+    "avg_precision": 0.9021649249146042,
+    "confusion_matrix": [
+      [
+        473,
+        84
+      ],
+      [
+        118,
+        449
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8003384094754653,
+        "recall": 0.8491921005385996,
+        "f1-score": 0.8240418118466899,
+        "support": 557.0
+      },
+      "1": {
+        "precision": 0.8424015009380863,
+        "recall": 0.7918871252204586,
+        "f1-score": 0.8163636363636364,
+        "support": 567.0
+      },
+      "accuracy": 0.8202846975088968,
+      "macro avg": {
+        "precision": 0.8213699552067758,
+        "recall": 0.820539612879529,
+        "f1-score": 0.8202027241051632,
+        "support": 1124.0
+      },
+      "weighted avg": {
+        "precision": 0.8215570686029618,
+        "recall": 0.8202846975088968,
+        "f1-score": 0.8201685685202741,
+        "support": 1124.0
+      }
+    },
+    "train_samples": 4495,
+    "test_samples": 1124,
+    "positive_rate": 0.5041822388325324
+  },
+  "threshold": 0.43959288970763316,
+  "created_at": "2026-04-18T05:59:21.439320"
+}

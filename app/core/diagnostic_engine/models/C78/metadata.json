@@ -1,0 +1,86 @@
+{
+  "disease_icd": "C78",
+  "disease_name": "Secondary Malignant Neoplasm Respiratory Digestive",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7850299401197605,
+    "roc_auc": 0.8706221383243634,
+    "avg_precision": 0.8686075101863224,
+    "confusion_matrix": [
+      [
+        652,
+        174
+      ],
+      [
+        185,
+        659
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.7789725209080047,
+        "recall": 0.7893462469733656,
+        "f1-score": 0.7841250751653638,
+        "support": 826.0
+      },
+      "1": {
+        "precision": 0.7911164465786314,
+        "recall": 0.7808056872037915,
+        "f1-score": 0.7859272510435301,
+        "support": 844.0
+      },
+      "accuracy": 0.7850299401197605,
+      "macro avg": {
+        "precision": 0.7850444837433181,
+        "recall": 0.7850759670885785,
+        "f1-score": 0.785026163104447,
+        "support": 1670.0
+      },
+      "weighted avg": {
+        "precision": 0.7851099300493274,
+        "recall": 0.7850299401197605,
+        "f1-score": 0.7850358754295389,
+        "support": 1670.0
+      }
+    },
+    "train_samples": 6680,
+    "test_samples": 1670,
+    "positive_rate": 0.5051497005988024
+  },
+  "threshold": 0.38707984628980224,
+  "created_at": "2026-04-18T05:49:04.585072"
+}

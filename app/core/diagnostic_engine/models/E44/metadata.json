@@ -1,0 +1,86 @@
+{
+  "disease_icd": "E44",
+  "disease_name": "Protein-Calorie Malnutrition",
+  "feature_names": [
+    "%_hemoglobin_a1c",
+    "alanine_aminotransferase_(alt)",
+    "albumin",
+    "alkaline_phosphatase",
+    "asparate_aminotransferase_(ast)",
+    "bilirubin,_direct",
+    "bilirubin,_total",
+    "c-reactive_protein",
+    "calcium,_total",
+    "creatine_kinase,_mb_isoenzyme",
+    "creatinine",
+    "creatinine,_whole_blood",
+    "glucose",
+    "hematocrit",
+    "hematocrit,_calculated",
+    "hemoglobin",
+    "inr(pt)",
+    "lactate",
+    "magnesium",
+    "ntprobnp",
+    "pt",
+    "ptt",
+    "platelet_count",
+    "potassium",
+    "potassium,_whole_blood",
+    "protein,_total",
+    "sodium",
+    "sodium,_whole_blood",
+    "troponin_i",
+    "troponin_t",
+    "urea_nitrogen",
+    "wbc_count",
+    "white_blood_cells"
+  ],
+  "metrics": {
+    "accuracy": 0.7861369399830939,
+    "roc_auc": 0.8709531731467348,
+    "avg_precision": 0.8533668907523347,
+    "confusion_matrix": [
+      [
+        440,
+        146
+      ],
+      [
+        107,
+        490
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.8043875685557587,
+        "recall": 0.7508532423208191,
+        "f1-score": 0.7766990291262136,
+        "support": 586.0
+      },
+      "1": {
+        "precision": 0.7704402515723271,
+        "recall": 0.8207705192629816,
+        "f1-score": 0.7948094079480941,
+        "support": 597.0
+      },
+      "accuracy": 0.7861369399830939,
+      "macro avg": {
+        "precision": 0.7874139100640429,
+        "recall": 0.7858118807919003,
+        "f1-score": 0.7857542185371538,
+        "support": 1183.0
+      },
+      "weighted avg": {
+        "precision": 0.787256082301229,
+        "recall": 0.7861369399830939,
+        "f1-score": 0.7858384172552606,
+        "support": 1183.0
+      }
+    },
+    "train_samples": 4729,
+    "test_samples": 1183,
+    "positive_rate": 0.5049052774018945
+  },
+  "threshold": 0.3599421828002797,
+  "created_at": "2026-04-18T05:52:32.712719"
+}
